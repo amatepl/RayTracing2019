@@ -21,8 +21,7 @@ SOURCES += main.cpp\
     wall.cpp \
     settings.cpp \
     ray.cpp \
-    lineo.cpp \
-    coverage.cpp
+    lineo.cpp
 
 HEADERS  += \
     room.h \
@@ -32,8 +31,7 @@ HEADERS  += \
     wall.h \
     settings.h \
     ray.h \
-    lineo.h \
-    coverage.h
+    lineo.h
 
 FORMS    += ieee80211g.ui \     #Qt design template
     help.ui \

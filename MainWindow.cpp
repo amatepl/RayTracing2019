@@ -103,7 +103,7 @@ void MainWindow::on_generateCoveragePushButton_clicked()
 
     if(scene->getTransmitter() != NULL){
         scene->readSettingsFile();
-        cov = new coverage(scene->getAmountDiscret(), scene, this);
+        scene->drawCoverege();
 
     }else{
         statusBar()->showMessage("Placing emettor is needed to generate coverage");
@@ -117,7 +117,7 @@ void MainWindow::on_commandLinkButton_clicked()
         ui->spinBoxResult->setValue(scene->distance()*2*pow(10, -2));
 
         scene->readSettingsFile();
-        scene->launch_algo();
+        scene->launch_algo(true);
 
         ui->powerResultSpinBox->setValue(scene->getReceivedPower());
         if(scene->getBinaryDebit() > 0){ui->binaryResultsSpinBox->setValue(scene->getBinaryDebit());}

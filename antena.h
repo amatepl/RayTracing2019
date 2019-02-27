@@ -11,7 +11,7 @@ public:
     ~antena();
     int getPosX();
     int getPosY();
-
+    void setPosi(QPointF posi);
 private:
     room *myRoom;
     QPointF pos;

@@ -17,7 +17,7 @@
 #include "room.h"
 #include "help.h"
 #include "settings.h"
-#include "coverage.h"
+
 
 class coverage;
 

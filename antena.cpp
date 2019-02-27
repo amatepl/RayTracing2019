@@ -15,7 +15,7 @@ QGraphicsEllipseItem()
     this->setBrush(noBrush);
     this->setPen(setColor());
 
-    myRoom->addItem(this);
+    //myRoom->addItem(this);
 }
 
 antena::~antena(){
@@ -46,5 +46,9 @@ QPen antena::setColor(){
 // --> Getters && Setters
 
 int antena::getPosX(){return pos.x();}
+//int antena::getPosX(){return this->x();}
 int antena::getPosY(){return pos.y();}
 
+void antena::setPosi(QPointF posi){this->pos = posi;
+            this->setRect(posi.x(),posi.y(),1,1);
+            }

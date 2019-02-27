@@ -5,6 +5,7 @@ using namespace std;
 
 room::room(MainWindow *parent) :
     QGraphicsScene(parent)
+  //, QImage(1000,1000, QImage::Format_RGB32)
 {   myParent = parent;
 
     readSettingsFile();
@@ -29,12 +30,12 @@ room::room(MainWindow *parent) :
     gamma = alpha + i*beta;
 
     // Let us define the walls and draw the view
-    walls[0] = new wall(this, 970,1,970,460, 0.0, 0.0, 0.0, 0);
+    walls[0] = new wall(this, 970,1,970,485, 0.0, 0.0, 0.0, 0);
     walls[1] = new wall(this, 970,1,1,1, 0.0, 0.0, 0.0, 1);
-    walls[2] = new wall(this, 1,1,1,460, 0.0, 0.0, 0.0, 2);
-    walls[3] = new wall(this, 970,460,1,460, 0.0, 0.0, 0.0, 3);
+    walls[2] = new wall(this, 1,1,1,485, 0.0, 0.0, 0.0, 2);
+    walls[3] = new wall(this, 970,485,1,485, 0.0, 0.0, 0.0, 3);
     walls[4] = new wall(this, 250, 1, 250, 250, 0.0, 0.0, 0.0, 4);
-    walls[5] = new wall(this, 250, 300, 250, 460, 0.0, 0.0, 0.0, 5);
+    walls[5] = new wall(this, 250, 300, 250, 485, 0.0, 0.0, 0.0, 5);
     walls[6] = new wall(this, 250, 150, 500, 150, 0.0, 0.0, 0.0, 6);
     walls[7] = new wall(this, 550, 150, 970, 150, 0.0, 0.0, 0.0, 7);
     walls[8] = new wall(this, 750, 150, 750, 390, 0.0, 0.0, 0.0, 8);
@@ -52,12 +53,13 @@ room::room(MainWindow *parent) :
     walls[8]->show_line(0);
     walls[9]->show_line(0);
     walls[10]->show_line(0);
+
 }
 
 
 void room::setAntenaType(int type){antenaType = type;}
 
-void room::launch_algo(){
+void room::launch_algo(bool drawR){
 
     /*
      * This function is called upon when the user pushes the launch_algo button
@@ -74,7 +76,7 @@ void room::launch_algo(){
 
 
     // Calculate power -- Reflexion and transmission
-    recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber);
+    recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, drawR);
     powerReceived =  calculatePower(allRays);
 
 
@@ -94,7 +96,7 @@ void room::launch_algo(){
 // ------------------------------ Image method ------------------------------------------------
 
 
-void room::recursion(double transmitterPosX, double transmitterPosY,double receiverPosX,double receiverPosY,int numberOfReflections){
+void room::recursion(double transmitterPosX, double transmitterPosY,double receiverPosX,double receiverPosY,int numberOfReflections, bool drawR){
 
     /*
      * The recursion method generalize the image method for any amount of reflections. Keeps track of the depth of the recursive algorithm.
@@ -109,7 +111,8 @@ void room::recursion(double transmitterPosX, double transmitterPosY,double recei
     int NumberOfReflections = numberOfReflections;
 
     // ---- Drawing of the ray on the screen && saving ----
-    drawRay(transmitterPosX,transmitterPosY,receiverPosX,receiverPosY);
+    drawRay(transmitterPosX,transmitterPosY,receiverPosX,receiverPosY,drawR);
+
 
 
     // --- Re-loop starts -------------
@@ -149,7 +152,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY,double recei
 
                 //---------END OF TRANSMITTER IMAGE CONSTRUCTION--------------------------
 
-                recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1);
+                recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,drawR);
             }
 
         if(i == amount_walls - 1){recursionState -=1;}
@@ -158,7 +161,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY,double recei
 }
 
 
-void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,double OriginY){
+void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,double OriginY,bool drawR){
 
     /*
      * Called back from the recursion method, draws the rays when necessary, then removes the excess
@@ -168,15 +171,18 @@ void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,
     completeRay.clear();
 
     ray* wholeRay[recursionState];
+    ray* receiver_ray;
+    QPen outlinePen(QColor(0, 0, 255, 255));
+    outlinePen.setWidth(1);
+
 
     if(recursionState > 0){
-
         double originX = OriginX;
         double originY = OriginY;
         double transmitterPosX ;
         double transmitterPosY ;
 
-        int j = 0;
+        unsigned char j = 0;
         while(j<=recursionState){
 
             wall* walle = wallRecursiveNumber[recursionState -j];
@@ -187,7 +193,7 @@ void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,
             if(j != recursionState){
                 imCoordinates[0] = intersection(current_ray,walle)[0];
                 imCoordinates[1] = intersection(current_ray,walle)[1];
-                ray* receiver_ray;
+                //ray* receiver_ray;
 
                 if(pointOnLine(walle,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
 
@@ -195,11 +201,15 @@ void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,
                     wholeRay[j] = receiver_ray;
 
                     completeRay.push_back(receiver_ray);
+                    if(drawR){
 
-                    this->addItem(receiver_ray);   // Send the ray to be displayed
-                    QPen outlinePen(QColor(0,255 -  (255/reflectionsNumber)*(j),255,255));
-                    outlinePen.setWidth(1);
-                    receiver_ray->setPen(outlinePen);
+                        this->addItem(receiver_ray);   // Send the ray to be displayed
+                        outlinePen.setColor(QColor(0,255 -  (255/reflectionsNumber)*(j),255,255));
+                        receiver_ray->setPen(outlinePen);
+//                        QPen outlinePen(QColor(0,255 -  (255/reflectionsNumber)*(j),255,255));
+//                        outlinePen.setWidth(1);
+//                        receiver_ray->setPen(outlinePen);
+                    }
 
                     originX = imCoordinates[0];
                     originY = imCoordinates[1];
@@ -207,23 +217,29 @@ void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,
                 else{
 
                     for(int i = 0;i<j;i++ ){
-                        if(completeRay.at(i)->getX1() != NULL){
+                        if(completeRay.at(i)->getX1() != 0){
+
+
+                            if(drawR){
                             this->removeItem(completeRay.at(i));
+                            //completeRay.erase(completeRay.begin());
+                            }
+
                         }
                     }
+                    completeRay.clear();
                     j = recursionState+1;
                 }
             }
             else if(j == recursionState){
 
                 //Ray from transmitter
-                    ray *receiver_ray = new ray(Transmitter->getPosX(),Transmitter->getPosY(),originX,originY,0,0,this);
+                    receiver_ray = new ray(Transmitter->getPosX(),Transmitter->getPosY(),originX,originY,0,0,this);
                     completeRay.push_back(receiver_ray);
-
-                    this->addItem(receiver_ray);   // Send the ray to be displayed
-                    QPen outlinePen(QColor(0, 0, 255, 255));
-                    outlinePen.setWidth(1);
-                    receiver_ray->setPen(outlinePen);
+                    if(drawR){
+                        this->addItem(receiver_ray);   // Send the ray to be displayed
+                        receiver_ray->setPen(outlinePen);
+                    }
             }
             j+=1;
         }
@@ -231,13 +247,13 @@ void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,
     else {
 
         //Direct ray
-        ray* receiver_ray = new ray(TransmitterPosX,TransmitterPosY,OriginX,OriginY,0,0,this);
+        receiver_ray = new ray(TransmitterPosX,TransmitterPosY,OriginX,OriginY,0,0,this);
         completeRay.push_back(receiver_ray);
-
-        this->addItem(receiver_ray);   // Send the ray to be displayed
-        QPen outlinePen(QColor(0,255,255,255));
-        outlinePen.setWidth(1);
-        receiver_ray->setPen(outlinePen);
+        if(drawR){
+            this->addItem(receiver_ray);   // Send the ray to be displayed
+            outlinePen.setColor(QColor(0,255,255,255));
+            receiver_ray->setPen(outlinePen);
+        }
     }
 
     allRays.push_back(completeRay);
@@ -290,7 +306,7 @@ void room::calculateDiffractedRays(){
 
     edges.shrink_to_fit();
 
-    for(int i = 0; i < edges.size(); i ++){
+    for(unsigned char i = 0; i < edges.size(); i ++){
         completeRay.clear();
         completeRay.shrink_to_fit();
 
@@ -701,10 +717,18 @@ double room::binaryDebit(double power){
      * we have for y = ax + b the line equation (y being the binary debit and x the power in dBm
      * a = 12/5 and b = 1146/5, and thus
      */
+    double logBinaryDebit;
 
-   double a = 12/5;
-   double b = 1146/5;
-   double logBinaryDebit = a*power + b;
+    //if(power<= -93){logBinaryDebit = 6;}
+    //else if(power >=-73){logBinaryDebit = 56;}
+    //else{
+
+    double a = 12/5;
+    double b = 1146/5;
+    logBinaryDebit = a*power + b;
+    //}
+    if(logBinaryDebit<0){logBinaryDebit=0;}
+
    return logBinaryDebit;
 }
 
@@ -836,6 +860,7 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
             Transmitter = NULL;};
 
         Transmitter = new antena(this, event->scenePos(),antenaType);
+        this->addItem(Transmitter);
     }
 
     else if (antenaType == 1){
@@ -844,7 +869,49 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
             Receiver = NULL;};
 
         Receiver = new antena(this, event->scenePos(),antenaType);
+        this->addItem(Receiver);
     }
 }
 
-void room::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){antenaType = 2;}
+void room::mouseReleaseEvent(QGraphicsSceneMouseEvent */*unused event*/){antenaType = 2;}
+
+
+
+
+//---> Draw the heatmap-------------------------------------------------------------------------------------------------------------------
+
+
+void room::drawCoverege(){
+
+    unsigned char discret = amount_discret;
+    double square_size = 970/(double)discret;
+    if(Receiver !=NULL){
+        delete Receiver;
+        Receiver = NULL;
+
+    }
+    Receiver = new antena(this,QPointF(0,0),1);
+    //QBrush brush;
+    QBrush *brush = new QBrush(QColor(0, 0, 0, 220));
+    QPen pen;
+    pen.setColor(QColor(0,0,0,0));
+    QColor color;
+
+    for(int i=0;i < discret;i++){
+        for(int j=0;j < (int)discret/2;j++){
+            double xRece = square_size/2 + i*square_size;
+            double yRece = square_size/2 + j*square_size;
+
+            Receiver->setPosi(QPointF(xRece,yRece));
+            launch_algo(false);
+            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
+            else{color.setHsv(0,255,255,255);}
+            brush->setColor(color);
+            this->addRect(i*square_size,j*square_size,square_size,square_size,pen,*brush);
+       }
+    }
+    for(int i;i<=10;i++){
+        this->removeItem(walls[i]);
+        this->addItem(walls[i]);
+    }
+}

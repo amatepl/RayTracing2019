@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1281</width>
-    <height>681</height>
+    <height>707</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>20</x>
       <y>0</y>
       <width>1011</width>
       <height>581</height>
@@ -84,7 +84,8 @@
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>path4136.png</normaloff>path4136.png</iconset>
+             <normaloff>path4136.png</normaloff>
+             <normalon>path4136.png</normalon>path4136.png</iconset>
            </property>
           </widget>
          </item>
@@ -131,26 +132,12 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Distance Emettor - Receptor (m)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="spinBoxResult">
-       <property name="maximum">
-        <double>999.990000000000009</double>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>1020</x>
+      <x>1040</x>
       <y>50</y>
       <width>211</width>
       <height>471</height>
@@ -204,13 +191,13 @@
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;-Launch a coverage map scan. &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Beware that it might take a while. The discretisation is by default 50x50&lt;span style=&quot; text-decoration: underline;&quot;&gt; (fast loading n = 2/3)&lt;/span&gt;, however it migh be changed in the settings menu.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- It is also adviced to reduce the amount of rebounds calculated when scanning.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;-Launch a coverage map scan. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;Beware that it might take a while. The discretisation is by default 50x50&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; text-decoration: underline;&quot;&gt; (fast loading n = 2/3)&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;, however it migh be changed in the settings menu.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;- It is also adviced to reduce the amount of rebounds calculated when scanning.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -219,7 +206,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="generateCoveragePushButton">
     <property name="geometry">
      <rect>
-      <x>1030</x>
+      <x>1060</x>
       <y>530</y>
       <width>180</width>
       <height>31</height>
@@ -229,6 +216,32 @@ p, li { white-space: pre-wrap; }
      <string>Generate Coverage</string>
     </property>
    </widget>
+   <widget class="QDoubleSpinBox" name="spinBoxResult">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>620</y>
+      <width>1009</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <double>999.990000000000009</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>600</y>
+      <width>1009</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Distance Emettor - Receptor (m)</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -236,7 +249,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1281</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

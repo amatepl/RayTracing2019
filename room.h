@@ -22,14 +22,14 @@ class wall;
 class MainWindow;
 class ray;
 
-class room : public QGraphicsScene
+class room : public QGraphicsScene//, private QImage
 {
 
     Q_OBJECT
 public:
     explicit room(MainWindow *parent = 0);
 
-    void launch_algo();
+    void launch_algo(bool drawR);
 
     float distance();
     void drawWall(qreal &x1, qreal &y1, qreal &x2, qreal &y2);
@@ -55,7 +55,7 @@ public:
     void readSettingsFile();
     void clearAll();
 
-
+    void drawCoverege();
 
 
 signals:
@@ -63,7 +63,7 @@ signals:
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
 
     int antenaType;
 
@@ -149,8 +149,8 @@ private:
 
     // Computation methods
     void imagesMethod(double transmitterPosX,double transmitterPosY ,double reveiverPosX,double receiverPosY, int numberOfReflections);
-    void recursion(double transmitterPosX, double transmitterPosY,double receiverPosX,double receiverPosY,int numberOfReflections);
-    void drawRay(double TransmitterImagePosX,double TransmitterImagePosY,double OriginX,double OriginY);
+    void recursion(double transmitterPosX, double transmitterPosY, double receiverPosX, double receiverPosY, int numberOfReflections, bool drawR);
+    void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, bool drawR);
     void calculateDiffractedRays();
 
     // Numerical analysis
@@ -179,6 +179,7 @@ private:
 
     //Misc
     void setDefaultSettings();
+
 
 public slots:
 
