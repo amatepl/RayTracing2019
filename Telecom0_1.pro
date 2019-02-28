@@ -32,6 +32,7 @@ HEADERS  += \
     settings.h \
     ray.h \
     lineo.h
+RESOURCES = icon.qrc
 
 FORMS    += ieee80211g.ui \     #Qt design template
     help.ui \

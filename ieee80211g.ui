@@ -83,9 +83,8 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset>
-             <normaloff>path4136.png</normaloff>
-             <normalon>path4136.png</normalon>path4136.png</iconset>
+            <iconset resource="icon.qrc">
+             <normaloff>:/path4136.png</normaloff>:/path4136.png</iconset>
            </property>
           </widget>
          </item>
@@ -268,6 +267,8 @@ p, li { white-space: pre-wrap; }
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="icon.qrc"/>
+ </resources>
  <connections/>
 </ui>

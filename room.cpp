@@ -76,19 +76,23 @@ void room::launch_algo(bool drawR){
 
 
     // Calculate power -- Reflexion and transmission
-    recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, drawR);
-    powerReceived =  calculatePower(allRays);
+    if(drawR){
+    recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);
+    }
+    else{recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);}
+    //powerReceived =  calculatePower(allRays);
 
 
     // Calculate power -- Diffraction
-    if(diffractOn == true){
-        calculateDiffractedRays();
-        double secondarypower = calculatePowerDiff(allDiffractedRays);
-        powerReceived += secondarypower;
-    }
+//    if(diffractOn == true){
+//        calculateDiffractedRays();
+//        double secondarypower = calculatePowerDiff(allDiffractedRays);
+//        powerReceived += secondarypower;
+//    }
 
-    powerReceived = dBm(powerReceived);
+    powerReceived = dBm(power);
     resultsBinaryDebit = binaryDebit(powerReceived);
+    //cout<<resultsBinaryDebit<<"\n";
     cout << "->";
 }
 
@@ -96,7 +100,7 @@ void room::launch_algo(bool drawR){
 // ------------------------------ Image method ------------------------------------------------
 
 
-void room::recursion(double transmitterPosX, double transmitterPosY,double receiverPosX,double receiverPosY,int numberOfReflections, bool drawR){
+void room::recursion(double transmitterPosX, double transmitterPosY, double receiverPosX, double receiverPosY, int numberOfReflections,void (*draw)(double, double, double, double,room*)){
 
     /*
      * The recursion method generalize the image method for any amount of reflections. Keeps track of the depth of the recursive algorithm.
@@ -111,7 +115,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY,double recei
     int NumberOfReflections = numberOfReflections;
 
     // ---- Drawing of the ray on the screen && saving ----
-    drawRay(transmitterPosX,transmitterPosY,receiverPosX,receiverPosY,drawR);
+    (*draw)(transmitterPosX,transmitterPosY,receiverPosX,receiverPosY,this);
 
 
 
@@ -143,7 +147,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY,double recei
                     virtual_slope = acos((transmitterPosX - current_wall->getX2())/ray_vector_length);
                 }
 
-                double ray_slope = angle_wall + ( angle_wall - virtual_slope);
+                double ray_slope = angle_wall + (angle_wall - virtual_slope);
                 double ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
                 double x2 = ray_vector_length * ray_vector[0];
                 double y2 = ray_vector_length * ray_vector[1];
@@ -152,7 +156,13 @@ void room::recursion(double transmitterPosX, double transmitterPosY,double recei
 
                 //---------END OF TRANSMITTER IMAGE CONSTRUCTION--------------------------
 
-                recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,drawR);
+                current_ray = new lineo(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,this);
+                imCoordinates[0] = intersection(current_ray,current_wall)[0];
+                imCoordinates[1] = intersection(current_ray,current_wall)[1];
+                if(pointOnLine(current_wall,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
+                    recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
+                }
+
             }
 
         if(i == amount_walls - 1){recursionState -=1;}
@@ -161,102 +171,132 @@ void room::recursion(double transmitterPosX, double transmitterPosY,double recei
 }
 
 
-void room::drawRay(double TransmitterPosX,double TransmitterPosY,double OriginX,double OriginY,bool drawR){
+void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,double originY,room* scene){
 
     /*
      * Called back from the recursion method, draws the rays when necessary, then removes the excess
      */
 
     // Freeing memory
-    completeRay.clear();
+    (*scene).completeRay.clear();
 
-    ray* wholeRay[recursionState];
+    ray* wholeRay[(*scene).recursionState];
     ray* receiver_ray;
     QPen outlinePen(QColor(0, 0, 255, 255));
     outlinePen.setWidth(1);
 
 
-    if(recursionState > 0){
-        double originX = OriginX;
-        double originY = OriginY;
-        double transmitterPosX ;
-        double transmitterPosY ;
+    unsigned char j = 0;
+    while(j<=(*scene).recursionState){
 
-        unsigned char j = 0;
-        while(j<=recursionState){
+        wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
+        transmitterPosX = (*scene).transmitterSerie[(*scene).recursionState-j][0];
+        transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
+        (*scene).current_ray= new lineo(transmitterPosX,transmitterPosY,originX,originY,scene);
 
-            wall* walle = wallRecursiveNumber[recursionState -j];
-            transmitterPosX = transmitterSerie[recursionState-j][0];
-            transmitterPosY = transmitterSerie[recursionState-j][1];
-            current_ray= new lineo(transmitterPosX,transmitterPosY,originX,originY,this);
+        if(j != (*scene).recursionState){
+            (*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
+            (*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
+            //ray* receiver_ray;
 
-            if(j != recursionState){
-                imCoordinates[0] = intersection(current_ray,walle)[0];
-                imCoordinates[1] = intersection(current_ray,walle)[1];
-                //ray* receiver_ray;
+            if((*scene).pointOnLine(walle,(*scene).imCoordinates[0],(*scene).imCoordinates[1]) && (*scene).pointOnLine((*scene).current_ray,(*scene).imCoordinates[0],(*scene).imCoordinates[1])){
 
-                if(pointOnLine(walle,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
+                receiver_ray = new ray((*scene).imCoordinates[0],(*scene).imCoordinates[1],originX,originY,M_PI/2 - abs(abs((*scene).current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall(),scene);
+                wholeRay[j] = receiver_ray;
 
-                    receiver_ray = new ray(imCoordinates[0],imCoordinates[1],originX,originY,M_PI/2 - abs(abs(current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall(),this);
-                    wholeRay[j] = receiver_ray;
-
-                    completeRay.push_back(receiver_ray);
-                    if(drawR){
-
-                        this->addItem(receiver_ray);   // Send the ray to be displayed
-                        outlinePen.setColor(QColor(0,255 -  (255/reflectionsNumber)*(j),255,255));
-                        receiver_ray->setPen(outlinePen);
-//                        QPen outlinePen(QColor(0,255 -  (255/reflectionsNumber)*(j),255,255));
-//                        outlinePen.setWidth(1);
-//                        receiver_ray->setPen(outlinePen);
-                    }
-
-                    originX = imCoordinates[0];
-                    originY = imCoordinates[1];
-                }
-                else{
-
-                    for(int i = 0;i<j;i++ ){
-                        if(completeRay.at(i)->getX1() != 0){
+                (*scene).completeRay.push_back(receiver_ray);
 
 
-                            if(drawR){
-                            this->removeItem(completeRay.at(i));
-                            //completeRay.erase(completeRay.begin());
-                            }
+                scene->addItem(receiver_ray);   // Send the ray to be displayed
+                outlinePen.setColor(QColor(0,255 -  (255/(*scene).reflectionsNumber)*(j),255,255));
+                receiver_ray->setPen(outlinePen);
 
-                        }
-                    }
-                    completeRay.clear();
-                    j = recursionState+1;
-                }
+                originX = (*scene).imCoordinates[0];
+                originY = (*scene).imCoordinates[1];
             }
-            else if(j == recursionState){
+            else{
 
-                //Ray from transmitter
-                    receiver_ray = new ray(Transmitter->getPosX(),Transmitter->getPosY(),originX,originY,0,0,this);
-                    completeRay.push_back(receiver_ray);
-                    if(drawR){
-                        this->addItem(receiver_ray);   // Send the ray to be displayed
-                        receiver_ray->setPen(outlinePen);
+                for(int i = 0;i<j;i++ ){
+                    if((*scene).completeRay.at(i)->getX1() != 0){
+                        scene->removeItem((*scene).completeRay.at(i));
                     }
+                }
+                (*scene).completeRay.clear();
+                j = (*scene).recursionState+1;
             }
-            j+=1;
         }
-    }
-    else {
+        else if(j == (*scene).recursionState){
 
-        //Direct ray
-        receiver_ray = new ray(TransmitterPosX,TransmitterPosY,OriginX,OriginY,0,0,this);
-        completeRay.push_back(receiver_ray);
-        if(drawR){
-            this->addItem(receiver_ray);   // Send the ray to be displayed
-            outlinePen.setColor(QColor(0,255,255,255));
-            receiver_ray->setPen(outlinePen);
+            //Ray from transmitter
+                receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0,scene);
+                (*scene).completeRay.push_back(receiver_ray);
+
+                scene->addItem(receiver_ray);   // Send the ray to be displayed
+                receiver_ray->setPen(outlinePen);
         }
+        j+=1;
     }
 
-    allRays.push_back(completeRay);
+    if((*scene).completeRay.size() != 0){
+    (*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);
+    }
+    //(*scene).allRays.push_back((*scene).completeRay);
+}
+
+
+void room::buildRay(double transmitterPosX,double transmitterPosY,double originX,double originY,room* scene){
+
+    /*
+     * Called back from the recursion method, draws the rays when necessary, then removes the excess
+     */
+
+    // Freeing memory
+
+    (*scene).completeRay.clear();
+    ray* wholeRay[(*scene).recursionState];
+    ray* receiver_ray;
+
+    unsigned char j = 0;
+    while(j<=(*scene).recursionState){
+
+        wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
+        transmitterPosX = (*scene).transmitterSerie[(*scene).recursionState-j][0];
+        transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
+        (*scene).current_ray= new lineo(transmitterPosX,transmitterPosY,originX,originY,scene);
+
+        if(j != (*scene).recursionState){
+            (*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
+            (*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
+            //ray* receiver_ray;
+
+            if((*scene).pointOnLine(walle,(*scene).imCoordinates[0],(*scene).imCoordinates[1]) && (*scene).pointOnLine((*scene).current_ray,(*scene).imCoordinates[0],(*scene).imCoordinates[1])){
+
+                receiver_ray = new ray((*scene).imCoordinates[0],(*scene).imCoordinates[1],originX,originY,M_PI/2 - abs(abs((*scene).current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall(),scene);
+                wholeRay[j] = receiver_ray;
+
+                (*scene).completeRay.push_back(receiver_ray);
+
+                originX = (*scene).imCoordinates[0];
+                originY = (*scene).imCoordinates[1];
+            }
+            else{
+                (*scene).completeRay.clear();
+                j = (*scene).recursionState+1;
+            }
+        }
+        else if(j == (*scene).recursionState){
+
+            //Ray from transmitter
+                receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0,scene);
+                (*scene).completeRay.push_back(receiver_ray);
+        }
+        j+=1;
+    }
+
+    if((*scene).completeRay.size() != 0){
+        (*scene).power += 1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);}
+
+    //(*scene).allRays.push_back((*scene).completeRay);
 }
 
 
@@ -611,6 +651,7 @@ double room::calculateRay(vector<ray*> rayLine){
         Efield = T * R * sqrt(60.0 * G * dBmRev(powerEmettor)) * exp(-1.0*k*(2.0*M_PI/lambda)*completeLength)/completeLength;
 
         double powerTransmitted = pow(norm(h*Efield), 2);
+        //cout<<powerTransmitted<<"\n";
         return powerTransmitted;   // Returns the transmitted power in dBm for it te be added right away
 
     }else{return -1;}
@@ -699,7 +740,7 @@ double room::calculateRayDiff(vector<ray*> rayLine){
         totalEfield += Efield;
 
         double powerTransmitted = pow(norm(h*Efield), 2);
-
+        cout<<powerTransmitted<<"\\n";
         return powerTransmitted;   // Returns the transmitted power in dBm for it te be added right away
     }else{return -1;}
 }
@@ -723,8 +764,10 @@ double room::binaryDebit(double power){
     //else if(power >=-73){logBinaryDebit = 56;}
     //else{
 
-    double a = 12/5;
-    double b = 1146/5;
+    //double a = 12/5;
+    double a = 2.4;
+    //double b = 1146/5;
+    double b = 229.2;
     logBinaryDebit = a*power + b;
     //}
     if(logBinaryDebit<0){logBinaryDebit=0;}
@@ -815,7 +858,7 @@ float room::distance(){
     int y2 = Receiver->getPosY();
 
     dist = new QGraphicsLineItem(x1,y1,x2,y2,NULL);
-    this->addItem(dist);
+    //this->addItem(dist);
 
     QPen outlinePen(Qt::green);
     outlinePen.setWidth(2);
@@ -899,6 +942,7 @@ void room::drawCoverege(){
 
     for(int i=0;i < discret;i++){
         for(int j=0;j < (int)discret/2;j++){
+            power = 0;
             double xRece = square_size/2 + i*square_size;
             double yRece = square_size/2 + j*square_size;
 

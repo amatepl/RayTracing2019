@@ -93,6 +93,7 @@ private:
     double beta;
 
     complex <double> gamma;
+    double power;
 
 
     double  Ra = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
@@ -149,8 +150,9 @@ private:
 
     // Computation methods
     void imagesMethod(double transmitterPosX,double transmitterPosY ,double reveiverPosX,double receiverPosY, int numberOfReflections);
-    void recursion(double transmitterPosX, double transmitterPosY, double receiverPosX, double receiverPosY, int numberOfReflections, bool drawR);
-    void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, bool drawR);
+    void recursion(double transmitterPosX, double transmitterPosY, double receiverPosX, double receiverPosY, int numberOfReflections, void (*draw)(double, double, double, double, room *));
+    static void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, room *scene);
+    static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
     void calculateDiffractedRays();
 
     // Numerical analysis
