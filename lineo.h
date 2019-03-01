@@ -8,11 +8,10 @@
 
 class room;
 
-class lineo: public QGraphicsLineItem
+class lineo
 {
 public:
-    lineo(int x01 = 0, int y01 = 0, int x02 = 0, int y02 = 0 , room *scene = NULL);
-    void show_line(int a);
+    lineo(int x01 = 0, int y01 = 0, int x02 = 0, int y02 = 0 );
     double getLength();
     int vectX();
     int vectY();
@@ -31,7 +30,6 @@ public:
     double getAngle();
 
 protected:
-    room *myRoom;
     double x1;
     double y1;
     double x2;

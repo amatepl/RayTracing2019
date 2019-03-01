@@ -7,10 +7,8 @@
  * itself inherits from QGraphicsLineItem
  */
 
-lineo::lineo(int x01, int y01, int x02, int y02, room *scene):
-    QGraphicsLineItem(x01, y01, x02,y02)
+lineo::lineo(int x01, int y01, int x02, int y02)
 {
-    myRoom = scene;
     x1 = x01;
     y1 = y01;
     x2 = x02;
@@ -19,6 +17,8 @@ lineo::lineo(int x01, int y01, int x02, int y02, room *scene):
     def_Slope(x1,y1,x2,y2);
     def_YOrigin(x1,y1);
     setLength();
+
+
 }
 
 void lineo::def_Slope(qreal x01, qreal y01, qreal x02, qreal y02){
@@ -42,27 +42,6 @@ void lineo::def_YOrigin(qreal x01, qreal y01){
 }
 
 
-void lineo::show_line(int a){
-
-    this->setLine(x1,y1,x2,y2);
-
-    if(a == 0){
-       QPen outlinePen(Qt::black);
-       outlinePen.setWidth(2);
-       this->setPen(outlinePen);
-    }else if(a == 1){
-        QPen outlinePen(Qt::green);
-        outlinePen.setWidth(2);
-        this->setPen(outlinePen);
-
-    }else if(a == 2){
-        QPen outlinePen(Qt::blue);
-        outlinePen.setWidth(2);
-        this->setPen(outlinePen);
-    }
-    myRoom->addItem(this);
-}
-
 void lineo::setLength(){
      d = sqrt(pow((x2-x1), 2) + pow((y2-y1), 2));
 }
@@ -83,19 +62,19 @@ int lineo::getY2(){return y2;}
 
 
 void lineo::setX1(double x01){x1 = x01;
-                             this->setLine(x01,y1,x2,y2);
+                             //this->setLine(x01,y1,x2,y2);
                               def_Slope(x01,y1,x2,y2);
                               def_YOrigin(x01,y1);}
 void lineo::setY1(double y01){y1 = y01;
-                             this->setLine(x1,y01,x2,y2);
+                             //this->setLine(x1,y01,x2,y2);
                               def_Slope(x1,y01,x2,y2);
                               def_YOrigin(x1,y01);}
 void lineo::setX2(double x02){x2 = x02;
-                             this->setLine(x1,y1,x02,y2);
+                             //this->setLine(x1,y1,x02,y2);
                               def_Slope(x1,y1,x02,y2);
                               def_YOrigin(x1,y1);}
 void lineo::setY2(double y02){y2 = y02;
-                             this->setLine(x1,y1,x2,y02);
+                             //this->setLine(x1,y1,x2,y02);
                               def_Slope(x1,y1,x2,y02);
                               def_YOrigin(x1,y1);}
 

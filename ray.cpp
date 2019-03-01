@@ -13,8 +13,8 @@
  */
 
 
-ray::ray(int x01, int y01, int x02, int y02,double Tetai,int indWall ,room *scene):
-    lineo(x01, y01, x02, y02, scene)
+ray::ray(int x01, int y01, int x02, int y02,double Tetai,int indWall):
+    lineo(x01, y01, x02, y02)
 
 {
     tetai = Tetai;

@@ -97,7 +97,7 @@ private:
 
 
     double  Ra = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
-
+    struct Drawer;
 
     // Algo parameters
     int ray_counter;
@@ -154,6 +154,7 @@ private:
     static void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, room *scene);
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
     void calculateDiffractedRays();
+    bool intersectionCheck(lineo* line1, lineo* line2);
 
     // Numerical analysis
 
