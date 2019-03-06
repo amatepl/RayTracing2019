@@ -112,7 +112,7 @@ private:
 
 
     //lineo *current_wall = NULL;
-    lineo *current_ray;
+    QLineF *current_ray;
     QLineF lineToVirtualSource;
 
     int recursionState = 0;
@@ -154,14 +154,14 @@ private:
     static void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, room *scene);
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
     void calculateDiffractedRays();
-    bool intersectionCheck(lineo* line1, lineo* line2);
+    bool intersectionCheck(lineo *line1, lineo *line2);
 
     // Numerical analysis
 
     complex <double> FtIntegral(double x);
 
     // Geometric methods
-    bool pointOnLine(lineo* line1, double x, double y);
+    bool pointOnLine(QLineF* line1, double x, double y);
     vector<double> intersection(lineo* line1, lineo* line2 );
 
     double distInWall(double tetai);

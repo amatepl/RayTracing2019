@@ -13,7 +13,7 @@
 
 class lineo;
 
-class ray: public lineo
+class ray: public QLineF
 {
 private:
 

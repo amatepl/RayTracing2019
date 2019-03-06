@@ -14,7 +14,7 @@
 
 
 ray::ray(int x01, int y01, int x02, int y02,double Tetai,int indWall):
-    lineo(x01, y01, x02, y02)
+    QLineF(x01,y01,x02,y02)
 
 {
     tetai = Tetai;
@@ -28,7 +28,6 @@ ray::ray(int x01, int y01, int x02, int y02,double Tetai,int indWall):
 
 void ray::updateLength(double length_inWall){
     meterLength += length_inWall;
-    d += length_inWall/(2*pow(10,-2));
 }
 
 
@@ -36,7 +35,7 @@ void ray::updateLength(double length_inWall){
  * The scale chosen for the meter-pixels conversion is 1px = 2cm
  */
 
-void ray::updateMeterLength(){meterLength = d*2*pow(10, -2.0);}
+void ray::updateMeterLength(){meterLength = this->length()*2*pow(10, -2.0);}
 
 
 // --> Getters && Settets

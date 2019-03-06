@@ -44,17 +44,18 @@ room::room(MainWindow *parent) :
 
     QPen outlinePen(QColor(0, 0, 0, 255));
     outlinePen.setWidth(2);
-    this->addLine(walls[0]->getX1(),walls[0]->getY1(),walls[0]->getX2(),walls[0]->getY2(),outlinePen);
-    this->addLine(walls[1]->getX1(),walls[1]->getY1(),walls[1]->getX2(),walls[1]->getY2(),outlinePen);
-    this->addLine(walls[2]->getX1(),walls[2]->getY1(),walls[2]->getX2(),walls[2]->getY2(),outlinePen);
-    this->addLine(walls[3]->getX1(),walls[3]->getY1(),walls[3]->getX2(),walls[3]->getY2(),outlinePen);
-    this->addLine(walls[4]->getX1(),walls[4]->getY1(),walls[4]->getX2(),walls[4]->getY2(),outlinePen);
-    this->addLine(walls[5]->getX1(),walls[5]->getY1(),walls[5]->getX2(),walls[5]->getY2(),outlinePen);
-    this->addLine(walls[6]->getX1(),walls[6]->getY1(),walls[6]->getX2(),walls[6]->getY2(),outlinePen);
-    this->addLine(walls[7]->getX1(),walls[7]->getY1(),walls[7]->getX2(),walls[7]->getY2(),outlinePen);
-    this->addLine(walls[8]->getX1(),walls[8]->getY1(),walls[8]->getX2(),walls[8]->getY2(),outlinePen);
-    this->addLine(walls[9]->getX1(),walls[9]->getY1(),walls[9]->getX2(),walls[9]->getY2(),outlinePen);
-    this->addLine(walls[10]->getX1(),walls[10]->getY1(),walls[10]->getX2(),walls[10]->getY2(),outlinePen);
+    this->addLine(*walls[0],outlinePen);
+    this->addLine(*walls[1],outlinePen);
+    this->addLine(*walls[2],outlinePen);
+    this->addLine(*walls[3],outlinePen);
+    this->addLine(*walls[4],outlinePen);
+    this->addLine(*walls[5],outlinePen);
+    this->addLine(*walls[6],outlinePen);
+    this->addLine(*walls[7],outlinePen);
+    this->addLine(*walls[8],outlinePen);
+    this->addLine(*walls[9],outlinePen);
+
+    this->addLine(*walls[10],outlinePen);
 
 }
 
@@ -76,7 +77,6 @@ void room::launch_algo(bool drawR){
 
     clearAll();     // Resets the power, binary debit and ray vector --> 0
 
-
     // Calculate power -- Reflexion and transmission
     if(drawR){
     recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);
@@ -95,7 +95,7 @@ void room::launch_algo(bool drawR){
     powerReceived = dBm(power);
     resultsBinaryDebit = binaryDebit(powerReceived);
     //cout<<resultsBinaryDebit<<"\n";
-    cout << "->";
+    //cout << "->";
 }
 
 
@@ -112,7 +112,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
     transmitterSerie[recursionState][0] = transmitterPosX;
     transmitterSerie[recursionState][1] = transmitterPosY;
 
-    lineo* current_wall = wallRecursiveNumber[recursionState];
+    QLineF* current_wall = wallRecursiveNumber[recursionState];
 
     int NumberOfReflections = numberOfReflections;
 
@@ -134,35 +134,40 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
             if(current_wall != wallRecursiveNumber[recursionState -1]){
                 wallRecursiveNumber[recursionState] = walls[i];
 
-                angle_wall = current_wall->getAngle();
+                angle_wall = current_wall->angle()*M_PI/180.0;
 
                 //------------TRANSMITTER IMAGE CONSTRUCTION--------------------------
 
-                double ray_vector_length = sqrt(pow(transmitterPosY - current_wall->getY2(),2) + pow(transmitterPosX - current_wall->getX2(),2));
+                double ray_vector_length = sqrt(pow(transmitterPosY - current_wall->y2(),2) + pow(transmitterPosX - current_wall->x2(),2));
                 double virtual_slope;
 
-                if (transmitterPosY - current_wall->getY2() < 0 && transmitterPosX - current_wall->getX2()){
-                    virtual_slope = -acos((transmitterPosX - current_wall->getX2())/ray_vector_length);
+                if (transmitterPosY - current_wall->y2() < 0 && transmitterPosX - current_wall->x2()){
+                    virtual_slope = -acos((transmitterPosX - current_wall->x2())/ray_vector_length);
                 }
 
                 else{
-                    virtual_slope = acos((transmitterPosX - current_wall->getX2())/ray_vector_length);
+                    virtual_slope = acos((transmitterPosX - current_wall->x2())/ray_vector_length);
                 }
 
                 double ray_slope = angle_wall + (angle_wall - virtual_slope);
                 double ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
                 double x2 = ray_vector_length * ray_vector[0];
                 double y2 = ray_vector_length * ray_vector[1];
-                double transmitterImagePosX = current_wall->getX2() + x2;
-                double transmitterImagePosY = current_wall->getY2() + y2;
+                double transmitterImagePosX = current_wall->x2() + x2;
+                double transmitterImagePosY = current_wall->y2() + y2;
 
                 //---------END OF TRANSMITTER IMAGE CONSTRUCTION--------------------------
 
-                current_ray = new lineo(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY);
-                imCoordinates[0] = intersection(current_ray,current_wall)[0];
-                imCoordinates[1] = intersection(current_ray,current_wall)[1];
+                //current_ray = new QLineF(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY);
+                //QPointF* intersectionPoint;
+
+                //urrent_ray->intersect(*current_wall,NULL);
+
+
+                //imCoordinates[0] = intersectionPoint->x();
+                //imCoordinates[1] = intersectionPoint->y();
                 //if(pointOnLine(current_wall,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
-                    recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
+                recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
                 //}
 
             }
@@ -181,13 +186,15 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
      */
 
     // Freeing memory
+
     (*scene).completeRay.clear();
 
     ray* wholeRay[(*scene).recursionState];
     ray* receiver_ray;
     QPen outlinePen(QColor(0, 0, 255, 255));
     outlinePen.setWidth(1);
-
+    QPointF intersectionPoint;
+    QPointF intersectWall;
 
     unsigned char j = 0;
     while(j<=(*scene).recursionState){
@@ -195,34 +202,33 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
         transmitterPosX = (*scene).transmitterSerie[(*scene).recursionState-j][0];
         transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
-        (*scene).current_ray= new lineo(transmitterPosX,transmitterPosY,originX,originY);
+        (*scene).current_ray= new QLineF(transmitterPosX,transmitterPosY,originX,originY);
 
         if(j != (*scene).recursionState){
-            (*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
-            (*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
+            //(*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
+            //(*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
+            (*scene).current_ray->intersect(*walle,&intersectWall);
+            (*scene).imCoordinates[0] = intersectWall.x();
+            (*scene).imCoordinates[1] = intersectWall.y();
+
             //ray* receiver_ray;
 
-            if((*scene).pointOnLine(walle,(*scene).imCoordinates[0],(*scene).imCoordinates[1]) && (*scene).pointOnLine((*scene).current_ray,(*scene).imCoordinates[0],(*scene).imCoordinates[1])){
-
-                receiver_ray = new ray((*scene).imCoordinates[0],(*scene).imCoordinates[1],originX,originY,M_PI/2 - abs(abs((*scene).current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall());
+            if((*scene).current_ray->intersect(*walle,&intersectionPoint)==1){
+                //(*scene).current_ray->intersect(*walle,intersectionPoint);
+                std::cout <<"Intersection point:"<< intersectionPoint.x() << std::endl;
+                receiver_ray = new ray(intersectionPoint.x(),intersectionPoint.y(),originX,originY,M_PI/2 - abs(abs((*scene).current_ray->angle()*M_PI/180)-abs(walle->angle())*M_PI/180),walle->getIndWall());
                 wholeRay[j] = receiver_ray;
 
                 (*scene).completeRay.push_back(receiver_ray);
 
 
-//                scene->addItem(receiver_ray);   // Send the ray to be displayed
+////                scene->addItem(receiver_ray);   // Send the ray to be displayed
 
 
-                originX = (*scene).imCoordinates[0];
-                originY = (*scene).imCoordinates[1];
+                originX = intersectionPoint.x();
+                originY = intersectionPoint.y();
             }
             else{
-
-                for(int i = 0;i<j;i++ ){
-//                    if((*scene).completeRay.at(i)->getX1() != 0){
-//                        scene->removeItem((*scene).completeRay.at(i));
-//                    }
-                }
                 (*scene).completeRay.clear();
                 j = (*scene).recursionState+1;
             }
@@ -231,6 +237,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
 
             //Ray from transmitter
                 receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0);
+                //std::cout << "Hello" << std::endl;
                 (*scene).completeRay.push_back(receiver_ray);
 
 //                scene->addItem(receiver_ray);   // Send the ray to be displayed
@@ -238,16 +245,23 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         }
         j+=1;
     }
+    (*scene).completeRay.shrink_to_fit();
 
     if(!(*scene).completeRay.empty()){
-    for(int i=0;i<(*scene).completeRay.size();i++){
-        outlinePen.setColor(QColor(0,255 -  (255/(*scene).reflectionsNumber)*(i),255,255));
-        //receiver_ray->setPen(outlinePen);
-        scene->addLine((*scene).completeRay[i]->getX1(),(*scene).completeRay[i]->getY1(),(*scene).completeRay[i]->getX2(),(*scene).completeRay[i]->getY2(),outlinePen);
-    }
-    (*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);
+
+        for(unsigned char i=0;i<(*scene).completeRay.size();i++){
+
+            outlinePen.setColor(QColor(0,255 -  (255/((*scene).reflectionsNumber + 1))*(i),255,255));
+            //receiver_ray->setPen(outlinePen);
+            //std::cout << "Hello" << std::endl;
+            scene->addLine(*(*scene).completeRay[i],outlinePen);
+        }
+
+        (*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);
+        //std::cout << (*scene).power << std::endl;
     }
     //(*scene).allRays.push_back((*scene).completeRay);
+
 }
 
 
@@ -262,6 +276,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     (*scene).completeRay.clear();
     ray* wholeRay[(*scene).recursionState];
     ray* receiver_ray;
+    QPointF* intersectionPoint;
 
     unsigned char j = 0;
     while(j<=(*scene).recursionState){
@@ -269,16 +284,17 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
         wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
         transmitterPosX = (*scene).transmitterSerie[(*scene).recursionState-j][0];
         transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
-        (*scene).current_ray= new lineo(transmitterPosX,transmitterPosY,originX,originY);
+        (*scene).current_ray= new QLineF(transmitterPosX,transmitterPosY,originX,originY);
 
         if(j != (*scene).recursionState){
-            (*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
-            (*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
+            //(*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
+            //(*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
             //ray* receiver_ray;
 
-            if((*scene).pointOnLine(walle,(*scene).imCoordinates[0],(*scene).imCoordinates[1]) && (*scene).pointOnLine((*scene).current_ray,(*scene).imCoordinates[0],(*scene).imCoordinates[1])){
+            if((*scene).current_ray->intersect(*walle,intersectionPoint)==1){
 
-                receiver_ray = new ray((*scene).imCoordinates[0],(*scene).imCoordinates[1],originX,originY,M_PI/2 - abs(abs((*scene).current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall());
+
+                receiver_ray = new ray(intersectionPoint->x(),intersectionPoint->y(),originX,originY,M_PI/2 - abs(abs((*scene).current_ray->angle()*M_PI/180)-abs(walle->angle())*M_PI/180),walle->getIndWall());
                 wholeRay[j] = receiver_ray;
 
                 (*scene).completeRay.push_back(receiver_ray);
@@ -301,6 +317,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     }
 
     if(!(*scene).completeRay.empty()){
+
         (*scene).power += 1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);}
 
     //(*scene).allRays.push_back((*scene).completeRay);
@@ -324,11 +341,11 @@ void room::calculateDiffractedRays(){
 
         wall *current_wall = walls[i];
 
-            double x1_check = current_wall->getX1();
-            double y1_check = current_wall->getY1();
+            double x1_check = current_wall->x1();
+            double y1_check = current_wall->y1();
 
-            double x2_check = current_wall->getX2();
-            double y2_check = current_wall->getY2();
+            double x2_check = current_wall->x2();
+            double y2_check = current_wall->y2();
 
                 if(commonToAnyWall(x1_check, y1_check, i) != false){
 
@@ -484,17 +501,17 @@ std::vector<double> room::intersection(lineo* line1, lineo* line2){
 }
 
 
-bool room::pointOnLine(lineo* line1, double x, double y){
+bool room::pointOnLine(QLineF *line1, double x, double y){
 
     /*
      * As the intersection is computed by lines equations, it is required to check whether or not the intersection is placed on the the wall line, an line
      * equation being define from [-INF, +INF]
      */
 
-    int x1 = line1->getX1();
-    int y1 = line1->getY1();
-    int x2 = line1->getX2();
-    int y2 = line1->getY2();
+    int x1 = line1->x1();
+    int y1 = line1->y1();
+    int x2 = line1->x2();
+    int y2 = line1->y2();
 
     bool answer;
 
@@ -540,7 +557,7 @@ bool room::intersectionCheck(lineo* line1, lineo* line2){
     ypos = (a * xpos) + b;
     }
 
-    return pointOnLine(line1,xpos,ypos) && pointOnLine(line2,xpos,ypos);
+    return true;//pointOnLine(line1,xpos,ypos) && pointOnLine(line2,xpos,ypos);
 
 }
 
@@ -628,20 +645,23 @@ double room::calculateRay(vector<ray*> rayLine){
 
     for (int i = 0; i < amountSegment; i++){
         current_r = rayLine.at(i);
+        std::cout<<"I'm alive!"<<endl;
+        double x1 = current_r->x1();
+        double y1 = current_r->y1();
 
-        double x1 = current_r->getX1();
-        double y1 = current_r->getY1();
-
-        double x2 = current_r->getX2();
-        double y2 = current_r->getY2();
+        double x2 = current_r->x2();
+        double y2 = current_r->y2();
 
         // Transmission --------------------------------
 
         for(int j = 0; j < amount_walls; j++){
+            std::cout<<"x1:"<<x1<<endl;
+            if((current_r->intersect(*walls[j],NULL)==1) && pointOnLine(walls[j], x2, y2) == false && pointOnLine(walls[j], x1, y1) == false){
 
-            if(intersectionCheck(current_r,walls[j]) && pointOnLine(walls[j], x2, y2) == false && pointOnLine(walls[j], x1, y1) == false){
+                double tetai = abs(abs(current_r->angle()*M_PI/180)-abs(walls[j]->angle()*M_PI/180));
+                std::cout<<"Wall:"<<walls[j]->x1()<<endl;
+                //std::cout<<"Tetai:"<<tetai<<endl;
 
-                double tetai = abs(abs(current_r->getAngle())-abs(walls[j]->getAngle()));
                 double tetat = asin(sqrt(epsilonAir/eps)*sin(tetai));   //Snell's law
 
                 double s = distInWall(tetai);
@@ -661,22 +681,23 @@ double room::calculateRay(vector<ray*> rayLine){
         }
 
 
-          //  Reflection -----------------------------
+      //  Reflection -----------------------------
 
 
-            if((i != amountSegment - 1)){   // The last segment, the one that reach the receptor does not have a rebound
+        if((i != amountSegment - 1)){   // The last segment, the one that reach the receptor does not have a rebound
 
-                // Lets check which wall was hit by this ray
+            // Lets check which wall was hit by this ray
 
-                double tetai = abs(current_r->getTetai());
-                double tetat = asin(sqrt(epsilonAir/eps)*sin(tetai));    // Snell's law
+            double tetai = abs(current_r->getTetai());
+            //std::cout<<"Tetai:"<<tetai<<endl;
+            double tetat = asin(sqrt(epsilonAir/eps)*sin(tetai));    // Snell's law
 
-                double s = distInWall(tetai);
+            double s = distInWall(tetai);
 
-                Rp = (Zwall*cos(tetai) - Zvoid*cos(tetat))/(Zwall*cos(tetai) + Zvoid*cos(tetat));
-                R *= Rp + (1.0 - pow(Rp, 2.0))*(Rp*exp(-2.0*gamma*s)*exp(k*2.0*(2*M_PI/lambda)*s*sin(tetai)*sin(tetat)))/(1.0 - pow(Rp, 2.0)*exp(-2.0*gamma*s)*exp(2.0*(2*M_PI/lambda)*s*sin(tetat)*sin(tetai)));
-            }
-            completeLength += current_r->getMeterLength();    // Get each length of each ray segment after the meter conversion (1px == 2cm)
+            Rp = (Zwall*cos(tetai) - Zvoid*cos(tetat))/(Zwall*cos(tetai) + Zvoid*cos(tetat));
+            R *= Rp + (1.0 - pow(Rp, 2.0))*(Rp*exp(-2.0*gamma*s)*exp(k*2.0*(2*M_PI/lambda)*s*sin(tetai)*sin(tetat)))/(1.0 - pow(Rp, 2.0)*exp(-2.0*gamma*s)*exp(2.0*(2*M_PI/lambda)*s*sin(tetat)*sin(tetai)));
+        }
+        completeLength += current_r->getMeterLength();    // Get each length of each ray segment after the meter conversion (1px == 2cm)
     }
 
 
@@ -688,6 +709,7 @@ double room::calculateRay(vector<ray*> rayLine){
     double h = lambda / M_PI;
 
     if(completeLength != 0.0){
+        //std::cout<<completeLength<<endl;
         Efield = T * R * sqrt(60.0 * G * dBmRev(powerEmettor)) * exp(-1.0*k*(2.0*M_PI/lambda)*completeLength)/completeLength;
 
         double powerTransmitted = pow(norm(h*Efield), 2);
@@ -724,20 +746,20 @@ double room::calculateRayDiff(vector<ray*> rayLine){
     for (int i = 0; i < amountSegment; i++){
         current_r = rayLine.at(i);
 
-        double x1 = current_r->getX1();
-        double y1 = current_r->getY1();
+        double x1 = current_r->x1();
+        double y1 = current_r->y1();
 
-        double x2 = current_r->getX2();
-        double y2 = current_r->getY2();
+        double x2 = current_r->x2();
+        double y2 = current_r->y2();
 
 
         // Transmission --------------------------------
 
         for(int j = 0; j < amount_walls; j++){
 
-            if(intersectionCheck(current_r,walls[j]) && pointOnLine(walls[j], x2, y2) == false && pointOnLine(walls[j], x1, y1) == false){
+            if(current_r->intersect(*walls[j],NULL)&& pointOnLine(walls[j], x2, y2) == false && pointOnLine(walls[j], x1, y1) == false){
 
-                double tetai = abs(abs(current_r->getAngle())-abs(walls[j]->getAngle()));
+                double tetai = abs(abs(current_r->angle())-abs(walls[j]->angle()));
                 double tetat = asin(sqrt(epsilonAir/eps)*sin(tetai));   //Snell's law
 
                 double s = distInWall(tetai);
@@ -780,7 +802,7 @@ double room::calculateRayDiff(vector<ray*> rayLine){
         totalEfield += Efield;
 
         double powerTransmitted = pow(norm(h*Efield), 2);
-        cout<<powerTransmitted<<"\\n";
+        //cout<<powerTransmitted<<"\\n";
         return powerTransmitted;   // Returns the transmitted power in dBm for it te be added right away
     }else{return -1;}
 }
