@@ -205,8 +205,6 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         (*scene).current_ray= new QLineF(transmitterPosX,transmitterPosY,originX,originY);
 
         if(j != (*scene).recursionState){
-            //(*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
-            //(*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
             (*scene).current_ray->intersect(*walle,&intersectWall);
             (*scene).imCoordinates[0] = intersectWall.x();
             (*scene).imCoordinates[1] = intersectWall.y();
@@ -214,16 +212,9 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
             //ray* receiver_ray;
 
             if((*scene).current_ray->intersect(*walle,&intersectionPoint)==1){
-                //(*scene).current_ray->intersect(*walle,intersectionPoint);
-                std::cout <<"Intersection point:"<< intersectionPoint.x() << std::endl;
                 receiver_ray = new ray(intersectionPoint.x(),intersectionPoint.y(),originX,originY,M_PI/2 - abs(abs((*scene).current_ray->angle()*M_PI/180)-abs(walle->angle())*M_PI/180),walle->getIndWall());
                 wholeRay[j] = receiver_ray;
-
                 (*scene).completeRay.push_back(receiver_ray);
-
-
-////                scene->addItem(receiver_ray);   // Send the ray to be displayed
-
 
                 originX = intersectionPoint.x();
                 originY = intersectionPoint.y();
@@ -236,12 +227,9 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         else if(j == (*scene).recursionState){
 
             //Ray from transmitter
-                receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0);
-                //std::cout << "Hello" << std::endl;
-                (*scene).completeRay.push_back(receiver_ray);
+            receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0);
+            (*scene).completeRay.push_back(receiver_ray);
 
-//                scene->addItem(receiver_ray);   // Send the ray to be displayed
-//                receiver_ray->setPen(outlinePen);
         }
         j+=1;
     }
@@ -252,16 +240,11 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         for(unsigned char i=0;i<(*scene).completeRay.size();i++){
 
             outlinePen.setColor(QColor(0,255 -  (255/((*scene).reflectionsNumber + 1))*(i),255,255));
-            //receiver_ray->setPen(outlinePen);
-            //std::cout << "Hello" << std::endl;
             scene->addLine(*(*scene).completeRay[i],outlinePen);
         }
 
-        (*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);
-        //std::cout << (*scene).power << std::endl;
+        (*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);   
     }
-    //(*scene).allRays.push_back((*scene).completeRay);
-
 }
 
 
@@ -274,9 +257,11 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     // Freeing memory
 
     (*scene).completeRay.clear();
+
     ray* wholeRay[(*scene).recursionState];
     ray* receiver_ray;
-    QPointF* intersectionPoint;
+    QPointF intersectionPoint;
+    QPointF intersectWall;
 
     unsigned char j = 0;
     while(j<=(*scene).recursionState){
@@ -287,20 +272,19 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
         (*scene).current_ray= new QLineF(transmitterPosX,transmitterPosY,originX,originY);
 
         if(j != (*scene).recursionState){
-            //(*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
-            //(*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
+            (*scene).current_ray->intersect(*walle,&intersectWall);
+            (*scene).imCoordinates[0] = intersectWall.x();
+            (*scene).imCoordinates[1] = intersectWall.y();
+
             //ray* receiver_ray;
 
-            if((*scene).current_ray->intersect(*walle,intersectionPoint)==1){
-
-
-                receiver_ray = new ray(intersectionPoint->x(),intersectionPoint->y(),originX,originY,M_PI/2 - abs(abs((*scene).current_ray->angle()*M_PI/180)-abs(walle->angle())*M_PI/180),walle->getIndWall());
+            if((*scene).current_ray->intersect(*walle,&intersectionPoint)==1){
+                receiver_ray = new ray(intersectionPoint.x(),intersectionPoint.y(),originX,originY,M_PI/2 - abs(abs((*scene).current_ray->angle()*M_PI/180)-abs(walle->angle())*M_PI/180),walle->getIndWall());
                 wholeRay[j] = receiver_ray;
-
                 (*scene).completeRay.push_back(receiver_ray);
 
-                originX = (*scene).imCoordinates[0];
-                originY = (*scene).imCoordinates[1];
+                originX = intersectionPoint.x();
+                originY = intersectionPoint.y();
             }
             else{
                 (*scene).completeRay.clear();
@@ -310,17 +294,15 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
         else if(j == (*scene).recursionState){
 
             //Ray from transmitter
-                receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0);
-                (*scene).completeRay.push_back(receiver_ray);
+            receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0);
+            (*scene).completeRay.push_back(receiver_ray);
+
         }
         j+=1;
     }
+    (*scene).completeRay.shrink_to_fit();
 
-    if(!(*scene).completeRay.empty()){
-
-        (*scene).power += 1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);}
-
-    //(*scene).allRays.push_back((*scene).completeRay);
+    if(!(*scene).completeRay.empty()){(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay((*scene).completeRay);}
 }
 
 
@@ -463,42 +445,7 @@ bool room::commonToAnyWall(double posX, double posY, int indwall){
 
 
 
-std::vector<double> room::intersection(lineo* line1, lineo* line2){
 
-   /*
-    * Two-equations line system, determines the intersection point if it exists
-    *    y = ax + b
-    *    y = cx + d
-    */
-
-   std::vector<double> coord(2);
-
-   double xpos;
-   double ypos;
-
-   double a = line1->getSlope();
-   double b = line1->getYorigin();
-   double c = line2->getSlope();
-   double d = line2->getYorigin();
-
-   if(a == INFINITY){
-       xpos = line1->getX1();
-       ypos = c * xpos + d;
-   }
-
-   else if(c == INFINITY){
-       xpos = line2->getX1();
-       ypos = a * xpos + b;
-   }
-   else{
-   xpos = (d - b)/(a - c);
-   ypos = (a * xpos) + b;
-   }
-
-   coord[0] = xpos;
-   coord[1] = ypos;
-   return coord;
-}
 
 
 bool room::pointOnLine(QLineF *line1, double x, double y){
@@ -528,38 +475,7 @@ bool room::pointOnLine(QLineF *line1, double x, double y){
     return answer;
 }
 
-bool room::intersectionCheck(lineo* line1, lineo* line2){
-    /*
-     * Two-equations line system, determines the intersection point if it exists
-     *    y = ax + b
-     *    y = cx + d
-     */
 
-    double xpos;
-    double ypos;
-
-    double a = line1->getSlope();
-    double b = line1->getYorigin();
-    double c = line2->getSlope();
-    double d = line2->getYorigin();
-
-    if(a == INFINITY){
-        xpos = line1->getX1();
-        ypos = c * xpos + d;
-    }
-
-    else if(c == INFINITY){
-        xpos = line2->getX1();
-        ypos = a * xpos + b;
-    }
-    else{
-    xpos = (d - b)/(a - c);
-    ypos = (a * xpos) + b;
-    }
-
-    return true;//pointOnLine(line1,xpos,ypos) && pointOnLine(line2,xpos,ypos);
-
-}
 
 double room::distInWall(double tetai){
 

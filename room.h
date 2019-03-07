@@ -154,7 +154,6 @@ private:
     static void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, room *scene);
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
     void calculateDiffractedRays();
-    bool intersectionCheck(lineo *line1, lineo *line2);
 
     // Numerical analysis
 
@@ -162,7 +161,6 @@ private:
 
     // Geometric methods
     bool pointOnLine(QLineF* line1, double x, double y);
-    vector<double> intersection(lineo* line1, lineo* line2 );
 
     double distInWall(double tetai);
     void distCorrection(vector<ray*> oneCompleteRay, wall walls[]);
