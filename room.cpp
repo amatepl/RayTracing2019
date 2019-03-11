@@ -158,18 +158,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
 
                 //---------END OF TRANSMITTER IMAGE CONSTRUCTION--------------------------
 
-                //current_ray = new QLineF(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY);
-                //QPointF* intersectionPoint;
-
-                //urrent_ray->intersect(*current_wall,NULL);
-
-
-                //imCoordinates[0] = intersectionPoint->x();
-                //imCoordinates[1] = intersectionPoint->y();
-                //if(pointOnLine(current_wall,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
                 recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
-                //}
-
             }
 
         if(i == amount_walls - 1){recursionState -=1;}
@@ -182,7 +171,10 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
 void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,double originY,room* scene){
 
     /*
-     * Called back from the recursion method, draws the rays when necessary, then removes the excess
+     * Called back from the recursion method, draws the rays starting from the receivrer when necessary, then removes the excess if
+     * one branch of the whole ray isn't intersecting the wall on which it should reflect (the wall which was used to build the image).
+     *
+     * wholeRay - list of all the branches of a ray
      */
 
     // Freeing memory
@@ -198,10 +190,19 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
 
     unsigned char j = 0;
     while(j<=(*scene).recursionState){
+        /*
+         * If we are in the recursion we have to build the whole ray using the transmitters and walls from
+         * wall recursiveNumber and transmitterSerie
+         */
 
+        //walle = a wall from wallRecursiceNumber beggening from the last one
         wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
+
+        //Takking the cooridinates of the consecutives inages of transmitters begging with the last one
         transmitterPosX = (*scene).transmitterSerie[(*scene).recursionState-j][0];
         transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
+
+        //Builiding a temporary ray from the transmitter to the receiver
         (*scene).current_ray= new QLineF(transmitterPosX,transmitterPosY,originX,originY);
 
         if(j != (*scene).recursionState){
