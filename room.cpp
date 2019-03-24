@@ -183,13 +183,15 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
     // Freeing memory
     (*scene).completeRay.clear();
 
-    ray* wholeRay[(*scene).recursionState];
+    //ray* wholeRay[(*scene).recursionState];
     ray* receiver_ray;
     QPen outlinePen(QColor(0, 0, 255, 255));
     outlinePen.setWidth(1);
 
 
     unsigned char j = 0;
+
+
     while(j<=(*scene).recursionState){
 
         wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
@@ -197,6 +199,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
         (*scene).current_ray= new lineo(transmitterPosX,transmitterPosY,originX,originY);
 
+        // To get rid of this if the original transmitter has to be added to the transmitterSrerie
         if(j != (*scene).recursionState){
             (*scene).imCoordinates[0] = (*scene).intersection((*scene).current_ray,walle)[0];
             (*scene).imCoordinates[1] = (*scene).intersection((*scene).current_ray,walle)[1];
@@ -205,7 +208,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
             if((*scene).pointOnLine(walle,(*scene).imCoordinates[0],(*scene).imCoordinates[1]) && (*scene).pointOnLine((*scene).current_ray,(*scene).imCoordinates[0],(*scene).imCoordinates[1])){
 
                 receiver_ray = new ray((*scene).imCoordinates[0],(*scene).imCoordinates[1],originX,originY,M_PI/2 - abs(abs((*scene).current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall());
-                wholeRay[j] = receiver_ray;
+                //wholeRay[j] = receiver_ray;
 
                 (*scene).completeRay.push_back(receiver_ray);
 
@@ -240,7 +243,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
     }
 
     if(!(*scene).completeRay.empty()){
-    for(int i=0;i<(*scene).completeRay.size();i++){
+    for(unsigned char i=0;i<(*scene).completeRay.size();i++){
         outlinePen.setColor(QColor(0,255 -  (255/(*scene).reflectionsNumber)*(i),255,255));
         //receiver_ray->setPen(outlinePen);
         scene->addLine((*scene).completeRay[i]->getX1(),(*scene).completeRay[i]->getY1(),(*scene).completeRay[i]->getX2(),(*scene).completeRay[i]->getY2(),outlinePen);
@@ -260,7 +263,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     // Freeing memory
 
     (*scene).completeRay.clear();
-    ray* wholeRay[(*scene).recursionState];
+    //ray* wholeRay[(*scene).recursionState];
     ray* receiver_ray;
 
     unsigned char j = 0;
@@ -279,7 +282,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
             if((*scene).pointOnLine(walle,(*scene).imCoordinates[0],(*scene).imCoordinates[1]) && (*scene).pointOnLine((*scene).current_ray,(*scene).imCoordinates[0],(*scene).imCoordinates[1])){
 
                 receiver_ray = new ray((*scene).imCoordinates[0],(*scene).imCoordinates[1],originX,originY,M_PI/2 - abs(abs((*scene).current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall());
-                wholeRay[j] = receiver_ray;
+                //wholeRay[j] = receiver_ray;
 
                 (*scene).completeRay.push_back(receiver_ray);
 
