@@ -11,18 +11,18 @@ class room;
 class lineo
 {
 public:
-    lineo(int x01 = 0, int y01 = 0, int x02 = 0, int y02 = 0 );
+    lineo(double x01 = 0, double y01 = 0, double x02 = 0, double y02 = 0 );
     double getLength();
     int vectX();
     int vectY();
-    double getSlope();
+    long double getSlope();
     double getYorigin();
     void setSlope(double slope);
     void setAngle(double angle);
-    int getX1();
-    int getY1();
-    int getX2();
-    int getY2();
+    double getX1();
+    double getY1();
+    double getX2();
+    double getY2();
     void setX1(double x01);
     void setY1(double y01);
     void setX2(double x02);
@@ -36,13 +36,13 @@ protected:
     double y2;
     double angle;
 
-    double a;
+    long double a;
     int b;
 
     double d; // Total distance of the segment
 
-    void def_Slope(qreal x01, qreal y01, qreal x02, qreal y02);
-    void def_YOrigin(qreal x01, qreal y01);
+    void def_Slope(double x01, double y01, double x02, double y02);
+    void def_YOrigin(double x01, double y01);
     void setLength();
 
 };

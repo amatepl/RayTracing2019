@@ -13,7 +13,7 @@
  */
 
 
-ray::ray(int x01, int y01, int x02, int y02,double Tetai,int indWall):
+ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall):
     lineo(x01, y01, x02, y02)
 
 {

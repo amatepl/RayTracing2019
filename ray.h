@@ -35,7 +35,7 @@ private:
 
 public:
 
-    ray(int x01 = 0, int y01 = 0, int x02 = 0, int y02 = 0, double tetai = 0, int indWall = 0);
+    ray(double x01 = 0, double y01 = 0, double x02 = 0, double y02 = 0, double tetai = 0, int indWall = 0);
 
 
     // Getters && Setters

@@ -7,7 +7,7 @@
  * itself inherits from QGraphicsLineItem
  */
 
-lineo::lineo(int x01, int y01, int x02, int y02)
+lineo::lineo(double x01, double y01, double x02, double y02)
 {
     x1 = x01;
     y1 = y01;
@@ -21,7 +21,7 @@ lineo::lineo(int x01, int y01, int x02, int y02)
 
 }
 
-void lineo::def_Slope(qreal x01, qreal y01, qreal x02, qreal y02){
+void lineo::def_Slope(double x01, double y01, double x02, double y02){
     if(x01 == x02){
         // If the line is vertically oriented, the slope is infinite
         a = INFINITY;
@@ -33,7 +33,7 @@ void lineo::def_Slope(qreal x01, qreal y01, qreal x02, qreal y02){
     }
 }
 
-void lineo::def_YOrigin(qreal x01, qreal y01){
+void lineo::def_YOrigin(double x01, double y01){
     if(a != INFINITY){
         b = y01 - a*x01;
     }else{
@@ -48,17 +48,17 @@ void lineo::setLength(){
 
 //--> Getters && Setters
 
-double lineo::getSlope(){return a;}
+long double lineo::getSlope(){return a;}
 double lineo::getAngle(){return angle;}
 double lineo::getYorigin(){return b;}
 double lineo::getLength(){return d;}
 
 int lineo::vectX(){return (x2-x1);}
 int lineo::vectY(){return (y2-y1);}
-int lineo::getX1(){return x1;}
-int lineo::getY1(){return y1;}
-int lineo::getX2(){return x2;}
-int lineo::getY2(){return y2;}
+double lineo::getX1(){return x1;}
+double lineo::getY1(){return y1;}
+double lineo::getX2(){return x2;}
+double lineo::getY2(){return y2;}
 
 
 void lineo::setX1(double x01){x1 = x01;

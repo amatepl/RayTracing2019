@@ -1,7 +1,7 @@
 #include "wall.h"
 #include <math.h>
 
-wall::wall(qreal x01, qreal y01, qreal x02, qreal y02, double thickness, double relEps, double sig, int listInd):
+wall::wall(double x01, double y01, double x02, double y02, double thickness, double relEps, double sig, int listInd):
     lineo(x01, y01, x02, y02)
 
   /*

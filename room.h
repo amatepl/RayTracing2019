@@ -77,7 +77,8 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    wall *walls[11];    // For easier use walls are put in arrays
+    wall *walls[16];    // For easier use walls are put in arrays
+    vector <std::array <double,2>> diffractionPoints;
 
 
     // --> Global variables (electrical constants)
@@ -93,7 +94,7 @@ private:
     double beta;
 
     complex <double> gamma;
-    double power;
+    double power = 0;
 
 
     double  Ra = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
@@ -134,7 +135,7 @@ private:
 
     // Problem parameters
     int reflectionsNumber;
-    int amount_walls = 11;
+    int amount_walls = 16;
     int amount_discret = 20;
     double powerEmettor = 20.0;   // In watts the power of the emettor
     double Zwall;
@@ -155,19 +156,25 @@ private:
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
     void calculateDiffractedRays();
     bool intersectionCheck(lineo* line1, lineo* line2);
+    bool checkTransmission(lineo* line1, lineo* line2, int x1, int y1,int x2,int y2);
+    static void drawDiffraction(room* scene);
 
     // Numerical analysis
 
     complex <double> FtIntegral(double x);
 
     // Geometric methods
-    bool pointOnLine(lineo* line1, double x, double y);
+    //bool pointOnLine(lineo* line1, double x, double y);
+    bool pointOnLine(lineo* line1, const double xp, const double yp);
     vector<double> intersection(lineo* line1, lineo* line2 );
 
     double distInWall(double tetai);
     void distCorrection(vector<ray*> oneCompleteRay, wall walls[]);
 
     bool commonToAnyWall(double posX, double posY, int indWall);
+
+    void drawWalls();
+    void findDiffractionPoints();
 
     // Telecom calculation tools
     double dBm(double power);
