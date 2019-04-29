@@ -156,8 +156,10 @@ private:
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
     void calculateDiffractedRays();
     bool intersectionCheck(lineo* line1, lineo* line2);
+    bool intersectionCheckNonInclusive(lineo* line1, lineo* line2);
     bool checkTransmission(lineo* line1, lineo* line2, int x1, int y1,int x2,int y2);
     static void drawDiffraction(room* scene);
+    bool workingZone();
 
     // Numerical analysis
 
@@ -166,6 +168,7 @@ private:
     // Geometric methods
     //bool pointOnLine(lineo* line1, double x, double y);
     bool pointOnLine(lineo* line1, const double xp, const double yp);
+    bool pointOnLineNonInclusive(lineo* line1, const double xp, const double yp);
     vector<double> intersection(lineo* line1, lineo* line2 );
 
     double distInWall(double tetai);

@@ -55,6 +55,17 @@ room::room(MainWindow *parent) :
 
 }
 
+bool room::workingZone(){
+    int Rx = Receiver->getPosX();
+    int Ry = Receiver->getPosY();
+
+//    int Tx = Receiver->getPosX();
+//    int Ty = Receiver->getPosY();
+    bool result;
+
+    result = (Rx>=1 && Rx<=450 && Ry>=1 && Ry<=200) || (Rx>=550 && Rx<=970 && Ry>=1 && Ry<=200) || (Rx>=1 && Rx<=450 && Ry>=300 && Ry<=500) || (Rx>=550 && Rx<=970 && Ry>=300 && Ry<=500);
+    return result ;
+}
 
 void room::findDiffractionPoints(){
 
@@ -134,28 +145,30 @@ void room::launch_algo(bool drawR){
 
     clearAll();     // Resets the power, binary debit and ray vector --> 0
 
-
-    // Calculate power -- Reflexion and transmission
-    if(drawR){
-    recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);
-    }
-    else{recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);}
-    //powerReceived =  calculatePower(allRays);
-    if(diffractOn){
+    if(!workingZone()){
+        // Calculate power -- Reflexion and transmission
+        if(drawR){
+        recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);
         drawDiffraction(this);
+        }
+        else{recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);}
+        //powerReceived =  calculatePower(allRays);
+//        if(diffractOn){
+//            drawDiffraction(this);
+//        }
+
+        // Calculate power -- Diffraction
+    //    if(diffractOn == true){
+    //        calculateDiffractedRays();
+    //        double secondarypower = calculatePowerDiff(allDiffractedRays);
+    //        powerReceived += secondarypower;
+    //    }
+
+        powerReceived = dBm(power);
+        resultsBinaryDebit = binaryDebit(powerReceived);
+        //cout<<resultsBinaryDebit<<"\n";
+        //cout << "->";
     }
-
-    // Calculate power -- Diffraction
-//    if(diffractOn == true){
-//        calculateDiffractedRays();
-//        double secondarypower = calculatePowerDiff(allDiffractedRays);
-//        powerReceived += secondarypower;
-//    }
-
-    powerReceived = dBm(power);
-    resultsBinaryDebit = binaryDebit(powerReceived);
-    //cout<<resultsBinaryDebit<<"\n";
-    //cout << "->";
 }
 
 
@@ -468,18 +481,18 @@ void room::drawDiffraction(room* scene){
         noObstacle = true;
         int j = 0;
         while(j < (*scene).amount_walls && noObstacle){
-            if((*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX1() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY1() && (*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX2() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY2()){
-                noObstacle = !(*scene).intersectionCheck(pathTester,(*scene).walls[j]);
-            }
+            //if((*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX1() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY1() && (*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX2() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY2()){
+                noObstacle = !(*scene).intersectionCheckNonInclusive(pathTester,(*scene).walls[j]);
+            //}
             j++;
         }
 
         pathTester = new lineo((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[i][0],(*scene).diffractionPoints[i][1]);
         j = 0;
         while(j < (*scene).amount_walls && noObstacle){
-            if((*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX1() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY1() && (*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX2() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY2()){
-                noObstacle = ((*scene).intersectionCheck(pathTester,(*scene).walls[j]));
-            }
+            //if((*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX1() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY1() && (*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX2() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY2()){
+                noObstacle = !((*scene).intersectionCheckNonInclusive(pathTester,(*scene).walls[j]));
+            //}
             j++;
         }
 
@@ -717,6 +730,53 @@ bool room::pointOnLine(lineo* line1,const double xp,const double yp){
     return answer1 || answer2;
 }
 
+bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp){
+
+    /*
+     * As the intersection is computed by lines equations, it is required to check whether or not the intersection is placed on the the wall line, an line
+     * equation being define from [-INF, +INF]
+     */
+
+
+    int x1 = (int)line1->getX1();
+    int y1 = (int)line1->getY1();
+    int x2 = (int)line1->getX2();
+    int y2 = (int)line1->getY2();
+
+    bool answer1 = false;
+
+    int x = ceil(xp);
+    int y = ceil(yp);
+
+    if(x1 == x2){   // Cas du mur vertical
+        answer1 = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
+    }
+    else if (y1 == y2){   // Cas du mur horizental
+        answer1 = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
+    }
+    else {
+       answer1 = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
+    }
+
+
+    x = floor(xp);
+    y = floor(yp);
+
+    bool answer2;
+
+    if(x1 == x2){   // Cas du mur vertical
+        answer2 = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
+    }
+    else if (y1 == y2){   // Cas du mur horizental
+        answer2 = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
+    }
+    else {
+       answer2 = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
+    }
+
+    return answer1 || answer2;
+}
+
 bool room::intersectionCheck(lineo* line1, lineo* line2){
     /*
      * Two-equations line system, determines the intersection point if it exists
@@ -747,6 +807,39 @@ bool room::intersectionCheck(lineo* line1, lineo* line2){
     }
 
     return (pointOnLine(line1,xpos,ypos) && pointOnLine(line2,xpos,ypos));
+
+}
+
+bool room::intersectionCheckNonInclusive(lineo* line1, lineo* line2){
+    /*
+     * Two-equations line system, determines the intersection point if it exists
+     *    y = ax + b
+     *    y = cx + d
+     */
+
+    double xpos;
+    double ypos;
+
+    long double a = line1->getSlope();
+    double b = line1->getYorigin();
+    long double c = line2->getSlope();
+    double d = line2->getYorigin();
+
+    if(a == INFINITY){
+        xpos = line1->getX1();
+        ypos = c * xpos + d;
+    }
+
+    else if(c == INFINITY){
+        xpos = line2->getX1();
+        ypos = a * xpos + b;
+    }
+    else{
+    xpos = (d - b)/(a - c);
+    ypos = (a * xpos) + b;
+    }
+
+    return (pointOnLineNonInclusive(line1,xpos,ypos) && pointOnLineNonInclusive(line2,xpos,ypos));
 
 }
 
