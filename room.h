@@ -87,14 +87,17 @@ private:
     double  Zvoid = 120*M_PI;
     double  muAir = 4*M_PI*1e-7;      // Tm/A
     double  c =2.998e+8;              // m/s
-    double  freq = 2.45e+9;           // Hz
+//   double  freq = 2.45e+9;           // Hz
+    double  freq = 26e+9;           // Hz
 
     double lambda;
     double alpha;
     double beta;
+    double Beta = 2*M_PI*freq*sqrt(muAir*epsilonAir); // Used for the diffraction.
 
     complex <double> gamma;
     double power = 0;
+    double diffractedPower = 0;
 
 
     double  Ra = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
@@ -137,7 +140,8 @@ private:
     int reflectionsNumber;
     int amount_walls = 16;
     int amount_discret = 20;
-    double powerEmettor = 20.0;   // In watts the power of the emettor
+//    double powerEmettor = 20.0;   // In watts the power of the emettor
+    double powerEmettor = 2.0;   // In watts the power of the emettor
     double Zwall;
     double eps;
     bool diffractOn = false;
@@ -159,6 +163,7 @@ private:
     bool intersectionCheckNonInclusive(lineo* line1, lineo* line2);
     bool checkTransmission(lineo* line1, lineo* line2, int x1, int y1,int x2,int y2);
     static void drawDiffraction(room* scene);
+    static void buildDiffraction(room* scene);
     bool workingZone();
 
     // Numerical analysis
@@ -189,6 +194,7 @@ private:
 
     double calculateRay(vector<ray*> rayLine);
     double calculateRayDiff(vector<ray*> rayLine);
+    double diffractedRayPower(ray* rayReceiver, ray*rayTransmitter);
 
     //Misc
     void setDefaultSettings();
