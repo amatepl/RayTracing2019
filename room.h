@@ -158,7 +158,6 @@ private:
     void recursion(double transmitterPosX, double transmitterPosY, double receiverPosX, double receiverPosY, int numberOfReflections, void (*draw)(double, double, double, double, room *));
     static void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, room *scene);
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
-    void calculateDiffractedRays();
     bool intersectionCheck(lineo* line1, lineo* line2);
     bool intersectionCheckNonInclusive(lineo* line1, lineo* line2);
     bool checkTransmission(lineo* line1, lineo* line2, int x1, int y1,int x2,int y2);
@@ -189,11 +188,6 @@ private:
     double dBmRev(double dbm);
     double binaryDebit(double power);
 
-    double calculatePower(vector< vector<ray*>> allRays);
-    double calculatePowerDiff(vector< vector<ray*>> allRays);
-
-    double calculateRay(vector<ray*> rayLine);
-    double calculateRayDiff(vector<ray*> rayLine);
     double diffractedRayPower(ray* rayReceiver, ray*rayTransmitter);
 
     //Misc

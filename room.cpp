@@ -155,24 +155,12 @@ void room::launch_algo(bool drawR){
             recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);
             buildDiffraction((this));
         }
-        //powerReceived =  calculatePower(allRays);
-//        if(diffractOn){
-//            drawDiffraction(this);
-//        }
 
-        // Calculate power -- Diffraction
-    //    if(diffractOn == true){
-    //        calculateDiffractedRays();
-    //        double secondarypower = calculatePowerDiff(allDiffractedRays);
-    //        powerReceived += secondarypower;
-    //    }
         if(diffractedPower){power = power + dBmRev(diffractedPower);}
         double powerRef = computePrx(totalEfield);
         powerReceived = dBm(powerRef);
 
         resultsBinaryDebit = binaryDebit(powerReceived);
-        //cout<<resultsBinaryDebit<<"\n";
-        //cout << "->";
     }
 }
 
@@ -381,8 +369,6 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         (*scene).totalEfield += scene->computeEfield(completeRay);
 //        cout<<"Ray's power: ";
 //        cout<< (*scene).power<<endl;
-        cout<<"E: ";
-        cout<<(*scene).totalEfield <<endl;
     }
 
 }
@@ -491,6 +477,8 @@ void room::drawDiffraction(room* scene){
     ray* rayReceiver;
     ray* rayTransmitter;
 
+    (*scene).diffractionPoints.clear();
+
     pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
     int walls_indices[2];
     int indice = 0;
@@ -516,40 +504,8 @@ void room::drawDiffraction(room* scene){
         rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
         rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
         double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-        cout<<diffractPower<<endl;
         (*scene).diffractedPower+= diffractPower;
     }
-
-
-//    for(unsigned int i = 0;i<(*scene).diffractionPoints.size();i++){
-//        pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[i][0],(*scene).diffractionPoints[i][1]);
-//        noObstacle = true;
-//        int j = 0;
-//        while(j < (*scene).amount_walls && noObstacle){
-//            //if((*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX1() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY1() && (*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX2() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY2()){
-//                noObstacle = !(*scene).intersectionCheckNonInclusive(pathTester,(*scene).walls[j]);
-//            //}
-//            j++;
-//        }
-
-//        pathTester = new lineo((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[i][0],(*scene).diffractionPoints[i][1]);
-//        j = 0;
-//        while(j < (*scene).amount_walls && noObstacle){
-//            //if((*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX1() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY1() && (*scene).intersection(pathTester,(*scene).walls[j])[0] != (*scene).walls[j]->getX2() && (*scene).intersection(pathTester,(*scene).walls[j])[1] != (*scene).walls[j]->getY2()){
-//                noObstacle = !((*scene).intersectionCheckNonInclusive(pathTester,(*scene).walls[j]));
-//            //}
-//            j++;
-//        }
-
-//        if(noObstacle){
-//            scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[i][0],(*scene).diffractionPoints[i][1],outlinePen);
-//            scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[i][0],(*scene).diffractionPoints[i][1],outlinePen);
-//            rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[i][0],(*scene).diffractionPoints[i][1],0,0);
-//            rayTransmitter = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[i][0],(*scene).diffractionPoints[i][1],0,0);
-//            double diffractedPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-
-//        }
-//    }
 }
 
 
@@ -591,123 +547,9 @@ void room::buildDiffraction(room* scene){
 }
 
 
-
-void room::calculateDiffractedRays(){
-    /*
-     * The first part is a search algorithm to find all the door edges, for each wall we check if the two extreme points are met with only one wall line, if it is
-     * the case, it is an edge
-     */
-
-    vector <vector <int>> edges;
-
-    // Search algorithm
-
-    for (int i = 0; i < amount_walls; i ++){
-
-        wall *current_wall = walls[i];
-
-            double x1_check = current_wall->getX1();
-            double y1_check = current_wall->getY1();
-
-            double x2_check = current_wall->getX2();
-            double y2_check = current_wall->getY2();
-
-                if(!commonToAnyWall(x1_check, y1_check, i)){
-
-                    vector <int> coord;
-                    coord.push_back(x1_check);
-                    coord.push_back(y1_check);
-
-                    edges.push_back(coord);
-                    }
-
-                if(!commonToAnyWall(x2_check, y2_check, i)){
-
-                    vector <int> coord;
-                    coord.push_back(x2_check);
-                    coord.push_back(y2_check);
-
-                    edges.push_back(coord);
-                }
-        }
-
-    // Drawing the diffracted rays
-
-    edges.shrink_to_fit();
-
-    for(unsigned char i = 0; i < edges.size(); i ++){
-        completeRay.clear();
-        completeRay.shrink_to_fit();
-
-        int x = edges.at(i)[0];
-        int y = edges.at(i)[1];
-
-        // Starting ray
-        ray *transmitter_ray = new ray(Transmitter->getPosX(),Transmitter->getPosY(),x,y,0,0);
-        completeRay.push_back(transmitter_ray);
-
-
-        // Arriving ray
-        ray *receiver_ray = new ray(Receiver->getPosX(),Receiver->getPosY(),x,y,0,0);
-        completeRay.push_back(transmitter_ray);
-
-
-            // Starting ray
-            //this->addItem(transmitter_ray);   // Send the ray to be displayed
-        QPen outlinePen(QColor(255, 0, 0, 220));
-        outlinePen.setWidth(1);
-        this->addLine(Transmitter->getPosX(),Transmitter->getPosY(),x,y);
-
-
-
-
-        // Arriving ray
-        //this->addItem(receiver_ray);   // Send the ray to be displayed
-        this->addLine(Receiver->getPosX(),Receiver->getPosY(),x,y);
-
-
-            allDiffractedRays.push_back(completeRay);
-    }
-}
-
-
 // --> Numerical computing --------------------------------------------------------------------------------------------------------------
 
 
-complex <double> room::FtIntegral(double x){
-    /*
-     * For improper integral methods, the trapez method is usually not the good way to come by, however for a rapidelly oscillating integral this method works very well (in that case)
-     * The integral from sqrt(x) -> INFINITY is the integral from 0 -> INFINTY from which the integral from 0 -> sqrt(x) has been cut.
-     *
-     * Fortunately, there is an analytical solution to the first integral, and we will evaluate the second one with the trapez method.
-     */
-
-    complex <double> j(0,1);
-    complex <double> res(0, 0) ;
-    complex <double> completIntegral (sqrt((M_PI/2.0))*1/2, -sqrt((M_PI/2.0))*1/2);
-
-    complex <double> coeff = 2.0*j*sqrt(x)*exp(j*x);
-
-    // Lets compute the approximate of the integral
-
-    double step = 1;
-    double i = 0.0;
-    double MAX_RANGE = sqrt(x);
-
-    // Trapez method
-
-    while(i < MAX_RANGE){
-        if(i == sqrt(x) || i == MAX_RANGE){
-            res+= exp(-1.0*j*pow(i, 2));
-        }else{
-            res += 2.0*exp(-1.0*j*pow(i, 2));
-        }
-        i += step;
-    }
-
-    complex <double> integral = (step/2.0)*coeff*(completIntegral - res);
-    return integral;
-}
 
 // --> geometric tools ------------------------------------------------------------------------------------------------------------------
 
@@ -957,144 +799,49 @@ double room::distInWall(double tetai){
 
 // --> Electrical power calculation --------------------------------------------------------------------------------------------------------------------
 
-
-double room::calculatePower(vector< vector<ray*>> allRays){
-
-    /* All rays evaluated by the image method are vectors of rays, stored in a bigger vector structure, (so that one vector is one complet n-sized ray), for each the
-     * amount of reflections is computed as well as the intersections with all walls, in which the T transmission coefficient is computed. The distance the ray went
-     * through in the wall is corrected in the ray object.
-     */
-
-    double results = 0;
-    int amountRays = allRays.size();
-    current.clear();
-    current.shrink_to_fit();
-
-    for(int i =0; i < amountRays; i++){
-        current = allRays.at(i);
-
-        if(current.size() != 0){
-            results += calculateRay(current);
-        }
-    }
-    return 1/(8*Ra)*results;   // Mean power per meter squared
+double room::computeReflexionPar(double thetaI, double epsilonR){
+    double R = 1;
+    return R;
 }
 
-
-double room::calculatePowerDiff(vector< vector<ray*>> allRays){
-
-    /* All rays evaluated by the image method are vectors of rays, stored in a bigger vector structure, (so that one vector is one complet n-sized ray), for each the
-     * amount of reflections is computed as well as the intersections with all walls, in which the T transmission coefficient is computed. The distance the ray went
-     * through in the wall is corrected in the ray object.
-     */
-
-    double results = 0;
-    int amountRays = allRays.size();
-
-
-    for(int i =0; i < amountRays; i++){
-
-        current.clear();
-        current.shrink_to_fit();
-        current = allRays.at(i);
-
-        if(current.size() != 0){
-            results += calculateRay(current);
-        }
-    }
-    return 1/(8*Ra)*results;   // Mean power per meter squared
+double room::computeReflexionPer(double thetaI, double epsilonR){
+    double R = 1;
+    return R;
 }
 
-double room::calculateRay(vector<ray*> rayLine){
-
-    /* One vector is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
+complex <double> room::computeEfield(vector<ray*> rayLine){
+    /* One vector<ray*> is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
      * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
      *
-     * The caracteristic length is only determined by the angle the last ray makes with the receptor, assuming the optimal orientation is set to angle zero, relative
-     * to the x-axis.
+     * This function gives the electrical field, generated by one MPC, at the receiver. The electric field is // to the dipole antenna since we only consider relections
+     * off the buildings. The electric field is not // for the reflexion with the ground though. This is taken into account in the function computePrx.
      */
 
-    int amountSegment = rayLine.size();  // Après avoir shrink to fit dans launch_algo()
-
+    int amountSegment = rayLine.size();
     double completeLength = 0.0;
-    Efield = 0.0;
-
-    complex <double> T (1.0, 0.0);   // let us define a global transmission coefficient
-    complex <double> R (1.0, 0.0);   // Definition global reflection coefficient
-    complex <double> Rp;
-    complex <double> k(0.0, 1.0);
-
-    ray *current_r;
-
-    for (int i = 0; i < amountSegment; i++){
-        current_r = rayLine.at(i);
-
-        double x1 = current_r->getX1();
-        double y1 = current_r->getY1();
-
-        double x2 = current_r->getX2();
-        double y2 = current_r->getY2();
-
-        // Transmission --------------------------------
-
-        for(int j = 0; j < amount_walls; j++){
-
-            if(intersectionCheck(current_r,walls[j]) && pointOnLine(walls[j], x2, y2) == false && pointOnLine(walls[j], x1, y1) == false){
-
-                double tetai = abs(abs(current_r->getAngle())-abs(walls[j]->getAngle()));
-                double tetat = asin(sqrt(epsilonAir/eps)*sin(tetai));   //Snell's law
-
-                double s = distInWall(tetai);
-                current_r->updateLength(s);
-
-                /*
-                 * The propagation constant is a complex number \gamma, in the exponantial we leave out the complex part, as it has only
-                 * consequences on the phase, which is not interesting for now.
-                 *
-                 * We are in the context of low-loss in the walls. And then j\beta = \gamma
-                 */
-
-                Rp = (Zwall*cos(tetai) - Zvoid*cos(tetat))/(Zwall*cos(tetai) + Zvoid*cos(tetat));
-                T *= ((1.0 - pow(Rp, 2.0))*exp(-gamma*s))/(1.0 - pow(Rp, 2)*exp(-2.0*gamma*s)*exp(k*(2*M_PI/lambda)*s*sin(tetai)*sin(tetat)));
-
-            }else{}
+    double R = 1;
+    complex <double> Efield = 0.0;
+    ray *currentRay;
+    for (int i=0; i<amountSegment; i++){
+        currentRay = rayLine.at(i);
+        if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
+            double tethaI = abs(currentRay->getTetai());
+            R *= computeReflexionPar(tethaI,epsilonWallRel);
         }
-
-
-          //  Reflection -----------------------------
-
-
-            if((i != amountSegment - 1)){   // The last segment, the one that reach the receptor does not have a rebound
-
-                // Lets check which wall was hit by this ray
-
-                double tetai = abs(current_r->getTetai());
-                double tetat = asin(sqrt(epsilonAir/eps)*sin(tetai));    // Snell's law
-
-                double s = distInWall(tetai);
-
-                Rp = (Zwall*cos(tetai) - Zvoid*cos(tetat))/(Zwall*cos(tetai) + Zvoid*cos(tetat));
-                R *= Rp + (1.0 - pow(Rp, 2.0))*(Rp*exp(-2.0*gamma*s)*exp(k*2.0*(2*M_PI/lambda)*s*sin(tetai)*sin(tetat)))/(1.0 - pow(Rp, 2.0)*exp(-2.0*gamma*s)*exp(2.0*(2*M_PI/lambda)*s*sin(tetat)*sin(tetai)));
-            }
-            completeLength += current_r->getMeterLength();    // Get each length of each ray segment after the meter conversion (1px == 2cm)
+        completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 2cm)
     }
-
-
-    // From the caracteristic surface of a \lamda/2, and the definition of the maximum gain for the receptor.Which means that \teta = M_PI/2
-
     double G = Zvoid/(pow(M_PI, 2)*Ra);
+    Efield = R * (sqrt(60*G*dBmRev(powerEmettor))/completeLength);  // we can add the phase if we want to take into account the interraction between MPCs
+    return Efield;
+}
 
-    // Carateristic length
-    double h = lambda / M_PI;
-
-    if(completeLength != 0.0){
-        Efield = T * R * sqrt(60.0 * G * dBmRev(powerEmettor)) * exp(-1.0*k*(2.0*M_PI/lambda)*completeLength)/completeLength;
-
-        double powerTransmitted = pow(norm(h*Efield), 2);
-        //cout<<powerTransmitted<<"\n";
-        return powerTransmitted;   // Returns the transmitted power in dBm for it te be added right away
-
-    }else{return -1;}
+double room::computePrx(complex <double> totalEfield){
+    complex <double> h = lambda / M_PI;
+    complex <double> groundField = 0; // create a function that compute the MPC reflected off the ground
+    complex <double> RxEfield = totalEfield + groundField;
+    complex <double> Voc = h*RxEfield;
+    double Prx = 1/(8*Ra)*pow(norm(Voc), 2);
+    return Prx;
 }
 
 double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
@@ -1109,96 +856,9 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // The ITU's approximation for |F(nu)|^2
     double FresnelPower = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
-    cout<< "Diffracted ray power: ";
-    cout<< FresnelPower<<endl;
     return FresnelPower;
 }
 
-
-double room::calculateRayDiff(vector<ray*> rayLine){
-
-    /* One vector is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
-     * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
-     *
-     * The caracteristic length is only determined by the angle the last ray makes with the receptor, assuming the optimal orientation is set to angle zero, relative
-     * to the x-axis.
-     */
-
-    int amountSegment = rayLine.size();  // Après avoir shrink to fit dans launch_algo()
-
-    double completeLength = 0.0;
-    Efield = 0.0;
-
-    complex <double> T (1.0, 0.0);   // let us define a global transmission coefficient
-    complex <double> D (1.0, 0.0);   // Definition global reflection coefficient
-    complex <double> Rp;
-    complex <double> k(0.0, 1.0);
-
-    ray *current_r;
-
-    for (int i = 0; i < amountSegment; i++){
-        current_r = rayLine.at(i);
-
-        double x1 = current_r->getX1();
-        double y1 = current_r->getY1();
-
-        double x2 = current_r->getX2();
-        double y2 = current_r->getY2();
-
-
-        // Transmission --------------------------------
-
-        for(int j = 0; j < amount_walls; j++){
-
-            if(intersectionCheck(current_r,walls[j]) && pointOnLine(walls[j], x2, y2) == false && pointOnLine(walls[j], x1, y1) == false){
-
-                double tetai = abs(abs(current_r->getAngle())-abs(walls[j]->getAngle()));
-                double tetat = asin(sqrt(epsilonAir/eps)*sin(tetai));   //Snell's law
-
-                double s = distInWall(tetai);
-                current_r->updateLength(s);
-
-                /*
-                 * The propagation constant is a complex number \gamma, in the exponantial we leave out the complex part, as it has only
-                 * consequences on the phase, which is not interesting for now.
-                 *
-                 * We are in the context of low-loss in the walls. And then j\beta = \gamma
-                 */
-
-                Rp = (Zwall*cos(tetai) - Zvoid*cos(tetat))/(Zwall*cos(tetai) + Zvoid*cos(tetat));
-                T *= ((1.0 - pow(Rp, 2.0))*exp(-gamma*s))/(1.0 - pow(Rp, 2)*exp(-2.0*gamma*s)*exp(k*(2*M_PI/lambda)*s*sin(tetai)*sin(tetat)));
-
-            }else{}
-        }
-    }
-
-
-          //  Diffraction -----------------------------
-    current_r = rayLine.at(0);
-    ray *current_r2 = rayLine.at(1);
-
-    completeLength = current_r->getMeterLength() + current_r2->getMeterLength();    // Get each length of each ray segment after the meter conversion (1px == 2cm)
-
-        double L = (current_r->getMeterLength()*current_r2->getMeterLength())/completeLength;
-        double delt = M_PI - abs(current_r->getTetai() - current_r2->getTetai());
-
-        double arg = 2.0*(lambda/2.0*M_PI)*L*pow(sin(delt/2.0), 2);
-        D = - (exp(-1.0*k*(M_PI/4))/(2.0*(sqrt(2.0*lambda*L)))) * (FtIntegral(arg)/(sin(delt/2)));
-
-    double G = Zvoid/(pow(M_PI, 2)*Ra);
-
-    // Carateristic length
-    double h = lambda / M_PI; // * ((M_PI/2)*cos(M_PI/2))/(pow(sin(M_PI), 2));
-
-    if(completeLength != 0.0){
-        Efield = T * D * sqrt(60.0 * G * dBmRev(powerEmettor)) * exp(-1.0*k*(lambda/2.0*M_PI)*completeLength)/completeLength;
-        totalEfield += Efield;
-
-        double powerTransmitted = pow(norm(h*Efield), 2);
-        cout<<powerTransmitted<<"\\n";
-        return powerTransmitted;   // Returns the transmitted power in dBm for it te be added right away
-    }else{return -1;}
-}
 
 // --> Telecom calculation tools ---------------------------------------------------------------------------------------------------------------------------
 
@@ -1415,47 +1075,4 @@ void room::drawCoverege(){
 
 }
 
-double room::computeReflexionPar(double thetaI, double epsilonR){
-    double R = 1;
-    return R;
-}
 
-double room::computeReflexionPer(double thetaI, double epsilonR){
-    double R = 1;
-    return R;
-}
-
-complex <double> room::computeEfield(vector<ray*> rayLine){
-    /* One vector<ray*> is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
-     * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
-     *
-     * This function gives the electrical field, generated by one MPC, at the receiver. The electric field is // to the dipole antenna since we only consider relections
-     * off the buildings. The electric field is not // for the reflexion with the ground though. This is taken into account in the function computePrx.
-     */
-
-    int amountSegment = rayLine.size();
-    double completeLength = 0.0;
-    double R = 1;
-    complex <double> Efield = 0.0;
-    ray *currentRay;
-    for (int i=0; i<amountSegment; i++){
-        currentRay = rayLine.at(i);
-        if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
-            double tethaI = abs(currentRay->getTetai());
-            R *= computeReflexionPar(tethaI,epsilonWallRel);
-        }
-        completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 2cm)
-    }
-    double G = Zvoid/(pow(M_PI, 2)*Ra);
-    Efield = R * (sqrt(60*G*dBmRev(powerEmettor))/completeLength);  // we can add the phase if we want to take into account the interraction between MPCs
-    return Efield;
-}
-
-double room::computePrx(complex <double> totalEfield){
-    complex <double> h = lambda / M_PI;
-    complex <double> groundField = 0; // create a function that compute the MPC reflected off the ground
-    complex <double> RxEfield = totalEfield + groundField;
-    complex <double> Voc = h*RxEfield;
-    double Prx = 1/(8*Ra)*pow(norm(Voc), 2);
-    return Prx;
-}
