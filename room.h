@@ -87,8 +87,8 @@ private:
     double  Zvoid = 120*M_PI;
     double  muAir = 4*M_PI*1e-7;      // Tm/A
     double  c =2.998e+8;              // m/s
-//   double  freq = 2.45e+9;           // Hz
-    double  freq = 26e+9;           // Hz
+    double  freq = 2.45e+9;           // Hz
+//    double  freq = 26e+9;           // Hz
 
     double lambda;
     double alpha;
@@ -198,6 +198,11 @@ private:
 
     //Misc
     void setDefaultSettings();
+
+    double computePrx(complex <double> totalEfield);
+    complex <double> computeEfield(vector<ray*> rayLine);
+    double computeReflexionPar(double thetaI, double epsilonR);
+    double computeReflexionPer(double thetaI, double epsilonR);
 
 
 public slots:
