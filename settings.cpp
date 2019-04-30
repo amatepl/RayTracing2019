@@ -31,7 +31,6 @@ void settings::writeSettings(){
     settingsData << toStringDoub(wallThick) + "\n";
     settingsData << toStringInt(discret) + "\n";
     settingsData << toStringDoub(emettorPower) + "\n";
-    settingsData << toStringBool(diffractOnBool) + "\n";
 
     settingsData.close();
 }
@@ -57,10 +56,6 @@ void settings::readSettings(){
               discret = stoi(line);
           }else if(count == 4){
               emettorPower = stod(line);
-          }else if(count == 5){
-              if(line == "true"){diffractOnBool = true;}else{
-                  diffractOnBool = false;
-              }
           }
           count++;
       }
@@ -80,7 +75,6 @@ void settings::updateSettings(){
     ui->reboundSpin->setValue(amountReflect);
     ui->discretSubBox->setValue(discret);
     ui->typeComboBox->setCurrentIndex(wallType); //0 index = Concrete Wall
-    ui->diffractBox->setTristate(diffractOnBool);
 }
 
 
@@ -98,7 +92,6 @@ void settings::setToDefault(){
     wallThick = 50;  //Cm
     discret = 50;
     emettorPower = 20; //dBm
-    diffractOnBool = false;
 
     updateSettings();
     writeSettings();
@@ -118,7 +111,6 @@ void settings::on_applyChangesButton_clicked(){
     wallThick = ui->wallThickSpinBox->value();  //Cm
     discret = ui->discretSubBox->value();
     emettorPower = ui->powerSpinBox->value(); //dBm
-    diffractOnBool = ui->diffractBox->checkState();
 
     updateSettings();
     writeSettings();
