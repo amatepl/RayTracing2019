@@ -13,6 +13,7 @@ room::room(MainWindow *parent) :
     antenaType = 2; // 0 for transmitter 1 for receiver 2 for nothing
     Transmitter = NULL;
     Receiver = NULL;
+    antennaHeight = 1.8; //m
 
     complex <double> i(0.0, 1.0);
     lambda = c/freq;
@@ -574,40 +575,39 @@ bool room::commonToAnyWall(double posX, double posY, int indwall){
 
 
 std::vector<double> room::intersection(lineo* line1, lineo* line2){
+    /*
+        * Two-equations line system, determines the intersection point if it exists
+        *    y = ax + b
+        *    y = cx + d
+        */
 
-   /*
-    * Two-equations line system, determines the intersection point if it exists
-    *    y = ax + b
-    *    y = cx + d
-    */
+    std::vector<double> coord(2);
 
-   std::vector<double> coord(2);
+    double xpos;
+    double ypos;
 
-   double xpos;
-   double ypos;
+    long double a = line1->getSlope();
+    double b = line1->getYorigin();
+    long double c = line2->getSlope();
+    double d = line2->getYorigin();
 
-   long double a = line1->getSlope();
-   double b = line1->getYorigin();
-   long double c = line2->getSlope();
-   double d = line2->getYorigin();
+    if(a == INFINITY){
+        xpos = line1->getX1();
+        ypos = c * xpos + d;
+    }
 
-   if(a == INFINITY){
-       xpos = line1->getX1();
-       ypos = c * xpos + d;
-   }
+    else if(c == INFINITY){
+        xpos = line2->getX1();
+        ypos = a * xpos + b;
+    }
+    else{
+    xpos = (d - b)/(a - c);
+    ypos = (a * xpos) + b;
+    }
 
-   else if(c == INFINITY){
-       xpos = line2->getX1();
-       ypos = a * xpos + b;
-   }
-   else{
-   xpos = (d - b)/(a - c);
-   ypos = (a * xpos) + b;
-   }
-
-   coord[0] = xpos;
-   coord[1] = ypos;
-   return coord;
+    coord[0] = xpos;
+    coord[1] = ypos;
+    return coord;
 }
 
 
@@ -769,7 +769,6 @@ bool room::intersectionCheckNonInclusive(lineo* line1, lineo* line2){
     }
 
     return (pointOnLineNonInclusive(line1,xpos,ypos) && pointOnLineNonInclusive(line2,xpos,ypos));
-
 }
 
 
@@ -799,13 +798,13 @@ double room::distInWall(double tetai){
 
 // --> Electrical power calculation --------------------------------------------------------------------------------------------------------------------
 
-double room::computeReflexionPar(double thetaI, double epsilonR){
-    double R = 1;
+double room::computeReflexionPer(double thetaI, double epsilonR){
+    double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
     return R;
 }
 
-double room::computeReflexionPer(double thetaI, double epsilonR){
-    double R = 1;
+double room::computeReflexionPar(double thetaI, double epsilonR){
+    double R = (cos(thetaI) - (1/sqrt(epsilonR))*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + (1/sqrt(epsilonR))*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
     return R;
 }
 
@@ -817,6 +816,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
      * off the buildings. The electric field is not // for the reflexion with the ground though. This is taken into account in the function computePrx.
      */
 
+    complex <double> i(0.0, 1.0);
     int amountSegment = rayLine.size();
     double completeLength = 0.0;
     double R = 1;
@@ -830,22 +830,36 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         }
         completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 2cm)
     }
-    double G = Zvoid/(pow(M_PI, 2)*Ra);
-    Efield = R * (sqrt(60*G*dBmRev(powerEmettor))/completeLength);  // we can add the phase if we want to take into account the interraction between MPCs
+    double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
+    Efield = -i * R * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*completeLength)/completeLength);
+    return Efield;
+}
+
+complex <double> room::computeEfieldGround(){
+    // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
+    // To Do: check if there is a wall between the TX and RX
+    double distance = this->distance()*0.02; // conversion (1px == 2cm)
+    double thetaG = atan((distance/2)/antennaHeight);
+    double thetaI = M_PI - thetaG;
+    double R = computeReflexionPer(thetaG,epsilonWallRel);
+    double completeLength = distance/sin(thetaG);
+    complex <double> i(0.0, 1.0);
+    double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application
+    complex <double> Efield = i * R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI)) * (exp(-i*(2.0*M_PI/lambda)*completeLength)/completeLength);
     return Efield;
 }
 
 double room::computePrx(complex <double> totalEfield){
-    complex <double> h = lambda / M_PI;
-    complex <double> groundField = 0; // create a function that compute the MPC reflected off the ground
-    complex <double> RxEfield = totalEfield + groundField;
-    complex <double> Voc = h*RxEfield;
+    // Compute the power at the receive antenna with the total electric field induced by all MPC 
+    complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
+    double distance = this->distance()*0.02;
+    double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
+    complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
     double Prx = 1/(8*Ra)*pow(norm(Voc), 2);
     return Prx;
 }
 
 double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
-
     // Direct distance between the receiver and the transmitter
     double direct_dist = sqrt(pow(Transmitter->getPosX()-Receiver->getPosX(),2) + pow(Transmitter->getPosY()-Receiver->getPosY(),2));
 

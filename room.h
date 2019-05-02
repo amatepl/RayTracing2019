@@ -77,6 +77,7 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
+    double antennaHeight;
     wall *walls[16];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
 
@@ -195,6 +196,7 @@ private:
 
     double computePrx(complex <double> totalEfield);
     complex <double> computeEfield(vector<ray*> rayLine);
+    complex <double> computeEfieldGround();
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
 
