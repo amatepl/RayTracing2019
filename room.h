@@ -91,6 +91,7 @@ private:
     double  c =2.998e+8;              // m/s
 //    double  freq = 2.45e+9;           // Hz
     double  freq = 26e+9;           // Hz
+    double antennaHeight;
 
     double lambda;
     double alpha;
@@ -203,6 +204,7 @@ private:
     complex <double> computeEfield(vector<ray*> rayLine);
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
+    complex <double> computeEfieldGround();
 
 
 public slots:
