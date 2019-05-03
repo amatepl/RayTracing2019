@@ -28,6 +28,7 @@ class room : public QGraphicsScene//, private QImage
     Q_OBJECT
 public:
     explicit room(MainWindow *parent = 0);
+    ~room(void);
 
     void launch_algo(bool drawR);
 
@@ -77,7 +78,8 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    wall *walls[16];    // For easier use walls are put in arrays
+    wall *walls[18];    // For easier use walls are put in arrays
+    lineo *uselessWalls[10];
     vector <std::array <double,2>> diffractionPoints;
 
 
@@ -87,8 +89,8 @@ private:
     double  Zvoid = 120*M_PI;
     double  muAir = 4*M_PI*1e-7;      // Tm/A
     double  c =2.998e+8;              // m/s
-    double  freq = 2.45e+9;           // Hz
-//    double  freq = 26e+9;           // Hz
+//    double  freq = 2.45e+9;           // Hz
+    double  freq = 26e+9;           // Hz
 
     double lambda;
     double alpha;
@@ -138,8 +140,11 @@ private:
 
     // Problem parameters
     int reflectionsNumber;
-    int amount_walls = 16;
+    int amount_walls = 18;
+    int amount_useless_walls = 10;
     int amount_discret = 20;
+    map<char,int[4]> streets;
+
 //    double powerEmettor = 20.0;   // In watts the power of the emettor
     double powerEmettor = 2.0;   // In watts the power of the emettor
     double Zwall;
@@ -164,6 +169,7 @@ private:
     static void drawDiffraction(room* scene);
     static void buildDiffraction(room* scene);
     bool workingZone();
+    void setUpStreets();
 
     // Numerical analysis
 

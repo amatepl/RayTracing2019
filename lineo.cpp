@@ -17,9 +17,9 @@ lineo::lineo(double x01, double y01, double x02, double y02)
     def_Slope(x1,y1,x2,y2);
     def_YOrigin(x1,y1);
     setLength();
-
-
 }
+
+lineo::~lineo(void){}
 
 void lineo::def_Slope(double x01, double y01, double x02, double y02){
     if(x01 == x02){
