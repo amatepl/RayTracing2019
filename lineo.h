@@ -5,6 +5,7 @@
 
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
+#include <iostream>
 
 class room;
 

@@ -22,7 +22,9 @@ ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall
     updateMeterLength();
 }
 
-ray::~ray(void){}
+ray::~ray(void){
+    //std::cout<<"Ray destroyed"<<std::endl;
+}
 
 /*
  * It is necessary to update the real length when the ray is transmitted through a wall. See function in room::distInWall()

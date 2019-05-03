@@ -8,6 +8,7 @@
 
 // Libraries
 #include "math.h"
+#include <iostream>
 #include <vector>
 
 

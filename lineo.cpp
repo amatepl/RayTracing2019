@@ -19,7 +19,9 @@ lineo::lineo(double x01, double y01, double x02, double y02)
     setLength();
 }
 
-lineo::~lineo(void){}
+lineo::~lineo(void){
+    //cout<<"line destroyed"<<endl;
+}
 
 void lineo::def_Slope(double x01, double y01, double x02, double y02){
     if(x01 == x02){
