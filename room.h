@@ -78,9 +78,9 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    wall *walls[18];    // For easier use walls are put in arrays
-    lineo *uselessWalls[10];
+    wall *walls[28];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
+    //lineo *uselessWalls[10];
 
 
     // --> Global variables (electrical constants)
@@ -143,6 +143,7 @@ private:
     int reflectionsNumber;
     int amount_walls = 18;
     int amount_useless_walls = 10;
+    int amount_all_walls = 28;
     int amount_discret = 20;
     map<char,int[4]> streets;
 

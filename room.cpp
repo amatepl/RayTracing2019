@@ -34,55 +34,45 @@ room::room(MainWindow *parent) :
 
     //Building 1
     walls[0] = new wall(200,1,200,200, 0.0, 0.0, 0.0, 0);
-    //walls[1] = new wall(200,1,1,1, 0.0, 0.0, 0.0, 1);
-    uselessWalls[0] = new lineo(200,1,1,1);
-    walls[1] = new wall(200,200,1,200, 0.0, 0.0, 0.0, 2);
-    uselessWalls[1] = new lineo(1,200,1,1);
-    //walls[3] = new wall(1,200,1,1, 0.0, 0.0, 0.0, 3);
+    walls[18] = new wall(200,1,1,1, 0.0, 0.0, 0.0, 18);
+    walls[1] = new wall(200,200,1,200, 0.0, 0.0, 0.0, 1);
+    walls[19] = new wall(1,200,1,1, 0.0, 0.0, 0.0, 19);
 
     //Building 2
-    walls[2] = new wall(250, 1, 250, 200, 0.0, 0.0, 0.0, 4);
-    walls[3] = new wall(250, 200, 450, 200, 0.0, 0.0, 0.0, 5);
-    walls[4] = new wall(450, 200, 450, 1, 0.0, 0.0, 0.0, 6);
-    //walls[7] = new wall(450, 1, 250, 1, 0.0, 0.0, 0.0, 7);
-    uselessWalls[2]=new lineo(450, 1, 250, 1);
+    walls[2] = new wall(250, 1, 250, 200, 0.0, 0.0, 0.0, 2);
+    walls[3] = new wall(250, 200, 450, 200, 0.0, 0.0, 0.0, 3);
+    walls[4] = new wall(450, 200, 450, 1, 0.0, 0.0, 0.0, 4);
+    walls[20] = new wall(450, 1, 250, 1, 0.0, 0.0, 0.0,20);
 
     //Building 3
-    walls[5] = new wall(500, 1, 500, 200, 0.0, 0.0, 0.0, 8);
-    walls[6] = new wall(500, 200, 700, 200, 0.0, 0.0, 0.0, 9);
-    walls[7] = new wall(700, 200, 700, 1, 0.0, 0.0, 0.0, 10);
-    //walls[11] = new wall(700, 1, 500, 1, 0.0, 0.0, 0.0, 11);
-    uselessWalls[3] = new lineo(700, 1, 500, 1);
+    walls[5] = new wall(500, 1, 500, 200, 0.0, 0.0, 0.0, 5);
+    walls[6] = new wall(500, 200, 700, 200, 0.0, 0.0, 0.0, 6);
+    walls[7] = new wall(700, 200, 700, 1, 0.0, 0.0, 0.0, 7);
+    walls[21] = new wall(700, 1, 500, 1, 0.0, 0.0, 0.0, 21);
 
     //Building 4
-    walls[8] = new wall(750, 1, 750, 200, 0.0, 0.0, 0.0, 12);
-    walls[9] = new wall(750, 200, 950, 200, 0.0, 0.0, 0.0, 13);
-    walls[10] = new wall(950, 200, 950, 1, 0.0, 0.0, 0.0, 14);
-    //walls[15] = new wall(950, 1, 750, 1, 0.0, 0.0, 0.0, 15);
-    uselessWalls[4] = new lineo(950, 1, 750, 1);
+    walls[8] = new wall(750, 1, 750, 200, 0.0, 0.0, 0.0, 8);
+    walls[9] = new wall(750, 200, 950, 200, 0.0, 0.0, 0.0, 9);
+    walls[10] = new wall(950, 200, 950, 1, 0.0, 0.0, 0.0, 10);
+    walls[22] = new wall(950, 1, 750, 1, 0.0, 0.0, 0.0, 22);
 
     //Building 5
-    walls[11] = new wall(200, 300, 200, 500, 0.0, 0.0, 0.0, 16);
-    //walls[17] = new wall(200, 500, 1, 500, 0.0, 0.0, 0.0, 17);
-    uselessWalls[5] = new lineo(200, 500, 1, 500);
-    //walls[18] = new wall(1, 500, 1, 300, 0.0, 0.0, 0.0, 18);
-    uselessWalls[6] = new lineo(1, 500, 1, 300);
-    walls[12] = new wall(1, 300, 200, 300, 0.0, 0.0, 0.0, 19);
+    walls[11] = new wall(200, 300, 200, 500, 0.0, 0.0, 0.0, 11);
+    walls[23] = new wall(200, 500, 1, 500, 0.0, 0.0, 0.0, 23);
+    walls[24] = new wall(1, 500, 1, 300, 0.0, 0.0, 0.0, 24);
+    walls[12] = new wall(1, 300, 200, 300, 0.0, 0.0, 0.0, 12);
 
     //Building 6
-    walls[13] = new wall(250, 300, 250, 500, 0.0, 0.0, 0.0, 20);
-    //walls[21] = new wall(250, 500, 600, 500, 0.0, 0.0, 0.0, 21);
-    uselessWalls[7] = new lineo(250, 500, 600, 500);
-    walls[14] = new wall(600, 500, 600, 300, 0.0, 0.0, 0.0, 22);
-    walls[15] = new wall(600, 300, 250, 300, 0.0, 0.0, 0.0, 23);
+    walls[13] = new wall(250, 300, 250, 500, 0.0, 0.0, 0.0, 13);
+    walls[25] = new wall(250, 500, 600, 500, 0.0, 0.0, 0.0, 25);
+    walls[14] = new wall(600, 500, 600, 300, 0.0, 0.0, 0.0, 14);
+    walls[15] = new wall(600, 300, 250, 300, 0.0, 0.0, 0.0, 15);
 
     //Building 7
-    walls[16] = new wall(650, 300, 650, 500, 0.0, 0.0, 0.0, 24);
-    //walls[25] = new wall(650, 500, 950, 500, 0.0, 0.0, 0.0, 25);
-    uselessWalls[8] = new lineo(650, 500, 950, 500);
-    //walls[26] = new wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 26);
-    uselessWalls[9] = new lineo(950, 500, 950, 300);
-    walls[17] = new wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 27);
+    walls[16] = new wall(650, 300, 650, 500, 0.0, 0.0, 0.0, 16);
+    walls[26] = new wall(650, 500, 950, 500, 0.0, 0.0, 0.0, 26);
+    walls[27] = new wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
+    walls[17] = new wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);
 
     drawWalls();
     //findDiffractionPoints();
@@ -173,12 +163,8 @@ void room::findDiffractionPoints(){
 void room::drawWalls(){
     QPen outlinePen(QColor(0, 0, 0, 255));
     outlinePen.setWidth(2);
-    for(int i = 0;i<amount_walls;i++){
+    for(int i = 0;i<amount_all_walls;i++){
         this->addLine(walls[i]->getX1(),walls[i]->getY1(),walls[i]->getX2(),walls[i]->getY2(),outlinePen);
-
-    }
-    for(int i = 0;i<amount_useless_walls;i++){
-        this->addLine(uselessWalls[i]->getX1(),uselessWalls[i]->getY1(),uselessWalls[i]->getX2(),uselessWalls[i]->getY2(),outlinePen);
     }
 }
 
@@ -339,6 +325,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
                 completeRay.push_back(receiver_ray);
                 originX = imageCoordinates[0];
                 originY = imageCoordinates[1];
+                delete(current_ray);
 
             }
             else{
@@ -347,6 +334,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
                 */
 
                 completeRay.clear();
+                delete(current_ray);
                 j = (*scene).recursionState+1; // Setting j to this value stops the while loop
             }
         }
@@ -378,8 +366,9 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
 //            if((*scene).intersectionCheck(receiver_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], rayEnd[0], rayEnd[1]) && !(*scene).pointOnLine((*scene).walls[j], rayStart[0], rayStart[1])){
             if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
             //if((*scene).checkTransmission((*scene).walls[i],receiver_ray,rayStart[0], rayStart[1],rayEnd[0], rayEnd[1])){
-                current_ray->~lineo();
+                delete(current_ray);
                 completeRay.clear();
+                completeRay.shrink_to_fit();
                 dontStop = false;
                 break;
             }
@@ -426,9 +415,9 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         }
         //(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay(completeRay);
         (*scene).totalEfield += scene->computeEfield(completeRay);
-        for(int i = 0;i<completeRay.size();i++){
-            completeRay[i]->~ray();
-        }
+        delete(receiver_ray);
+        completeRay.clear();
+        completeRay.shrink_to_fit();
 
 //        cout<<"Ray's power: ";
 //        cout<< (*scene).power<<endl;
@@ -522,10 +511,9 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     if(!completeRay.empty()){
         //(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay(completeRay);
         (*scene).totalEfield += scene->computeEfield(completeRay);
-        for(unsigned int i = 0;i<completeRay.size();i++){
-            completeRay[i]->~ray();
-            delete completeRay[i];
-        }
+        delete(receiver_ray);
+        completeRay.clear();
+        completeRay.shrink_to_fit();
     }
 }
 
@@ -558,19 +546,20 @@ void room::drawDiffraction(room* scene){
     pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
     bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
     int i = 0;
-    while(i<(*scene).amount_walls && notDiffracted){
+    while(i<(*scene).amount_all_walls && notDiffracted){
         // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
         if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
             pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
             bool check = true;
             int j = 0;
-            while(j<(*scene).amount_walls && check){
+            while(j<(*scene).amount_all_walls && check){
                 check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
+            delete(pathTester2);
             pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
             j =0;
-            while(j<(*scene).amount_walls && check){
+            while(j<(*scene).amount_all_walls && check){
                 check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
@@ -583,15 +572,17 @@ void room::drawDiffraction(room* scene){
                 //(*scene).diffractedPower+= diffractPower;
                 notDiffracted =false;
             }
+            delete(pathTester2);
             pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
             j = 0;
-            while(j<(*scene).amount_walls && !check){
+            while(j<(*scene).amount_all_walls && !check){
                 check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
+            delete(pathTester2);
             pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
             j=0;
-            while(j<(*scene).amount_walls && !check){
+            while(j<(*scene).amount_all_walls && !check){
                 check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
@@ -602,12 +593,16 @@ void room::drawDiffraction(room* scene){
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
                 //(*scene).diffractedPower+= diffractPower;
+                delete(rayReceiver);
+                delete(rayTransmitter);
                 notDiffracted = false;
             }
+            delete(pathTester2);
 
         }
         i++;
     }
+    delete(pathTester);
 
 
 
@@ -658,20 +653,20 @@ void room::buildDiffraction(room* scene){
     pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
     bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
     int i = 0;
-    while(i<(*scene).amount_walls && notDiffracted){
+    while(i<(*scene).amount_all_walls && notDiffracted){
         // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
         if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
             pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
             bool check = true;
             int j = 0;
-            while(j<(*scene).amount_walls && check){
+            while(j<(*scene).amount_all_walls && check){
                 check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
             delete(pathTester2);
             pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
             j =0;
-            while(j<(*scene).amount_walls && check){
+            while(j<(*scene).amount_all_walls && check){
                 check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
@@ -685,14 +680,14 @@ void room::buildDiffraction(room* scene){
             delete(pathTester2);
             pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
             j = 0;
-            while(j<(*scene).amount_walls && !check){
+            while(j<(*scene).amount_all_walls && !check){
                 check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
             delete(pathTester2);
             pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
             j=0;
-            while(j<(*scene).amount_walls && !check){
+            while(j<(*scene).amount_all_walls && !check){
                 check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
             }
