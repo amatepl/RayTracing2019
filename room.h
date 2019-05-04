@@ -46,7 +46,9 @@ public:
     double getpowerEmettor();
     double getInitBinaryDeb();
     complex <double> getTotalEfield();
-
+    
+    double getPrx(int posX, int posY);
+    double getDelay(int posX, int posY);
 
     void setTransmitter(antena *new_transmitter);
     void setReceiver(antena *new_receiver);
@@ -58,8 +60,6 @@ public:
 
     void drawCoverege();
     bool DataComputed();
-    double getPrx(int posX, int posY);
-    double getDelay(int posX, int posY);
 
 signals:
 

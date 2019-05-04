@@ -1197,7 +1197,7 @@ void room::readSettingsFile(){
           }else if(count == 2){
               wallThickness = stod(line);
           }else if(count == 3){
-              amount_discret = 400;//stoi(line);
+              amount_discret = stoi(line);
           }else if(count == 4){
               powerEmettor = stod(line);
           }else if(count == 5){
@@ -1321,7 +1321,7 @@ void room::drawCoverege(){
 
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
-            this->Data[i*discret+j] = resultsBinaryDebit; // Received Power
+            this->Data[i*discret+j] = powerReceived; // Received Power
             this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)] = (maxLength-minLength)/c; // delay spread; coherence bandwidth = 1/(delay spread)
             //this->Data[i*discret+j+2] = ; // Rice factor
 
