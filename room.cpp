@@ -131,8 +131,8 @@ void room::findDiffractionPoints(){
     */
 
 
-    for(int i = 0;i<amount_walls;i++){
-        for(int j = 0;j<amount_walls;j++){
+    for(unsigned int i = 0;i<amount_walls;i++){
+        for(unsigned int j = 0;j<amount_walls;j++){
             if(walls[i]->getIndWall() != walls[j]->getIndWall()){          
                 if(pointOnLine(walls[j],walls[i]->getX1(),walls[i]->getY1())){
                     bool check = true;
@@ -188,21 +188,38 @@ void room::launch_algo(bool drawR){
 
     if(!workingZone()){
         // Calculate power -- Reflexion and transmission
+
+        current_ray = new lineo(Receiver->getPosX(),Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY());
+        bool reflection = true;
+        unsigned int i = 0;
+        while(i<amount_walls && reflection){
+            reflection = !intersectionCheck(current_ray,walls[i]);
+            i++;
+        }
+        delete(current_ray);
+
         if(drawR){
-            recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);
-            drawDiffraction(this);
+            if(reflection){recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);}
+            else{
+                drawDiffraction(this);}
         }
         else{
-            recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);
-            buildDiffraction((this));
+            if(reflection){recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);}
+            else{buildDiffraction((this));}
         }
         //cout<<diffractedPower<<endl;
         //if(diffractedPower !=0){power = power + dBmRev(diffractedPower);}
-        double powerRef = computePrx(totalEfield);
-        if(diffractedPower !=0){powerRef = powerRef + dBmRev(diffractedPower);}
-        powerReceived = dBm(powerRef);
 
-        resultsBinaryDebit = binaryDebit(powerReceived);
+        //if(diffractedPower !=0){powerRef = powerRef + dBmRev(diffractedPower);}
+        if(reflection){
+        double powerRef = computePrx(totalEfield);
+        //cout<<"power: ";
+        //cout<<powerRef<<endl;
+        powerReceived = dBm(powerRef);
+        }
+        if(powerReceived){
+            resultsBinaryDebit = binaryDebit(powerReceived);
+        }
     }
 }
 
@@ -234,7 +251,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
         recursionState += 1;
 
         //Direct ray beteween the transmitter and the receiver
-        for(int i = 0;i < amount_walls;i++){
+        for(unsigned int i = 0;i < amount_walls;i++){
 
            current_wall = walls[i];
 
@@ -299,8 +316,6 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
     outlinePen.setWidth(1);
 
     unsigned char j = 0;
-
-
     while(j<=(*scene).recursionState){
 
         /*
@@ -350,7 +365,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
     unsigned int i = 0;
     bool dontStop = true;
     while(i<completeRay.size() && dontStop){
-        for (int j = 0;j<(*scene).amount_walls;j++){
+        for (unsigned int j = 0;j<(*scene).amount_walls;j++){
             /*
              This loop checks if there is any intersection of the ray with the walls. If this is the case we destroy the ray since
              there is no transmission.
@@ -440,8 +455,6 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     ray* receiver_ray;
 
     unsigned char j = 0;
-
-
     while(j<=(*scene).recursionState){
 
         /*
@@ -490,7 +503,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     unsigned int i = 0;
     bool dontStop = true;
     while(i<completeRay.size() && dontStop){
-        for (int j = 0;j<(*scene).amount_walls;j++){
+        for (unsigned int j = 0;j<(*scene).amount_walls;j++){
             /*
              This loop checks if there is any intersection of the ray with the walls. If this is the case we destroy the ray since
              there is no transmission.
@@ -545,13 +558,13 @@ void room::drawDiffraction(room* scene){
 
     pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
     bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
-    int i = 0;
+    unsigned int i = 0;
     while(i<(*scene).amount_all_walls && notDiffracted){
         // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
         if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
             pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
             bool check = true;
-            int j = 0;
+            unsigned int j = 0;
             while(j<(*scene).amount_all_walls && check){
                 check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
@@ -569,6 +582,7 @@ void room::drawDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 notDiffracted =false;
             }
@@ -592,6 +606,7 @@ void room::drawDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 delete(rayReceiver);
                 delete(rayTransmitter);
@@ -652,13 +667,13 @@ void room::buildDiffraction(room* scene){
 
     pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
     bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
-    int i = 0;
+    unsigned int i = 0;
     while(i<(*scene).amount_all_walls && notDiffracted){
         // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
         if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
             pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
             bool check = true;
-            int j = 0;
+            unsigned int j = 0;
             while(j<(*scene).amount_all_walls && check){
                 check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
                 j++;
@@ -674,6 +689,7 @@ void room::buildDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 notDiffracted =false;
             }
@@ -696,6 +712,7 @@ void room::buildDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 delete(rayReceiver);
                 delete(rayTransmitter);
@@ -726,7 +743,7 @@ bool room::commonToAnyWall(double posX, double posY, int indwall){
 
     bool ans = true;
 
-    for (int i = 0; i < amount_walls; i ++){
+    for (unsigned int i = 0; i < amount_walls; i ++){
 
             if(pointOnLine(walls[i], posX, posY)  && i != indwall /*&& walls[i]->line().intersect(walls[indwall]->line(), NULL) == 0*/){
                 ans = false;
@@ -997,6 +1014,8 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     }
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     Efield = -i * R * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*completeLength)/completeLength);
+//    cout<<"Electric filed: ";
+//    cout<<Efield<<endl;
     return Efield;
 }
 
@@ -1036,27 +1055,35 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     complex<double> Efield =0.0;
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
-    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist;
+    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist*pow(10, -1.0);
 
     double nu = sqrt(2*Beta*delta_r/M_PI) ;
 
     // The ITU's approximation for |F(nu)|^2
-    double FresnelPower = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
-    double fresnelPowerW = pow(10,FresnelPower/20);
+    double FresnelPower = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+//    double fresnelPowerW = pow(10,FresnelPower/20);
     //double fresnelNorm = sqrt(-6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1));
-    double fresnelNorm = sqrt(fresnelPowerW);
+//    double fresnelNorm = sqrt(fresnelPowerW);
 //    double fresnelArg = -(M_PI/4)-(M_PI/2)*pow(nu,2);
-    double fresnelArg = -(1/4)-(1/2)*pow(nu,2);
+//    double fresnelArg = -(1/4)-(1/2)*pow(nu,2);
 //    complex <double> fresnelCoef = fresnelNorm*exp(fresnelArg);
-    complex <double> fresnelCoef = (fresnelNorm*cos(M_PI*fresnelArg),fresnelNorm*sin(M_PI*fresnelArg));
+//    complex <double> fresnelCoef = (fresnelNorm*cos(M_PI*fresnelArg),fresnelNorm*sin(M_PI*fresnelArg));
 //    norm(fresnelCoef) = fresnelNorm;
 //    arg(fresnelCoef) = fresnelArg;
     ray* directRay = new ray(Receiver->getPosX(),Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY(),0,0);
     //rayLine.push_back(directRay);
     //Efield = computeEfield(rayLine);
     double G = Zvoid/(pow(M_PI, 2)*Ra);
-    Efield = (sqrt(60*G*powerEmettor)/directRay->getMeterLength());  // we can add the phase if we want to take into account the interraction between MPCs
-    totalEfield += Efield*fresnelCoef;
+    //Efield = (sqrt(60*G*powerEmettor)/directRay->getMeterLength());  // we can add the phase if we want to take into account the interraction between MPCs
+    complex <double> i(0.0, 1.0);
+    double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
+    Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
+    double power = 1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)*FresnelPower;
+
+
+//    totalEfield += Efield*fresnelCoef;
+
+
     delete(directRay);
 //    cout<< "Fresnel coeffiecient: ";
 //    cout<<fresnelCoef<<endl;
@@ -1064,11 +1091,21 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 //    cout<<fresnelNorm<<endl;
 //    cout<< "Fresnel argument: ";
 //    cout<<fresnelArg<<endl;
-//    cout<< "Fresnel power: ";
-//    cout<<FresnelPower<<endl;
-//    cout<< "Electric field: ";
-//    cout<<Efield<<endl;
-    return FresnelPower;
+    cout<< "Fresnel power: ";
+    cout<<FresnelPower<<endl;
+    cout<< "Electric field: ";
+    cout<<Efield<<endl;
+    cout<< "Electric field power: ";
+    cout<<1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)<<endl;
+    cout<< "Electric field power(dBm): ";
+    cout<<dBm(1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2))<<endl;
+    cout<< "power: ";
+    cout<<power<<endl;
+    cout<< "power(dBm): ";
+    cout<<dBm(power)<<endl;
+    cout<< "nu: ";
+    cout<<nu<<endl;
+    return power;
 }
 
 
@@ -1274,6 +1311,7 @@ void room::drawCoverege(){
         for(int j=0;j < (int)discret*ceil(rows);j++){
             power = 0;
             diffractedPower = 0;
+            totalEfield = 0;
             double xRece = square_size/2 + i*square_size;
             double yRece = square_size/2 + j*square_size;
 

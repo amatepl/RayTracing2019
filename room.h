@@ -114,7 +114,7 @@ private:
     vector <ray*> completeRay;
     vector <ray*> current; // algo power
 
-    complex <double> Efield;
+    complex <double> Efield = 0;
     complex <double> totalEfield = 0.0;
 
 
@@ -141,9 +141,9 @@ private:
 
     // Problem parameters
     int reflectionsNumber;
-    int amount_walls = 18;
+    unsigned int amount_walls = 18;
     int amount_useless_walls = 10;
-    int amount_all_walls = 28;
+    unsigned int amount_all_walls = 28;
     int amount_discret = 20;
     map<char,int[4]> streets;
 
