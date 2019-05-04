@@ -53,6 +53,11 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
     statusBar()->showMessage(eventName);
     ui->spinBoxPosX->setValue(pos.x());
     ui->spinBoxPosY->setValue(pos.y());
+
+    if(scene->DataComputed()){
+        ui->Prx->setNum(scene->getPrx(pos.x(),pos.y()));
+        ui->DelaySpread->setNum(scene->getDelay(pos.x(),pos.y()));
+    }
 }
 
 

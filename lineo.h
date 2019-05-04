@@ -5,6 +5,7 @@
 
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
+#include <iostream>
 
 class room;
 
@@ -12,6 +13,7 @@ class lineo
 {
 public:
     lineo(double x01 = 0, double y01 = 0, double x02 = 0, double y02 = 0 );
+    ~lineo(void);
     double getLength();
     int vectX();
     int vectY();

@@ -28,6 +28,7 @@ class room : public QGraphicsScene//, private QImage
     Q_OBJECT
 public:
     explicit room(MainWindow *parent = 0);
+    ~room(void);
 
     void launch_algo(bool drawR);
 
@@ -56,7 +57,9 @@ public:
     void clearAll();
 
     void drawCoverege();
-
+    bool DataComputed();
+    double getPrx(int posX, int posY);
+    double getDelay(int posX, int posY);
 
 signals:
 
@@ -67,7 +70,6 @@ protected:
 
     int antenaType;
 
-
 private:
 
     // Qt visuals
@@ -77,9 +79,9 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    double antennaHeight;
-    wall *walls[16];    // For easier use walls are put in arrays
+    wall *walls[28];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
+    //lineo *uselessWalls[10];
 
 
     // --> Global variables (electrical constants)
@@ -88,15 +90,16 @@ private:
     double  Zvoid = 120*M_PI;
     double  muAir = 4*M_PI*1e-7;      // Tm/A
     double  c =2.998e+8;              // m/s
-    double  freq = 2.45e+9;           // Hz
-//    double  freq = 26e+9;           // Hz
+//    double  freq = 2.45e+9;           // Hz
+    double  freq = 26e+9;           // Hz
+    double  antennaHeight = 1.8; //m
 
     double lambda;
-    double alpha;
-    double beta;
+    // double alpha;
+    // double beta;
     double Beta = 2*M_PI*freq*sqrt(muAir*epsilonAir); // Used for the diffraction.
 
-    complex <double> gamma;
+    // complex <double> gamma;
     double power = 0;
     double diffractedPower = 0;
 
@@ -112,7 +115,7 @@ private:
     vector <ray*> completeRay;
     vector <ray*> current; // algo power
 
-    complex <double> Efield;
+    complex <double> Efield = 0;
     complex <double> totalEfield = 0.0;
 
 
@@ -139,8 +142,16 @@ private:
 
     // Problem parameters
     int reflectionsNumber;
-    int amount_walls = 16;
+    unsigned int amount_walls = 18;
+    int amount_useless_walls = 10;
+    unsigned int amount_all_walls = 28;
     int amount_discret = 20;
+    map<char,int[4]> streets;
+
+    double minLength, maxLength;
+    double *Data;
+    bool coverageDone = false;
+
 //    double powerEmettor = 20.0;   // In watts the power of the emettor
     double powerEmettor = 2.0;   // In watts the power of the emettor
     double Zwall;
@@ -165,6 +176,7 @@ private:
     static void drawDiffraction(room* scene);
     static void buildDiffraction(room* scene);
     bool workingZone();
+    void setUpStreets();
 
     // Numerical analysis
 
@@ -196,10 +208,9 @@ private:
 
     double computePrx(complex <double> totalEfield);
     complex <double> computeEfield(vector<ray*> rayLine);
-    complex <double> computeEfieldGround();
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
-
+    complex <double> computeEfieldGround();
 
 public slots:
 

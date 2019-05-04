@@ -13,9 +13,7 @@ room::room(MainWindow *parent) :
     antenaType = 2; // 0 for transmitter 1 for receiver 2 for nothing
     Transmitter = NULL;
     Receiver = NULL;
-    antennaHeight = 1.8; //m
 
-    complex <double> i(0.0, 1.0);
     lambda = c/freq;
 
     // Absolute electric permittivity
@@ -25,36 +23,85 @@ room::room(MainWindow *parent) :
     Zwall = sqrt((muAir/eps));
 
     // Propagation constants for small-loss hypothesis
-    alpha = 2*M_PI*freq*sqrt((muAir*eps)/2)*sqrt((sqrt(1 + pow((wallSigma/(2*M_PI*freq*eps)), 2)) -1 ));
-    beta = 2*M_PI*freq*sqrt((muAir*eps)/2)*sqrt((sqrt(1 + pow((wallSigma/(2*M_PI*freq*eps)), 2)) + 1 ));
+    // alpha = 2*M_PI*freq*sqrt((muAir*eps)/2)*sqrt((sqrt(1 + pow((wallSigma/(2*M_PI*freq*eps)), 2)) -1 ));
+    // beta = 2*M_PI*freq*sqrt((muAir*eps)/2)*sqrt((sqrt(1 + pow((wallSigma/(2*M_PI*freq*eps)), 2)) + 1 ));
 
-    gamma = alpha + i*beta;
+    // gamma = alpha + i*beta;
 
     // Let us define the walls and draw the view
-    walls[0] = new wall(450,1,450,200, 0.0, 0.0, 0.0, 0);
-    walls[1] = new wall(450,1,1,1, 0.0, 0.0, 0.0, 1);
-    walls[2] = new wall(450,200,1,200, 0.0, 0.0, 0.0, 2);
-    walls[3] = new wall(1,200,1,1, 0.0, 0.0, 0.0, 3);
 
-    walls[4] = new wall(550, 1, 550, 200, 0.0, 0.0, 0.0, 4);
-    walls[5] = new wall(550, 200, 970, 200, 0.0, 0.0, 0.0, 5);
-    walls[6] = new wall(970, 200, 970, 1, 0.0, 0.0, 0.0, 6);
-    walls[7] = new wall(970, 1, 550, 1, 0.0, 0.0, 0.0, 7);
+    double minLength, maxLength = 0;
+    double *Data;
 
-    walls[8] = new wall(550, 300, 550, 500, 0.0, 0.0, 0.0, 8);
-    walls[9] = new wall(550, 500, 970, 500, 0.0, 0.0, 0.0, 9);
-    walls[10] = new wall(970, 500, 970, 300, 0.0, 0.0, 0.0, 10);
-    walls[11] = new wall(970, 300, 550, 300, 0.0, 0.0, 0.0, 11);
+    //Building 1
+    walls[0] = new wall(200,1,200,200, 0.0, 0.0, 0.0, 0);
+    walls[18] = new wall(200,1,1,1, 0.0, 0.0, 0.0, 18);
+    walls[1] = new wall(200,200,1,200, 0.0, 0.0, 0.0, 1);
+    walls[19] = new wall(1,200,1,1, 0.0, 0.0, 0.0, 19);
 
-    walls[12] = new wall(1, 300, 1, 500, 0.0, 0.0, 0.0, 11);
-    walls[13] = new wall(1, 500, 450, 500, 0.0, 0.0, 0.0, 13);
-    walls[14] = new wall(450, 500, 450, 300, 0.0, 0.0, 0.0, 14);
-    walls[15] = new wall(450, 300, 1, 300, 0.0, 0.0, 0.0, 15);
+    //Building 2
+    walls[2] = new wall(250, 1, 250, 200, 0.0, 0.0, 0.0, 2);
+    walls[3] = new wall(250, 200, 450, 200, 0.0, 0.0, 0.0, 3);
+    walls[4] = new wall(450, 200, 450, 1, 0.0, 0.0, 0.0, 4);
+    walls[20] = new wall(450, 1, 250, 1, 0.0, 0.0, 0.0,20);
+
+    //Building 3
+    walls[5] = new wall(500, 1, 500, 200, 0.0, 0.0, 0.0, 5);
+    walls[6] = new wall(500, 200, 700, 200, 0.0, 0.0, 0.0, 6);
+    walls[7] = new wall(700, 200, 700, 1, 0.0, 0.0, 0.0, 7);
+    walls[21] = new wall(700, 1, 500, 1, 0.0, 0.0, 0.0, 21);
+
+    //Building 4
+    walls[8] = new wall(750, 1, 750, 200, 0.0, 0.0, 0.0, 8);
+    walls[9] = new wall(750, 200, 950, 200, 0.0, 0.0, 0.0, 9);
+    walls[10] = new wall(950, 200, 950, 1, 0.0, 0.0, 0.0, 10);
+    walls[22] = new wall(950, 1, 750, 1, 0.0, 0.0, 0.0, 22);
+
+    //Building 5
+    walls[11] = new wall(200, 300, 200, 500, 0.0, 0.0, 0.0, 11);
+    walls[23] = new wall(200, 500, 1, 500, 0.0, 0.0, 0.0, 23);
+    walls[24] = new wall(1, 500, 1, 300, 0.0, 0.0, 0.0, 24);
+    walls[12] = new wall(1, 300, 200, 300, 0.0, 0.0, 0.0, 12);
+
+    //Building 6
+    walls[13] = new wall(250, 300, 250, 500, 0.0, 0.0, 0.0, 13);
+    walls[25] = new wall(250, 500, 600, 500, 0.0, 0.0, 0.0, 25);
+    walls[14] = new wall(600, 500, 600, 300, 0.0, 0.0, 0.0, 14);
+    walls[15] = new wall(600, 300, 250, 300, 0.0, 0.0, 0.0, 15);
+
+    //Building 7
+    walls[16] = new wall(650, 300, 650, 500, 0.0, 0.0, 0.0, 16);
+    walls[26] = new wall(650, 500, 950, 500, 0.0, 0.0, 0.0, 26);
+    walls[27] = new wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
+    walls[17] = new wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);
 
     drawWalls();
     //findDiffractionPoints();
 
 }
+room::~room(void){}
+
+void room::setUpStreets(){
+    int laLoi[4]= {1,200,950,300};
+    int commerceUp[4] = {200,1,250,200};
+    int commerceDown[4] = {200,300,250,500};
+    int deuxEg[4] = {450,1,500,200};
+    int spa[4] = {700,1,750,200};
+    int indu[4] = {600,300,650,500};
+
+
+    //lis = {1,200,950,300};
+    struct rect{
+      int size[4];
+    };
+    map <unsigned int,rect*> st;
+    rect* str = new rect;
+    str->size[0] = 1;
+//    st = ('La_Loi', str);
+    st['Rue_de_la_Loi']= str;
+//    //{'Rue_du_Commerce_Up', {200,1,250,200}};
+}
+
 
 bool room::workingZone(){
     int Rx = Receiver->getPosX();
@@ -64,7 +111,17 @@ bool room::workingZone(){
 //    int Ty = Receiver->getPosY();
     bool result;
 
-    result = (Rx>=1 && Rx<=450 && Ry>=1 && Ry<=200) || (Rx>=550 && Rx<=970 && Ry>=1 && Ry<=200) || (Rx>=1 && Rx<=450 && Ry>=300 && Ry<=500) || (Rx>=550 && Rx<=970 && Ry>=300 && Ry<=500);
+    bool building1 = Rx>=1 && Rx<=200 && Ry>=1 && Ry<=200;
+    bool building2 = Rx>=250 && Rx<=450 && Ry>=1 && Ry<=200;
+    bool building3 = Rx>=500 && Rx<=700 && Ry>=1 && Ry<=200;
+    bool building4 = Rx>=750 && Rx<=950 && Ry>=1 && Ry<=200;
+    bool building5 = Rx>=1 && Rx<=200 && Ry>=300 && Ry<=500;
+    bool building6 = Rx>=250 && Rx<=600 && Ry>=300 && Ry<=500;
+    bool building7 = Rx>=650 && Rx<=950 && Ry>=300 && Ry<=500;
+
+
+
+    result = building1 || building2 || building3 || building4 || building5 || building6 || building7;
     return result ;
 }
 
@@ -75,15 +132,15 @@ void room::findDiffractionPoints(){
     */
 
 
-    for(int i = 0;i<amount_walls;i++){
-        for(int j = 0;j<amount_walls;j++){
-            if(walls[i]->getIndWall() != walls[j]->getIndWall()){          
+    for(unsigned int i = 0;i<amount_walls;i++){
+        for(unsigned int j = 0;j<amount_walls;j++){
+            if(walls[i]->getIndWall() != walls[j]->getIndWall()){
                 if(pointOnLine(walls[j],walls[i]->getX1(),walls[i]->getY1())){
                     bool check = true;
                     unsigned int c = 0;
                     while(c<diffractionPoints.size()&& check){
                         check = (diffractionPoints[c][0] != walls[i]->getX1() || diffractionPoints[c][1] != walls[i]->getY1());
-                        c++;
+                        c++;    cout<<(double)950/500<<endl;
                     }
 
                     if(check){diffractionPoints.push_back({walls[i]->getX1(),walls[i]->getY1()});}
@@ -107,25 +164,9 @@ void room::findDiffractionPoints(){
 void room::drawWalls(){
     QPen outlinePen(QColor(0, 0, 0, 255));
     outlinePen.setWidth(2);
-    this->addLine(walls[0]->getX1(),walls[0]->getY1(),walls[0]->getX2(),walls[0]->getY2(),outlinePen);
-    this->addLine(walls[1]->getX1(),walls[1]->getY1(),walls[1]->getX2(),walls[1]->getY2(),outlinePen);
-    this->addLine(walls[2]->getX1(),walls[2]->getY1(),walls[2]->getX2(),walls[2]->getY2(),outlinePen);
-    this->addLine(walls[3]->getX1(),walls[3]->getY1(),walls[3]->getX2(),walls[3]->getY2(),outlinePen);
-
-    this->addLine(walls[4]->getX1(),walls[4]->getY1(),walls[4]->getX2(),walls[4]->getY2(),outlinePen);
-    this->addLine(walls[5]->getX1(),walls[5]->getY1(),walls[5]->getX2(),walls[5]->getY2(),outlinePen);
-    this->addLine(walls[6]->getX1(),walls[6]->getY1(),walls[6]->getX2(),walls[6]->getY2(),outlinePen);
-    this->addLine(walls[7]->getX1(),walls[7]->getY1(),walls[7]->getX2(),walls[7]->getY2(),outlinePen);
-
-    this->addLine(walls[8]->getX1(),walls[8]->getY1(),walls[8]->getX2(),walls[8]->getY2(),outlinePen);
-    this->addLine(walls[9]->getX1(),walls[9]->getY1(),walls[9]->getX2(),walls[9]->getY2(),outlinePen);
-    this->addLine(walls[10]->getX1(),walls[10]->getY1(),walls[10]->getX2(),walls[10]->getY2(),outlinePen);
-    this->addLine(walls[11]->getX1(),walls[11]->getY1(),walls[11]->getX2(),walls[11]->getY2(),outlinePen);
-
-    this->addLine(walls[12]->getX1(),walls[12]->getY1(),walls[12]->getX2(),walls[12]->getY2(),outlinePen);
-    this->addLine(walls[13]->getX1(),walls[13]->getY1(),walls[13]->getX2(),walls[13]->getY2(),outlinePen);
-    this->addLine(walls[14]->getX1(),walls[14]->getY1(),walls[14]->getX2(),walls[14]->getY2(),outlinePen);
-    this->addLine(walls[15]->getX1(),walls[15]->getY1(),walls[15]->getX2(),walls[15]->getY2(),outlinePen);
+    for(int i = 0;i<amount_all_walls;i++){
+        this->addLine(walls[i]->getX1(),walls[i]->getY1(),walls[i]->getX2(),walls[i]->getY2(),outlinePen);
+    }
 }
 
 
@@ -148,20 +189,38 @@ void room::launch_algo(bool drawR){
 
     if(!workingZone()){
         // Calculate power -- Reflexion and transmission
+
+        current_ray = new lineo(Receiver->getPosX(),Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY());
+        bool reflection = true;
+        unsigned int i = 0;
+        while(i<amount_walls && reflection){
+            reflection = !intersectionCheck(current_ray,walls[i]);
+            i++;
+        }
+        delete(current_ray);
+
         if(drawR){
-            recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);
-            drawDiffraction(this);
+            if(reflection){recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber,drawRay);}
+            else{
+                drawDiffraction(this);}
         }
         else{
-            recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);
-            buildDiffraction((this));
+            if(reflection){recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);}
+            else{buildDiffraction((this));}
         }
+        //cout<<diffractedPower<<endl;
+        //if(diffractedPower !=0){power = power + dBmRev(diffractedPower);}
 
-        if(diffractedPower){power = power + dBmRev(diffractedPower);}
-        double powerRef = computePrx(totalEfield);
-        powerReceived = dBm(powerRef);
-
-        resultsBinaryDebit = binaryDebit(powerReceived);
+        //if(diffractedPower !=0){powerRef = powerRef + dBmRev(diffractedPower);}
+        if(reflection){
+            double powerRef = computePrx(totalEfield);
+            //cout<<"power: ";
+            //cout<<powerRef<<endl;
+            powerReceived = dBm(powerRef);
+        }
+        if(powerReceived){
+            resultsBinaryDebit = binaryDebit(powerReceived);
+        }
     }
 }
 
@@ -193,7 +252,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
         recursionState += 1;
 
         //Direct ray beteween the transmitter and the receiver
-        for(int i = 0;i < amount_walls;i++){
+        for(unsigned int i = 0;i < amount_walls;i++){
 
            current_wall = walls[i];
 
@@ -227,6 +286,7 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
                 current_ray = new lineo(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY);
                 imCoordinates[0] = intersection(current_ray,current_wall)[0];
                 imCoordinates[1] = intersection(current_ray,current_wall)[1];
+                delete(current_ray);
                 //if(pointOnLine(current_wall,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
                     recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
                 //}
@@ -257,8 +317,6 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
     outlinePen.setWidth(1);
 
     unsigned char j = 0;
-
-
     while(j<=(*scene).recursionState){
 
         /*
@@ -283,13 +341,16 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
                 completeRay.push_back(receiver_ray);
                 originX = imageCoordinates[0];
                 originY = imageCoordinates[1];
+                delete(current_ray);
 
             }
             else{
                 /*
                  * Here we know that the ray doesn't reflect on any real wall so we've got to destroy it and also its past.
                 */
+
                 completeRay.clear();
+                delete(current_ray);
                 j = (*scene).recursionState+1; // Setting j to this value stops the while loop
             }
         }
@@ -305,7 +366,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
     unsigned int i = 0;
     bool dontStop = true;
     while(i<completeRay.size() && dontStop){
-        for (int j = 0;j<(*scene).amount_walls;j++){
+        for (unsigned int j = 0;j<(*scene).amount_walls;j++){
             /*
              This loop checks if there is any intersection of the ray with the walls. If this is the case we destroy the ray since
              there is no transmission.
@@ -321,7 +382,9 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
 //            if((*scene).intersectionCheck(receiver_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], rayEnd[0], rayEnd[1]) && !(*scene).pointOnLine((*scene).walls[j], rayStart[0], rayStart[1])){
             if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
             //if((*scene).checkTransmission((*scene).walls[i],receiver_ray,rayStart[0], rayStart[1],rayEnd[0], rayEnd[1])){
+                delete(current_ray);
                 completeRay.clear();
+                completeRay.shrink_to_fit();
                 dontStop = false;
                 break;
             }
@@ -368,6 +431,10 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         }
         //(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay(completeRay);
         (*scene).totalEfield += scene->computeEfield(completeRay);
+        delete(receiver_ray);
+        completeRay.clear();
+        completeRay.shrink_to_fit();
+
 //        cout<<"Ray's power: ";
 //        cout<< (*scene).power<<endl;
     }
@@ -388,13 +455,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     lineo *current_ray;
     ray* receiver_ray;
 
-    // Setting up drawing tool
-    QPen outlinePen(QColor(0, 0, 255, 255));
-    outlinePen.setWidth(1);
-
     unsigned char j = 0;
-
-
     while(j<=(*scene).recursionState){
 
         /*
@@ -415,7 +476,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
             if((*scene).pointOnLine(walle,imageCoordinates[0],imageCoordinates[1]) && (*scene).pointOnLine(current_ray,imageCoordinates[0],imageCoordinates[1])){
 
                 receiver_ray = new ray(imageCoordinates[0],imageCoordinates[1],originX,originY,M_PI/2 - abs(abs(current_ray->getAngle())-abs(walle->getAngle())),walle->getIndWall());
-
+                delete(current_ray);
                 completeRay.push_back(receiver_ray);
                 originX = imageCoordinates[0];
                 originY = imageCoordinates[1];
@@ -425,7 +486,9 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
                 /*
                  * Here we know that the ray doesn't reflect on any real wall so we've got to destroy it and also its past.
                 */
+                delete(current_ray);
                 completeRay.clear();
+                completeRay.shrink_to_fit();
                 j = (*scene).recursionState+1; // Setting j to this value stops the while loop
             }
         }
@@ -441,7 +504,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     unsigned int i = 0;
     bool dontStop = true;
     while(i<completeRay.size() && dontStop){
-        for (int j = 0;j<(*scene).amount_walls;j++){
+        for (unsigned int j = 0;j<(*scene).amount_walls;j++){
             /*
              This loop checks if there is any intersection of the ray with the walls. If this is the case we destroy the ray since
              there is no transmission.
@@ -450,6 +513,7 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
             receiver_ray = completeRay[i];
             current_ray = new lineo(receiver_ray->getX1(),receiver_ray->getY1(),receiver_ray->getX2(),receiver_ray->getY2());
             if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
+                delete(current_ray);
                 completeRay.clear();
                 dontStop = false;
                 break;
@@ -461,6 +525,9 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
     if(!completeRay.empty()){
         //(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay(completeRay);
         (*scene).totalEfield += scene->computeEfield(completeRay);
+        delete(receiver_ray);
+        completeRay.clear();
+        completeRay.shrink_to_fit();
     }
 }
 
@@ -471,79 +538,193 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
 
 
 void room::drawDiffraction(room* scene){
+
+    /* This function draws the diffracted ray and asks to calculate its power.
+     * Only one diffraction is allowed for a given position of the transmitter and the receiver.
+     */
+
+    // Setting-up the drawing tool.
     QPen outlinePen(QColor(255, 0, 0, 220));
     outlinePen.setWidth(1);
-    lineo* pathTester;
 
+    // Those will check the intersections with the walls.
+    lineo* pathTester;
+    lineo* pathTester2;
+
+    //Actual rays that we chould obtein when the diffracation happens.
     ray* rayReceiver;
     ray* rayTransmitter;
 
     (*scene).diffractionPoints.clear();
 
     pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-    int walls_indices[2];
-    int indice = 0;
-    int c = 0;
-    while(c<(*scene).amount_walls && indice<2){
-        if((*scene).intersectionCheck(pathTester,(*scene).walls[c])){
-            walls_indices[indice] = c;
-            indice += 1;
+    bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
+    unsigned int i = 0;
+    while(i<(*scene).amount_all_walls && notDiffracted){
+        // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
+        if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
+            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
+            bool check = true;
+            unsigned int j = 0;
+            while(j<(*scene).amount_all_walls && check){
+                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            delete(pathTester2);
+            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
+            j =0;
+            while(j<(*scene).amount_all_walls && check){
+                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            if(check){
+                scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),outlinePen);
+                scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),outlinePen);
+                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
+                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
+                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
+                //(*scene).diffractedPower+= diffractPower;
+                notDiffracted =false;
+            }
+            delete(pathTester2);
+            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
+            j = 0;
+            while(j<(*scene).amount_all_walls && !check){
+                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            delete(pathTester2);
+            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
+            j=0;
+            while(j<(*scene).amount_all_walls && !check){
+                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            if(!check){
+                scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),outlinePen);
+                scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),outlinePen);
+                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
+                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
+                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
+                //(*scene).diffractedPower+= diffractPower;
+                delete(rayReceiver);
+                delete(rayTransmitter);
+                notDiffracted = false;
+            }
+            delete(pathTester2);
+
         }
-        c++;
+        i++;
     }
-    if(indice == 2){
-        wall* wall1 = (*scene).walls[walls_indices[0]];
-        wall* wall2 = (*scene).walls[walls_indices[1]];
-        if((wall1->getX1() == wall2->getX1() && wall1->getY1() == wall2->getY1()) || (wall1->getX1() == wall2->getX2() && wall1->getY1() == wall2->getY2())){
-            (*scene).diffractionPoints.push_back({wall1->getX1(),wall1->getY1()});
-        }
-        else if((wall1->getX2() == wall2->getX2() && wall1->getY2() == wall2->getY2()) || (wall1->getX2() == wall2->getX1() && wall1->getY2() == wall2->getY1())){
-            (*scene).diffractionPoints.push_back({wall1->getX2(),wall1->getY2()});
-        }
-        scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],outlinePen);
-        scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],outlinePen);
-        rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
-        rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
-        double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-        (*scene).diffractedPower+= diffractPower;
-    }
+    delete(pathTester);
+
+
+
+//    int walls_indices[2];
+//    int indice = 0;
+//    int c = 0;
+//    while(c<(*scene).amount_walls && indice<2){
+//        if((*scene).intersectionCheck(pathTester,(*scene).walls[c])){
+//            walls_indices[indice] = c;
+//            indice += 1;
+//        }
+//        c++;
+//    }
+//    if(indice == 2){
+//        wall* wall1 = (*scene).walls[walls_indices[0]];
+//        wall* wall2 = (*scene).walls[walls_indices[1]];
+//        if((wall1->getX1() == wall2->getX1() && wall1->getY1() == wall2->getY1()) || (wall1->getX1() == wall2->getX2() && wall1->getY1() == wall2->getY2())){
+//            (*scene).diffractionPoints.push_back({wall1->getX1(),wall1->getY1()});
+//        }
+//        else if((wall1->getX2() == wall2->getX2() && wall1->getY2() == wall2->getY2()) || (wall1->getX2() == wall2->getX1() && wall1->getY2() == wall2->getY1())){
+//            (*scene).diffractionPoints.push_back({wall1->getX2(),wall1->getY2()});
+//        }
+//        scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],outlinePen);
+//        scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],outlinePen);
+//        rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
+//        rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
+//        double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+//        (*scene).diffractedPower+= diffractPower;
+//    }
 }
 
 
 void room::buildDiffraction(room* scene){
-    QPen outlinePen(QColor(255, 0, 0, 220));
-    outlinePen.setWidth(1);
-    lineo* pathTester;
+    /* This function builds the diffracted ray and asks to calculate its power.
+     * Only one diffraction is allowed for a given position of the transmitter and the receiver.
+     */
 
-    (*scene).diffractionPoints.clear();
+    // Those will check the intersections with the walls.
+    lineo* pathTester;
+    lineo* pathTester2;
+
+    //Actual rays that we chould obtein when the diffracation happens.
     ray* rayReceiver;
     ray* rayTransmitter;
 
+    (*scene).diffractionPoints.clear();
+
     pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-    int walls_indices[2];
-    int indice = 0;
-    int c = 0;
-    while(c<(*scene).amount_walls && indice<2){
-        if((*scene).intersectionCheck(pathTester,(*scene).walls[c])){
-            walls_indices[indice] = c;
-            indice += 1;
+    bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
+    unsigned int i = 0;
+    while(i<(*scene).amount_all_walls && notDiffracted){
+        // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
+        if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
+            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
+            bool check = true;
+            unsigned int j = 0;
+            while(j<(*scene).amount_all_walls && check){
+                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            delete(pathTester2);
+            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
+            j =0;
+            while(j<(*scene).amount_all_walls && check){
+                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            if(check){
+                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
+                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
+                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
+                //(*scene).diffractedPower+= diffractPower;
+                notDiffracted =false;
+            }
+            delete(pathTester2);
+            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
+            j = 0;
+            while(j<(*scene).amount_all_walls && !check){
+                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            delete(pathTester2);
+            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
+            j=0;
+            while(j<(*scene).amount_all_walls && !check){
+                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
+                j++;
+            }
+            delete(pathTester2);
+            if(!check){
+                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
+                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
+                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerReceived = (*scene).dBm(diffractPower);
+                //(*scene).diffractedPower+= diffractPower;
+                delete(rayReceiver);
+                delete(rayTransmitter);
+                notDiffracted = false;
+            }
+
         }
-        c++;
+        i++;
     }
-    if(indice == 2){
-        wall* wall1 = (*scene).walls[walls_indices[0]];
-        wall* wall2 = (*scene).walls[walls_indices[1]];
-        if((wall1->getX1() == wall2->getX1() && wall1->getY1() == wall2->getY1()) || (wall1->getX1() == wall2->getX2() && wall1->getY1() == wall2->getY2())){
-            (*scene).diffractionPoints.push_back({wall1->getX1(),wall1->getY1()});
-        }
-        else if((wall1->getX2() == wall2->getX2() && wall1->getY2() == wall2->getY2()) || (wall1->getX2() == wall2->getX1() && wall1->getY2() == wall2->getY1())){
-            (*scene).diffractionPoints.push_back({wall1->getX2(),wall1->getY2()});
-        }
-        rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
-        rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
-        double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-        (*scene).diffractedPower+= diffractPower;
-    }
+    delete(pathTester);
+
 
 }
 
@@ -563,7 +744,7 @@ bool room::commonToAnyWall(double posX, double posY, int indwall){
 
     bool ans = true;
 
-    for (int i = 0; i < amount_walls; i ++){
+    for (unsigned int i = 0; i < amount_walls; i ++){
 
             if(pointOnLine(walls[i], posX, posY)  && i != indwall /*&& walls[i]->line().intersect(walls[indwall]->line(), NULL) == 0*/){
                 ans = false;
@@ -575,39 +756,40 @@ bool room::commonToAnyWall(double posX, double posY, int indwall){
 
 
 std::vector<double> room::intersection(lineo* line1, lineo* line2){
-    /*
-        * Two-equations line system, determines the intersection point if it exists
-        *    y = ax + b
-        *    y = cx + d
-        */
 
-    std::vector<double> coord(2);
+   /*
+    * Two-equations line system, determines the intersection point if it exists
+    *    y = ax + b
+    *    y = cx + d
+    */
 
-    double xpos;
-    double ypos;
+   std::vector<double> coord(2);
 
-    long double a = line1->getSlope();
-    double b = line1->getYorigin();
-    long double c = line2->getSlope();
-    double d = line2->getYorigin();
+   double xpos;
+   double ypos;
 
-    if(a == INFINITY){
-        xpos = line1->getX1();
-        ypos = c * xpos + d;
-    }
+   long double a = line1->getSlope();
+   double b = line1->getYorigin();
+   long double c = line2->getSlope();
+   double d = line2->getYorigin();
 
-    else if(c == INFINITY){
-        xpos = line2->getX1();
-        ypos = a * xpos + b;
-    }
-    else{
-    xpos = (d - b)/(a - c);
-    ypos = (a * xpos) + b;
-    }
+   if(a == INFINITY){
+       xpos = line1->getX1();
+       ypos = c * xpos + d;
+   }
 
-    coord[0] = xpos;
-    coord[1] = ypos;
-    return coord;
+   else if(c == INFINITY){
+       xpos = line2->getX1();
+       ypos = a * xpos + b;
+   }
+   else{
+   xpos = (d - b)/(a - c);
+   ypos = (a * xpos) + b;
+   }
+
+   coord[0] = xpos;
+   coord[1] = ypos;
+   return coord;
 }
 
 
@@ -769,6 +951,7 @@ bool room::intersectionCheckNonInclusive(lineo* line1, lineo* line2){
     }
 
     return (pointOnLineNonInclusive(line1,xpos,ypos) && pointOnLineNonInclusive(line2,xpos,ypos));
+
 }
 
 
@@ -830,6 +1013,10 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         }
         completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 2cm)
     }
+
+    if(amountSegment==1) this->minLength = completeLength; // for delay spread computation
+    if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
+
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     Efield = -i * R * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*completeLength)/completeLength);
     return Efield;
@@ -843,6 +1030,7 @@ complex <double> room::computeEfieldGround(){
     double thetaI = M_PI - thetaG;
     double R = computeReflexionPer(thetaG,epsilonWallRel);
     double completeLength = distance/sin(thetaG);
+    if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application
     complex <double> Efield = i * R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI)) * (exp(-i*(2.0*M_PI/lambda)*completeLength)/completeLength);
@@ -850,7 +1038,7 @@ complex <double> room::computeEfieldGround(){
 }
 
 double room::computePrx(complex <double> totalEfield){
-    // Compute the power at the receive antenna with the total electric field induced by all MPC 
+    // Compute the power at the receive antenna with the total electric field induced by all MPC
     complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
     double distance = this->distance()*0.02;
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
@@ -860,17 +1048,68 @@ double room::computePrx(complex <double> totalEfield){
 }
 
 double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
+
     // Direct distance between the receiver and the transmitter
     double direct_dist = sqrt(pow(Transmitter->getPosX()-Receiver->getPosX(),2) + pow(Transmitter->getPosY()-Receiver->getPosY(),2));
 
+    // The vactor that will contain the direct ray.
+    //vector<ray*> rayLine;
+    //rayLine.clear();
+
+    complex<double> Efield =0.0;
+
     // The length defference between the path going through the tip of the obstacle, and the direct path.
-    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist;
+    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist*pow(10, -1.0);
 
     double nu = sqrt(2*Beta*delta_r/M_PI) ;
 
     // The ITU's approximation for |F(nu)|^2
-    double FresnelPower = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
-    return FresnelPower;
+    double FresnelPower = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+//    double fresnelPowerW = pow(10,FresnelPower/20);
+    //double fresnelNorm = sqrt(-6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1));
+//    double fresnelNorm = sqrt(fresnelPowerW);
+//    double fresnelArg = -(M_PI/4)-(M_PI/2)*pow(nu,2);
+//    double fresnelArg = -(1/4)-(1/2)*pow(nu,2);
+//    complex <double> fresnelCoef = fresnelNorm*exp(fresnelArg);
+//    complex <double> fresnelCoef = (fresnelNorm*cos(M_PI*fresnelArg),fresnelNorm*sin(M_PI*fresnelArg));
+//    norm(fresnelCoef) = fresnelNorm;
+//    arg(fresnelCoef) = fresnelArg;
+    ray* directRay = new ray(Receiver->getPosX(),Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY(),0,0);
+    //rayLine.push_back(directRay);
+    //Efield = computeEfield(rayLine);
+    double G = Zvoid/(pow(M_PI, 2)*Ra);
+    //Efield = (sqrt(60*G*powerEmettor)/directRay->getMeterLength());  // we can add the phase if we want to take into account the interraction between MPCs
+    complex <double> i(0.0, 1.0);
+    double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
+    Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
+    double power = 1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)*FresnelPower;
+
+
+//    totalEfield += Efield*fresnelCoef;
+
+
+    delete(directRay);
+//    cout<< "Fresnel coeffiecient: ";
+//    cout<<fresnelCoef<<endl;
+//    cout<< "Fresnel norm: ";
+//    cout<<fresnelNorm<<endl;
+//    cout<< "Fresnel argument: ";
+//    cout<<fresnelArg<<endl;
+//    cout<< "Fresnel power: ";
+//    cout<<FresnelPower<<endl;
+//    cout<< "Electric field: ";
+//    cout<<Efield<<endl;
+//    cout<< "Electric field power: ";
+//    cout<<1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)<<endl;
+//    cout<< "Electric field power(dBm): ";
+//    cout<<dBm(1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2))<<endl;
+//    cout<< "power: ";
+//    cout<<power<<endl;
+//    cout<< "power(dBm): ";
+//    cout<<dBm(power)<<endl;
+//    cout<< "nu: ";
+//    cout<<nu<<endl;
+    return power;
 }
 
 
@@ -958,7 +1197,7 @@ void room::readSettingsFile(){
           }else if(count == 2){
               wallThickness = stod(line);
           }else if(count == 3){
-              amount_discret = stoi(line);
+              amount_discret = 400;//stoi(line);
           }else if(count == 4){
               powerEmettor = stod(line);
           }else if(count == 5){
@@ -1054,15 +1293,14 @@ void room::mouseReleaseEvent(QGraphicsSceneMouseEvent */*unused event*/){antenaT
 
 
 void room::drawCoverege(){
-
     this->clearAll();
     unsigned char discret = amount_discret;
-    double square_size = 970/(double)discret;
+    double square_size = 950/(double)discret;
     if(Receiver !=NULL){
         delete Receiver;
         Receiver = NULL;
-
     }
+    if(coverageDone) free(Data);
     Receiver = new antena(this,QPointF(0,0),1);
     //QBrush brush;
     QBrush *brush = new QBrush(QColor(0, 0, 0, 220));
@@ -1070,23 +1308,59 @@ void room::drawCoverege(){
     pen.setColor(QColor(0,0,0,0));
     QColor color;
 
+    double rows = 950/500;
+    this->Data = (double *)calloc((int)(discret*ceil(double(950/500))) * (int)amount_discret * 2, sizeof(double));
+
     for(int i=0;i < discret;i++){
-        for(int j=0;j < (int)discret/2;j++){
-            power = 0;
+        for(int j=0;j < (int)discret*ceil(rows);j++){
+            powerReceived = 0;
             diffractedPower = 0;
+            totalEfield = 0;
             double xRece = square_size/2 + i*square_size;
             double yRece = square_size/2 + j*square_size;
 
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
-            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
-            else{color.setHsv(0,255,255,255);}
-            brush->setColor(color);
-            this->addRect(i*square_size,j*square_size,square_size,square_size,pen,*brush);
-       }
+            this->Data[i*discret+j] = resultsBinaryDebit; // Received Power
+            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)] = (maxLength-minLength)/c; // delay spread; coherence bandwidth = 1/(delay spread)
+            //this->Data[i*discret+j+2] = ; // Rice factor
+
+           // Plot results
+           if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
+           else{color.setHsv(0,255,255,255);}
+           brush->setColor(color);
+           this->addRect(i*square_size,j*square_size,square_size,square_size,pen,*brush);
+        }
     }
     drawWalls();
-
+    this->clearAll();
+    coverageDone = true;
 }
 
+bool room::DataComputed(){
+    return coverageDone;
+}
 
+double room::getPrx(int posX, int posY){
+    unsigned char discret = amount_discret;
+    double square_size = 950/(double)discret;
+    double Prx = 0;
+    if(posX>0 and posY>0){
+        int i = (int)(posX/square_size);
+        int j = (int)(posY/square_size);
+        Prx = this->Data[i*discret+j];
+    }
+    return Prx;
+}
+
+double room::getDelay(int posX, int posY){
+    unsigned char discret = amount_discret;
+    double square_size = 950/(double)discret;
+    double delay = 0;
+    if(posX>0 and posY>0){
+        int i = (int)(posX/square_size);
+        int j = (int)(posY/square_size);
+        delay = this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)];
+    }
+    return delay;
+}
