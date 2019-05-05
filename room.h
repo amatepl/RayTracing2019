@@ -49,6 +49,8 @@ public:
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
+    double getCoherenceBandwidth(int i, int j);
+    double getRiceFactor(int i, int j);
 
     void setTransmitter(antena *new_transmitter);
     void setReceiver(antena *new_receiver);
@@ -57,9 +59,11 @@ public:
     //Misc tools
     void readSettingsFile();
     void clearAll();
+    void clearLocalParameters();
 
     void drawCoverege();
     bool DataComputed();
+    void getDataIndices(int posX, int posY, int &index_i, int &index_j);
 
 signals:
 
@@ -100,7 +104,7 @@ private:
     double Beta = 2*M_PI*freq*sqrt(muAir*epsilonAir); // Used for the diffraction.
 
     // complex <double> gamma;
-    double power = 0;
+    //double power = 0;
     double diffractedPower = 0;
 
 
@@ -115,7 +119,7 @@ private:
     vector <ray*> completeRay;
     vector <ray*> current; // algo power
 
-    complex <double> Efield = 0;
+    //complex <double> Efield = 0;
     complex <double> totalEfield = 0.0;
 
 
@@ -148,8 +152,8 @@ private:
     int amount_discret = 20;
     map<char,int[4]> streets;
 
-    double minLength, maxLength;
-    double *Data;
+    double minLength, maxLength = 0;
+    double *Data = nullptr;
     bool coverageDone = false;
 
 //    double powerEmettor = 20.0;   // In watts the power of the emettor
@@ -162,6 +166,9 @@ private:
     // Results
     double resultsBinaryDebit;
     double powerReceived;
+    double powerRef;
+    double LOS;
+    double NLOS;
 
 // ---------- Methods ------------------------
 
@@ -188,7 +195,7 @@ private:
     bool pointOnLineNonInclusive(lineo* line1, const double xp, const double yp);
     vector<double> intersection(lineo* line1, lineo* line2 );
 
-    double distInWall(double tetai);
+//    double distInWall(double tetai);
     void distCorrection(vector<ray*> oneCompleteRay, wall walls[]);
 
     bool commonToAnyWall(double posX, double posY, int indWall);

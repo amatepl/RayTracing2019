@@ -55,8 +55,17 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
     ui->spinBoxPosY->setValue(pos.y());
 
     if(scene->DataComputed()){
-        ui->Prx->setNum(scene->getPrx(pos.x(),pos.y()));
-        ui->DelaySpread->setNum(scene->getDelay(pos.x(),pos.y()));
+        int i = 0, j = 0;
+        scene->getDataIndices(pos.x(), pos.y(), i, j);
+        if(i>0 and j >0){
+            ui->Prx->setNum(scene->getPrx(i, j));
+            ui->DelaySpread->setNum(scene->getDelay(i, j));
+            ui->RiceFactor->setNum(scene->getRiceFactor(i, j));
+        }else{
+            ui->Prx->setNum(0);
+            ui->DelaySpread->setNum(0);
+            ui->RiceFactor->setNum(0);
+        }
     }
 }
 

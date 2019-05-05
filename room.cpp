@@ -17,10 +17,10 @@ room::room(MainWindow *parent) :
     lambda = c/freq;
 
     // Absolute electric permittivity
-    eps = epsilonAir*epsilonWallRel;
+    //eps = epsilonAir*epsilonWallRel;
 
     // impedance of the wall
-    Zwall = sqrt((muAir/eps));
+    //Zwall = sqrt((muAir/eps));
 
     // Propagation constants for small-loss hypothesis
     // alpha = 2*M_PI*freq*sqrt((muAir*eps)/2)*sqrt((sqrt(1 + pow((wallSigma/(2*M_PI*freq*eps)), 2)) -1 ));
@@ -29,9 +29,6 @@ room::room(MainWindow *parent) :
     // gamma = alpha + i*beta;
 
     // Let us define the walls and draw the view
-
-    double minLength, maxLength = 0;
-    double *Data;
 
     //Building 1
     walls[0] = new wall(200,1,200,200, 0.0, 0.0, 0.0, 0);
@@ -213,7 +210,7 @@ void room::launch_algo(bool drawR){
 
         //if(diffractedPower !=0){powerRef = powerRef + dBmRev(diffractedPower);}
         if(reflection){
-            double powerRef = computePrx(totalEfield);
+            powerRef = computePrx(totalEfield);
             //cout<<"power: ";
             //cout<<powerRef<<endl;
             powerReceived = dBm(powerRef);
@@ -968,16 +965,16 @@ bool room::checkTransmission(lineo* line1, lineo* line2, int x1, int y1,int x2,i
     return isNotTransmitted;
 }
 
-double room::distInWall(double tetai){
+// double room::distInWall(double tetai){
 
-/*
- * It is requiered to know the distance travelled in the wall, we will use Snell's rule to determine the angle in the transmitted ray inside the wall, then
- * knowing the thickness determine the length in the wall by simple trigonometry.
- */
-    double tetaTrans = asin((sqrt(epsilonAir)*sin(tetai))/(sqrt(epsilonWallRel*epsilonAir)));    // Snell's rule
+// /*
+//  * It is requiered to know the distance travelled in the wall, we will use Snell's rule to determine the angle in the transmitted ray inside the wall, then
+//  * knowing the thickness determine the length in the wall by simple trigonometry.
+//  */
+//     double tetaTrans = asin((sqrt(epsilonAir)*sin(tetai))/(sqrt(epsilonWallRel*epsilonAir)));    // Snell's rule
 
-    return wallThickness*pow(10, -2)/cos(tetaTrans);    // L/cos(\teta_Transmitted) cosine projection, the 1/2 factor for the pixel to Cm conversion
-}
+//     return wallThickness*pow(10, -2)/cos(tetaTrans);    // L/cos(\teta_Transmitted) cosine projection, the 1/2 factor for the pixel to Cm conversion
+// }
 
 // --> Electrical power calculation --------------------------------------------------------------------------------------------------------------------
 
@@ -1014,11 +1011,19 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 2cm)
     }
 
-    if(amountSegment==1) this->minLength = completeLength; // for delay spread computation
-    if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
-
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
-    Efield = -i * R * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*completeLength)/completeLength);
+    double a = R * ((Zvoid*Ia)/(2*M_PI))/completeLength;
+    Efield = -i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+
+    if(amountSegment==1){
+        this->minLength = completeLength; // for delay spread computation
+        this->LOS = pow(a,2);
+    } else{
+        this->NLOS += pow(a,2); 
+    }
+    if(completeLength > this->maxLength){
+        this->maxLength = completeLength; // for delay spread computation
+    } 
     return Efield;
 }
 
@@ -1033,7 +1038,9 @@ complex <double> room::computeEfieldGround(){
     if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application
-    complex <double> Efield = i * R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI)) * (exp(-i*(2.0*M_PI/lambda)*completeLength)/completeLength);
+    double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;
+    complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+    this->NLOS += pow(a,2);
     return Efield;
 }
 
@@ -1061,7 +1068,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     // The length defference between the path going through the tip of the obstacle, and the direct path.
     double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist*pow(10, -1.0);
 
-    double nu = sqrt(2*Beta*delta_r/M_PI) ;
+    double nu = sqrt(2*Beta*delta_r/M_PI);
 
     // The ITU's approximation for |F(nu)|^2
     double FresnelPower = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
@@ -1154,11 +1161,20 @@ double room::dBmRev(double dbm){return pow(10, -3)*pow(10, (dbm/10));}
 
 
 void room::clearAll(){
+    clearLocalParameters();
+    allRays.clear(); // Empty all previously calculated vectors
+}
+
+void room::clearLocalParameters(){
     totalEfield = 0.0;
     resultsBinaryDebit = 0.0;
     powerReceived = 0.0;
-    allRays.clear();   // Empty all previously calculated vectors
-    Efield = 0.0;
+    powerRef = 0.0;
+    minLength = 0.0;
+    maxLength = 0.0;
+    LOS = 0.0;
+    NLOS = 0.0;
+    //Efield = 0.0;
 }
 
 void room::readSettingsFile(){
@@ -1309,21 +1325,19 @@ void room::drawCoverege(){
     QColor color;
 
     double rows = 950/500;
-    this->Data = (double *)calloc((int)(discret*ceil(double(950/500))) * (int)amount_discret * 2, sizeof(double));
+    this->Data = (double *)calloc((int)(discret*ceil(double(950/500))) * (int)amount_discret * 3, sizeof(double));
 
     for(int i=0;i < discret;i++){
         for(int j=0;j < (int)discret*ceil(rows);j++){
-            powerReceived = 0;
-            diffractedPower = 0;
-            totalEfield = 0;
+            this->clearLocalParameters();
             double xRece = square_size/2 + i*square_size;
             double yRece = square_size/2 + j*square_size;
 
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
-            this->Data[i*discret+j] = powerReceived; // Received Power
-            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)] = (maxLength-minLength)/c; // delay spread; coherence bandwidth = 1/(delay spread)
-            //this->Data[i*discret+j+2] = ; // Rice factor
+            this->Data[i*discret+j] = this->powerReceived; // Received Power
+            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)] = norm(maxLength-minLength)/c; // Rice factor
+            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*2] = 10*log10(LOS/NLOS); // Rice factor
 
            // Plot results
            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
@@ -1341,26 +1355,46 @@ bool room::DataComputed(){
     return coverageDone;
 }
 
-double room::getPrx(int posX, int posY){
+//---> Minimal results for local area-------------------------------------------------------------------------------------------------------------------
+
+void room::getDataIndices(int posX, int posY, int &index_i, int &index_j){
     unsigned char discret = amount_discret;
     double square_size = 950/(double)discret;
-    double Prx = 0;
-    if(posX>0 and posY>0){
-        int i = (int)(posX/square_size);
-        int j = (int)(posY/square_size);
-        Prx = this->Data[i*discret+j];
-    }
+    index_i = (int)(posX/square_size);
+    index_j = (int)(posY/square_size);
+}
+
+double room::getPrx(int i, int j){
+    // Narrowband receive power
+    unsigned char discret = amount_discret;
+    double Prx = this->Data[i*discret+j];
     return Prx;
 }
 
-double room::getDelay(int posX, int posY){
+double room::getDelay(int i, int j){
+    // Delay spread
     unsigned char discret = amount_discret;
-    double square_size = 950/(double)discret;
-    double delay = 0;
-    if(posX>0 and posY>0){
-        int i = (int)(posX/square_size);
-        int j = (int)(posY/square_size);
-        delay = this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)];
-    }
+    double delay = this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)];
     return delay;
 }
+
+double room::getCoherenceBandwidth(int i, int j){
+    return (1/this->getDelay(i,j));
+}
+
+double room::getRiceFactor(int i, int j){
+    unsigned char discret = amount_discret;
+    double K = this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*2];
+    return K;
+}
+
+
+// //---> Plots----------
+
+// double room::plotPathLoss(){
+//     //Path loss from a straight line in the main street.
+// }
+
+// double room::plotFadingVariability(){
+
+// }
