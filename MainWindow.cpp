@@ -141,3 +141,4 @@ void MainWindow::on_commandLinkButton_clicked()
         statusBar()->showMessage("Placing the emettor/receptor is requiered");
     }
 }
+

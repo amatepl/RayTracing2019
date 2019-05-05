@@ -1391,10 +1391,12 @@ double room::getRiceFactor(int i, int j){
 
 // //---> Plots----------
 
-// double room::plotPathLoss(){
-//     //Path loss from a straight line in the main street.
-// }
+double room::plotPathLoss(){
+    //Path loss from a straight line in the main street.
 
-// double room::plotFadingVariability(){
+}
 
-// }
+double room::plotFadingVariability(){
+    //Fading variability from a straight line in the main street.
+    
+}

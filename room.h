@@ -163,12 +163,16 @@ private:
     bool diffractOn = false;
 
 
-    // Results
+// ---------- Results ------------------------
     double resultsBinaryDebit;
     double powerReceived;
     double powerRef;
     double LOS;
     double NLOS;
+
+    // Plots
+    void plotPathLoss();
+    void plotFadindVariability();
 
 // ---------- Methods ------------------------
 
