@@ -101,7 +101,7 @@ void MainWindow::on_plotButton_clicked()
         scene_plots = new plots();
         int i = 0, j = 0;
         scene->getDataIndices(scene->getTransmitter()->getPosX(), scene->getTransmitter()->getPosY(), i, j);
-        scene_plots->plotPathLoss(scene->getData(), i, j, scene->getAmountDiscret());
+        scene_plots->plotPathLoss(scene->getData(), i, j, scene->getRows(), scene->getColumns(), scene->getTotalArea());
         scene_plots->show();
    }
 }

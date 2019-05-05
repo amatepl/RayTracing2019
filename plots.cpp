@@ -18,12 +18,11 @@ plots::~plots()
     delete ui;
 }
 
-void plots::plotPathLoss(double *Data, int TxIndex_i, int TxIndex_j, int amount_discret){
-    unsigned char discret = amount_discret;
-    QVector<double> logD(discret-TxIndex_i-1), Prx(discret-TxIndex_i-1);
-    for (int i=0; i<(discret-TxIndex_i-1); ++i){
-        logD[i] = log10(Data[(i+TxIndex_i+1)*discret+TxIndex_j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*3]);
-        Prx[i] = Data[(i+TxIndex_i+1)*discret+TxIndex_j];
+void plots::plotPathLoss(double *Data, int TxIndex_i, int TxIndex_j, int rows, int columns, int totalArea){
+    QVector<double> logD(columns-TxIndex_i-1), Prx(columns-TxIndex_i-1);
+    for (int i=0; i<(columns-TxIndex_i-1); ++i){
+        logD[i] = log10(Data[(i+TxIndex_i+1)*rows+TxIndex_j+totalArea*3]);
+        Prx[i] = Data[(i+TxIndex_i+1)*rows+TxIndex_j];
     }
 
     // create graph and assign data to it:

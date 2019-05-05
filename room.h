@@ -46,6 +46,9 @@ public:
     double getpowerEmettor();
     double getInitBinaryDeb();
     complex <double> getTotalEfield();
+    int getRows();
+    int getColumns();
+    int getTotalArea();
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
@@ -82,7 +85,12 @@ private:
     MainWindow *myParent;
     QGraphicsView *graphicsView;
 
+    // Graphical parameters
     double pxToMeter = 0.1;
+    int square_size = 3;
+    int rows = 500/square_size; // 950 = window width
+    int columns = 950/square_size; // 500 = window height
+    int totalArea = rows * columns; // total number of local area
 
     // General objects
     antena *Transmitter;

@@ -1176,7 +1176,6 @@ void room::clearLocalParameters(){
 }
 
 void room::readSettingsFile(){
-
     /*
      * Takes all problems parameters from the data file in /settings.txt, this will be changed in the settings menu if the user changes it
      */
@@ -1211,7 +1210,7 @@ void room::readSettingsFile(){
           }else if(count == 2){
               wallThickness = stod(line);
           }else if(count == 3){
-              amount_discret = stoi(line);
+              square_size = stoi(line);
           }else if(count == 4){
               powerEmettor = stod(line);
           }else if(count == 5){
@@ -1265,7 +1264,9 @@ complex <double> room::getTotalEfield(){return totalEfield;}
 
 void room::setReceiver(antena *new_receiver){Receiver = new_receiver;}
 void room::setTransmitter(antena *new_transmitter){Transmitter = new_transmitter;}
-
+int room::getRows(){return rows;}
+int room::getColumns(){return columns;}
+int room::getTotalArea(){return totalArea;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 
@@ -1308,8 +1309,6 @@ void room::mouseReleaseEvent(QGraphicsSceneMouseEvent */*unused event*/){antenaT
 
 void room::drawCoverege(){
     this->clearAll();
-    unsigned char discret = amount_discret;
-    double square_size = 950/(double)discret;
     if(Receiver !=NULL){
         delete Receiver;
         Receiver = NULL;
@@ -1321,25 +1320,24 @@ void room::drawCoverege(){
     QPen pen;
     pen.setColor(QColor(0,0,0,0));
     QColor color;
-
-    double rows = 950/500;
-    this->Data = (double *)calloc((int)(discret*ceil(double(950/500))) * (int)amount_discret * 4, sizeof(double));
+    
+    this->Data = (double *)calloc(totalArea * 4, sizeof(double));
     if (!this->Data) {
         printf("mem failure, exiting \n");
         exit(EXIT_FAILURE);
     }
-    for(int i=0;i < discret;i++){
-        for(int j=0;j < (int)discret*ceil(rows);j++){
+    for(int i=0; i<columns; i++){
+        for(int j=0; j<rows; j++){
             this->clearLocalParameters();
             double xRece = square_size/2 + i*square_size;
             double yRece = square_size/2 + j*square_size;
 
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
-            this->Data[i*discret+j] = this->powerReceived; // Received Power
-            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)] = norm(maxLength-minLength)/c; // Delay Spread
-            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*2] = 10*log10(LOS/NLOS); // Rice factor
-            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*3] = this->distance(); // Distance from TX
+            this->Data[i*rows+j] = this->powerReceived; // Received Power
+            this->Data[i*rows+j+totalArea] = norm(maxLength-minLength)/c; // Delay Spread
+            this->Data[i*rows+j+totalArea*2] = 10*log10(LOS/NLOS); // Rice factor
+            this->Data[i*rows+j+totalArea*3] = this->distance(); // Distance from TX
 
            // Plot results
            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
@@ -1357,20 +1355,14 @@ bool room::DataComputed(){
     return coverageDone;
 }
 
-//---> Minimal results for local area-------------------------------------------------------------------------------------------------------------------
-
 void room::getDataIndices(int posX, int posY, int &index_i, int &index_j){
     // Find the indices in the array Data that correspond to the mouse position 
-    unsigned char discret = amount_discret;
-    double square_size = 950/(double)discret;
     index_i = (int)(posX/square_size);
     index_j = (int)(posY/square_size);
 }
 
 void room::getTxIndices(int &index_i, int &index_j){
     // Find the indices in the array Data that correspond to the TX position 
-    unsigned char discret = amount_discret;
-    double square_size = 950/(double)discret;
     index_i = (int)(Transmitter->getPosX()/square_size);
     index_j = (int)(Transmitter->getPosY()/square_size);
 }
@@ -1379,17 +1371,17 @@ double* room::getData(){
     return this->Data;
 }
 
+//---> Minimal results for local area-------------------------------------------------------------------------------------------------------------------
+
 double room::getPrx(int i, int j){
     // Narrowband receive power
-    unsigned char discret = amount_discret;
-    double Prx = this->Data[i*discret+j];
+    double Prx = this->Data[i*rows+j];
     return Prx;
 }
 
 double room::getDelay(int i, int j){
     // Delay spread
-    unsigned char discret = amount_discret;
-    double delay = this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)];
+    double delay = this->Data[i*rows+j+totalArea];
     return delay;
 }
 
@@ -1398,20 +1390,6 @@ double room::getCoherenceBandwidth(int i, int j){
 }
 
 double room::getRiceFactor(int i, int j){
-    unsigned char discret = amount_discret;
-    double K = this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*2];
+    double K = this->Data[i*rows+j+totalArea*2];
     return K;
 }
-
-
-// //---> Plots----------
-
-//double room::plotPathLoss(){
-//    //Path loss from a straight line in the main street.
-
-//}
-
-//double room::plotFadingVariability(){
-//    //Fading variability from a straight line in the main street.
-    
-//}

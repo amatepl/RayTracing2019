@@ -14,7 +14,7 @@ class plots : public QDialog
 public:
     explicit plots(QWidget *parent = 0);
     ~plots();
-    void plotPathLoss(double *Data, int TxIndex_i,  int TxIndex_j, int amount_discret);
+    void plotPathLoss(double *Data, int TxIndex_i,  int TxIndex_j, int rows, int columns, int totalArea);
 
 private:
     Ui::plots *ui;
