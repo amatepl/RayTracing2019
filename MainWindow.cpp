@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);   // basic Qt, arrow -> is the same as (ui*).setupUi()
 
     scene = new room(this);
+    scene_help = new help();
+    scene_settings = new settings();
     scene->setSceneRect(ui->graphicsView->rect());
        ui->graphicsView->setScene(scene);
        ui->graphicsView->ensureVisible(scene->sceneRect());
@@ -83,16 +85,25 @@ void MainWindow::on_receiver_clicked()
 
 
 void MainWindow::on_helpButton_clicked()
-{
-    scene_help = new help();
+{   
     scene_help->show();
 }
 
 
 void MainWindow::on_settingsButton_clicked()
 {
-    scene_settings = new settings();
     scene_settings->open();
+}
+
+void MainWindow::on_plotButton_clicked()
+{
+   if(scene->DataComputed()){
+        scene_plots = new plots();
+        int i = 0, j = 0;
+        scene->getDataIndices(scene->getTransmitter()->getPosX(), scene->getTransmitter()->getPosY(), i, j);
+        scene_plots->plotPathLoss(scene->getData(), i, j, scene->getAmountDiscret());
+        scene_plots->show();
+   }
 }
 
 void MainWindow::on_clearWorkspaceButton_clicked(){
@@ -128,7 +139,7 @@ void MainWindow::on_commandLinkButton_clicked()
 {   statusBar()->showMessage("Launch Ray-Tracing");
 
     if(scene->getReceiver() != NULL || scene->getTransmitter() != NULL){
-        ui->spinBoxResult->setValue(scene->distance()*2*pow(10, -2));
+        ui->spinBoxResult->setValue(scene->distance());
 
         scene->readSettingsFile();
         scene->launch_algo(true);

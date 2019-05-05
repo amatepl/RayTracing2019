@@ -64,6 +64,8 @@ public:
     void drawCoverege();
     bool DataComputed();
     void getDataIndices(int posX, int posY, int &index_i, int &index_j);
+    void getTxIndices(int &index_i, int &index_j);
+    double* getData();
 
 signals:
 

@@ -1030,7 +1030,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
 complex <double> room::computeEfieldGround(){
     // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
     // To Do: check if there is a wall between the TX and RX
-    double distance = this->distance()*0.02; // conversion (1px == 2cm)
+    double distance = this->distance(); // conversion (1px == 2cm)
     double thetaG = atan((distance/2)/antennaHeight);
     double thetaI = M_PI - thetaG;
     double R = computeReflexionPer(thetaG,epsilonWallRel);
@@ -1047,7 +1047,7 @@ complex <double> room::computeEfieldGround(){
 double room::computePrx(complex <double> totalEfield){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
     complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
-    double distance = this->distance()*0.02;
+    double distance = this->distance();
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
     complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
     double Prx = 1/(8*Ra)*pow(norm(Voc), 2);
@@ -1057,7 +1057,7 @@ double room::computePrx(complex <double> totalEfield){
 double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // Direct distance between the receiver and the transmitter
-    double direct_dist = sqrt(pow(Transmitter->getPosX()-Receiver->getPosX(),2) + pow(Transmitter->getPosY()-Receiver->getPosY(),2));
+    double direct_dist = sqrt(pow(Transmitter->getPosX()-Receiver->getPosX(),2) + pow(Transmitter->getPosY()-Receiver->getPosY(),2)); //convertir px to cm?
 
     // The vactor that will contain the direct ray.
     //vector<ray*> rayLine;
@@ -1091,9 +1091,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
     double power = 1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)*FresnelPower;
 
-
 //    totalEfield += Efield*fresnelCoef;
-
 
     delete(directRay);
 //    cout<< "Fresnel coeffiecient: ";
@@ -1234,21 +1232,21 @@ float room::distance(){
      * For display, it calcultes the direct Euclidian distance from the receiver to the emettor, displays the results on the UI
      */
 
-    QGraphicsLineItem* dist ;
+    // QGraphicsLineItem* dist ;
 
     int x1 = Transmitter->getPosX();
     int y1 = Transmitter->getPosY();
     int x2 = Receiver->getPosX();
     int y2 = Receiver->getPosY();
 
-    dist = new QGraphicsLineItem(x1,y1,x2,y2,NULL);
-    //this->addItem(dist);
+    // dist = new QGraphicsLineItem(x1,y1,x2,y2,NULL);
+    // //this->addItem(dist);
 
-    QPen outlinePen(Qt::green);
-    outlinePen.setWidth(2);
-    dist->setPen(outlinePen);
+    // QPen outlinePen(Qt::green);
+    // outlinePen.setWidth(2);
+    // dist->setPen(outlinePen);
 
-    return sqrt(pow((x2-x1),2)+pow((y2-y1),2));
+    return sqrt(pow((x2-x1),2)+pow((y2-y1),2))*0.02; // conversion (1px == 2cm)
 }
 
 // --> Getters and Setters ----------------------------------------------------------------------------------------------------------------
@@ -1325,8 +1323,11 @@ void room::drawCoverege(){
     QColor color;
 
     double rows = 950/500;
-    this->Data = (double *)calloc((int)(discret*ceil(double(950/500))) * (int)amount_discret * 3, sizeof(double));
-
+    this->Data = (double *)calloc((int)(discret*ceil(double(950/500))) * (int)amount_discret * 4, sizeof(double));
+    if (!this->Data) {
+        printf("mem failure, exiting \n");
+        exit(EXIT_FAILURE);
+    }
     for(int i=0;i < discret;i++){
         for(int j=0;j < (int)discret*ceil(rows);j++){
             this->clearLocalParameters();
@@ -1336,8 +1337,9 @@ void room::drawCoverege(){
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
             this->Data[i*discret+j] = this->powerReceived; // Received Power
-            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)] = norm(maxLength-minLength)/c; // Rice factor
+            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)] = norm(maxLength-minLength)/c; // Delay Spread
             this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*2] = 10*log10(LOS/NLOS); // Rice factor
+            this->Data[i*discret+j+((int)(discret*ceil(double(950/500))) * (int)amount_discret)*3] = this->distance(); // Distance from TX
 
            // Plot results
            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
@@ -1358,10 +1360,23 @@ bool room::DataComputed(){
 //---> Minimal results for local area-------------------------------------------------------------------------------------------------------------------
 
 void room::getDataIndices(int posX, int posY, int &index_i, int &index_j){
+    // Find the indices in the array Data that correspond to the mouse position 
     unsigned char discret = amount_discret;
     double square_size = 950/(double)discret;
     index_i = (int)(posX/square_size);
     index_j = (int)(posY/square_size);
+}
+
+void room::getTxIndices(int &index_i, int &index_j){
+    // Find the indices in the array Data that correspond to the TX position 
+    unsigned char discret = amount_discret;
+    double square_size = 950/(double)discret;
+    index_i = (int)(Transmitter->getPosX()/square_size);
+    index_j = (int)(Transmitter->getPosY()/square_size);
+}
+
+double* room::getData(){
+    return this->Data;
 }
 
 double room::getPrx(int i, int j){
@@ -1391,12 +1406,12 @@ double room::getRiceFactor(int i, int j){
 
 // //---> Plots----------
 
-double room::plotPathLoss(){
-    //Path loss from a straight line in the main street.
+//double room::plotPathLoss(){
+//    //Path loss from a straight line in the main street.
 
-}
+//}
 
-double room::plotFadingVariability(){
-    //Fading variability from a straight line in the main street.
+//double room::plotFadingVariability(){
+//    //Fading variability from a straight line in the main street.
     
-}
+//}

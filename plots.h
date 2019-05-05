@@ -1,11 +1,23 @@
-#ifndef PLOT_H
-#define PLOT_H
+#ifndef plots_H
+#define plots_H
 
+#include <QDialog>
 
-class plot
+namespace Ui {
+class plots;
+}
+
+class plots : public QDialog
 {
+    Q_OBJECT
+
 public:
-    plot();
+    explicit plots(QWidget *parent = 0);
+    ~plots();
+    void plotPathLoss(double *Data, int TxIndex_i,  int TxIndex_j, int amount_discret);
+
+private:
+    Ui::plots *ui;
 };
 
-#endif // PLOT_H
+#endif // plots_H
