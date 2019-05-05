@@ -82,6 +82,8 @@ private:
     MainWindow *myParent;
     QGraphicsView *graphicsView;
 
+    double pxToMeter = 0.1;
+
     // General objects
     antena *Transmitter;
     antena *Receiver;

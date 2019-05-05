@@ -1008,7 +1008,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
             double tethaI = abs(currentRay->getTetai());
             R *= computeReflexionPar(tethaI,epsilonWallRel);
         }
-        completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 2cm)
+        completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
     }
 
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
@@ -1246,7 +1246,7 @@ float room::distance(){
     // outlinePen.setWidth(2);
     // dist->setPen(outlinePen);
 
-    return sqrt(pow((x2-x1),2)+pow((y2-y1),2))*0.02; // conversion (1px == 2cm)
+    return sqrt(pow((x2-x1),2)+pow((y2-y1),2))*this->pxToMeter; // conversion (1px == 1dm)
 }
 
 // --> Getters and Setters ----------------------------------------------------------------------------------------------------------------
