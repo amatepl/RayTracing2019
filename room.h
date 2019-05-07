@@ -87,7 +87,7 @@ private:
 
     // Graphical parameters
     double pxToMeter = 0.1;
-    int square_size = 3;
+    int square_size = 10;
     int rows = 500/square_size; // 950 = window width
     int columns = 950/square_size; // 500 = window height
     int totalArea = rows * columns; // total number of local area
