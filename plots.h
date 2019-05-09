@@ -18,6 +18,7 @@ public:
     explicit plots(QWidget *parent = 0);
     ~plots();
     void plotPathLoss(room *scene);
+    int linreg(int n, QVector<double> x, QVector<double> y, double* m, double* b, double* r);
 
 private:
     Ui::plots *ui;
