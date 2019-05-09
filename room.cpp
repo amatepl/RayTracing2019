@@ -1,4 +1,5 @@
 #include "room.h"
+#include "plots.h"
 
 
 using namespace std;
@@ -1270,6 +1271,9 @@ void room::setTransmitter(antena *new_transmitter){Transmitter = new_transmitter
 int room::getRows(){return rows;}
 int room::getColumns(){return columns;}
 int room::getTotalArea(){return totalArea;}
+int room::getMinimalDistance(){return minimalDistance;}
+int room::getSquare_size(){return square_size;}
+float room::getPxToMeter(){return pxToMeter;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 
@@ -1395,4 +1399,9 @@ double room::getCoherenceBandwidth(int i, int j){
 double room::getRiceFactor(int i, int j){
     double K = this->Data[i*rows+j+totalArea*2];
     return K;
+}
+
+double room::getDistance(int i, int j){
+    double distance = this->Data[i*rows+j+totalArea*3];
+    return distance;
 }

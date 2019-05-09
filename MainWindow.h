@@ -28,6 +28,8 @@ class QGraphicsScene;
 
 class room;
 
+class plots;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

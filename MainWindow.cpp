@@ -23,6 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
        QBrush blueBrush(Qt::blue);
        QPen outlinePen(Qt::black);
        outlinePen.setWidth(2);
+
+       ui->Prx->setText("Prx [dBm]: 0");
+       ui->Distance->setText("Distance [m]: 0");
+       ui->DelaySpread->setText("Delay spread [s]: 0");
+       ui->RiceFactor->setText("Rice Factor [dB]: 0");
 }
 
 MainWindow::~MainWindow()
@@ -60,13 +65,15 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
         int i = 0, j = 0;
         scene->getDataIndices(pos.x(), pos.y(), i, j);
         if(i>0 and j >0){
-            ui->Prx->setNum(scene->getPrx(i, j));
-            ui->DelaySpread->setNum(scene->getDelay(i, j));
-            ui->RiceFactor->setNum(scene->getRiceFactor(i, j));
+            ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getPrx(i, j)));
+            ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->getDistance(i, j)));
+            ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay(i, j)));
+            ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor(i, j)));
         }else{
-            ui->Prx->setNum(0);
-            ui->DelaySpread->setNum(0);
-            ui->RiceFactor->setNum(0);
+            ui->Prx->setText("Prx [dBm]: 0");
+            ui->Distance->setText("Distance [m]: 0");
+            ui->DelaySpread->setText("Delay spread [s]: 0");
+            ui->RiceFactor->setText("Rice Factor [dB]: 0");
         }
     }
 }
@@ -101,7 +108,7 @@ void MainWindow::on_plotButton_clicked()
         scene_plots = new plots();
         int i = 0, j = 0;
         scene->getDataIndices(scene->getTransmitter()->getPosX(), scene->getTransmitter()->getPosY(), i, j);
-        scene_plots->plotPathLoss(scene->getData(), i, j, scene->getRows(), scene->getColumns(), scene->getTotalArea());
+        scene_plots->plotPathLoss(scene);
         scene_plots->show();
    }
 }

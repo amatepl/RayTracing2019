@@ -49,11 +49,16 @@ public:
     int getRows();
     int getColumns();
     int getTotalArea();
+    double* getData();
+    int getMinimalDistance();
+    int getSquare_size();
+    float getPxToMeter();
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
     double getCoherenceBandwidth(int i, int j);
     double getRiceFactor(int i, int j);
+    double getDistance(int i, int j);
 
     void setTransmitter(antena *new_transmitter);
     void setReceiver(antena *new_receiver);
@@ -68,7 +73,6 @@ public:
     bool DataComputed();
     void getDataIndices(int posX, int posY, int &index_i, int &index_j);
     void getTxIndices(int &index_i, int &index_j);
-    double* getData();
 
 signals:
 
@@ -86,11 +90,12 @@ private:
     QGraphicsView *graphicsView;
 
     // Graphical parameters
-    double pxToMeter = 0.1;
+    float pxToMeter = 0.1;
     int square_size = 10;
     int rows = 500/square_size; // 950 = window width
     int columns = 950/square_size; // 500 = window height
     int totalArea = rows * columns; // total number of local area
+    int minimalDistance = 10; // 10m
 
     // General objects
     antena *Transmitter;

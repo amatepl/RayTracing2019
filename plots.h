@@ -2,10 +2,13 @@
 #define plots_H
 
 #include <QDialog>
+#include "room.h"
 
 namespace Ui {
 class plots;
 }
+
+class room;
 
 class plots : public QDialog
 {
@@ -14,7 +17,7 @@ class plots : public QDialog
 public:
     explicit plots(QWidget *parent = 0);
     ~plots();
-    void plotPathLoss(double *Data, int TxIndex_i,  int TxIndex_j, int rows, int columns, int totalArea);
+    void plotPathLoss(room *scene);
 
 private:
     Ui::plots *ui;
