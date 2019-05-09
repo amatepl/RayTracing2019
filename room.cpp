@@ -1210,7 +1210,10 @@ void room::readSettingsFile(){
           }else if(count == 2){
               wallThickness = stod(line);
           }else if(count == 3){
-              //square_size = stoi(line);
+                square_size = stoi(line);
+                rows = 500/square_size; // 950 = window width
+                columns = 950/square_size; // 500 = window height
+                totalArea = rows * columns; // total number of local area
           }else if(count == 4){
               powerEmettor = stod(line);
           }else if(count == 5){
