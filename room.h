@@ -52,7 +52,7 @@ public:
     double* getData();
     int getMinimalDistance();
     int getSquare_size();
-    float getPxToMeter();
+    double getPxToMeter();
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
@@ -90,7 +90,7 @@ private:
     QGraphicsView *graphicsView;
 
     // Graphical parameters
-    float pxToMeter = 0.1;
+    double pxToMeter = 0.1;
     int square_size = 10;
     int rows = 500/square_size; // 950 = window width
     int columns = 950/square_size; // 500 = window height

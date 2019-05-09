@@ -32,7 +32,7 @@ void plots::plotPathLoss(room *scene){
      int bias = 0;
      double minDist = scene->getMinimalDistance();
      double square_size = scene->getSquare_size();
-     float pxToMeter = scene->getPxToMeter();
+     double pxToMeter = scene->getPxToMeter();
      int distMinBias = ceil(minDist/(square_size*pxToMeter));
      if(TxIndex_i <= columns/2){
          lengthData = columns-TxIndex_i-1;

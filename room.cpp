@@ -1273,7 +1273,7 @@ int room::getColumns(){return columns;}
 int room::getTotalArea(){return totalArea;}
 int room::getMinimalDistance(){return minimalDistance;}
 int room::getSquare_size(){return square_size;}
-float room::getPxToMeter(){return pxToMeter;}
+double room::getPxToMeter(){return pxToMeter;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 
