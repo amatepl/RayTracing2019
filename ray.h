@@ -41,7 +41,7 @@ public:
 
     // Getters && Setters
 
-    void updateLength(double length_inWall);
+    // void updateLength(double length_inWall);
     double getCoefficient();
     int getWallInd();
     void setCoefficient(double iAngle, wall inWall);

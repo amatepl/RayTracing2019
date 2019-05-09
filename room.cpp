@@ -1012,8 +1012,8 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
     }
 
-    double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
-    double a = R * ((Zvoid*Ia)/(2*M_PI))/completeLength;
+    double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
+    double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
     Efield = -i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
 
     if(amountSegment==1){
@@ -1051,7 +1051,7 @@ double room::computePrx(complex <double> totalEfield){
     double distance = this->distance();
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
     complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
-    double Prx = 1/(8*Ra)*pow(norm(Voc), 2);
+    double Prx = 1/(8*Ra)*norm(Voc);
     return Prx;
 }
 
@@ -1090,7 +1090,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
-    double power = 1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)*FresnelPower;
+    double power = 1/(8*Ra)*norm((lambda/M_PI)*Efield)*FresnelPower;
 
 //    totalEfield += Efield*fresnelCoef;
 
@@ -1342,11 +1342,12 @@ void room::drawCoverege(){
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
             this->Data[i*rows+j] = this->powerReceived; // Received Power
-            this->Data[i*rows+j+totalArea] = norm(maxLength-minLength)/c; // Delay Spread
+            this->Data[i*rows+j+totalArea] = abs(maxLength-minLength)/c; // Delay Spread
             this->Data[i*rows+j+totalArea*2] = 10*log10(LOS/NLOS); // Rice factor
             this->Data[i*rows+j+totalArea*3] = this->distance(); // Distance from TX
 
            // Plot results
+           // Change binaryDebit which is different for 5G
            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
            else{color.setHsv(0,255,255,255);}
            brush->setColor(color);

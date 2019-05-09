@@ -35,7 +35,7 @@ void plots::plotPathLoss(room *scene){
     double minDist = scene->getMinimalDistance();
     double square_size = scene->getSquare_size();
     double pxToMeter = scene->getPxToMeter();
-    int distMinBias = ceil(minDist/(square_size*pxToMeter));
+    int distMinBias = floor(minDist/(square_size*pxToMeter));
     if(TxIndex_i <= columns/2){
         lengthData = columns-TxIndex_i-1;
         bias = TxIndex_i+1+distMinBias;
@@ -69,7 +69,7 @@ void plots::plotPathLoss(room *scene){
     ui->customPlot->graph(1)->setData(logD, pathLoss);
 
     // give the axes some labels:
-    ui->customPlot->xAxis->setLabel("Log(d)");
+    ui->customPlot->xAxis->setLabel("Log(d/1m)");
     ui->customPlot->yAxis->setLabel("Prx[dbm]");
     ui->customPlot->rescaleAxes();
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
@@ -80,14 +80,10 @@ void plots::plotPathLoss(room *scene){
     textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
     textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
     textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
-    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(norm(m/10)));
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(m/10)));
     textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
     textLabel->setPen(QPen(Qt::black)); // show black border around text
 }
-
-
-
-
 
 int plots::linreg(int n, QVector<double> x, QVector<double> y, double* m, double* b, double* r){
     /*

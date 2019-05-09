@@ -30,17 +30,17 @@ ray::~ray(void){
  * It is necessary to update the real length when the ray is transmitted through a wall. See function in room::distInWall()
  */
 
-void ray::updateLength(double length_inWall){
-    meterLength += length_inWall;
-    d += length_inWall/(2*pow(10,-2));
-}
+// void ray::updateLength(double length_inWall){
+//     meterLength += length_inWall;
+//     d += length_inWall/(2*pow(10,-2));
+// }
 
 
 /*
  * The scale chosen for the meter-pixels conversion is 1px = 2cm
  */
 
-void ray::updateMeterLength(){meterLength = d*pow(10, -1.0);}
+void ray::updateMeterLength(){meterLength = d*0.1;} // pxToMeter = 0.1
 
 
 // --> Getters && Settets
