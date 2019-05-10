@@ -1091,20 +1091,20 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 //    cout<<fresnelNorm<<endl;
 //    cout<< "Fresnel argument: ";
 //    cout<<fresnelArg<<endl;
-    cout<< "Fresnel power: ";
-    cout<<FresnelPower<<endl;
-    cout<< "Electric field: ";
-    cout<<Efield<<endl;
-    cout<< "Electric field power: ";
-    cout<<1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)<<endl;
-    cout<< "Electric field power(dBm): ";
-    cout<<dBm(1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2))<<endl;
-    cout<< "power: ";
-    cout<<power<<endl;
-    cout<< "power(dBm): ";
-    cout<<dBm(power)<<endl;
-    cout<< "nu: ";
-    cout<<nu<<endl;
+//    cout<< "Fresnel power: ";
+//    cout<<FresnelPower<<endl;
+//    cout<< "Electric field: ";
+//    cout<<Efield<<endl;
+//    cout<< "Electric field power: ";
+//    cout<<1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)<<endl;
+//    cout<< "Electric field power(dBm): ";
+//    cout<<dBm(1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2))<<endl;
+//    cout<< "power: ";
+//    cout<<power<<endl;
+//    cout<< "power(dBm): ";
+//    cout<<dBm(power)<<endl;
+//    cout<< "nu: ";
+//    cout<<nu<<endl;
     return power;
 }
 
