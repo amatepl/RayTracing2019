@@ -19,6 +19,7 @@ public:
     ~plots();
     void plotPathLoss(room *scene);
     int linreg(int n, QVector<double> x, QVector<double> y, double* m, double* b, double* r);
+    double findStandardDeviation(QVector<double> array);
 
 private:
     Ui::plots *ui;

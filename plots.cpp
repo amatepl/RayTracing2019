@@ -59,6 +59,9 @@ void plots::plotPathLoss(room *scene){
         pathLoss[i] = m*logD[i]+b;
     }
 
+    // Fading variability (standard deviation)
+    double fadingVariability = findStandardDeviation(pathLoss);
+
     // create graph and assign data to it:
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setPen(QPen(Qt::blue));
@@ -80,7 +83,7 @@ void plots::plotPathLoss(room *scene){
     textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
     textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
     textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
-    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(m/10)));
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(m/10)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fadingVariability));
     textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
     textLabel->setPen(QPen(Qt::black)); // show black border around text
 }
@@ -125,4 +128,19 @@ int plots::linreg(int n, QVector<double> x, QVector<double> y, double* m, double
               (sumy2 - pow(sumy,2)/n));
     }
     return 0; 
+}
+
+double plots::findStandardDeviation(QVector<double> array){
+    double sum = 0.0, sDeviation = 0.0, mean;
+    int count = array.size();
+    int i;
+    for(i = 0; i < count; i++) {
+        sum += array[i];
+    }
+    // Calculating mean 
+    mean = sum/count;
+    for(i = 0; i < count; ++i) {
+        sDeviation += pow(array[i] - mean, 2);
+    }
+    return sqrt(sDeviation/count);
 }
