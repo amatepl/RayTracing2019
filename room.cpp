@@ -1216,7 +1216,7 @@ void room::readSettingsFile(){
                 columns = 950/square_size; // 500 = window height
                 totalArea = rows * columns; // total number of local area
           }else if(count == 4){
-              powerEmettor = stod(line);
+                powerEmettor = stod(line);
           }else if(count == 5){
               if(line == "true"){diffractOn = true;}else{
                   diffractOn = false;

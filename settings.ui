@@ -42,7 +42,7 @@
     <item row="1" column="1">
      <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Emettor power (dBm)</string>
+       <string>Emettor power (W)</string>
       </property>
      </widget>
     </item>
