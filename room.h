@@ -177,7 +177,6 @@ private:
     double powerEmettor = 2.0;   // In watts the power of the emettor
     double Zwall;
     double eps;
-    bool diffractOn = false;
 
 
 // ---------- Results ------------------------

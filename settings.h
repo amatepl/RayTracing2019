@@ -48,7 +48,6 @@ private:
     double wallThick;
     int square_size;
     double emettorPower;
-    bool diffractOnBool;
 
     // tools
     string toStringInt(int input);

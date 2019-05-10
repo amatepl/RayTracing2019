@@ -1217,11 +1217,7 @@ void room::readSettingsFile(){
                 totalArea = rows * columns; // total number of local area
           }else if(count == 4){
               powerEmettor = stod(line);
-          }else if(count == 5){
-              if(line == "true"){diffractOn = true;}else{
-                  diffractOn = false;
-              }
-      }
+          }
           count++;
       }
       settingsData.close();
