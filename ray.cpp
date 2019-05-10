@@ -33,10 +33,10 @@ void ray::updateLength(double length_inWall){
 
 
 /*
- * The scale chosen for the meter-pixels conversion is 1px = 2cm
+ * The scale chosen for the meter-pixels conversion is 1px = 1dm
  */
 
-void ray::updateMeterLength(){meterLength = d*2*pow(10, -2.0);}
+void ray::updateMeterLength(){meterLength = d*pow(10, -1.0);}
 
 
 // --> Getters && Settets

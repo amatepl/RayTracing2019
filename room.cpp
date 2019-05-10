@@ -864,7 +864,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     double direct_dist = sqrt(pow(Transmitter->getPosX()-Receiver->getPosX(),2) + pow(Transmitter->getPosY()-Receiver->getPosY(),2));
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
-    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist;
+    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist*pow(10,-1);
 
     double nu = sqrt(2*Beta*delta_r/M_PI) ;
 
