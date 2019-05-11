@@ -87,6 +87,11 @@ void plots::plotPathLoss(room *scene){
     textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(m/10)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fadingVariability));
     textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
     textLabel->setPen(QPen(Qt::black)); // show black border around text
+
+
+
+    // Cell Range vs Probability
+    plotCellRange(m, b, fadingVariability);
 }
 
 int plots::linreg(int n, QVector<double> x, QVector<double> y, double* m, double* b, double* r){
@@ -158,7 +163,7 @@ void plots::plotCellRange(double m, double b, double fadingVariability){
     QVector<double> Pr(lengthData), cellRange(lengthData);
     for (int i=0; i<lengthData; ++i){
         gamma = i*step;
-        Pr[i] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)));  // Pr[L_fading<gamma]
+        Pr[i] = 1 - 0.5*erfc(gamma/(fadingVariability * sqrt(2)));// Pr[L_fading<gamma]
 
         // -102[dBm] = mx + b - gamma[dBm] => x = (-102 + gamma - b)/m => log10(d) = (-102 + gamma - b)/m => d = 10((-102 + gamma - b)/m)
         cellRange[i] = pow(10,(-102 + gamma - b)/m);
@@ -166,5 +171,24 @@ void plots::plotCellRange(double m, double b, double fadingVariability){
 
 
     // Plot Range vs Probability
-    
+    // create graph and assign data to it:
+    ui->customPlot_2->addGraph();
+    ui->customPlot_2->graph(0)->setPen(QPen(Qt::blue));
+    ui->customPlot_2->graph(0)->setData(Pr, cellRange);
+
+    // give the axes some labels:
+    ui->customPlot_2->xAxis->setLabel("Connection probability");
+    ui->customPlot_2->yAxis->setLabel("Cell range[m]");
+    ui->customPlot_2->rescaleAxes();
+    ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->customPlot_2->replot();
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(ui->customPlot_2);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("For a minimal received power of -102 dBm"));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 }
