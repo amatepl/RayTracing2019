@@ -33,16 +33,11 @@
       <attribute name="title">
        <string>Model</string>
       </attribute>
-      <widget class="QCustomPlot" name="customPlot_3" native="true">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>9</y>
-         <width>613</width>
-         <height>409</height>
-        </rect>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QCustomPlot" name="customPlot_3" native="true"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">

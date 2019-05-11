@@ -97,6 +97,8 @@ void plots::plotPathLoss(room *scene){
 
     // Cell Range vs Probability
     plotCellRange(m, b, fadingVariability);
+
+    ui->tabWidget->setCurrentWidget(ui->tab_1);
 }
 
 int plots::linreg(int n, QVector<double> x, QVector<double> y, double* m, double* b, double* r){
