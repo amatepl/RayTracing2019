@@ -88,7 +88,8 @@ void plots::plotPathLoss(room *scene){
     textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
     textLabel->setPen(QPen(Qt::black)); // show black border around text
 
-
+    // Plot model
+    plotModel(m, b, fadingVariability);
 
     // Cell Range vs Probability
     plotCellRange(m, b, fadingVariability);
@@ -150,6 +151,51 @@ double plots::findStandardDeviation(QVector<double> array){
     }
     return sqrt(sDeviation/count);
 }
+
+
+
+//  Create the plots
+
+void plots::plotModel(double m, double b, double fadingVariability){
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0.0, fadingVariability);
+
+
+    double minDist = log10(10); //m
+    double maxDist = log10(50000);// 50km
+    double step = 0.01;
+    int lengthData = (maxDist-minDist)/step;
+    QVector<double> logD_model(lengthData), Prx_model(lengthData), pathLoss_model(lengthData), threshold(lengthData);
+    double L_fading_model;
+    for (int i=0; i<lengthData; ++i){
+        logD_model[i] = minDist + i*step;
+        pathLoss_model[i] =  m*logD_model[i] + b;
+        L_fading_model = distribution(generator);
+        Prx_model[i] = pathLoss_model[i] + L_fading_model;
+        threshold[i] = -102;
+    }
+
+    // create graph and assign data to it:
+    ui->customPlot_3->addGraph();
+    ui->customPlot_3->graph(0)->setPen(QPen(Qt::blue));
+    ui->customPlot_3->graph(0)->setData(logD_model, Prx_model);
+
+    ui->customPlot_3->addGraph();
+    ui->customPlot_3->graph(1)->setPen(QPen(Qt::red));
+    ui->customPlot_3->graph(1)->setData(logD_model, pathLoss_model);
+
+    ui->customPlot_3->addGraph();
+    ui->customPlot_3->graph(2)->setPen(QPen(Qt::green));
+    ui->customPlot_3->graph(2)->setData(logD_model, threshold);
+
+    // give the axes some labels:
+    ui->customPlot_3->xAxis->setLabel("Log(d/1m)");
+    ui->customPlot_3->yAxis->setLabel("Prx[dbm]");
+    ui->customPlot_3->rescaleAxes();
+    ui->customPlot_3->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->customPlot_3->replot();
+}
+
 
 void plots::plotCellRange(double m, double b, double fadingVariability){
     // minDBM = <Prx> - L_fading

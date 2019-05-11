@@ -17,11 +17,11 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_1">
       <attribute name="title">
-       <string>Tab 1</string>
+       <string>Map</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -29,9 +29,24 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_4">
+     <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Tab 2</string>
+       <string>Model</string>
+      </attribute>
+      <widget class="QCustomPlot" name="customPlot_3" native="true">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>9</y>
+         <width>613</width>
+         <height>409</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Cell Range</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
