@@ -796,12 +796,10 @@ std::vector<double> room::intersection(lineo* line1, lineo* line2){
 
 //bool room::pointOnLine(lineo* line1, double x, double y){
 bool room::pointOnLine(lineo* line1,const double xp,const double yp){
-
     /*
      * As the intersection is computed by lines equations, it is required to check whether or not the intersection is placed on the the wall line, an line
      * equation being define from [-INF, +INF]
      */
-
 
     int x1 = (int)line1->getX1();
     int y1 = (int)line1->getY1();
@@ -887,6 +885,23 @@ bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp)
     }
 
     return answer1 || answer2;
+
+// bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp){
+//     double x1 = line1->getX1();
+//     double y1 = line1->getY1();
+//     double x2 = line1->getX2();
+//     double y2 = line1->getY2();
+
+//     bool answer;
+    
+//     if(x1==x2){ // Cas du mur vertical
+//         answer = (x1=<xp && xp=<x1+1 && ( (y1<yp && yp<y2) || (y2<yp && yp<y1) ) )
+//     }else if(y1 == y2){ // Cas du mur horizontal
+//         answer = (y1=<yp && yp=<y1+1 && ( (x1<xp && xp<x2) || (x2<xp && xp<x1) ) )
+//     }else{
+//         answer = false;
+//     }
+//     return answer;
 }
 
 bool room::intersectionCheck(lineo* line1, lineo* line2){
@@ -1033,7 +1048,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     if(computePhysicalResponse){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
-        channelData[rayNumber+8] = completeLength;
+        channelData[rayNumber+10] = completeLength;
         rayNumber += 1;
     }
 
@@ -1059,7 +1074,7 @@ complex <double> room::computeEfieldGround(){
     if(computePhysicalResponse){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
-        channelData[rayNumber+8] = completeLength;
+        channelData[rayNumber+10] = completeLength;
         rayNumber += 1;
     }
 

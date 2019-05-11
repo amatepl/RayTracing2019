@@ -99,7 +99,9 @@ void plots::plotPathLoss(room *scene){
         // Cell Range vs Probability
         plotCellRange(m, b, fadingVariability);
         ui->tabWidget->setCurrentWidget(ui->tab_1);
-    } else if(scene->getRayNumber()>0){
+    }
+
+    if(scene->getRayNumber()>0){
         // Physical impulse response
         physicalImpulseResponse(scene);
         ui->tabWidget->setCurrentWidget(ui->tab_5);
@@ -262,17 +264,21 @@ void plots::physicalImpulseResponse(room* scene){
     cout<<rayNumber<<endl;
 
     QVector<double> h(rayNumber), tau(rayNumber);
+    double tau_check;
     for (int i=0; i<(rayNumber); ++i){
         h[i] = 10*log10(abs(channelData[i])); // alpha
-        tau[i] = channelData[i+8]/c*1e9; // tau
+        tau[i] = channelData[i+10]/c*1e9; // tau
+
+        QCPItemLine *line = new QCPItemLine(ui->customPlot_4);
+        line->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
+        line->end->setCoords(tau[i], -100);  // location of point 2 in plot coordinate
     }
 
     // Plot physiscal impulse response
     ui->customPlot_4->addGraph();
     ui->customPlot_4->graph(0)->setPen(QPen(Qt::blue));
-//    ui->customPlot_4->graph(0)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_4->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->customPlot_4->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-
     ui->customPlot_4->graph(0)->setData(tau, h);
 
     // give the axes some labels:
@@ -284,3 +290,24 @@ void plots::physicalImpulseResponse(room* scene){
     ui->customPlot_4->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_4->replot();
 }
+
+// void plots::TDLImpulseResponse(){
+    
+
+//     // Plot physiscal impulse response
+//     ui->customPlot_4->addGraph();
+//     ui->customPlot_4->graph(0)->setPen(QPen(Qt::blue));
+// //    ui->customPlot_4->graph(0)->setLineStyle(QCPGraph::lsNone);
+//     ui->customPlot_4->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+
+//     ui->customPlot_4->graph(0)->setData(tau, h);
+
+//     // give the axes some labels:
+//     ui->customPlot_4->xAxis->setLabel("tau[ns]");
+//     ui->customPlot_4->yAxis->setLabel("h[dB]");
+//     ui->customPlot_4->yAxis->grid()->setSubGridVisible(true);
+//     ui->customPlot_4->xAxis->grid()->setSubGridVisible(true);
+//     ui->customPlot_4->rescaleAxes();
+//     ui->customPlot_4->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+//     ui->customPlot_4->replot();
+//}
