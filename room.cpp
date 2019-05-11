@@ -1009,7 +1009,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         currentRay = rayLine.at(i);
         if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
             double tethaI = abs(currentRay->getTetai());
-            R *= computeReflexionPar(tethaI,epsilonWallRel);
+            R *= computeReflexionPer(tethaI,epsilonWallRel);
         }
         completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
     }
@@ -1036,7 +1036,7 @@ complex <double> room::computeEfieldGround(){
     double distance = this->distance(); // conversion (1px == 2cm)
     double thetaG = atan((distance/2)/antennaHeight);
     double thetaI = M_PI - thetaG;
-    double R = computeReflexionPer(thetaG,epsilonWallRel);
+    double R = computeReflexionPar(thetaG,epsilonWallRel);
     double completeLength = distance/sin(thetaG);
     if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);

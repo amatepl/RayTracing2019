@@ -46,9 +46,10 @@ void plots::plotPathLoss(room *scene){
 
     lengthData -= distMinBias;
 
-    QVector<double> logD(lengthData), Prx(lengthData), pathLoss(lengthData), fading(lengthData);
+    QVector<double> D(lengthData), logD(lengthData), Prx(lengthData), pathLoss(lengthData), fading(lengthData);
     for (int i=0; i<(lengthData); ++i){
-        logD[i] = log10(Data[(i+bias)*rows+TxIndex_j+totalArea*3]);
+        D[i] = Data[(i+bias)*rows+TxIndex_j+totalArea*3];
+        logD[i] = log10(D[i]);
         Prx[i] = Data[(i+bias)*rows+TxIndex_j];
     }
 
@@ -66,15 +67,18 @@ void plots::plotPathLoss(room *scene){
     // create graph and assign data to it:
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setPen(QPen(Qt::blue));
-    ui->customPlot->graph(0)->setData(logD, Prx);
+    ui->customPlot->graph(0)->setData(D, Prx);
 
     ui->customPlot->addGraph();
     ui->customPlot->graph(1)->setPen(QPen(Qt::red));
-    ui->customPlot->graph(1)->setData(logD, pathLoss);
+    ui->customPlot->graph(1)->setData(D, pathLoss);
 
     // give the axes some labels:
-    ui->customPlot->xAxis->setLabel("Log(d/1m)");
+    ui->customPlot->xAxis->setLabel("Distance[m]");
     ui->customPlot->yAxis->setLabel("Prx[dbm]");
+    ui->customPlot->xAxis->setScaleType(QCPAxis::stLogarithmic); 
+    ui->customPlot->yAxis->grid()->setSubGridVisible(true);
+    ui->customPlot->xAxis->grid()->setSubGridVisible(true);
     ui->customPlot->rescaleAxes();
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot->replot();
@@ -160,15 +164,15 @@ void plots::plotModel(double m, double b, double fadingVariability){
     std::default_random_engine generator;
     std::normal_distribution<double> distribution(0.0, fadingVariability);
 
-
     double minDist = log10(10); //m
     double maxDist = log10(50000);// 50km
     double step = 0.01;
     int lengthData = (maxDist-minDist)/step;
-    QVector<double> logD_model(lengthData), Prx_model(lengthData), pathLoss_model(lengthData), threshold(lengthData);
+    QVector<double> D_model(lengthData), logD_model(lengthData), Prx_model(lengthData), pathLoss_model(lengthData), threshold(lengthData);
     double L_fading_model;
     for (int i=0; i<lengthData; ++i){
         logD_model[i] = minDist + i*step;
+        D_model[i] = pow(10, logD_model[i]);
         pathLoss_model[i] =  m*logD_model[i] + b;
         L_fading_model = distribution(generator);
         Prx_model[i] = pathLoss_model[i] + L_fading_model;
@@ -178,19 +182,22 @@ void plots::plotModel(double m, double b, double fadingVariability){
     // create graph and assign data to it:
     ui->customPlot_3->addGraph();
     ui->customPlot_3->graph(0)->setPen(QPen(Qt::blue));
-    ui->customPlot_3->graph(0)->setData(logD_model, Prx_model);
+    ui->customPlot_3->graph(0)->setData(D_model, Prx_model);
 
     ui->customPlot_3->addGraph();
     ui->customPlot_3->graph(1)->setPen(QPen(Qt::red));
-    ui->customPlot_3->graph(1)->setData(logD_model, pathLoss_model);
+    ui->customPlot_3->graph(1)->setData(D_model, pathLoss_model);
 
     ui->customPlot_3->addGraph();
     ui->customPlot_3->graph(2)->setPen(QPen(Qt::green));
-    ui->customPlot_3->graph(2)->setData(logD_model, threshold);
+    ui->customPlot_3->graph(2)->setData(D_model, threshold);
 
     // give the axes some labels:
-    ui->customPlot_3->xAxis->setLabel("Log(d/1m)");
+    ui->customPlot_3->xAxis->setLabel("Distance[m]");
     ui->customPlot_3->yAxis->setLabel("Prx[dbm]");
+    ui->customPlot_3->xAxis->setScaleType(QCPAxis::stLogarithmic); 
+    ui->customPlot_3->yAxis->grid()->setSubGridVisible(true);
+    ui->customPlot_3->xAxis->grid()->setSubGridVisible(true);
     ui->customPlot_3->rescaleAxes();
     ui->customPlot_3->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_3->replot();
@@ -225,6 +232,7 @@ void plots::plotCellRange(double m, double b, double fadingVariability){
     // give the axes some labels:
     ui->customPlot_2->xAxis->setLabel("Connection probability");
     ui->customPlot_2->yAxis->setLabel("Cell range[m]");
+    ui->customPlot_2->yAxis->setScaleType(QCPAxis::stLogarithmic); 
     ui->customPlot_2->rescaleAxes();
     ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_2->replot();
