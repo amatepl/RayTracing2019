@@ -64,7 +64,7 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
     if(scene->DataComputed()){
         int i = 0, j = 0;
         scene->getDataIndices(pos.x(), pos.y(), i, j);
-        if(i>0 and j >0){
+        if(i>0 and j>0 and pos.x()<950 and pos.y()<500){
             ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getPrx(i, j)));
             ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->getDistance(i, j)));
             ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay(i, j)));
@@ -104,13 +104,13 @@ void MainWindow::on_settingsButton_clicked()
 
 void MainWindow::on_plotButton_clicked()
 {
-   if(scene->DataComputed()){
+  if(scene->DataComputed() or scene->getRayNumber()>0){
         scene_plots = new plots();
         int i = 0, j = 0;
         scene->getDataIndices(scene->getTransmitter()->getPosX(), scene->getTransmitter()->getPosY(), i, j);
         scene_plots->plotPathLoss(scene);
         scene_plots->show();
-   }
+  }
 }
 
 void MainWindow::on_clearWorkspaceButton_clicked(){

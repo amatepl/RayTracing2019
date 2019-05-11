@@ -15,8 +15,6 @@ room::room(MainWindow *parent) :
     Transmitter = NULL;
     Receiver = NULL;
 
-    lambda = c/freq;
-
     // Absolute electric permittivity
     //eps = epsilonAir*epsilonWallRel;
 
@@ -189,6 +187,7 @@ void room::launch_algo(bool drawR){
      */
 
     clearAll();     // Resets the power, binary debit and ray vector --> 0
+    computePhysicalResponse = drawR;
 
     if(!workingZone()){
         // Calculate power -- Reflexion and transmission
@@ -420,8 +419,8 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
             cout<<"--------------------------"<<endl;
             i++;
         }
-        //(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay(completeRay);
         (*scene).totalEfield += scene->computeEfield(completeRay);
+
         delete(receiver_ray);
         completeRay.clear();
         completeRay.shrink_to_fit();
@@ -574,6 +573,7 @@ void room::drawDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 notDiffracted =false;
@@ -598,6 +598,7 @@ void room::drawDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 delete(rayReceiver);
@@ -681,6 +682,7 @@ void room::buildDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 notDiffracted =false;
@@ -704,6 +706,7 @@ void room::buildDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 delete(rayReceiver);
@@ -786,12 +789,10 @@ std::vector<double> room::intersection(lineo* line1, lineo* line2){
 
 //bool room::pointOnLine(lineo* line1, double x, double y){
 bool room::pointOnLine(lineo* line1,const double xp,const double yp){
-
     /*
      * As the intersection is computed by lines equations, it is required to check whether or not the intersection is placed on the the wall line, an line
      * equation being define from [-INF, +INF]
      */
-
 
     int x1 = (int)line1->getX1();
     int y1 = (int)line1->getY1();
@@ -924,6 +925,23 @@ bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp)
     }
 
     return answer1 || answer2;
+
+// bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp){
+//     double x1 = line1->getX1();
+//     double y1 = line1->getY1();
+//     double x2 = line1->getX2();
+//     double y2 = line1->getY2();
+
+//     bool answer;
+    
+//     if(x1==x2){ // Cas du mur vertical
+//         answer = (x1=<xp && xp=<x1+1 && ( (y1<yp && yp<y2) || (y2<yp && yp<y1) ) )
+//     }else if(y1 == y2){ // Cas du mur horizontal
+//         answer = (y1=<yp && yp=<y1+1 && ( (x1<xp && xp<x2) || (x2<xp && xp<x1) ) )
+//     }else{
+//         answer = false;
+//     }
+//     return answer;
 }
 
 bool room::intersectionCheck(lineo* line1, lineo* line2){
@@ -1047,7 +1065,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         currentRay = rayLine.at(i);
         if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
             double tethaI = abs(currentRay->getTetai());
-            R *= computeReflexionPar(tethaI,epsilonWallRel);
+            R *= computeReflexionPer(tethaI,epsilonWallRel);
         }
         completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
     }
@@ -1065,6 +1083,15 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     if(completeLength > this->maxLength){
         this->maxLength = completeLength; // for delay spread computation
     } 
+
+    // Store ray parameter for Physical impulse response
+    if(computePhysicalResponse){
+        // Store attenuation a and distance completeLength 
+        channelData[rayNumber] = R/completeLength;
+        channelData[rayNumber+10] = completeLength;
+        rayNumber += 1;
+    }
+
     return Efield;
 }
 
@@ -1074,7 +1101,7 @@ complex <double> room::computeEfieldGround(){
     double distance = this->distance(); // conversion (1px == 2cm)
     double thetaG = atan((distance/2)/antennaHeight);
     double thetaI = M_PI - thetaG;
-    double R = computeReflexionPer(thetaG,epsilonWallRel);
+    double R = computeReflexionPar(thetaG,epsilonWallRel);
     double completeLength = distance/sin(thetaG);
     if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);
@@ -1082,6 +1109,15 @@ complex <double> room::computeEfieldGround(){
     double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;
     complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
     this->NLOS += pow(a,2);
+
+    // Store ray parameter for Physical impulse response
+    if(computePhysicalResponse){
+        // Store attenuation a and distance completeLength 
+        channelData[rayNumber] = R/completeLength;
+        channelData[rayNumber+10] = completeLength;
+        rayNumber += 1;
+    }
+
     return Efield;
 }
 
@@ -1115,7 +1151,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // The ITU's approximation for |F(nu)|^2
     double FresnelPowerdB = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
-//    double FresnelPower = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+//    double FresnelPowerdB = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
     double FresnelPower = pow(10,FresnelPowerdB/20);
 //    double fresnelPowerW = pow(10,FresnelPower/20);
     //double fresnelNorm = sqrt(-6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1));
@@ -1129,7 +1165,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     ray* directRay = new ray(Receiver->getPosX(),Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY(),0,0);
     //rayLine.push_back(directRay);
     //Efield = computeEfield(rayLine);
-    double G = Zvoid/(pow(M_PI, 2)*Ra);
+//    double G = Zvoid/(pow(M_PI, 2)*Ra);
     //Efield = (sqrt(60*G*powerEmettor)/directRay->getMeterLength());  // we can add the phase if we want to take into account the interraction between MPCs
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
@@ -1195,7 +1231,7 @@ double room::binaryDebit(double power){
 
 
 // dBm to watts and watts to dBm conversion
-
+double room::dB(double power){return 10*(log10(power));}
 double room::dBm(double power){return 10*(log10(power)) + 30.0;}
 double room::dBmRev(double dbm){return pow(10, -3)*pow(10, (dbm/10));}
 
@@ -1217,6 +1253,7 @@ void room::clearLocalParameters(){
     maxLength = 0.0;
     LOS = 0.0;
     NLOS = 0.0;
+    rayNumber = 0;
     //Efield = 0.0;
 }
 
@@ -1260,7 +1297,7 @@ void room::readSettingsFile(){
                 columns = 950/square_size; // 500 = window height
                 totalArea = rows * columns; // total number of local area
           }else if(count == 4){
-                powerEmettor = stod(line);
+                //powerEmettor = stod(line);
           }else if(count == 5){
               if(line == "true"){diffractOn = true;}else{
                   diffractOn = false;
@@ -1318,6 +1355,9 @@ int room::getTotalArea(){return totalArea;}
 int room::getMinimalDistance(){return minimalDistance;}
 int room::getSquare_size(){return square_size;}
 double room::getPxToMeter(){return pxToMeter;}
+double* room::getData(){return this->Data;}
+int room::getRayNumber(){return this->rayNumber;}
+double* room::getChannelData(){return this->channelData;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 
@@ -1385,7 +1425,7 @@ void room::drawCoverege(){
 
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
-            this->Data[i*rows+j] = this->powerReceived; // Received Power
+            this->Data[i*rows+j] = (powerReceived); // Received Power[W]
             this->Data[i*rows+j+totalArea] = abs(maxLength-minLength)/c; // Delay Spread
             this->Data[i*rows+j+totalArea*2] = 10*log10(LOS/NLOS); // Rice factor
             this->Data[i*rows+j+totalArea*3] = this->distance(); // Distance from TX
@@ -1417,10 +1457,6 @@ void room::getTxIndices(int &index_i, int &index_j){
     // Find the indices in the array Data that correspond to the TX position 
     index_i = (int)(Transmitter->getPosX()/square_size);
     index_j = (int)(Transmitter->getPosY()/square_size);
-}
-
-double* room::getData(){
-    return this->Data;
 }
 
 //---> Minimal results for local area-------------------------------------------------------------------------------------------------------------------
