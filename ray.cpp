@@ -22,21 +22,27 @@ ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall
     updateMeterLength();
 }
 
+ray::~ray(void){
+    //std::cout<<"Ray destroyed"<<std::endl;
+}
+
 /*
  * It is necessary to update the real length when the ray is transmitted through a wall. See function in room::distInWall()
  */
 
-void ray::updateLength(double length_inWall){
-    meterLength += length_inWall;
-    d += length_inWall/(2*pow(10,-2));
-}
+// void ray::updateLength(double length_inWall){
+//     meterLength += length_inWall;
+//     d += length_inWall/(2*pow(10,-2));
+// }
 
 
 /*
  * The scale chosen for the meter-pixels conversion is 1px = 1dm
  */
 
-void ray::updateMeterLength(){meterLength = d*pow(10, -1.0);}
+
+void ray::updateMeterLength(){meterLength = d*0.1;} // pxToMeter = 0.1
+
 
 
 // --> Getters && Settets

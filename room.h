@@ -28,6 +28,7 @@ class room : public QGraphicsScene//, private QImage
     Q_OBJECT
 public:
     explicit room(MainWindow *parent = 0);
+    ~room(void);
 
     void launch_algo(bool drawR);
 
@@ -45,7 +46,19 @@ public:
     double getpowerEmettor();
     double getInitBinaryDeb();
     complex <double> getTotalEfield();
-
+    int getRows();
+    int getColumns();
+    int getTotalArea();
+    double* getData();
+    int getMinimalDistance();
+    int getSquare_size();
+    double getPxToMeter();
+    
+    double getPrx(int posX, int posY);
+    double getDelay(int posX, int posY);
+    double getCoherenceBandwidth(int i, int j);
+    double getRiceFactor(int i, int j);
+    double getDistance(int i, int j);
 
     void setTransmitter(antena *new_transmitter);
     void setReceiver(antena *new_receiver);
@@ -54,9 +67,12 @@ public:
     //Misc tools
     void readSettingsFile();
     void clearAll();
+    void clearLocalParameters();
 
     void drawCoverege();
-
+    bool DataComputed();
+    void getDataIndices(int posX, int posY, int &index_i, int &index_j);
+    void getTxIndices(int &index_i, int &index_j);
 
 signals:
 
@@ -67,19 +83,26 @@ protected:
 
     int antenaType;
 
-
 private:
 
     // Qt visuals
     MainWindow *myParent;
     QGraphicsView *graphicsView;
 
+    // Graphical parameters
+    double pxToMeter = 0.1;
+    int square_size = 10;
+    int rows = 500/square_size; // 950 = window width
+    int columns = 950/square_size; // 500 = window height
+    int totalArea = rows * columns; // total number of local area
+    int minimalDistance = 10; // 10m
+
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    double antennaHeight;
-    wall *walls[16];    // For easier use walls are put in arrays
+    wall *walls[28];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
+    //lineo *uselessWalls[10];
 
 
     // --> Global variables (electrical constants)
@@ -88,16 +111,17 @@ private:
     double  Zvoid = 120*M_PI;
     double  muAir = 4*M_PI*1e-7;      // Tm/A
     double  c =2.998e+8;              // m/s
-    double  freq = 2.45e+9;           // Hz
-//    double  freq = 26e+9;           // Hz
+//    double  freq = 2.45e+9;           // Hz
+    double  freq = 26e+9;           // Hz
+    double  antennaHeight = 1.8; //m
 
     double lambda;
-    double alpha;
-    double beta;
+    // double alpha;
+    // double beta;
     double Beta = 2*M_PI*freq*sqrt(muAir*epsilonAir); // Used for the diffraction.
 
-    complex <double> gamma;
-    double power = 0;
+    // complex <double> gamma;
+    //double power = 0;
     double diffractedPower = 0;
 
 
@@ -112,7 +136,7 @@ private:
     vector <ray*> completeRay;
     vector <ray*> current; // algo power
 
-    complex <double> Efield;
+    //complex <double> Efield = 0;
     complex <double> totalEfield = 0.0;
 
 
@@ -139,8 +163,16 @@ private:
 
     // Problem parameters
     int reflectionsNumber;
-    int amount_walls = 16;
+    unsigned int amount_walls = 18;
+    int amount_useless_walls = 10;
+    unsigned int amount_all_walls = 28;
     int amount_discret = 20;
+    map<char,int[4]> streets;
+
+    double minLength, maxLength = 0;
+    double *Data = nullptr;
+    bool coverageDone = false;
+
 //    double powerEmettor = 20.0;   // In watts the power of the emettor
     double powerEmettor = 2.0;   // In watts the power of the emettor
     double Zwall;
@@ -148,9 +180,16 @@ private:
     bool diffractOn = false;
 
 
-    // Results
+// ---------- Results ------------------------
     double resultsBinaryDebit;
     double powerReceived;
+    double powerRef;
+    double LOS;
+    double NLOS;
+
+    // Plots
+    void plotPathLoss();
+    void plotFadindVariability();
 
 // ---------- Methods ------------------------
 
@@ -165,6 +204,7 @@ private:
     static void drawDiffraction(room* scene);
     static void buildDiffraction(room* scene);
     bool workingZone();
+    void setUpStreets();
 
     // Numerical analysis
 
@@ -176,7 +216,7 @@ private:
     bool pointOnLineNonInclusive(lineo* line1, const double xp, const double yp);
     vector<double> intersection(lineo* line1, lineo* line2 );
 
-    double distInWall(double tetai);
+//    double distInWall(double tetai);
     void distCorrection(vector<ray*> oneCompleteRay, wall walls[]);
 
     bool commonToAnyWall(double posX, double posY, int indWall);
@@ -196,10 +236,9 @@ private:
 
     double computePrx(complex <double> totalEfield);
     complex <double> computeEfield(vector<ray*> rayLine);
-    complex <double> computeEfieldGround();
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
-
+    complex <double> computeEfieldGround();
 
 public slots:
 

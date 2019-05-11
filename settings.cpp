@@ -29,7 +29,7 @@ void settings::writeSettings(){
     settingsData << toStringInt(wallType) + "\n";
     settingsData << toStringInt(amountReflect) + "\n";
     settingsData << toStringDoub(wallThick) + "\n";
-    settingsData << toStringInt(discret) + "\n";
+    settingsData << toStringInt(square_size) + "\n";
     settingsData << toStringDoub(emettorPower) + "\n";
     settingsData << toStringBool(diffractOnBool) + "\n";
 
@@ -54,7 +54,7 @@ void settings::readSettings(){
           }else if(count == 2){
               wallThick = stod(line);
           }else if(count == 3){
-              discret = stoi(line);
+              square_size = stoi(line);
           }else if(count == 4){
               emettorPower = stod(line);
           }else if(count == 5){
@@ -78,7 +78,7 @@ void settings::updateSettings(){
     ui->powerSpinBox->setValue(emettorPower);
     ui->wallThickSpinBox->setValue(wallThick);
     ui->reboundSpin->setValue(amountReflect);
-    ui->discretSubBox->setValue(discret);
+    ui->discretSubBox->setValue(square_size);
     ui->typeComboBox->setCurrentIndex(wallType); //0 index = Concrete Wall
     ui->diffractBox->setTristate(diffractOnBool);
 }
@@ -96,7 +96,7 @@ void settings::setToDefault(){
     wallType = 0;
     amountReflect = 2;
     wallThick = 50;  //Cm
-    discret = 50;
+    square_size = 10;
     emettorPower = 20; //dBm
     diffractOnBool = false;
 
@@ -116,7 +116,7 @@ void settings::on_applyChangesButton_clicked(){
     wallType = ui->typeComboBox->currentIndex();   // 0 == CONCRETE, 1 == BRICK WALL, 2 == SEPARATORS
     amountReflect = ui->reboundSpin->value();
     wallThick = ui->wallThickSpinBox->value();  //Cm
-    discret = ui->discretSubBox->value();
+    square_size = ui->discretSubBox->value();
     emettorPower = ui->powerSpinBox->value(); //dBm
     diffractOnBool = ui->diffractBox->checkState();
 

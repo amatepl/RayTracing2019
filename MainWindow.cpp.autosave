@@ -136,6 +136,7 @@ void MainWindow::on_generateCoveragePushButton_clicked()
     if(scene->getTransmitter() != NULL){
         scene->readSettingsFile();
         scene->drawCoverege();
+        ui->textBrowser->setText("Penetration depth: ");
 
     }else{
         statusBar()->showMessage("Placing emettor is needed to generate coverage");

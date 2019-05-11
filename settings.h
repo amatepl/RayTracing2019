@@ -46,7 +46,7 @@ private:
     int wallType;
     int amountReflect;
     double wallThick;
-    int discret;
+    int square_size;
     double emettorPower;
     bool diffractOnBool;
 

@@ -42,7 +42,7 @@
     <item row="1" column="1">
      <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Emettor power (dBm)</string>
+       <string>Emettor power (W)</string>
       </property>
      </widget>
     </item>
@@ -102,15 +102,18 @@
     </item>
     <item row="6" column="2">
      <widget class="QSpinBox" name="discretSubBox">
+      <property name="minimum">
+       <number>1</number>
+      </property>
       <property name="maximum">
-       <number>400</number>
+       <number>30</number>
       </property>
      </widget>
     </item>
     <item row="6" column="1">
      <widget class="QLabel" name="label_4">
       <property name="text">
-       <string>Discretisation of the plane for level coverage (subdivision)</string>
+       <string>Square size (set to 10 for a local area of 1m²)</string>
       </property>
      </widget>
     </item>
