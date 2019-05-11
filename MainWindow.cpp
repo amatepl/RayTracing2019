@@ -104,13 +104,13 @@ void MainWindow::on_settingsButton_clicked()
 
 void MainWindow::on_plotButton_clicked()
 {
-   if(scene->DataComputed()){
+  if(scene->DataComputed() or scene->getRayNumber()>0){
         scene_plots = new plots();
         int i = 0, j = 0;
         scene->getDataIndices(scene->getTransmitter()->getPosX(), scene->getTransmitter()->getPosY(), i, j);
         scene_plots->plotPathLoss(scene);
         scene_plots->show();
-   }
+  }
 }
 
 void MainWindow::on_clearWorkspaceButton_clicked(){

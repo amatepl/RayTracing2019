@@ -182,6 +182,7 @@ void room::launch_algo(bool drawR){
      */
 
     clearAll();     // Resets the power, binary debit and ray vector --> 0
+    computePhysicalResponse = drawR;
 
     if(!workingZone()){
         // Calculate power -- Reflexion and transmission
@@ -425,8 +426,8 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
 //            cout<<"--------------------------"<<endl;
             i++;
         }
-        //(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay(completeRay);
         (*scene).totalEfield += scene->computeEfield(completeRay);
+
         delete(receiver_ray);
         completeRay.clear();
         completeRay.shrink_to_fit();
@@ -1027,6 +1028,15 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     if(completeLength > this->maxLength){
         this->maxLength = completeLength; // for delay spread computation
     } 
+
+    // Store ray parameter for Physical impulse response
+    if(computePhysicalResponse){
+        // Store attenuation a and distance completeLength 
+        channelData[rayNumber] = R/completeLength;
+        channelData[rayNumber+8] = completeLength;
+        rayNumber += 1;
+    }
+
     return Efield;
 }
 
@@ -1044,6 +1054,15 @@ complex <double> room::computeEfieldGround(){
     double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;
     complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
     this->NLOS += pow(a,2);
+
+    // Store ray parameter for Physical impulse response
+    if(computePhysicalResponse){
+        // Store attenuation a and distance completeLength 
+        channelData[rayNumber] = R/completeLength;
+        channelData[rayNumber+8] = completeLength;
+        rayNumber += 1;
+    }
+
     return Efield;
 }
 
@@ -1087,7 +1106,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     ray* directRay = new ray(Receiver->getPosX(),Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY(),0,0);
     //rayLine.push_back(directRay);
     //Efield = computeEfield(rayLine);
-    double G = Zvoid/(pow(M_PI, 2)*Ra);
+//    double G = Zvoid/(pow(M_PI, 2)*Ra);
     //Efield = (sqrt(60*G*powerEmettor)/directRay->getMeterLength());  // we can add the phase if we want to take into account the interraction between MPCs
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
@@ -1175,6 +1194,7 @@ void room::clearLocalParameters(){
     maxLength = 0.0;
     LOS = 0.0;
     NLOS = 0.0;
+    rayNumber = 0;
     //Efield = 0.0;
 }
 
@@ -1276,6 +1296,9 @@ int room::getTotalArea(){return totalArea;}
 int room::getMinimalDistance(){return minimalDistance;}
 int room::getSquare_size(){return square_size;}
 double room::getPxToMeter(){return pxToMeter;}
+double* room::getData(){return this->Data;}
+int room::getRayNumber(){return this->rayNumber;}
+double* room::getChannelData(){return this->channelData;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 
@@ -1375,10 +1398,6 @@ void room::getTxIndices(int &index_i, int &index_j){
     // Find the indices in the array Data that correspond to the TX position 
     index_i = (int)(Transmitter->getPosX()/square_size);
     index_j = (int)(Transmitter->getPosY()/square_size);
-}
-
-double* room::getData(){
-    return this->Data;
 }
 
 //---> Minimal results for local area-------------------------------------------------------------------------------------------------------------------

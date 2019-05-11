@@ -53,6 +53,8 @@ public:
     int getMinimalDistance();
     int getSquare_size();
     double getPxToMeter();
+    int getRayNumber();
+    double* getChannelData();
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
@@ -191,9 +193,9 @@ private:
     double LOS;
     double NLOS;
 
-    // Plots
-    void plotPathLoss();
-    void plotFadindVariability();
+    int rayNumber = 0; // Help to keep track of the number of rays
+    bool computePhysicalResponse; // If we compute the channel response or not
+    double channelData[16] = {}; 
 
 // ---------- Methods ------------------------
 
