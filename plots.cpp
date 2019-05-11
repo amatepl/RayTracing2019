@@ -46,21 +46,22 @@ void plots::plotPathLoss(room *scene){
 
     lengthData -= distMinBias;
 
-    QVector<double> logD(lengthData), Prx(lengthData), pathLoss(lengthData);
+    QVector<double> logD(lengthData), Prx(lengthData), pathLoss(lengthData), fading(lengthData);
     for (int i=0; i<(lengthData); ++i){
         logD[i] = log10(Data[(i+bias)*rows+TxIndex_j+totalArea*3]);
         Prx[i] = Data[(i+bias)*rows+TxIndex_j];
     }
 
-    // Plot Path Loss (linear regression y = mx + b)
+    // Plot Path Loss (linear regression y = mx + b); m/10 = path loss exponent
     double m , b, r;
     linreg(lengthData, logD, Prx, &m, &b, &r);
     for (int i=0; i<(lengthData); ++i){
         pathLoss[i] = m*logD[i]+b;
+        fading[i] = Prx[i]-pathLoss[i];
     }
 
     // Fading variability (standard deviation)
-    double fadingVariability = findStandardDeviation(pathLoss);
+    double fadingVariability = findStandardDeviation(fading);
 
     // create graph and assign data to it:
     ui->customPlot->addGraph();
@@ -143,4 +144,27 @@ double plots::findStandardDeviation(QVector<double> array){
         sDeviation += pow(array[i] - mean, 2);
     }
     return sqrt(sDeviation/count);
+}
+
+void plots::plotCellRange(double m, double b, double fadingVariability){
+    // minDBM = <Prx> - L_fading
+    // <Prx> = mx + b; where x = log10(d) 
+    // Pr[L_fading<gamma] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)))
+
+    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma => plot R vs Pr
+    int lengthData = 100;
+    double step = (3*fadingVariability)/lengthData;
+    double gamma;
+    QVector<double> Pr(lengthData), cellRange(lengthData);
+    for (int i=0; i<lengthData; ++i){
+        gamma = i*step;
+        Pr[i] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)));  // Pr[L_fading<gamma]
+
+        // -102[dBm] = mx + b - gamma[dBm] => x = (-102 + gamma - b)/m => log10(d) = (-102 + gamma - b)/m => d = 10((-102 + gamma - b)/m)
+        cellRange[i] = pow(10,(-102 + gamma - b)/m);
+    }
+
+
+    // Plot Range vs Probability
+    
 }

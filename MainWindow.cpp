@@ -64,7 +64,7 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
     if(scene->DataComputed()){
         int i = 0, j = 0;
         scene->getDataIndices(pos.x(), pos.y(), i, j);
-        if(i>0 and j >0){
+        if(i>0 and j>0 and pos.x()<950 and pos.y()<500){
             ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getPrx(i, j)));
             ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->getDistance(i, j)));
             ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay(i, j)));

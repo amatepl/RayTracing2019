@@ -18,11 +18,13 @@ public:
     explicit plots(QWidget *parent = 0);
     ~plots();
     void plotPathLoss(room *scene);
+    void plotCellRange(double m, double b, double fadingVariability);
     int linreg(int n, QVector<double> x, QVector<double> y, double* m, double* b, double* r);
     double findStandardDeviation(QVector<double> array);
 
 private:
     Ui::plots *ui;
+    double minDBM = -102; // Minimal power[dBm] to establish a reliable communication
 };
 
 #endif // plots_H

@@ -115,7 +115,7 @@ private:
     double  freq = 26e+9;           // Hz
     double  antennaHeight = 1.8; //m
 
-    double lambda;
+    double lambda = c/freq;
     // double alpha;
     // double beta;
     double Beta = 2*M_PI*freq*sqrt(muAir*epsilonAir); // Used for the diffraction.
@@ -173,8 +173,12 @@ private:
     double *Data = nullptr;
     bool coverageDone = false;
 
-//    double powerEmettor = 20.0;   // In watts the power of the emettor
-    double powerEmettor = 2.0;   // In watts the power of the emettor
+    // System Parameters
+    double maxEIRP = 2; // Watt
+    double n = 1; // n = efficiency of the antenna
+    double maxGain = n*16/(3*M_PI);
+    double antennaLoss = 1; //L_Tx
+    double powerEmettor = maxEIRP*antennaLoss/maxGain;   // In watts the power of the emettor
     double Zwall;
     double eps;
     bool diffractOn = false;
@@ -225,6 +229,7 @@ private:
     void findDiffractionPoints();
 
     // Telecom calculation tools
+    double dB(double power);
     double dBm(double power);
     double dBmRev(double dbm);
     double binaryDebit(double power);

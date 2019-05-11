@@ -15,8 +15,6 @@ room::room(MainWindow *parent) :
     Transmitter = NULL;
     Receiver = NULL;
 
-    lambda = c/freq;
-
     // Absolute electric permittivity
     //eps = epsilonAir*epsilonWallRel;
 
@@ -581,6 +579,7 @@ void room::drawDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 notDiffracted =false;
@@ -605,6 +604,7 @@ void room::drawDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 delete(rayReceiver);
@@ -688,6 +688,7 @@ void room::buildDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 notDiffracted =false;
@@ -711,6 +712,7 @@ void room::buildDiffraction(room* scene){
                 rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+                (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
                 delete(rayReceiver);
@@ -1151,7 +1153,7 @@ double room::binaryDebit(double power){
 
 
 // dBm to watts and watts to dBm conversion
-
+double room::dB(double power){return 10*(log10(power));}
 double room::dBm(double power){return 10*(log10(power)) + 30.0;}
 double room::dBmRev(double dbm){return pow(10, -3)*pow(10, (dbm/10));}
 
@@ -1216,7 +1218,7 @@ void room::readSettingsFile(){
                 columns = 950/square_size; // 500 = window height
                 totalArea = rows * columns; // total number of local area
           }else if(count == 4){
-                powerEmettor = stod(line);
+                //powerEmettor = stod(line);
           }else if(count == 5){
               if(line == "true"){diffractOn = true;}else{
                   diffractOn = false;
@@ -1341,7 +1343,7 @@ void room::drawCoverege(){
 
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
-            this->Data[i*rows+j] = this->powerReceived; // Received Power
+            this->Data[i*rows+j] = (powerReceived); // Received Power[W]
             this->Data[i*rows+j+totalArea] = abs(maxLength-minLength)/c; // Delay Spread
             this->Data[i*rows+j+totalArea*2] = 10*log10(LOS/NLOS); // Rice factor
             this->Data[i*rows+j+totalArea*3] = this->distance(); // Distance from TX
