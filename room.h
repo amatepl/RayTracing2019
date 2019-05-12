@@ -55,6 +55,7 @@ public:
     double getPxToMeter();
     int getRayNumber();
     double* getChannelData();
+    map<const char*,int>* getStreetsPenDep();
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
@@ -169,7 +170,19 @@ private:
     int amount_useless_walls = 10;
     unsigned int amount_all_walls = 28;
     int amount_discret = 20;
-    map<char,int[4]> streets;
+    map<const char*,int> streetsPenDep;
+
+    struct streets{
+        int laLoi[4]= {1,200,950,300};
+
+        int commerceUp[4] = {200,1,250,200};
+        int commerceDown[4] = {200,300,250,500};
+        int deuxEg[4] = {450,1,500,200};
+        int spa[4] = {700,1,750,200};
+        int indu[4] = {600,300,650,500};
+    };
+
+    streets* st = new streets();
 
     double minLength, maxLength = 0;
     double *Data = nullptr;
@@ -211,6 +224,8 @@ private:
     static void buildDiffraction(room* scene);
     bool workingZone();
     void setUpStreets();
+    void penetrationDepth();
+    bool onStreet(int street[]);
 
     // Numerical analysis
 

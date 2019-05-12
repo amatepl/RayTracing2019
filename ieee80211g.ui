@@ -332,19 +332,6 @@ p, li { white-space: pre-wrap; }
      <string>Rue de l'Indusctrie: </string>
     </property>
    </widget>
-   <widget class="QLabel" name="science">
-    <property name="geometry">
-     <rect>
-      <x>1060</x>
-      <y>270</y>
-      <width>201</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Rue de la Science: </string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
@@ -433,9 +420,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <zorder>label_3</zorder>
+   <zorder>powerResultSpinBox</zorder>
+   <zorder>label_4</zorder>
+   <zorder>binaryResultsSpinBox</zorder>
+   <zorder>clearWorkspaceButton</zorder>
    <zorder>textBrowser_2</zorder>
    <zorder>layoutWidget</zorder>
-   <zorder>verticalLayoutWidget</zorder>
    <zorder>generateCoveragePushButton</zorder>
    <zorder>spinBoxResult</zorder>
    <zorder>label_5</zorder>
@@ -451,7 +442,6 @@ p, li { white-space: pre-wrap; }
    <zorder>spa</zorder>
    <zorder>commerceDown</zorder>
    <zorder>indu</zorder>
-   <zorder>science</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
