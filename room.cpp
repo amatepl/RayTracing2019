@@ -4,10 +4,10 @@
 
 using namespace std;
 
-room::room(MainWindow *parent) :
-    QGraphicsScene(parent)
+room::room(MainWindow *parente) :
+    QGraphicsScene(parente)
   //, QImage(1000,1000, QImage::Format_RGB32)
-{   myParent = parent;
+{   myParent = parente;
 
     readSettingsFile();
 
@@ -72,6 +72,12 @@ room::room(MainWindow *parent) :
     walls[17] = new wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);
 
     drawWalls();
+
+    streetsPenDep["commerceUp"] = 0;
+    streetsPenDep["commerceDown"] = 0;
+    streetsPenDep["spa"] = 0;
+    streetsPenDep["indu"] = 0;
+    streetsPenDep["deuxEg"] = 0;
     //findDiffractionPoints();
 
 }
@@ -101,6 +107,49 @@ void room::setUpStreets(){
 //    st = ('La_Loi', str);
     st['Rue_de_la_Loi']= str;
 //    //{'Rue_du_Commerce_Up', {200,1,250,200}};
+}
+
+void room::penetrationDepth(){
+    int Ry = Receiver->getPosY();
+    double depth;
+
+    if(onStreet(st->commerceUp)){
+        depth = (st->commerceUp[3] - Ry)*0.1;
+        if(depth > streetsPenDep["commerceUp"]){
+            streetsPenDep["commerceUp"] = depth;
+        }
+    }
+    else if(onStreet(st->deuxEg)){
+        depth = (st->deuxEg[3] - Ry)*0.1;
+        if(depth > streetsPenDep["deuxEg"]){
+            streetsPenDep["deuxEg"] = depth;
+        }
+    }
+    else if(onStreet(st->spa)){
+        depth = (st->spa[3] - Ry)*0.1;
+        if(depth > streetsPenDep["spa"]){
+            streetsPenDep["spa"] = depth;
+        }
+    }
+    else if(onStreet(st->commerceDown)){
+        depth = (Ry - st->commerceDown[1])*0.1;
+        if(depth > streetsPenDep["commerceDown"]){
+            streetsPenDep["commerceDown"] = depth;
+        }
+    }
+    else if(onStreet(st->indu)){
+        depth = (Ry - st->indu[1])*0.1;
+        if(depth > streetsPenDep["indu"]){
+            streetsPenDep["indu"] = depth;
+        }
+    }
+}
+
+bool room::onStreet(int street[4]){
+    int Rx = Receiver->getPosX();
+    int Ry = Receiver->getPosY();
+
+    return Rx>street[0] && Rx<street[2] && Ry>street[1] && Ry<street[3];
 }
 
 
@@ -372,7 +421,8 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
             receiver_ray = completeRay[i];
             current_ray = new lineo(receiver_ray->getX1(),receiver_ray->getY1(),receiver_ray->getX2(),receiver_ray->getY2());
 
-            if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
+//            if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
+             if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
                 delete(current_ray);
                 completeRay.clear();
                 completeRay.shrink_to_fit();
@@ -703,6 +753,12 @@ void room::buildDiffraction(room* scene){
                 double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
                 (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
+                double binary = (*scene).binaryDebit((*scene).powerReceived);
+                if(binary !=0){
+                    //cout<<binary<<endl;
+                    (*scene).penetrationDepth();
+                }
+
                 //(*scene).diffractedPower+= diffractPower;
                 delete(rayReceiver);
                 delete(rayTransmitter);
@@ -1365,6 +1421,7 @@ double room::getPxToMeter(){return pxToMeter;}
 double* room::getData(){return this->Data;}
 int room::getRayNumber(){return this->rayNumber;}
 double* room::getChannelData(){return this->channelData;}
+map<const char *, int> *room::getStreetsPenDep(){return &(this->streetsPenDep);}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -1444,6 +1501,17 @@ void room::drawCoverege(){
             this->addRect(i*square_size,j*square_size,square_size,square_size,pen,*brush);
         }
     }
+    cout<< "Rue du Commerce Up: ";
+    cout<< streetsPenDep["commerceUp"]<<endl;
+    cout<< "Rue du Commerce Down: ";
+    cout<< streetsPenDep["commerceDown"]<<endl;
+    cout<< "Rue de deux Eglises: ";
+    cout<< streetsPenDep["deuxEg"]<<endl;
+    cout<< "Rue de Spa: ";
+    cout<< streetsPenDep["spa"]<<endl;
+    cout<< "Rue de l'Industrie: ";
+    cout<< streetsPenDep["indu"]<<endl;
+    this->myParent->writePenetrationDepth(&streetsPenDep);
     drawWalls();
     this->clearAll();
     coverageDone = true;

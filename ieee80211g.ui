@@ -332,19 +332,6 @@ p, li { white-space: pre-wrap; }
      <string>Rue de l'Indusctrie: </string>
     </property>
    </widget>
-   <widget class="QLabel" name="science">
-    <property name="geometry">
-     <rect>
-      <x>1060</x>
-      <y>270</y>
-      <width>201</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Rue de la Science: </string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>

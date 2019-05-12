@@ -3,6 +3,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::IEEE80211g)
+
 {
     ui->setupUi(this);   // basic Qt, arrow -> is the same as (ui*).setupUi()
 
@@ -165,5 +166,19 @@ void MainWindow::on_commandLinkButton_clicked()
     }else{
         statusBar()->showMessage("Placing the emettor/receptor is requiered");
     }
+}
+
+void MainWindow::writePenetrationDepth(map<const char *, int>* text){
+    map<const char*,int>* st = scene->getStreetsPenDep();
+    ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*st)["commerceUp"]));
+//    cout<<(*st)["commerceUp"]<<endl;
+//    cout<<(*text)["commerceUp"]<<endl;
+//    cout<<(*text).size()<<endl;
+//    cout<<(*text)["deuxEg"]<<endl;
+    //ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*text)["commerceUp"]));
+    ui->commerceDown->setText(QString("Rue du Commerce Down: ") + QString::number((*text)["commerceDown"]));
+    ui->deuxEg->setText(QString("Rue de deux Eglises: ") + QString::number((*text)["deuxEg"]));
+    ui->spa->setText(QString("Rue de spa: ") + QString::number((*text)["spa"]));
+    ui->indu->setText(QString("Rue de l'Industrie: ") + QString::number((*text)["indu"]));
 }
 
