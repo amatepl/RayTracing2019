@@ -55,6 +55,7 @@ public:
     double getPxToMeter();
     int getRayNumber();
     double* getChannelData();
+    double getCarrierFrequency();
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);

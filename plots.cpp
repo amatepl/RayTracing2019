@@ -3,6 +3,8 @@
 #include "room.h"
 #include <stdlib.h>
 #include <math.h>
+// Libraries
+#include <complex>
 
 plots::plots(QWidget *parent) :
     QDialog(parent),
@@ -416,13 +418,14 @@ void plots::TDLImpulseResponse(room* scene){
 void plots::TDL_US(room* scene){
     int rayNumber = scene->getRayNumber();
     double *channelData = scene->getChannelData();
-    double  c =2.998e+8; // m/s
-
+    double  c = 2.998e+8; // m/s
+    double freq = scene->getCarrierFrequency();
     double BW = 100e+6; // Hz
     double deltaTau = 1/(2*BW);
-    cout<<deltaTau*1e9<<endl;
 
-    QVector<double> x(rayNumber), y(rayNumber);
+    double x[rayNumber];
+    complex <double> y[rayNumber];
+    complex <double> p(0.0, 1.0);
     double tau_check;
     for (int i=0; i<(rayNumber); ++i){
         tau_check = channelData[i+10]/c;
@@ -431,7 +434,7 @@ void plots::TDL_US(room* scene){
             l++;
         }
         x[i] = l*deltaTau*1e9;
-        y[i] = channelData[i];
+        y[i] = channelData[i] * exp(-p * 2.0*M_PI * freq * tau_check);
     }
 
     int counter = rayNumber;
@@ -447,7 +450,7 @@ void plots::TDL_US(room* scene){
     QVector<double> h_TDL(counter), tau(counter);
     int k = 0, counter2 = 0;
     while(k<rayNumber){
-        if(y[k] != 0){
+        if(y[k] != 0.0){
             tau[counter2] = x[k];
             h_TDL[counter2] = 10*log10(abs(y[k]));
             QCPItemLine *line = new QCPItemLine(ui->customPlot_6);
