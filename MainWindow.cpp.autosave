@@ -64,7 +64,7 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
     if(scene->DataComputed()){
         int i = 0, j = 0;
         scene->getDataIndices(pos.x(), pos.y(), i, j);
-        if(i>0 and j>0 and pos.x()<950 and pos.y()<500){
+        if(i>0 and j >0){
             ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getPrx(i, j)));
             ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->getDistance(i, j)));
             ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay(i, j)));
@@ -104,13 +104,13 @@ void MainWindow::on_settingsButton_clicked()
 
 void MainWindow::on_plotButton_clicked()
 {
-  if(scene->DataComputed() or scene->getRayNumber()>0){
+   if(scene->DataComputed()){
         scene_plots = new plots();
         int i = 0, j = 0;
         scene->getDataIndices(scene->getTransmitter()->getPosX(), scene->getTransmitter()->getPosY(), i, j);
         scene_plots->plotPathLoss(scene);
         scene_plots->show();
-  }
+   }
 }
 
 void MainWindow::on_clearWorkspaceButton_clicked(){
@@ -136,6 +136,7 @@ void MainWindow::on_generateCoveragePushButton_clicked()
     if(scene->getTransmitter() != NULL){
         scene->readSettingsFile();
         scene->drawCoverege();
+        ui->textBrowser->setText("Penetration depth: ");
 
     }else{
         statusBar()->showMessage("Placing emettor is needed to generate coverage");

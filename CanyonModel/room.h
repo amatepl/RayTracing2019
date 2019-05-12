@@ -53,9 +53,6 @@ public:
     int getMinimalDistance();
     int getSquare_size();
     double getPxToMeter();
-    int getRayNumber();
-    double* getChannelData();
-    double getCarrierFrequency();
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
@@ -118,7 +115,7 @@ private:
     double  freq = 26e+9;           // Hz
     double  antennaHeight = 1.8; //m
 
-    double lambda = c/freq;
+    double lambda;
     // double alpha;
     // double beta;
     double Beta = 2*M_PI*freq*sqrt(muAir*epsilonAir); // Used for the diffraction.
@@ -128,7 +125,7 @@ private:
     double diffractedPower = 0;
 
 
-    double  Ra = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
+    double  Ra = 73.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
     struct Drawer;
 
     // Algo parameters
@@ -166,9 +163,9 @@ private:
 
     // Problem parameters
     int reflectionsNumber;
-    unsigned int amount_walls = 18;
-    int amount_useless_walls = 10;
-    unsigned int amount_all_walls = 28;
+    unsigned int amount_walls = 2;
+    int amount_useless_walls = 0;
+    unsigned int amount_all_walls = 2;
     int amount_discret = 20;
     map<char,int[4]> streets;
 
@@ -176,15 +173,10 @@ private:
     double *Data = nullptr;
     bool coverageDone = false;
 
-    // System Parameters
-    double maxEIRP = 2; // Watt
-    double n = 1; // n = efficiency of the antenna
-    double maxGain = n*16/(3*M_PI);
-    double antennaLoss = 1; //L_Tx
-    double powerEmettor = maxEIRP*antennaLoss/maxGain;   // In watts the power of the emettor
+//    double powerEmettor = 20.0;   // In watts the power of the emettor
+    double powerEmettor = 2.0;   // In watts the power of the emettor
     double Zwall;
     double eps;
-    bool diffractOn = false;
 
 
 // ---------- Results ------------------------
@@ -194,9 +186,9 @@ private:
     double LOS;
     double NLOS;
 
-    int rayNumber = 0; // Help to keep track of the number of rays
-    bool computePhysicalResponse; // If we compute the channel response or not
-    double channelData[2*20] = {}; // 2 * 10 rays
+    // Plots
+    void plotPathLoss();
+    void plotFadindVariability();
 
 // ---------- Methods ------------------------
 
@@ -232,7 +224,6 @@ private:
     void findDiffractionPoints();
 
     // Telecom calculation tools
-    double dB(double power);
     double dBm(double power);
     double dBmRev(double dbm);
     double binaryDebit(double power);
