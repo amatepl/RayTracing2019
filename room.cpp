@@ -104,12 +104,7 @@ void room::setUpStreets(){
 }
 
 
-bool room::workingZone(){
-    int Rx = Receiver->getPosX();
-    int Ry = Receiver->getPosY();
-
-//    int Tx = Receiver->getPosX();
-//    int Ty = Receiver->getPosY();
+bool room::workingZone(int Rx, int Ry){
     bool result;
 
     bool building1 = Rx>=1 && Rx<=200 && Ry>=1 && Ry<=200;
@@ -189,7 +184,7 @@ void room::launch_algo(bool drawR){
     clearAll();     // Resets the power, binary debit and ray vector --> 0
     computePhysicalResponse = drawR;
 
-    if(!workingZone()){
+    if(!workingZone(Receiver->getPosX(), Receiver->getPosY())){
         // Calculate power -- Reflexion and transmission
 
         current_ray = new lineo(Receiver->getPosX(),Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY());
@@ -1131,6 +1126,14 @@ double room::computePrx(complex <double> totalEfield){
     return Prx;
 }
 
+double room::computeSNR(double Prx){
+    /*
+        Compute the SNR [dB] with Prx given in dBm.
+    */
+    double SNR = (Prx+30) - noiseFigure - inputNoise;
+    return SNR;
+}
+
 double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // Direct distance between the receiver and the transmitter
@@ -1248,6 +1251,7 @@ void room::clearLocalParameters(){
     totalEfield = 0.0;
     resultsBinaryDebit = 0.0;
     powerReceived = 0.0;
+    SNR = 0.0;
     powerRef = 0.0;
     minLength = 0.0;
     maxLength = 0.0;
@@ -1347,6 +1351,8 @@ double room::getpowerEmettor(){return powerEmettor;}
 double room::getInitBinaryDeb(){return binaryDebit(powerEmettor);}
 complex <double> room::getTotalEfield(){return totalEfield;}
 double room::getCarrierFrequency(){return freq;}
+double room::getBandwidth(){return BW;}
+double room::getMinPrx(){return minPrx;}
 
 void room::setReceiver(antena *new_receiver){Receiver = new_receiver;}
 void room::setTransmitter(antena *new_transmitter){Transmitter = new_transmitter;}
@@ -1361,8 +1367,6 @@ int room::getRayNumber(){return this->rayNumber;}
 double* room::getChannelData(){return this->channelData;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
-
-
 void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {   QPointF x = event->scenePos();
     QPoint X = x.toPoint();
@@ -1413,7 +1417,7 @@ void room::drawCoverege(){
     pen.setColor(QColor(0,0,0,0));
     QColor color;
     
-    this->Data = (double *)calloc(totalArea * 4, sizeof(double));
+    this->Data = (double *)calloc(totalArea * 5, sizeof(double));
     if (!this->Data) {
         printf("mem failure, exiting \n");
         exit(EXIT_FAILURE);
@@ -1426,17 +1430,18 @@ void room::drawCoverege(){
 
             Receiver->setPosi(QPointF(xRece,yRece));
             launch_algo(false);
-            this->Data[i*rows+j] = (powerReceived); // Received Power[W]
+            this->Data[i*rows+j] = (powerReceived); // Received Power[dBm]
             this->Data[i*rows+j+totalArea] = abs(maxLength-minLength)/c; // Delay Spread
             this->Data[i*rows+j+totalArea*2] = 10*log10(LOS/NLOS); // Rice factor
             this->Data[i*rows+j+totalArea*3] = this->distance(); // Distance from TX
+            this->Data[i*rows+j+totalArea*4] = this->computeSNR(powerReceived); // Compute SNR from Prx in dBm
 
-           // Plot results
-           // Change binaryDebit which is different for 5G
-           if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
-           else{color.setHsv(0,255,255,255);}
-           brush->setColor(color);
-           this->addRect(i*square_size,j*square_size,square_size,square_size,pen,*brush);
+            // Plot results
+            // Change binaryDebit which is different for 5G
+            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
+            else{color.setHsv(0,255,255,255);}
+            brush->setColor(color);
+            this->addRect(i*square_size,j*square_size,square_size,square_size,pen,*brush);
         }
     }
     drawWalls();
@@ -1461,6 +1466,22 @@ void room::getTxIndices(int &index_i, int &index_j){
 }
 
 //---> Minimal results for local area-------------------------------------------------------------------------------------------------------------------
+double room::getDelay_local(){
+    // Delay spread
+    return abs(maxLength-minLength)/c;
+}
+
+double room::getCoherenceBandwidth_local(){
+    return (1/this->getDelay_local());
+}
+
+double room::getRiceFactor_local(){
+    return 10*log10(LOS/NLOS);
+}
+
+double room::getSNR_local(){
+    return computeSNR(powerReceived);
+}
 
 double room::getPrx(int i, int j){
     // Narrowband receive power
@@ -1486,4 +1507,9 @@ double room::getRiceFactor(int i, int j){
 double room::getDistance(int i, int j){
     double distance = this->Data[i*rows+j+totalArea*3];
     return distance;
+}
+
+double room::getSNR(int i, int j){
+    double SNR = this->Data[i*rows+j+totalArea*4];
+    return SNR;
 }

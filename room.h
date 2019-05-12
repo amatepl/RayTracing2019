@@ -56,12 +56,20 @@ public:
     int getRayNumber();
     double* getChannelData();
     double getCarrierFrequency();
+    double getBandwidth();
+    double getMinPrx();
     
     double getPrx(int posX, int posY);
+    double getSNR(int posX, int posY);
     double getDelay(int posX, int posY);
     double getCoherenceBandwidth(int i, int j);
     double getRiceFactor(int i, int j);
     double getDistance(int i, int j);
+
+    double getDelay_local();
+    double getCoherenceBandwidth_local();
+    double getRiceFactor_local();
+    double getSNR_local();
 
     void setTransmitter(antena *new_transmitter);
     void setReceiver(antena *new_receiver);
@@ -76,6 +84,7 @@ public:
     bool DataComputed();
     void getDataIndices(int posX, int posY, int &index_i, int &index_j);
     void getTxIndices(int &index_i, int &index_j);
+    bool workingZone(int x, int y);
 
 signals:
 
@@ -110,13 +119,15 @@ private:
 
     // --> Global variables (electrical constants)
 
-    double  epsilonAir = 8.864e-12;   // A²S⁴kg⁻1m⁻3
+    double  epsilonAir = 8.864e-12; // A²S⁴kg⁻1m⁻3
     double  Zvoid = 120*M_PI;
-    double  muAir = 4*M_PI*1e-7;      // Tm/A
-    double  c =2.998e+8;              // m/s
-//    double  freq = 2.45e+9;           // Hz
+    double  muAir = 4*M_PI*1e-7;    // Tm/A
+    double  c = 2.998e+8;           // m/s
+    double  kb = 1.379e-23;         // Boltzmann's constant
+    double  T0 = 290;               // K; reference temperature T_0
     double  freq = 26e+9;           // Hz
-    double  antennaHeight = 1.8; //m
+    double  BW = 100e+6;            // Hz
+    double  antennaHeight = 1.8;    //m
 
     double lambda = c/freq;
     // double alpha;
@@ -177,20 +188,28 @@ private:
     bool coverageDone = false;
 
     // System Parameters
-    double maxEIRP = 2; // Watt
-    double n = 1; // n = efficiency of the antenna
-    double maxGain = n*16/(3*M_PI);
-    double antennaLoss = 1; //L_Tx
-    double powerEmettor = maxEIRP*antennaLoss/maxGain;   // In watts the power of the emettor
-    double Zwall;
-    double eps;
-    bool diffractOn = false;
+    double  maxEIRP = 2; // Watt
+    double  n = 1; // n = efficiency of the antenna
+    double  maxGain = n*16/(3*M_PI);
+    double  L_Tx = 1; //L_Tx
+    double  powerEmettor = maxEIRP*L_Tx/maxGain;   // In watts the power of the emettor
+    double  Zwall;
+    double  eps;
+    bool    diffractOn = false;
 
+    // SNR parameters
+    double targetSNR = 8; //[dB] 
+    double noiseFigure = 10; //[dB]
+    double inputNoise = 10*log10(kb*T0*BW);
+    double interferenceMargin = 6; //[dB]
+
+    double minPrx = targetSNR + noiseFigure + inputNoise + interferenceMargin - 30; // +30 to convert dB -> dBm
 
 // ---------- Results ------------------------
     double resultsBinaryDebit;
     double powerReceived;
     double powerRef;
+    double SNR;
     double LOS;
     double NLOS;
 
@@ -210,7 +229,6 @@ private:
     bool checkTransmission(lineo* line1, lineo* line2, int x1, int y1,int x2,int y2);
     static void drawDiffraction(room* scene);
     static void buildDiffraction(room* scene);
-    bool workingZone();
     void setUpStreets();
 
     // Numerical analysis
@@ -247,6 +265,7 @@ private:
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
     complex <double> computeEfieldGround();
+    double computeSNR(double Prx);
 
 public slots:
 

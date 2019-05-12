@@ -5,6 +5,7 @@
 #include <math.h>
 // Libraries
 #include <complex>
+#include <random>
 
 plots::plots(QWidget *parent) :
     QDialog(parent),
@@ -96,11 +97,13 @@ void plots::plotPathLoss(room *scene){
         textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
         textLabel->setPen(QPen(Qt::black)); // show black border around text
 
+
         // Plot model
-        plotModel(m, b, fadingVariability);
+        double minPrx = scene->getMinPrx(); // Minimal power in dBm at receiver to establish a connection
+        plotModel(m, b, fadingVariability, minPrx);
 
         // Cell Range vs Probability
-        plotCellRange(m, b, fadingVariability);
+        plotCellRange(m, b, fadingVariability, minPrx);
     }
 
     if(scene->getRayNumber()>0){
@@ -175,7 +178,7 @@ double plots::findStandardDeviation(QVector<double> array){
 
 //  Create the plots
 
-void plots::plotModel(double m, double b, double fadingVariability){
+void plots::plotModel(double m, double b, double fadingVariability, double minPrx){
     std::default_random_engine generator;
     std::normal_distribution<double> distribution(0.0, fadingVariability);
 
@@ -191,7 +194,7 @@ void plots::plotModel(double m, double b, double fadingVariability){
         pathLoss_model[i] =  m*logD_model[i] + b;
         L_fading_model = distribution(generator);
         Prx_model[i] = pathLoss_model[i] + L_fading_model;
-        threshold[i] = -102;
+        threshold[i] = minPrx;
     }
 
     // create graph and assign data to it:
@@ -228,12 +231,12 @@ void plots::plotModel(double m, double b, double fadingVariability){
 }
 
 
-void plots::plotCellRange(double m, double b, double fadingVariability){
-    // minDBM = <Prx> - L_fading     (minDBM = -102dBm)
+void plots::plotCellRange(double m, double b, double fadingVariability, double minPrx){
+    // minPrx = <Prx> - L_fading     
     // <Prx> = mx + b; where x = log10(d) 
     // Pr[L_fading<gamma] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)))
 
-    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma => Compute R such that minDBM = <Prx(R)> - gamma
+    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma => Compute R such that minPrx> = <Prx(R)> - gamma
     int lengthData = 100;
     double step = (3*fadingVariability)/lengthData;
     double gamma;
@@ -242,8 +245,8 @@ void plots::plotCellRange(double m, double b, double fadingVariability){
         gamma = i*step;
         Pr[i] = 1 - 0.5*erfc(gamma/(fadingVariability * sqrt(2)));// Pr[L_fading<gamma]
 
-        // -102[dBm] = mx + b - gamma[dBm] => x = (-102 + gamma - b)/m => log10(d) = (-102 + gamma - b)/m => d = 10((-102 + gamma - b)/m)
-        cellRange[i] = pow(10,(-102 + gamma - b)/m);
+        // minPrx = mx + b - gamma[dBm] => x = (minPrx + gamma - b)/m => log10(d) = (-102 + gamma - b)/m => d = 10((minPrx + gamma - b)/m)
+        cellRange[i] = pow(10,(minPrx + gamma - b)/m);
     }
 
 
@@ -265,7 +268,7 @@ void plots::plotCellRange(double m, double b, double fadingVariability){
     textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
     textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
     textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
-    textLabel->setText(QString("For a minimal received power of -102 dBm"));
+    textLabel->setText(QString("For a minimal received power of ") + QString::number(minPrx) + QString("dBm"));
     textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
     textLabel->setPen(QPen(Qt::black)); // show black border around text
 }
@@ -377,7 +380,7 @@ void plots::TDL_US(room* scene){
     double *channelData = scene->getChannelData();
     double  c = 2.998e+8; // m/s
     double freq = scene->getCarrierFrequency();
-    double BW = 100e+6; // Hz
+    double BW = scene->getBandwidth();
     double deltaTau = 1/(2*BW);
 
     double x[rayNumber];
