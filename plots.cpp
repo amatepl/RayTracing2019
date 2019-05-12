@@ -372,6 +372,8 @@ void plots::TDLImpulseResponse(room* scene){
 
 void plots::TDL_US(room* scene){
     int rayNumber = scene->getRayNumber();
+    cout<<"number of rays: ";
+    cout<<rayNumber<<endl;
     double *channelData = scene->getChannelData();
     double  c = 2.998e+8; // m/s
     double freq = scene->getCarrierFrequency();
