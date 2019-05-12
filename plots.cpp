@@ -322,7 +322,7 @@ void plots::TDLImpulseResponse(room* scene){
     int rayNumber = scene->getRayNumber();
     double *channelData = scene->getChannelData();
     double  c =2.998e+8; // m/s
-
+    double freq = scene->getCarrierFrequency();
     double minBW = 100e+6;
     double maxBW = 700e+6;
     int lengthData = 200;
@@ -331,17 +331,20 @@ void plots::TDLImpulseResponse(room* scene){
 
     // Sweep Bandwidth BW from 100MHz -> 700 MHz
     QVector<double> BW(lengthData), h_l(lengthData);
+    complex <double> h_l_temp[lengthData];
+    complex <double> p(0.0, 1.0);
     int l = 0;
     double tau = 0;
     for (int i=0; i<lengthData; ++i){
         BW[i] = minBW + i*step;
         deltaTau = 1/(2*BW[i]);
         h_l[i] = 0;
+        h_l_temp[i] = 0;
         for (int j=0; j<(rayNumber); ++j){
             tau = channelData[j+10]/c;
-            h_l[i] += channelData[j]*(sin(2*BW[i]*(tau-l*deltaTau))/(2*BW[i]*(tau-l*deltaTau)));
+            h_l_temp[i] += channelData[j]*exp(-p * 2.0*M_PI * freq * tau) * (sin(2*BW[i]*(tau-l*deltaTau))/(2*BW[i]*(tau-l*deltaTau)));
         }
-        h_l[i] = 10*log10(h_l[i]);
+        h_l[i] = 10*log10(abs(h_l_temp[i]));
         BW[i] = BW[i]*1e-6;
 
         QCPItemLine *line = new QCPItemLine(ui->customPlot_5);
@@ -389,16 +392,20 @@ void plots::TDL_US(room* scene){
         y[i] = channelData[i] * exp(-p * 2.0*M_PI * freq * tau_check);
     }
 
-    int counter = rayNumber;
     for (int i=0; i<rayNumber; ++i){
         for (int j=0; j<rayNumber; ++j){
             if(i<j && x[i] == x[j]){
                 y[i] += y[j];
                 y[j] = 0;
-                counter--;
             }
         }
     }
+
+    int counter = 0;
+    for (int i=0; i<rayNumber; ++i){
+        if(y[i]!=0.0){counter++;}
+    }
+
     QVector<double> h_TDL(counter), tau(counter);
     int k = 0, counter2 = 0;
     while(k<rayNumber){
