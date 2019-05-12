@@ -78,12 +78,17 @@ room::room(MainWindow *parent) :
 room::~room(void){}
 
 void room::setUpStreets(){
-    int laLoi[4]= {1,200,950,300};
-    int commerceUp[4] = {200,1,250,200};
-    int commerceDown[4] = {200,300,250,500};
-    int deuxEg[4] = {450,1,500,200};
-    int spa[4] = {700,1,750,200};
-    int indu[4] = {600,300,650,500};
+
+    struct streets{
+        int laLoi[4]= {1,200,950,300};
+        int commerceUp[4] = {200,1,250,200};
+        int commerceDown[4] = {200,300,250,500};
+        int deuxEg[4] = {450,1,500,200};
+        int spa[4] = {700,1,750,200};
+        int indu[4] = {600,300,650,500};
+    };
+
+
 
 
     //lis = {1,200,950,300};
@@ -370,27 +375,15 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
             */
 
             receiver_ray = completeRay[i];
-
-            //double rayStart[2] = {receiver_ray->getX1(),receiver_ray->getY1()};
-            //double rayEnd[2] = {receiver_ray->getX2(),receiver_ray->getY2()};
             current_ray = new lineo(receiver_ray->getX1(),receiver_ray->getY1(),receiver_ray->getX2(),receiver_ray->getY2());
 
-            //double imageCoordinates[2] = {(*scene).intersection(current_ray,(*scene).walls[j])[0],(*scene).intersection(current_ray,(*scene).walls[j])[1]};
-//            if((*scene).intersectionCheck(receiver_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], rayEnd[0], rayEnd[1]) && !(*scene).pointOnLine((*scene).walls[j], rayStart[0], rayStart[1])){
             if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
-            //if((*scene).checkTransmission((*scene).walls[i],receiver_ray,rayStart[0], rayStart[1],rayEnd[0], rayEnd[1])){
                 delete(current_ray);
                 completeRay.clear();
                 completeRay.shrink_to_fit();
                 dontStop = false;
                 break;
             }
-//            else{
-//                cout<<"Ray's slope: ";
-//                cout<<receiver_ray->getSlope()<<endl;
-//                cout<<"Ray's root: ";
-//                cout<<receiver_ray->getYorigin()<<endl;
-//            }
         }
         i++;
     }
@@ -414,16 +407,16 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
 //            cout<<"Ray reflects on wall end: ";
 //            cout<<(*scene).pointOnLine((*scene).walls[4],completeRay[i]->getX2(),completeRay[i]->getY2())<<endl;
 
-//            cout<<"x1 and y1: ";
-//            cout<<completeRay[i]->getX1();
-//            cout<<", ";
-//            cout<<completeRay[i]->getY1()<<endl;
+            cout<<"x1 and y1: ";
+            cout<<completeRay[i]->getX1();
+            cout<<", ";
+            cout<<completeRay[i]->getY1()<<endl;
 
-//            cout<<"x2 and y2: ";
-//            cout<<completeRay[i]->getX2();
-//            cout<<", ";
-//            cout<<completeRay[i]->getY2()<<endl;
-//            cout<<"--------------------------"<<endl;
+            cout<<"x2 and y2: ";
+            cout<<completeRay[i]->getX2();
+            cout<<", ";
+            cout<<completeRay[i]->getY2()<<endl;
+            cout<<"--------------------------"<<endl;
             i++;
         }
         (*scene).totalEfield += scene->computeEfield(completeRay);
@@ -788,8 +781,8 @@ std::vector<double> room::intersection(lineo* line1, lineo* line2){
    ypos = (a * xpos) + b;
    }
 
-   coord[0] = xpos;
-   coord[1] = ypos;
+   coord[0] = round(xpos);
+   coord[1] = round(ypos);
    return coord;
 }
 
@@ -806,38 +799,85 @@ bool room::pointOnLine(lineo* line1,const double xp,const double yp){
     int x2 = (int)line1->getX2();
     int y2 = (int)line1->getY2();
 
-    bool answer1 = false;
+    bool answer = false;
 
-    int x = ceil(xp);
-    int y = ceil(yp);
-
-    if(x1 == x2){   // Cas du mur vertical
-        answer1 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
-    }
-    else if (y1 == y2){   // Cas du mur horizental
-        answer1 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
-    }
-    else {
-       answer1 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
-    }
-
-
-    x = floor(xp);
-    y = floor(yp);
-
-    bool answer2;
+    int x = xp;
+    int y = yp;
 
     if(x1 == x2){   // Cas du mur vertical
-        answer2 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
+        answer = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
     }
     else if (y1 == y2){   // Cas du mur horizental
-        answer2 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
+        answer = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
     }
     else {
-       answer2 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
+       answer = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
     }
+    return answer;
 
-    return answer1 || answer2;
+
+//    bool answer1 = false;
+
+//    int x = ceil(xp);
+//    int y = ceil(yp);
+
+//    if(x1 == x2){   // Cas du mur vertical
+//        answer1 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
+//    }
+//    else if (y1 == y2){   // Cas du mur horizental
+//        answer1 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
+//    }
+//    else {
+//       answer1 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
+//    }
+
+
+//    x = floor(xp);
+//    y = floor(yp);
+
+//    bool answer2;
+
+//    if(x1 == x2){   // Cas du mur vertical
+//        answer2 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
+//    }
+//    else if (y1 == y2){   // Cas du mur horizental
+//        answer2 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
+//    }
+//    else {
+//       answer2 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
+//    }
+
+//    x = floor(xp);
+//    y = ceil(yp);
+
+//    bool answer3;
+
+//    if(x1 == x2){   // Cas du mur vertical
+//        answer3 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
+//    }
+//    else if (y1 == y2){   // Cas du mur horizental
+//        answer3 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
+//    }
+//    else {
+//       answer3 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
+//    }
+
+//    x = ceil(xp);
+//    y = floor(yp);
+
+//    bool answer4;
+
+//    if(x1 == x2){   // Cas du mur vertical
+//        answer4 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
+//    }
+//    else if (y1 == y2){   // Cas du mur horizental
+//        answer4 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
+//    }
+//    else {
+//       answer4 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
+//    }
+
+//    return answer1 || answer2 || answer3 || answer4;
 }
 
 bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp){
@@ -1103,12 +1143,16 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     complex<double> Efield =0.0;
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
+
     double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist*pow(10, -1.0);
+
 
     double nu = sqrt(2*Beta*delta_r/M_PI);
 
     // The ITU's approximation for |F(nu)|^2
-    double FresnelPower = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+    double FresnelPowerdB = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+//    double FresnelPowerdB = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+    double FresnelPower = pow(10,FresnelPowerdB/20);
 //    double fresnelPowerW = pow(10,FresnelPower/20);
     //double fresnelNorm = sqrt(-6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1));
 //    double fresnelNorm = sqrt(fresnelPowerW);
