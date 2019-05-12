@@ -166,7 +166,9 @@ double plots::findStandardDeviation(QVector<double> array){
     for(i = 0; i < count; ++i) {
         sDeviation += pow(array[i] - mean, 2);
     }
-    return sqrt(sDeviation/count);
+    double res = sqrt(sDeviation/count);
+    if(res<1e-5){res = 0;}
+    return res;
 }
 
 
@@ -214,6 +216,15 @@ void plots::plotModel(double m, double b, double fadingVariability){
     ui->customPlot_2->rescaleAxes();
     ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_2->replot();
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(ui->customPlot_2);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(m/10)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fadingVariability));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 }
 
 
