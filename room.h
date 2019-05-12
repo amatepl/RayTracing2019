@@ -87,6 +87,12 @@ public:
     void getTxIndices(int &index_i, int &index_j);
     bool workingZone(int x, int y);
 
+    // Telecom calculation tools
+    double dB(double power);
+    double dBm(double power);
+    double dBmRev(double dbm);
+    double binaryDebit(double power);
+
 signals:
 
 protected:
@@ -201,7 +207,7 @@ private:
     bool coverageDone = false;
 
     // System Parameters
-    double  maxEIRP = 2; // Watt
+    double  maxEIRP = 1; // Watt
     double  n = 1; // n = efficiency of the antenna
     double  maxGain = n*16/(3*M_PI);
     double  L_Tx = 1; //L_Tx
@@ -263,12 +269,6 @@ private:
 
     void drawWalls();
     void findDiffractionPoints();
-
-    // Telecom calculation tools
-    double dB(double power);
-    double dBm(double power);
-    double dBmRev(double dbm);
-    double binaryDebit(double power);
 
     double diffractedRayPower(ray* rayReceiver, ray*rayTransmitter);
 

@@ -178,7 +178,7 @@
       <x>1050</x>
       <y>340</y>
       <width>221</width>
-      <height>161</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="html">
@@ -193,7 +193,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1060</x>
-      <y>350</y>
+      <y>380</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -206,7 +206,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1060</x>
-      <y>440</y>
+      <y>470</y>
       <width>191</width>
       <height>20</height>
      </rect>
@@ -219,7 +219,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1060</x>
-      <y>470</y>
+      <y>500</y>
       <width>201</width>
       <height>21</height>
      </rect>
@@ -245,7 +245,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1060</x>
-      <y>380</y>
+      <y>410</y>
       <width>181</width>
       <height>16</height>
      </rect>
@@ -424,7 +424,20 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>1060</x>
-      <y>410</y>
+      <y>440</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Ptx">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>350</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -455,8 +468,8 @@ p, li { white-space: pre-wrap; }
    <zorder>spa</zorder>
    <zorder>commerceDown</zorder>
    <zorder>indu</zorder>
-   <zorder>science</zorder>
    <zorder>SNR</zorder>
+   <zorder>Ptx</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
