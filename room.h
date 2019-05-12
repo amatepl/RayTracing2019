@@ -196,7 +196,7 @@ private:
 
     int rayNumber = 0; // Help to keep track of the number of rays
     bool computePhysicalResponse; // If we compute the channel response or not
-    double channelData[20] = {}; // 2 * 10 rays
+    double channelData[2*20] = {}; // 2 * 10 rays
 
 // ---------- Methods ------------------------
 

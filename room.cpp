@@ -1088,7 +1088,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     if(computePhysicalResponse){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
-        channelData[rayNumber+10] = completeLength;
+        channelData[rayNumber+20] = completeLength;
         rayNumber += 1;
     }
 
@@ -1114,7 +1114,7 @@ complex <double> room::computeEfieldGround(){
     if(computePhysicalResponse){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
-        channelData[rayNumber+10] = completeLength;
+        channelData[rayNumber+20] = completeLength;
         rayNumber += 1;
     }
 

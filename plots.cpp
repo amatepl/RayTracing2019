@@ -279,7 +279,7 @@ void plots::physicalImpulseResponse(room* scene){
     QVector<double> h(rayNumber), tau(rayNumber);
     for (int i=0; i<(rayNumber); ++i){
         h[i] = 10*log10(abs(channelData[i])); // alpha
-        tau[i] = channelData[i+10]/c*1e9; // tau
+        tau[i] = channelData[i+20]/c*1e9; // tau
 
         QCPItemLine *line = new QCPItemLine(ui->customPlot_4);
         line->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
@@ -341,7 +341,7 @@ void plots::TDLImpulseResponse(room* scene){
         h_l[i] = 0;
         h_l_temp[i] = 0;
         for (int j=0; j<(rayNumber); ++j){
-            tau = channelData[j+10]/c;
+            tau = channelData[j+20]/c;
             h_l_temp[i] += channelData[j]*exp(-p * 2.0*M_PI * freq * tau) * (sin(2*BW[i]*(tau-l*deltaTau))/(2*BW[i]*(tau-l*deltaTau)));
         }
         h_l[i] = 10*log10(abs(h_l_temp[i]));
@@ -383,7 +383,7 @@ void plots::TDL_US(room* scene){
     complex <double> p(0.0, 1.0);
     double tau_check;
     for (int i=0; i<(rayNumber); ++i){
-        tau_check = channelData[i+10]/c;
+        tau_check = channelData[i+20]/c;
         int l = 0;
         while(!(l*deltaTau-deltaTau/2<=tau_check && tau_check<l*deltaTau+deltaTau/2)){
             l++;
