@@ -31,8 +31,7 @@ void settings::writeSettings(){
     settingsData << toStringDoub(wallThick) + "\n";
     settingsData << toStringInt(square_size) + "\n";
     settingsData << toStringDoub(emettorPower) + "\n";
-    settingsData << toStringBool(diffractOnBool) + "\n";
-
+    settingsData << toStringDoub(speed) + "\n";
     settingsData.close();
 }
 
@@ -58,9 +57,7 @@ void settings::readSettings(){
           }else if(count == 4){
               emettorPower = stod(line);
           }else if(count == 5){
-              if(line == "true"){diffractOnBool = true;}else{
-                  diffractOnBool = false;
-              }
+              speed = stod(line);
           }
           count++;
       }
@@ -80,7 +77,7 @@ void settings::updateSettings(){
     ui->reboundSpin->setValue(amountReflect);
     ui->discretSubBox->setValue(square_size);
     ui->typeComboBox->setCurrentIndex(wallType); //0 index = Concrete Wall
-    ui->diffractBox->setTristate(diffractOnBool);
+    ui->spinBox->setValue(speed);
 }
 
 
@@ -98,7 +95,7 @@ void settings::setToDefault(){
     wallThick = 50;  //Cm
     square_size = 10;
     emettorPower = 20; //dBm
-    diffractOnBool = false;
+    speed = 0; // km/h
 
     updateSettings();
     writeSettings();
@@ -118,7 +115,7 @@ void settings::on_applyChangesButton_clicked(){
     wallThick = ui->wallThickSpinBox->value();  //Cm
     square_size = ui->discretSubBox->value();
     emettorPower = ui->powerSpinBox->value(); //dBm
-    diffractOnBool = ui->diffractBox->checkState();
+    speed = ui->spinBox->value();
 
     updateSettings();
     writeSettings();

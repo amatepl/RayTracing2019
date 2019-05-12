@@ -1417,6 +1417,7 @@ int room::getColumns(){return columns;}
 int room::getTotalArea(){return totalArea;}
 int room::getMinimalDistance(){return minimalDistance;}
 int room::getSquare_size(){return square_size;}
+double room::getSpeed(){return speed;}
 double room::getPxToMeter(){return pxToMeter;}
 double* room::getData(){return this->Data;}
 int room::getRayNumber(){return this->rayNumber;}

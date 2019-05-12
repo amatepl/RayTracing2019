@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1064</width>
-    <height>576</height>
+    <height>577</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,15 +33,43 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>60</y>
-     <width>1081</width>
-     <height>471</height>
+     <y>0</y>
+     <width>1061</width>
+     <height>411</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="horizontalSpacing">
      <number>6</number>
     </property>
+    <item row="6" column="1">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Square size (set to 10 for a local area of 1m²)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QSpinBox" name="reboundSpin">
+      <property name="maximum">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Wall thickness (cm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QSpinBox" name="wallThickSpinBox">
+      <property name="maximum">
+       <number>500</number>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="1">
      <widget class="QLabel" name="label_6">
       <property name="text">
@@ -68,38 +96,10 @@
       </item>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Wall thickness (cm)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Wall type</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QSpinBox" name="wallThickSpinBox">
-      <property name="maximum">
-       <number>500</number>
-      </property>
-     </widget>
-    </item>
     <item row="5" column="1">
      <widget class="QLabel" name="label_3">
       <property name="text">
        <string>Amount of rebound (n)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2">
-     <widget class="QSpinBox" name="reboundSpin">
-      <property name="maximum">
-       <number>5</number>
       </property>
      </widget>
     </item>
@@ -113,10 +113,10 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="1">
-     <widget class="QLabel" name="label_4">
+    <item row="2" column="1">
+     <widget class="QLabel" name="label">
       <property name="text">
-       <string>Square size (set to 10 for a local area of 1m²)</string>
+       <string>Wall type</string>
       </property>
      </widget>
     </item>
@@ -126,22 +126,6 @@
        <number>1000</number>
       </property>
      </widget>
-    </item>
-    <item row="7" column="1">
-     <widget class="QLabel" name="label_5">
-      <property name="maximumSize">
-       <size>
-        <width>537</width>
-        <height>26</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Speed of the receptor (km/h)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="2">
-     <widget class="QSpinBox" name="speedSpin"/>
     </item>
    </layout>
   </widget>
@@ -169,6 +153,16 @@
    </property>
    <property name="text">
     <string>Apply changes</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="spinBox">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>440</y>
+     <width>48</width>
+     <height>26</height>
+    </rect>
    </property>
   </widget>
  </widget>

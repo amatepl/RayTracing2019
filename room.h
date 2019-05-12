@@ -52,6 +52,7 @@ public:
     double* getData();
     int getMinimalDistance();
     int getSquare_size();
+    double getSpeed();
     double getPxToMeter();
     int getRayNumber();
     double* getChannelData();
@@ -115,6 +116,7 @@ private:
     int columns = 950/square_size; // 500 = window height
     int totalArea = rows * columns; // total number of local area
     int minimalDistance = 10; // 10m
+    double speed = 0;
 
     // General objects
     antena *Transmitter;
