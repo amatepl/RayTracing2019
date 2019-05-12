@@ -23,6 +23,8 @@ public:
     void plotModel(double m, double b, double fadingVariability);
     void plotCellRange(double m, double b, double fadingVariability);
     void physicalImpulseResponse(room* scene);
+    void TDLImpulseResponse(room* scene);
+    void TDL_US(room* scene);
 
 private:
     Ui::plots *ui;

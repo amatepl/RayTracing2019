@@ -3,6 +3,8 @@
 #include "room.h"
 #include <stdlib.h>
 #include <math.h>
+// Libraries
+#include <complex>
 
 plots::plots(QWidget *parent) :
     QDialog(parent),
@@ -23,6 +25,7 @@ plots::~plots()
 
 void plots::plotPathLoss(room *scene){
     if(scene->DataComputed()){
+        ui->tabWidget->setCurrentWidget(ui->tab_1);
         double *Data = scene->getData();
         int TxIndex_i = 0;
         int TxIndex_j = 0;
@@ -98,13 +101,14 @@ void plots::plotPathLoss(room *scene){
 
         // Cell Range vs Probability
         plotCellRange(m, b, fadingVariability);
-        ui->tabWidget->setCurrentWidget(ui->tab_1);
     }
 
     if(scene->getRayNumber()>0){
+        ui->tabWidget->setCurrentWidget(ui->tab_5);
         // Physical impulse response
         physicalImpulseResponse(scene);
-        ui->tabWidget->setCurrentWidget(ui->tab_5);
+        TDLImpulseResponse(scene);
+        TDL_US(scene);
     }
 }
 
@@ -162,7 +166,9 @@ double plots::findStandardDeviation(QVector<double> array){
     for(i = 0; i < count; ++i) {
         sDeviation += pow(array[i] - mean, 2);
     }
-    return sqrt(sDeviation/count);
+    double res = sqrt(sDeviation/count);
+    if(res<1e-5){res = 0;}
+    return res;
 }
 
 
@@ -210,6 +216,15 @@ void plots::plotModel(double m, double b, double fadingVariability){
     ui->customPlot_2->rescaleAxes();
     ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_2->replot();
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(ui->customPlot_2);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(m/10)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fadingVariability));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 }
 
 
@@ -260,18 +275,21 @@ void plots::physicalImpulseResponse(room* scene){
     int rayNumber = scene->getRayNumber();
     double *channelData = scene->getChannelData();
     double  c =2.998e+8; // m/s
-    cout<<"Number of rays: ";
-    cout<<rayNumber<<endl;
 
     QVector<double> h(rayNumber), tau(rayNumber);
-    double tau_check;
     for (int i=0; i<(rayNumber); ++i){
         h[i] = 10*log10(abs(channelData[i])); // alpha
-        tau[i] = channelData[i+10]/c*1e9; // tau
+        tau[i] = channelData[i+20]/c*1e9; // tau
 
         QCPItemLine *line = new QCPItemLine(ui->customPlot_4);
         line->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
         line->end->setCoords(tau[i], -100);  // location of point 2 in plot coordinate
+
+        // For the TDL plot
+        QCPItemLine *line2 = new QCPItemLine(ui->customPlot_6);
+        line2->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
+        line2->end->setCoords(tau[i], -100);  // location of point 2 in plot coordinate
+        line2->setPen(QPen(Qt::blue));
     }
 
     // Plot physiscal impulse response
@@ -282,32 +300,144 @@ void plots::physicalImpulseResponse(room* scene){
     ui->customPlot_4->graph(0)->setData(tau, h);
 
     // give the axes some labels:
-    ui->customPlot_4->xAxis->setLabel("tau[ns]");
-    ui->customPlot_4->yAxis->setLabel("h[dB]");
+    ui->customPlot_4->xAxis->setLabel("\u03C4[ns]");
+    ui->customPlot_4->yAxis->setLabel("h(\u03C4)[dB]");
     ui->customPlot_4->yAxis->grid()->setSubGridVisible(true);
     ui->customPlot_4->xAxis->grid()->setSubGridVisible(true);
     ui->customPlot_4->rescaleAxes();
     ui->customPlot_4->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_4->replot();
+
+
+    // Plot together with TDL
+    ui->customPlot_6->addGraph();
+    ui->customPlot_6->graph(0)->setPen(QPen(Qt::blue));
+    ui->customPlot_6->graph(0)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_6->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    ui->customPlot_6->graph(0)->setData(tau, h);
+    ui->customPlot_6->graph(0)->setName("Physical");
 }
 
-// void plots::TDLImpulseResponse(){
+void plots::TDLImpulseResponse(room* scene){
+    int rayNumber = scene->getRayNumber();
+    double *channelData = scene->getChannelData();
+    double  c =2.998e+8; // m/s
+    double freq = scene->getCarrierFrequency();
+    double minBW = 100e+6;
+    double maxBW = 700e+6;
+    int lengthData = 200;
+    double step = (maxBW-minBW)/lengthData;
+    double deltaTau;
+
+    // Sweep Bandwidth BW from 100MHz -> 700 MHz
+    QVector<double> BW(lengthData), h_l(lengthData);
+    complex <double> h_l_temp[lengthData];
+    complex <double> p(0.0, 1.0);
+    int l = 0;
+    double tau = 0;
+    for (int i=0; i<lengthData; ++i){
+        BW[i] = minBW + i*step;
+        deltaTau = 1/(2*BW[i]);
+        h_l[i] = 0;
+        h_l_temp[i] = 0;
+        for (int j=0; j<(rayNumber); ++j){
+            tau = channelData[j+20]/c;
+            h_l_temp[i] += channelData[j]*exp(-p * 2.0*M_PI * freq * tau) * (sin(2*BW[i]*(tau-l*deltaTau))/(2*BW[i]*(tau-l*deltaTau)));
+        }
+        h_l[i] = 10*log10(abs(h_l_temp[i]));
+        BW[i] = BW[i]*1e-6;
+
+        QCPItemLine *line = new QCPItemLine(ui->customPlot_5);
+        line->start->setCoords(BW[i], h_l[i]);  // location of point 1 in plot coordinate
+        line->end->setCoords(BW[i], -100);  // location of point 2 in plot coordinate
+    }
     
+    // Plot physiscal impulse response
+    ui->customPlot_5->addGraph();
+    ui->customPlot_5->graph(0)->setPen(QPen(Qt::blue));
+//    ui->customPlot_5->graph(0)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_5->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
 
-//     // Plot physiscal impulse response
-//     ui->customPlot_4->addGraph();
-//     ui->customPlot_4->graph(0)->setPen(QPen(Qt::blue));
-// //    ui->customPlot_4->graph(0)->setLineStyle(QCPGraph::lsNone);
-//     ui->customPlot_4->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    ui->customPlot_5->graph(0)->setData(BW, h_l);
 
-//     ui->customPlot_4->graph(0)->setData(tau, h);
+    // give the axes some labels:
+    ui->customPlot_5->xAxis->setLabel("B[MHz]");
+    ui->customPlot_5->yAxis->setLabel("h\u2097[dB]");
+    ui->customPlot_5->yAxis->grid()->setSubGridVisible(true);
+    ui->customPlot_5->xAxis->grid()->setSubGridVisible(true);
+    ui->customPlot_5->rescaleAxes();
+    ui->customPlot_5->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->customPlot_5->replot();
+}
 
-//     // give the axes some labels:
-//     ui->customPlot_4->xAxis->setLabel("tau[ns]");
-//     ui->customPlot_4->yAxis->setLabel("h[dB]");
-//     ui->customPlot_4->yAxis->grid()->setSubGridVisible(true);
-//     ui->customPlot_4->xAxis->grid()->setSubGridVisible(true);
-//     ui->customPlot_4->rescaleAxes();
-//     ui->customPlot_4->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//     ui->customPlot_4->replot();
-//}
+void plots::TDL_US(room* scene){
+    int rayNumber = scene->getRayNumber();
+    cout<<"number of rays: ";
+    cout<<rayNumber<<endl;
+    double *channelData = scene->getChannelData();
+    double  c = 2.998e+8; // m/s
+    double freq = scene->getCarrierFrequency();
+    double BW = 100e+6; // Hz
+    double deltaTau = 1/(2*BW);
+
+    double x[rayNumber];
+    complex <double> y[rayNumber];
+    complex <double> p(0.0, 1.0);
+    double tau_check;
+    for (int i=0; i<(rayNumber); ++i){
+        tau_check = channelData[i+20]/c;
+        int l = 0;
+        while(!(l*deltaTau-deltaTau/2<=tau_check && tau_check<l*deltaTau+deltaTau/2)){
+            l++;
+        }
+        x[i] = l*deltaTau*1e9;
+        y[i] = channelData[i] * exp(-p * 2.0*M_PI * freq * tau_check);
+    }
+
+    for (int i=0; i<rayNumber; ++i){
+        for (int j=0; j<rayNumber; ++j){
+            if(i<j && x[i] == x[j]){
+                y[i] += y[j];
+                y[j] = 0;
+            }
+        }
+    }
+
+    int counter = 0;
+    for (int i=0; i<rayNumber; ++i){
+        if(y[i]!=0.0){counter++;}
+    }
+
+    QVector<double> h_TDL(counter), tau(counter);
+    int k = 0, counter2 = 0;
+    while(k<rayNumber){
+        if(y[k] != 0.0){
+            tau[counter2] = x[k];
+            h_TDL[counter2] = 10*log10(abs(y[k]));
+            QCPItemLine *line = new QCPItemLine(ui->customPlot_6);
+            line->start->setCoords(tau[counter2], h_TDL[counter2]);  // location of point 1 in plot coordinate
+            line->end->setCoords(tau[counter2], -100);  // location of point 2 in plot coordinate
+            line->setPen(QPen(Qt::red));
+            counter2++;
+        }
+        k++;
+    }
+    
+    // Plot physiscal impulse response
+    ui->customPlot_6->addGraph();
+    ui->customPlot_6->graph(1)->setPen(QPen(Qt::red));
+    ui->customPlot_6->graph(1)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_6->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    ui->customPlot_6->graph(1)->setData(tau, h_TDL);
+    ui->customPlot_6->graph(1)->setName("TDL");
+
+    // give the axes some labels:
+    ui->customPlot_6->xAxis->setLabel("\u03C4[ns]");
+    ui->customPlot_6->yAxis->setLabel("h_TDL(\u03C4)[dB]");
+    ui->customPlot_6->yAxis->grid()->setSubGridVisible(true);
+    ui->customPlot_6->xAxis->grid()->setSubGridVisible(true);
+    ui->customPlot_6->rescaleAxes();
+    ui->customPlot_6->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->customPlot_6->legend->setVisible(true);
+    ui->customPlot_6->replot();
+}

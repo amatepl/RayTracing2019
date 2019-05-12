@@ -1,5 +1,5 @@
 #include "room.h"
-#include "plots.h"
+//#include "plots.h"
 
 
 using namespace std;
@@ -1144,7 +1144,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     if(computePhysicalResponse){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
-        channelData[rayNumber+10] = completeLength;
+        channelData[rayNumber+20] = completeLength;
         rayNumber += 1;
     }
 
@@ -1170,7 +1170,7 @@ complex <double> room::computeEfieldGround(){
     if(computePhysicalResponse){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
-        channelData[rayNumber+10] = completeLength;
+        channelData[rayNumber+20] = completeLength;
         rayNumber += 1;
     }
 
@@ -1402,6 +1402,7 @@ int room::getAmountDiscret(){return amount_discret;}
 double room::getpowerEmettor(){return powerEmettor;}
 double room::getInitBinaryDeb(){return binaryDebit(powerEmettor);}
 complex <double> room::getTotalEfield(){return totalEfield;}
+double room::getCarrierFrequency(){return freq;}
 
 void room::setReceiver(antena *new_receiver){Receiver = new_receiver;}
 void room::setTransmitter(antena *new_transmitter){Transmitter = new_transmitter;}

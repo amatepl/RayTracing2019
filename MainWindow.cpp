@@ -164,10 +164,10 @@ void MainWindow::on_commandLinkButton_clicked()
 void MainWindow::writePenetrationDepth(map<const char *, int>* text){
     map<const char*,int>* st = scene->getStreetsPenDep();
     ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*st)["commerceUp"]));
-    cout<<(*st)["commerceUp"]<<endl;
-    cout<<(*text)["commerceUp"]<<endl;
-    cout<<(*text).size()<<endl;
-    cout<<(*text)["deuxEg"]<<endl;
+//    cout<<(*st)["commerceUp"]<<endl;
+//    cout<<(*text)["commerceUp"]<<endl;
+//    cout<<(*text).size()<<endl;
+//    cout<<(*text)["deuxEg"]<<endl;
     //ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*text)["commerceUp"]));
     ui->commerceDown->setText(QString("Rue du Commerce Down: ") + QString::number((*text)["commerceDown"]));
     ui->deuxEg->setText(QString("Rue de deux Eglises: ") + QString::number((*text)["deuxEg"]));

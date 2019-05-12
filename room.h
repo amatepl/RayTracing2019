@@ -56,6 +56,8 @@ public:
     int getRayNumber();
     double* getChannelData();
     map<const char*,int>* getStreetsPenDep();
+    double getCarrierFrequency();
+
     
     double getPrx(int posX, int posY);
     double getDelay(int posX, int posY);
@@ -208,7 +210,7 @@ private:
 
     int rayNumber = 0; // Help to keep track of the number of rays
     bool computePhysicalResponse; // If we compute the channel response or not
-    double channelData[20] = {}; // 2 * 10 rays
+    double channelData[2*20] = {}; // 2 * 10 rays
 
 // ---------- Methods ------------------------
 
