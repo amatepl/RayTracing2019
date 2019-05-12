@@ -40,6 +40,7 @@ public:
 
     void onMouseEvent(const QString &eventName, const QPoint &pos);
     void setMap(QPointF &pos);
+    void writePenetrationDepth(map<const char *, int> *text);
 
 private slots:
     void on_commandLinkButton_clicked();
