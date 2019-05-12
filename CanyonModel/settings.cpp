@@ -31,6 +31,7 @@ void settings::writeSettings(){
     settingsData << toStringDoub(wallThick) + "\n";
     settingsData << toStringInt(square_size) + "\n";
     settingsData << toStringDoub(emettorPower) + "\n";
+    settingsData << toStringDoub(speed) + "\n";
 
     settingsData.close();
 }
@@ -56,6 +57,8 @@ void settings::readSettings(){
               square_size = stoi(line);
           }else if(count == 4){
               emettorPower = stod(line);
+          }else if (count == 5){
+              speed = stod{line};
           }
           count++;
       }
@@ -75,6 +78,7 @@ void settings::updateSettings(){
     ui->reboundSpin->setValue(amountReflect);
     ui->discretSubBox->setValue(square_size);
     ui->typeComboBox->setCurrentIndex(wallType); //0 index = Concrete Wall
+    ui->speedSpin->setValue(speed);
 }
 
 
@@ -92,6 +96,7 @@ void settings::setToDefault(){
     wallThick = 50;  //Cm
     square_size = 10;
     emettorPower = 20; //dBm
+    speed = 0; // km/h
 
     updateSettings();
     writeSettings();
@@ -111,6 +116,7 @@ void settings::on_applyChangesButton_clicked(){
     wallThick = ui->wallThickSpinBox->value();  //Cm
     square_size = ui->discretSubBox->value();
     emettorPower = ui->powerSpinBox->value(); //dBm
+    speed = ui->speedSpin->value();
 
     updateSettings();
     writeSettings();

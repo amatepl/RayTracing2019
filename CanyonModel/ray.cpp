@@ -37,10 +37,12 @@ ray::~ray(void){
 
 
 /*
- * The scale chosen for the meter-pixels conversion is 1px = 2cm
+ * The scale chosen for the meter-pixels conversion is 1px = 1dm
  */
 
+
 void ray::updateMeterLength(){meterLength = d*0.1;} // pxToMeter = 0.1
+
 
 
 // --> Getters && Settets

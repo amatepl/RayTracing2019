@@ -48,6 +48,7 @@ private:
     double wallThick;
     int square_size;
     double emettorPower;
+    double speed;
 
     // tools
     string toStringInt(int input);
