@@ -20,8 +20,8 @@ public:
     int linreg(int n, QVector<double> x, QVector<double> y, double* m, double* b, double* r);
     double findStandardDeviation(QVector<double> array);
     void plotPathLoss(room *scene);
-    void plotModel(double m, double b, double fadingVariability);
-    void plotCellRange(double m, double b, double fadingVariability);
+    void plotModel(double m, double b, double fadingVariability, double minPrx);
+    void plotCellRange(double m, double b, double fadingVariability, double minPrx);
     void physicalImpulseResponse(room* scene);
     void TDLImpulseResponse(room* scene);
     void TDL_US(room* scene);

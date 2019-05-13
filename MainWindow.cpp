@@ -11,24 +11,26 @@ MainWindow::MainWindow(QWidget *parent) :
     scene_help = new help();
     scene_settings = new settings();
     scene->setSceneRect(ui->graphicsView->rect());
-       ui->graphicsView->setScene(scene);
-       ui->graphicsView->ensureVisible(scene->sceneRect());
+        ui->graphicsView->setScene(scene);
+        ui->graphicsView->ensureVisible(scene->sceneRect());
 
-       ui->spinBoxPosX->setReadOnly(true);
-       ui->spinBoxPosY->setReadOnly(true);
-       ui->spinBoxPosX->setValue(cursor().pos().x());
-       ui->spinBoxPosY->setValue(cursor().pos().y());
-       configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
-       configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
-       QBrush greenBrush(Qt::green);
-       QBrush blueBrush(Qt::blue);
-       QPen outlinePen(Qt::black);
-       outlinePen.setWidth(2);
+        ui->spinBoxPosX->setReadOnly(true);
+        ui->spinBoxPosY->setReadOnly(true);
+        ui->spinBoxPosX->setValue(cursor().pos().x());
+        ui->spinBoxPosY->setValue(cursor().pos().y());
+        configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
+        configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
+        QBrush greenBrush(Qt::green);
+        QBrush blueBrush(Qt::blue);
+        QPen outlinePen(Qt::black);
+        outlinePen.setWidth(2);
 
-       ui->Prx->setText("Prx [dBm]: 0");
-       ui->Distance->setText("Distance [m]: 0");
-       ui->DelaySpread->setText("Delay spread [s]: 0");
-       ui->RiceFactor->setText("Rice Factor [dB]: 0");
+        ui->Ptx->setText("Ptx [dBm]: ");
+        ui->Prx->setText("Prx [dBm]: ");
+        ui->Distance->setText("Distance [m]: ");
+        ui->SNR->setText("SNR [dB]: ");
+        ui->DelaySpread->setText("Delay spread [s]: ");
+        ui->RiceFactor->setText("Rice Factor [dB]: ");
 }
 
 MainWindow::~MainWindow()
@@ -65,16 +67,20 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
     if(scene->DataComputed()){
         int i = 0, j = 0;
         scene->getDataIndices(pos.x(), pos.y(), i, j);
-        if(i>0 and j>0 and pos.x()<950 and pos.y()<500){
+        if(!scene->workingZone(pos.x(), pos.y())){
+            ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->getpowerEmettor()));
             ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getPrx(i, j)));
             ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->getDistance(i, j)));
+            ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR(i, j)));
             ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay(i, j)));
             ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor(i, j)));
         }else{
-            ui->Prx->setText("Prx [dBm]: 0");
-            ui->Distance->setText("Distance [m]: 0");
-            ui->DelaySpread->setText("Delay spread [s]: 0");
-            ui->RiceFactor->setText("Rice Factor [dB]: 0");
+            ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->getpowerEmettor()));
+            ui->Prx->setText("Prx [dBm]: ");
+            ui->Distance->setText("Distance [m]: ");
+            ui->SNR->setText("SNR [dB]: ");
+            ui->DelaySpread->setText("Delay spread [s]: ");
+            ui->RiceFactor->setText("Rice Factor [dB]: ");
         }
     }
 }
@@ -146,7 +152,6 @@ void MainWindow::on_generateCoveragePushButton_clicked()
 
 void MainWindow::on_commandLinkButton_clicked()
 {   statusBar()->showMessage("Launch Ray-Tracing");
-
     if(scene->getReceiver() != NULL || scene->getTransmitter() != NULL){
         ui->spinBoxResult->setValue(scene->distance());
 
@@ -156,11 +161,24 @@ void MainWindow::on_commandLinkButton_clicked()
         ui->powerResultSpinBox->setValue(scene->getReceivedPower());
         if(scene->getBinaryDebit() > 0){ui->binaryResultsSpinBox->setValue(scene->getBinaryDebit());}
 
+        // Display results
+        // Watt display
+        // ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->getpowerEmettor()));
+        // ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->dBmRev(scene->getReceivedPower())));
 
+        // dBm display
+        ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->dBm(scene->getpowerEmettor())));
+        ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getReceivedPower()));
+        
+        ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->distance()));
+        ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR_local()));
+        ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay_local()));
+        ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor_local()));
     }else{
         statusBar()->showMessage("Placing the emettor/receptor is requiered");
     }
 }
+
 
 void MainWindow::writePenetrationDepth(double text[5]){
 //    map<const char*,int>* st = scene->getStreetsPenDep();
@@ -174,5 +192,6 @@ void MainWindow::writePenetrationDepth(double text[5]){
     ui->deuxEg->setText(QString("Rue de deux Eglises: ") + QString::number(text[1]));
     ui->spa->setText(QString("Rue de spa: ") + QString::number(text[2]));
     ui->indu->setText(QString("Rue de l'Industrie: ") + QString::number(text[4]));
+
 }
 
