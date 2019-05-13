@@ -77,7 +77,7 @@ void settings::updateSettings(){
     ui->reboundSpin->setValue(amountReflect);
     ui->discretSubBox->setValue(square_size);
     ui->typeComboBox->setCurrentIndex(wallType); //0 index = Concrete Wall
-    ui->spinBox->setValue(speed);
+    ui->speedSpin->setValue(speed);
 }
 
 
@@ -115,7 +115,7 @@ void settings::on_applyChangesButton_clicked(){
     wallThick = ui->wallThickSpinBox->value();  //Cm
     square_size = ui->discretSubBox->value();
     emettorPower = ui->powerSpinBox->value(); //dBm
-    speed = ui->spinBox->value();
+    speed = ui->speedSpin->value();
 
     updateSettings();
     writeSettings();

@@ -41,7 +41,9 @@ public:
     QSpinBox *reboundSpin;
     QSpinBox *discretSubBox;
     QLabel *label_4;
+    QLabel *label_5;
     QSpinBox *powerSpinBox;
+    QSpinBox *speedSpin;
     QCheckBox *diffractBox;
     QPushButton *resetDefaultsButton;
     QPushButton *applyChangesButton;
@@ -75,7 +77,7 @@ public:
         label_2 = new QLabel(gridLayoutWidget);
         label_2->setObjectName(QStringLiteral("label_2"));
 
-        gridLayout->addWidget(label_2, 4, 1, 1, 1);
+        gridLayout->addWidget(label_2, 3, 1, 1, 1);
 
         label = new QLabel(gridLayoutWidget);
         label->setObjectName(QStringLiteral("label"));
@@ -86,7 +88,7 @@ public:
         wallThickSpinBox->setObjectName(QStringLiteral("wallThickSpinBox"));
         wallThickSpinBox->setMaximum(500);
 
-        gridLayout->addWidget(wallThickSpinBox, 4, 2, 1, 1);
+        gridLayout->addWidget(wallThickSpinBox, 3, 2, 1, 1);
 
         label_3 = new QLabel(gridLayoutWidget);
         label_3->setObjectName(QStringLiteral("label_3"));
@@ -117,11 +119,16 @@ public:
 
         gridLayout->addWidget(powerSpinBox, 1, 2, 1, 1);
 
-        diffractBox = new QCheckBox(gridLayoutWidget);
-        diffractBox->setObjectName(QStringLiteral("diffractBox"));
-        diffractBox->setTristate(true);
+        speedSpin = new QSpinBox(gridLayoutWidget);
+        speedSpin->setObjectName(QStringLiteral("speedSpin"));
+        speedSpin->setMaximum(1000);
 
-        gridLayout->addWidget(diffractBox, 7, 1, 1, 1);
+        gridLayout->addWidget(speedSpin,4, 2, 1, 1);
+
+        label_5 = new QLabel(gridLayoutWidget);
+        label_5->setObjectName(QStringLiteral("label_5"));
+
+        gridLayout->addWidget(label_5, 4, 1, 1, 1);
 
         resetDefaultsButton = new QPushButton(settings);
         resetDefaultsButton->setObjectName(QStringLiteral("resetDefaultsButton"));
@@ -151,7 +158,7 @@ public:
         label->setText(QApplication::translate("settings", "Wall type", Q_NULLPTR));
         label_3->setText(QApplication::translate("settings", "Amount of rebound (n)", Q_NULLPTR));
         label_4->setText(QApplication::translate("settings", "Square size (set to 10 for a local area of 1m\302\262)", Q_NULLPTR));
-        diffractBox->setText(QApplication::translate("settings", "Taking diffraction into account (integral approximation model, very calculation heavy)", Q_NULLPTR));
+        label_5->setText(QApplication::translate("settings","Speed of the receptor (km/h)",Q_NULLPTR));
         resetDefaultsButton->setText(QApplication::translate("settings", "Reset Defaults", Q_NULLPTR));
         applyChangesButton->setText(QApplication::translate("settings", "Apply changes", Q_NULLPTR));
     } // retranslateUi
