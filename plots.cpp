@@ -214,6 +214,8 @@ void plots::plotModel(double m, double b, double fadingVariability, double minPr
     ui->customPlot_2->xAxis->setLabel("Distance[m]");
     ui->customPlot_2->yAxis->setLabel("Prx[dbm]");
     ui->customPlot_2->xAxis->setScaleType(QCPAxis::stLogarithmic); 
+    QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
+    ui->customPlot_2->xAxis->setTicker(logTicker);
     ui->customPlot_2->yAxis->grid()->setSubGridVisible(true);
     ui->customPlot_2->xAxis->grid()->setSubGridVisible(true);
     ui->customPlot_2->rescaleAxes();
@@ -258,7 +260,7 @@ void plots::plotCellRange(double m, double b, double fadingVariability, double m
     // give the axes some labels:
     ui->customPlot_3->xAxis->setLabel("Connection probability");
     ui->customPlot_3->yAxis->setLabel("Cell range[m]");
-    ui->customPlot_3->yAxis->setScaleType(QCPAxis::stLogarithmic); 
+    ui->customPlot_3->yAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->customPlot_3->rescaleAxes();
     ui->customPlot_3->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_3->replot();

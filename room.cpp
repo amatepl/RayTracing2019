@@ -1336,6 +1336,8 @@ void room::drawCoverege(){
         printf("mem failure, exiting \n");
         exit(EXIT_FAILURE);
     }
+    cout<<"Ptx[W] = ";
+    cout<<powerEmettor<<endl;
     for(int i=0; i<columns; i++){
         for(int j=0; j<rows; j++){
             this->clearLocalParameters();

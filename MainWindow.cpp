@@ -68,7 +68,7 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
         int i = 0, j = 0;
         scene->getDataIndices(pos.x(), pos.y(), i, j);
         if(!scene->workingZone(pos.x(), pos.y())){
-            ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->getpowerEmettor()));
+            ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->dBm(scene->getpowerEmettor())));
             ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getPrx(i, j)));
             ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->getDistance(i, j)));
             ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR(i, j)));
