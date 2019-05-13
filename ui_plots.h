@@ -45,6 +45,9 @@ public:
     QWidget *tab_3;
     QVBoxLayout *verticalLayout_7;
     QCustomPlot *customPlot_6;
+    QVBoxLayout *verticalLayout_8;
+    QCustomPlot *customPlot_7;
+    QWidget *tab_7;
 
     void setupUi(QDialog *plots)
     {
@@ -114,6 +117,16 @@ public:
 
         verticalLayout_7->addWidget(customPlot_6);
 
+//        tabWidget->addTab(tab_7, QString());
+//        tab_7 = new QWidget();
+//        tab_7->setObjectName(QStringLiteral("tab_7"));
+//        verticalLayout_8 = new QVBoxLayout(tab_7);
+//        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
+//        customPlot_7 = new QCustomPlot(tab_7);
+//        customPlot_7->setObjectName(QStringLiteral("customPlot_7"));
+
+//        verticalLayout_8->addWidget(customPlot_7);
+
         tabWidget->addTab(tab_3, QString());
 
         verticalLayout_2->addWidget(tabWidget);
@@ -136,6 +149,7 @@ public:
         tabWidget->setTabText(tabWidget->indexOf(tab_5), QApplication::translate("plots", "Physical Impulse Response", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("plots", "h_l vs BW", Q_NULLPTR));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("plots", "US TDL", Q_NULLPTR));
+//	tabWidget->setTabText(tabWidget->indexOf(tab_7), QApplication::translate("plots", "Doppler Spectrum", Q_NULLPTR));
     } // retranslateUi
 
 };

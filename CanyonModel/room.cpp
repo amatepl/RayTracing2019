@@ -1121,6 +1121,7 @@ complex <double> room::computeEfieldGround(){
     if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application
+    cout << "PowerEmettor" <<endl;
     cout << powerEmettor << endl;
     cout << Ia << endl;
     double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;

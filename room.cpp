@@ -1358,11 +1358,10 @@ void room::readSettingsFile(){
                 totalArea = rows * columns; // total number of local area
           }else if(count == 4){
                 //powerEmettor = stod(line);
-          }else if(count == 5){
-              if(line == "true"){diffractOn = true;}else{
-                  diffractOn = false;
-              }
-      }
+          }else if (count == 5){
+                speed == stod(line);
+                speed = speed/3.6; // Conversion to m/s
+          }
           count++;
       }
       settingsData.close();

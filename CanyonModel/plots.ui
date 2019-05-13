@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>5</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tab_1">
       <attribute name="title">
@@ -76,6 +76,16 @@
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
         <widget class="QCustomPlot" name="customPlot_6" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>Doppler</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QCustomPlot" name="customPlot_7" native="true"/>
        </item>
       </layout>
      </widget>
