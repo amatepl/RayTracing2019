@@ -115,32 +115,43 @@ void room::penetrationDepth(){
 
     if(onStreet(st->commerceUp)){
         depth = (st->commerceUp[3] - Ry)*0.1;
-        if(depth > streetsPenDep["commerceUp"]){
-            streetsPenDep["commerceUp"] = depth;
+        //if(depth > streetsPenDep["commerceUp"]){
+        if(depth > stDepth[0]){
+        streetsPenDep["commerceUp"] = depth;
+            stDepth[0] = depth;
         }
     }
     else if(onStreet(st->deuxEg)){
         depth = (st->deuxEg[3] - Ry)*0.1;
-        if(depth > streetsPenDep["deuxEg"]){
+        //if(depth > streetsPenDep["deuxEg"]){
+        if(depth > stDepth[1]){
             streetsPenDep["deuxEg"] = depth;
+            stDepth[1] = depth;
         }
     }
     else if(onStreet(st->spa)){
         depth = (st->spa[3] - Ry)*0.1;
-        if(depth > streetsPenDep["spa"]){
+        //if(depth > streetsPenDep["spa"]){
+        if(depth > stDepth[2]){
             streetsPenDep["spa"] = depth;
+            stDepth[2] = depth;
         }
     }
     else if(onStreet(st->commerceDown)){
+        cout<<"OK!"<<endl;
         depth = (Ry - st->commerceDown[1])*0.1;
-        if(depth > streetsPenDep["commerceDown"]){
+        //if(depth > streetsPenDep["commerceDown"]){
+        if(depth > stDepth[3]){
             streetsPenDep["commerceDown"] = depth;
+            stDepth[3] = depth;
         }
     }
     else if(onStreet(st->indu)){
         depth = (Ry - st->indu[1])*0.1;
-        if(depth > streetsPenDep["indu"]){
+        //if(depth > streetsPenDep["indu"]){
+        if(depth > stDepth[4]){
             streetsPenDep["indu"] = depth;
+            stDepth[4] = depth;
         }
     }
 }
@@ -148,6 +159,9 @@ void room::penetrationDepth(){
 bool room::onStreet(int street[4]){
     int Rx = Receiver->getPosX();
     int Ry = Receiver->getPosY();
+    cout<<Rx;
+    cout<<", ";
+    cout<<Ry<<endl;
 
     return Rx>street[0] && Rx<street[2] && Ry>street[1] && Ry<street[3];
 }
@@ -735,6 +749,11 @@ void room::buildDiffraction(room* scene){
                 (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 //(*scene).diffractedPower+= diffractPower;
+                double binary = (*scene).binaryDebit((*scene).powerReceived);
+                if(binary > 6){
+                    //cout<<binary<<endl;
+                    (*scene).penetrationDepth();
+                }
                 notDiffracted =false;
             }
             delete(pathTester2);
@@ -759,7 +778,7 @@ void room::buildDiffraction(room* scene){
                 (*scene).powerRef = diffractPower;
                 (*scene).powerReceived = (*scene).dBm(diffractPower);
                 double binary = (*scene).binaryDebit((*scene).powerReceived);
-                if(binary !=0){
+                if(binary > 6){
                     //cout<<binary<<endl;
                     (*scene).penetrationDepth();
                 }
@@ -1179,7 +1198,7 @@ complex <double> room::computeEfieldGround(){
 
 double room::computePrx(complex <double> totalEfield){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-    complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
+    complex <double> groundEfield = 0;//this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
     double distance = this->distance();
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
     complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
@@ -1310,7 +1329,14 @@ void room::clearLocalParameters(){
     LOS = 0.0;
     NLOS = 0.0;
     rayNumber = 0;
+
     //Efield = 0.0;
+}
+
+void room::clearPenDepth(){
+    for(int i = 0; i<5;i++){
+        stDepth[i]=0;
+    }
 }
 
 void room::readSettingsFile(){
@@ -1506,7 +1532,8 @@ void room::drawCoverege(){
     cout<< streetsPenDep["spa"]<<endl;
     cout<< "Rue de l'Industrie: ";
     cout<< streetsPenDep["indu"]<<endl;
-    this->myParent->writePenetrationDepth(&streetsPenDep);
+    cout<< stDepth<<endl;
+    this->myParent->writePenetrationDepth(stDepth);
     drawWalls();
     this->clearAll();
     coverageDone = true;

@@ -13,6 +13,7 @@
 // Libraries
 #include <complex>
 #include <vector>
+#include <array>
 #include "math.h"
 
 using namespace std;
@@ -73,6 +74,7 @@ public:
     void readSettingsFile();
     void clearAll();
     void clearLocalParameters();
+    void clearPenDepth();
 
     void drawCoverege();
     bool DataComputed();
@@ -173,6 +175,7 @@ private:
     unsigned int amount_all_walls = 28;
     int amount_discret = 20;
     map<const char*,int> streetsPenDep;
+    double stDepth[5] = {0,0,0,0,0}; // 0 - commerce up, 1 - deux eg, 2 - spa, 3, commrece down, 4 - ind
 
     struct streets{
         int laLoi[4]= {1,200,950,300};
