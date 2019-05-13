@@ -1186,7 +1186,7 @@ double room::computeSNR(double Prx){
     /*
         Compute the SNR [dB] with Prx given in dBm.
     */
-    double SNR = (Prx+30) - noiseFigure - inputNoise;
+    double SNR = (Prx-30) - noiseFigure - inputNoise;
     return SNR;
 }
 
@@ -1479,6 +1479,8 @@ void room::drawCoverege(){
         printf("mem failure, exiting \n");
         exit(EXIT_FAILURE);
     }
+    cout<<"Ptx = ";
+    cout<<powerEmettor<<endl;
     for(int i=0; i<columns; i++){
         for(int j=0; j<rows; j++){
             this->clearLocalParameters();

@@ -207,7 +207,7 @@ private:
     bool coverageDone = false;
 
     // System Parameters
-    double  maxEIRP = 1; // Watt
+    double  maxEIRP = 2; // Watt
     double  n = 1; // n = efficiency of the antenna
     double  maxGain = n*16/(3*M_PI);
     double  L_Tx = 1; //L_Tx
@@ -222,7 +222,7 @@ private:
     double inputNoise = 10*log10(kb*T0*BW);
     double interferenceMargin = 6; //[dB]
 
-    double minPrx = targetSNR + noiseFigure + inputNoise + interferenceMargin - 30; // +30 to convert dB -> dBm
+    double minPrx = targetSNR + noiseFigure + inputNoise + interferenceMargin + 30; // +30 to convert dB -> dBm
 
 // ---------- Results ------------------------
     double resultsBinaryDebit;
