@@ -99,7 +99,7 @@ void settings::setToDefault(){
     wallThick = 50;  //Cm
     square_size = 10;
     emettorPower = 20; //dBm
-    speed = 2; // km/h
+    speed = 2.0; // km/h
     direction = 0;
 
     updateSettings();

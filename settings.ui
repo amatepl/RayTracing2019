@@ -130,9 +130,6 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
-     <widget class="QSpinBox" name="speedBox"/>
-    </item>
     <item row="7" column="2">
      <widget class="QSpinBox" name="reboundSpin">
       <property name="maximum">
@@ -170,6 +167,9 @@
        </property>
       </item>
      </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QDoubleSpinBox" name="speedBox"/>
     </item>
    </layout>
    <zorder>label_5</zorder>

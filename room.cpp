@@ -1145,8 +1145,6 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         double Prx = 1/(8*Ra)*norm(Voc);
         spectrumData[rayNumber] = dBm(Prx);
         spectrumData[rayNumber+20] = (lambda/M_PI)*speedReal*cos(theta+direction);
-        cout << "theta" << endl;
-        cout << theta << endl;
         rayNumber += 1;
     }
     return Efield;
