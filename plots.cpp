@@ -453,6 +453,7 @@ void plots::dopplerSpectrum(room* scene){
     double *spectrumAngle = scene->getSpectrumAngle();
     complex <double>* spectrumField = scene->getSpectrumField();
     QVector<double> Prx(specNumber), omega(specNumber);
+    QVector<double> P(1), wmin(1),wmax(1);
     double lambda = scene->getLambda();
     double Ra = scene->getRa();
     for (int i=0; i<specNumber; ++i){
@@ -463,7 +464,19 @@ void plots::dopplerSpectrum(room* scene){
         line->start->setCoords(omega[i], Prx[i]);
         line->end->setCoords(omega[i],-100);  // location of point 2 in plot coordinate
     }
-
+    P[0] = 0;
+    wmin[0] = -(2.0*M_PI/lambda)*scene->getSpeedReal();
+    wmax[0] = (2.0*M_PI/lambda)*scene->getSpeedReal();
+    QCPItemLine *line1 = new QCPItemLine(ui->customPlot_7);
+    QCPItemLine *line2 = new QCPItemLine(ui->customPlot_7);
+    QPen pen;
+    pen.setColor( Qt::green );
+    line1->setPen( pen );
+    line2->setPen(pen);
+    line1->start->setCoords(wmin[0],P [0]);
+    line1->end->setCoords(wmin[0],-100);
+    line2->start->setCoords(wmax[0],P[0]);
+    line2->end->setCoords(wmax[0],-100);
     // Plot dopplerSpectrum
     ui->customPlot_7->addGraph();
     ui->customPlot_7->graph(0)->setPen(QPen(Qt::blue));
@@ -479,4 +492,14 @@ void plots::dopplerSpectrum(room* scene){
     ui->customPlot_7->rescaleAxes();
     ui->customPlot_7->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_7->replot();
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(ui->customPlot_7);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("For a speed of : ") + QString::number(scene->getSpeed()) + QString(" km/h \n") +
+                       QString("And a maximum Doppler shift of : ") + QString::number((2.0*M_PI/lambda)*scene->getSpeedReal()) + QString(" rad/s"));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 }
