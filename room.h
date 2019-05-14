@@ -58,9 +58,12 @@ public:
     int getRayNumber();
     int getSpecNumber();
     double* getChannelData();
-    double* getSpectrumData();
+    double* getSpectrumAngle();
+    complex <double>* getSpectrumField();
     double getDirection();
     map<const char*,int>* getStreetsPenDep();
+    double getLambda();
+    double getRa();
     double getCarrierFrequency();
     double getBandwidth();
     double getMinPrx();
@@ -247,7 +250,8 @@ private:
     int specNumber = 0;
     bool computePhysicalResponse; // If we compute the channel response or not
     double channelData[2*20] = {}; // 2 * 10 rays
-    double spectrumData[2*20] = {}; // 2*10 rays
+    complex <double> spectrumField[20] = {}; // 2*10 rays
+    double spectrumAngle[20] = {};
 
 // ---------- Methods ------------------------
 

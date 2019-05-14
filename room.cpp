@@ -1012,20 +1012,18 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
         channelData[rayNumber+20] = completeLength;
-        complex <double> Voc = (lambda/M_PI)*Efield;
-        double Prx = 1/(8*Ra)*norm(Voc);
-        double degangle = round(cos(theta+direction)*180/M_PI);
+        double degangle = round((theta+direction)*180/M_PI);
         double radangle = degangle*M_PI/180;
-        spectrumData[specNumber] = Prx;
-        spectrumData[specNumber+20] = (2.0*M_PI/lambda)*speedReal*radangle;
+        spectrumField[specNumber] = Efield;
+        spectrumAngle[specNumber] = (2.0*M_PI/lambda)*speedReal*cos(radangle);
+        cout << (2.0*M_PI/lambda)*speedReal*cos(radangle)<< endl;
         int save = specNumber;
-        for (int j = 0; j < specNumber; j++){
-            if (spectrumData[j+20] == radangle){
-                spectrumData[j] += Prx;
-                save -= save;
+        for (int j = 0; j < save; j++){
+            if (spectrumAngle[j] == spectrumAngle[save]){
+                spectrumField[j] += Efield;
+                specNumber -= 1;
             }
         }
-        specNumber = save;
         specNumber += 1;
         rayNumber += 1;
     }
@@ -1312,9 +1310,12 @@ double* room::getData(){return this->Data;}
 int room::getRayNumber(){return this->rayNumber;}
 int room::getSpecNumber(){return this->specNumber;}
 double* room::getChannelData(){return this->channelData;}
-double* room::getSpectrumData(){return this->spectrumData;}
+complex <double> * room::getSpectrumField(){return this->spectrumField;}
+double* room::getSpectrumAngle(){return this->spectrumAngle;}
 double room::getDirection(){return direction;}
 map<const char *, int> *room::getStreetsPenDep(){return &(this->streetsPenDep);}
+double room::getLambda(){return lambda;}
+double room::getRa(){return Ra;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

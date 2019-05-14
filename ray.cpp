@@ -22,9 +22,14 @@ ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall
     updateMeterLength();
     double a;
     if(x01 == x02){
+        if (y02 - y01 >= 0){
+            a = -INFINITY;
+            theta = -M_PI/2;
+        }else{
         // If the line is vertically oriented, the slope is infinite
-        a = INFINITY;
-        theta = M_PI/2;
+            a = INFINITY;
+            theta = M_PI/2;
+        }
     }
     else{
         if (x02-x01 >= 0){

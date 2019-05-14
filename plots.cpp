@@ -450,12 +450,15 @@ void plots::TDL_US(room* scene){
 
 void plots::dopplerSpectrum(room* scene){
     int specNumber = scene->getSpecNumber();
-    double *spectrumData = scene->getSpectrumData();
-
+    double *spectrumAngle = scene->getSpectrumAngle();
+    complex <double>* spectrumField = scene->getSpectrumField();
     QVector<double> Prx(specNumber), omega(specNumber);
-    for (int i=0; i<(specNumber); ++i){
-        Prx[i] = scene->dBm(spectrumData[i]);
-        omega[i] = spectrumData[i+20];
+    double lambda = scene->getLambda();
+    double Ra = scene->getRa();
+    for (int i=0; i<specNumber; ++i){
+        complex <double> Voc = (lambda/M_PI)*spectrumField[i];
+        Prx[i] = scene->dBm(1/(8*Ra)*norm(Voc));
+        omega[i] = spectrumAngle[i];
         QCPItemLine *line = new QCPItemLine(ui->customPlot_7);
         line->start->setCoords(omega[i], Prx[i]);
         line->end->setCoords(omega[i],-100);  // location of point 2 in plot coordinate
