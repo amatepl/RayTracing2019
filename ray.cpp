@@ -20,6 +20,21 @@ ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall
     tetai = Tetai;
     wallIBouncedOn = indWall;
     updateMeterLength();
+    double a;
+    if(x01 == x02){
+        // If the line is vertically oriented, the slope is infinite
+        a = INFINITY;
+        theta = M_PI/2;
+    }
+    else{
+        if (x02-x01 >= 0){
+            a =(y02 - y01)/(x02 - x01);
+            theta = atan(a)+M_PI;
+        }else{
+            a =(y02 - y01)/(x02 - x01);
+            theta = atan(a);
+        }
+    }
 }
 
 ray::~ray(void){
@@ -49,5 +64,6 @@ void ray::updateMeterLength(){meterLength = d*0.1;} // pxToMeter = 0.1
 
 int ray::getWallInd(){return wallInd;}
 double ray::getTetai(){return tetai;}
+double ray::getTheta(){return theta;}
 int ray::getIndWall(){return wallIBouncedOn;}
 double ray::getMeterLength(){return meterLength;}

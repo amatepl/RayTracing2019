@@ -25,6 +25,7 @@ public:
     void physicalImpulseResponse(room* scene);
     void TDLImpulseResponse(room* scene);
     void TDL_US(room* scene);
+    void dopplerSpectrum(room* scene);
 
 private:
     Ui::plots *ui;

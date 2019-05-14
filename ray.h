@@ -29,6 +29,7 @@ private:
     double tetai ;
     double meterLength;
     int wallIBouncedOn;
+    double theta;
 
     std::vector <wall*> walls_intersected;   // Pas la meilleure approche, trop à enregsitrer.
 
@@ -46,6 +47,7 @@ public:
     int getWallInd();
     void setCoefficient(double iAngle, wall inWall);
     double getTetai();
+    double getTheta();
     double getMeterLength();
     int getIndWall();
 

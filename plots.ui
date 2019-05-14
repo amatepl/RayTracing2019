@@ -73,31 +73,21 @@
       <attribute name="title">
        <string>US TDL</string>
       </attribute>
-      <widget class="QCustomPlot" name="customPlot_6" native="true">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>9</y>
-         <width>613</width>
-         <height>407</height>
-        </rect>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QCustomPlot" name="customPlot_6" native="true"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>Page</string>
+       <string>Spectrum</string>
       </attribute>
-      <widget class="QCustomPlot" name="customPlot_7" native="true">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>613</width>
-         <height>407</height>
-        </rect>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QCustomPlot" name="customPlot_7" native="true"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

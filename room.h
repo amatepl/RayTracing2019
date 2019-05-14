@@ -49,13 +49,16 @@ public:
     int getRows();
     int getColumns();
     int getTotalArea();
+    double getSpeed();
+    double getSpeedReal();
     double* getData();
     int getMinimalDistance();
     int getSquare_size();
-    double getSpeed();
     double getPxToMeter();
     int getRayNumber();
     double* getChannelData();
+    double* getSpectrumData();
+    double getDirection();
     map<const char*,int>* getStreetsPenDep();
     double getCarrierFrequency();
     double getBandwidth();
@@ -116,7 +119,6 @@ private:
     int columns = 950/square_size; // 500 = window height
     int totalArea = rows * columns; // total number of local area
     int minimalDistance = 10; // 10m
-    double speed = 0;
 
     // General objects
     antena *Transmitter;
@@ -209,14 +211,17 @@ private:
     bool coverageDone = false;
 
     // System Parameters
-    double  maxEIRP = 1; // Watt
+    double  maxEIRP = 2; // Watt
     double  n = 1; // n = efficiency of the antenna
     double  maxGain = n*16/(3*M_PI);
     double  L_Tx = 1; //L_Tx
     double  powerEmettor = maxEIRP*L_Tx/maxGain;   // In watts the power of the emettor
     double  Zwall;
     double  eps;
-    bool    diffractOn = false;
+
+    double  speed;
+    double  speedReal;
+    double  direction;
 
     // SNR parameters
     double targetSNR = 8; //[dB] 
@@ -224,7 +229,7 @@ private:
     double inputNoise = 10*log10(kb*T0*BW);
     double interferenceMargin = 6; //[dB]
 
-    double minPrx = targetSNR + noiseFigure + inputNoise + interferenceMargin - 30; // +30 to convert dB -> dBm
+    double minPrx = targetSNR + noiseFigure + inputNoise + interferenceMargin + 30; // +30 to convert dB -> dBm
 
 // ---------- Results ------------------------
     double resultsBinaryDebit;
@@ -237,8 +242,7 @@ private:
     int rayNumber = 0; // Help to keep track of the number of rays
     bool computePhysicalResponse; // If we compute the channel response or not
     double channelData[2*20] = {}; // 2 * 10 rays
-
-    bool computeDoppler;
+    double spectrumData[2*20] = {}; // 2*10 rays
 
 // ---------- Methods ------------------------
 

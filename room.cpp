@@ -1109,18 +1109,19 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     complex <double> i(0.0, 1.0);
     int amountSegment = rayLine.size();
     double completeLength = 0.0;
+    double theta = 0.0;
     double R = 1;
     complex <double> Efield = 0.0;
     ray *currentRay;
     for (int i=0; i<amountSegment; i++){
         currentRay = rayLine.at(i);
+        theta = currentRay->getTheta();
         if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
-            double tethaI = abs(currentRay->getTetai());
-            R *= computeReflexionPer(tethaI,epsilonWallRel);
+            double thetaI = abs(currentRay->getTetai());
+            R *= computeReflexionPer(thetaI,epsilonWallRel);
         }
         completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
     }
-
     double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
     Efield = -i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
@@ -1140,9 +1141,14 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         // Store attenuation a and distance completeLength 
         channelData[rayNumber] = R/completeLength;
         channelData[rayNumber+20] = completeLength;
+        complex <double> Voc = (lambda/M_PI)*Efield;
+        double Prx = 1/(8*Ra)*norm(Voc);
+        spectrumData[rayNumber] = dBm(Prx);
+        spectrumData[rayNumber+20] = (lambda/M_PI)*speedReal*cos(theta+direction);
+        cout << "theta" << endl;
+        cout << theta << endl;
         rayNumber += 1;
     }
-
     return Efield;
 }
 
@@ -1186,7 +1192,7 @@ double room::computeSNR(double Prx){
     /*
         Compute the SNR [dB] with Prx given in dBm.
     */
-    double SNR = (Prx+30) - noiseFigure - inputNoise;
+    double SNR = (Prx-30) - noiseFigure - inputNoise;
     return SNR;
 }
 
@@ -1358,9 +1364,23 @@ void room::readSettingsFile(){
                 totalArea = rows * columns; // total number of local area
           }else if(count == 4){
                 //powerEmettor = stod(line);
-          }else if (count == 5){
-                speed == stod(line);
-                speed = speed/3.6; // Conversion to m/s
+          }else if(count == 5){
+                 speed = stod(line);
+                 speedReal = speed/3.6;
+          }else if(count == 6){
+              int dir = stoi(line);
+              if (dir == 0){
+                  direction = 0;
+              }
+              else if (dir == 1){
+                  direction =-M_PI;
+              }
+              else if (dir == 2){
+                  direction =M_PI/2;
+              }
+              else if (dir == 3){
+                  direction =-M_PI/2;
+              }
           }
           count++;
       }
@@ -1414,13 +1434,16 @@ void room::setTransmitter(antena *new_transmitter){Transmitter = new_transmitter
 int room::getRows(){return rows;}
 int room::getColumns(){return columns;}
 int room::getTotalArea(){return totalArea;}
+double room::getSpeed(){return speed;}
+double room::getSpeedReal(){return speedReal;}
 int room::getMinimalDistance(){return minimalDistance;}
 int room::getSquare_size(){return square_size;}
-double room::getSpeed(){return speed;}
 double room::getPxToMeter(){return pxToMeter;}
 double* room::getData(){return this->Data;}
 int room::getRayNumber(){return this->rayNumber;}
 double* room::getChannelData(){return this->channelData;}
+double* room::getSpectrumData(){return this->spectrumData;}
+double room::getDirection(){return direction;}
 map<const char *, int> *room::getStreetsPenDep(){return &(this->streetsPenDep);}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
@@ -1479,6 +1502,8 @@ void room::drawCoverege(){
         printf("mem failure, exiting \n");
         exit(EXIT_FAILURE);
     }
+    cout<<"Ptx[W] = ";
+    cout<<powerEmettor<<endl;
     for(int i=0; i<columns; i++){
         for(int j=0; j<rows; j++){
             this->clearLocalParameters();

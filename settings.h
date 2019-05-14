@@ -49,6 +49,7 @@ private:
     int square_size;
     double emettorPower;
     double speed;
+    int direction;
 
     // tools
     string toStringInt(int input);

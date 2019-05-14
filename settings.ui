@@ -32,21 +32,52 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>60</y>
-     <width>1081</width>
-     <height>471</height>
+     <x>10</x>
+     <y>0</y>
+     <width>1061</width>
+     <height>481</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
-     <widget class="QLabel" name="label_6">
-      <property name="text">
-       <string>Emettor power (W)</string>
+    <item row="8" column="2">
+     <widget class="QSpinBox" name="discretSubBox">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
+    <item row="4" column="1">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Wall type</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QSpinBox" name="wallThickSpinBox">
+      <property name="maximum">
+       <number>500</number>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Wall thickness (cm)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Amount of rebound (n)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
      <widget class="QComboBox" name="typeComboBox">
       <item>
        <property name="text">
@@ -65,38 +96,14 @@
       </item>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="label">
+    <item row="1" column="1">
+     <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Wall type</string>
+       <string>Emettor power (W)</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="1">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Amount of rebound (n)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="2">
-     <widget class="QSpinBox" name="reboundSpin">
-      <property name="maximum">
-       <number>5</number>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="2">
-     <widget class="QSpinBox" name="discretSubBox">
-      <property name="minimum">
-       <number>1</number>
-      </property>
-      <property name="maximum">
-       <number>30</number>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="1">
+    <item row="8" column="1">
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Square size (set to 10 for a local area of 1m²)</string>
@@ -110,31 +117,75 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Wall thickness (cm)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2">
-     <widget class="QSpinBox" name="speedSpin"/>
-    </item>
-    <item row="4" column="2">
-     <widget class="QSpinBox" name="wallThickSpinBox">
-      <property name="maximum">
-       <number>500</number>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
+    <item row="2" column="1">
      <widget class="QLabel" name="label_5">
+      <property name="maximumSize">
+       <size>
+        <width>530</width>
+        <height>30</height>
+       </size>
+      </property>
       <property name="text">
        <string>Speed of the receptor (km/h)</string>
       </property>
      </widget>
     </item>
+    <item row="2" column="2">
+     <widget class="QSpinBox" name="speedBox"/>
+    </item>
+    <item row="7" column="2">
+     <widget class="QSpinBox" name="reboundSpin">
+      <property name="maximum">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Direction of the receptor</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QComboBox" name="directionBox">
+      <item>
+       <property name="text">
+        <string>East</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>West</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>North</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>South</string>
+       </property>
+      </item>
+     </widget>
+    </item>
    </layout>
+   <zorder>label_5</zorder>
+   <zorder>label_6</zorder>
+   <zorder>typeComboBox</zorder>
+   <zorder>label_2</zorder>
+   <zorder>label</zorder>
+   <zorder>wallThickSpinBox</zorder>
+   <zorder>label_3</zorder>
+   <zorder>reboundSpin</zorder>
+   <zorder>discretSubBox</zorder>
+   <zorder>label_4</zorder>
+   <zorder>powerSpinBox</zorder>
+   <zorder>speedBox</zorder>
+   <zorder>label_7</zorder>
+   <zorder>directionBox</zorder>
   </widget>
   <widget class="QPushButton" name="resetDefaultsButton">
    <property name="geometry">

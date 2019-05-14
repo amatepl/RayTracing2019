@@ -112,6 +112,7 @@ void plots::plotPathLoss(room *scene){
         physicalImpulseResponse(scene);
         TDLImpulseResponse(scene);
         TDL_US(scene);
+        dopplerSpectrum(scene);
     }
 }
 
@@ -214,6 +215,8 @@ void plots::plotModel(double m, double b, double fadingVariability, double minPr
     ui->customPlot_2->xAxis->setLabel("Distance[m]");
     ui->customPlot_2->yAxis->setLabel("Prx[dbm]");
     ui->customPlot_2->xAxis->setScaleType(QCPAxis::stLogarithmic); 
+    QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
+    ui->customPlot_2->xAxis->setTicker(logTicker);
     ui->customPlot_2->yAxis->grid()->setSubGridVisible(true);
     ui->customPlot_2->xAxis->grid()->setSubGridVisible(true);
     ui->customPlot_2->rescaleAxes();
@@ -258,7 +261,7 @@ void plots::plotCellRange(double m, double b, double fadingVariability, double m
     // give the axes some labels:
     ui->customPlot_3->xAxis->setLabel("Connection probability");
     ui->customPlot_3->yAxis->setLabel("Cell range[m]");
-    ui->customPlot_3->yAxis->setScaleType(QCPAxis::stLogarithmic); 
+    ui->customPlot_3->yAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->customPlot_3->rescaleAxes();
     ui->customPlot_3->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_3->replot();
@@ -443,4 +446,34 @@ void plots::TDL_US(room* scene){
     ui->customPlot_6->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->customPlot_6->legend->setVisible(true);
     ui->customPlot_6->replot();
+}
+
+void plots::dopplerSpectrum(room* scene){
+    int rayNumber = scene->getRayNumber();
+    double *spectrumData = scene->getSpectrumData();
+
+    QVector<double> Prx(rayNumber-1), omega(rayNumber-1);
+    for (int i=0; i<(rayNumber-1); ++i){
+        Prx[i] = spectrumData[i];
+        omega[i] = spectrumData[i+20];
+        QCPItemLine *line = new QCPItemLine(ui->customPlot_7);
+        line->start->setCoords(omega[i], Prx[i]);
+        line->end->setCoords(omega[i],-100);  // location of point 2 in plot coordinate
+    }
+
+    // Plot dopplerSpectrum
+    ui->customPlot_7->addGraph();
+    ui->customPlot_7->graph(0)->setPen(QPen(Qt::blue));
+    ui->customPlot_7->graph(0)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlot_7->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    ui->customPlot_7->graph(0)->setData(omega, Prx);
+
+    // give the axes some labels:
+    ui->customPlot_7->xAxis->setLabel("\u03C9[rad/s]");
+    ui->customPlot_7->yAxis->setLabel("Prx[dBm]");
+    ui->customPlot_7->yAxis->grid()->setSubGridVisible(true);
+    ui->customPlot_7->xAxis->grid()->setSubGridVisible(true);
+    ui->customPlot_7->rescaleAxes();
+    ui->customPlot_7->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    ui->customPlot_7->replot();
 }
