@@ -452,8 +452,8 @@ void plots::dopplerSpectrum(room* scene){
     int rayNumber = scene->getRayNumber();
     double *spectrumData = scene->getSpectrumData();
 
-    QVector<double> Prx(rayNumber-1), omega(rayNumber-1);
-    for (int i=0; i<(rayNumber-1); ++i){
+    QVector<double> Prx(rayNumber), omega(rayNumber);
+    for (int i=0; i<(rayNumber); ++i){
         Prx[i] = spectrumData[i];
         omega[i] = spectrumData[i+20];
         QCPItemLine *line = new QCPItemLine(ui->customPlot_7);

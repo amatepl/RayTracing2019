@@ -1,3 +1,4 @@
+
 #include "room.h"
 //#include "plots.h"
 
@@ -78,7 +79,7 @@ room::room(MainWindow *parente) :
     streetsPenDep["spa"] = 0;
     streetsPenDep["indu"] = 0;
     streetsPenDep["deuxEg"] = 0;
-    //findDiffractionPoints();
+    findDiffractionPoints();
 
 }
 room::~room(void){}
@@ -115,32 +116,43 @@ void room::penetrationDepth(){
 
     if(onStreet(st->commerceUp)){
         depth = (st->commerceUp[3] - Ry)*0.1;
-        if(depth > streetsPenDep["commerceUp"]){
-            streetsPenDep["commerceUp"] = depth;
+        //if(depth > streetsPenDep["commerceUp"]){
+        if(depth > stDepth[0]){
+        streetsPenDep["commerceUp"] = depth;
+            stDepth[0] = depth;
         }
     }
     else if(onStreet(st->deuxEg)){
         depth = (st->deuxEg[3] - Ry)*0.1;
-        if(depth > streetsPenDep["deuxEg"]){
+        //if(depth > streetsPenDep["deuxEg"]){
+        if(depth > stDepth[1]){
             streetsPenDep["deuxEg"] = depth;
+            stDepth[1] = depth;
         }
     }
     else if(onStreet(st->spa)){
         depth = (st->spa[3] - Ry)*0.1;
-        if(depth > streetsPenDep["spa"]){
+        //if(depth > streetsPenDep["spa"]){
+        if(depth > stDepth[2]){
             streetsPenDep["spa"] = depth;
+            stDepth[2] = depth;
         }
     }
     else if(onStreet(st->commerceDown)){
+        cout<<"OK!"<<endl;
         depth = (Ry - st->commerceDown[1])*0.1;
-        if(depth > streetsPenDep["commerceDown"]){
+        //if(depth > streetsPenDep["commerceDown"]){
+        if(depth > stDepth[3]){
             streetsPenDep["commerceDown"] = depth;
+            stDepth[3] = depth;
         }
     }
     else if(onStreet(st->indu)){
         depth = (Ry - st->indu[1])*0.1;
-        if(depth > streetsPenDep["indu"]){
+        //if(depth > streetsPenDep["indu"]){
+        if(depth > stDepth[4]){
             streetsPenDep["indu"] = depth;
+            stDepth[4] = depth;
         }
     }
 }
@@ -185,7 +197,8 @@ void room::findDiffractionPoints(){
                     unsigned int c = 0;
                     while(c<diffractionPoints.size()&& check){
                         check = (diffractionPoints[c][0] != walls[i]->getX1() || diffractionPoints[c][1] != walls[i]->getY1());
-                        c++;    cout<<(double)950/500<<endl;
+                        c++;
+                        //cout<<(double)950/500<<endl;
                     }
 
                     if(check){diffractionPoints.push_back({walls[i]->getX1(),walls[i]->getY1()});}
@@ -260,8 +273,6 @@ void room::launch_algo(bool drawR){
         //if(diffractedPower !=0){powerRef = powerRef + dBmRev(diffractedPower);}
         if(reflection){
             powerRef = computePrx(totalEfield);
-            //cout<<"power: ";
-            //cout<<powerRef<<endl;
             powerReceived = dBm(powerRef);
         }
         if(powerReceived){
@@ -422,7 +433,13 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
             current_ray = new lineo(receiver_ray->getX1(),receiver_ray->getY1(),receiver_ray->getX2(),receiver_ray->getY2());
 
 //            if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
-             if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
+
+            // Check if there is intersection between current ray and any wall and if this intersection is not the reflexion point.
+            bool inter =(*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1());
+            //Check if we don't reflect on a corner.
+            bool extremity1 = (completeRay[i]->getX1() != (*scene).walls[j]->getX1() && completeRay[i]->getY1() != (*scene).walls[j]->getY1()) || (completeRay[i]->getX2() != (*scene).walls[j]->getX2() && completeRay[i]->getY2() != (*scene).walls[j]->getY2());
+            bool extremity2 = (completeRay[i]->getX1() != (*scene).walls[j]->getX2() && completeRay[i]->getY1() != (*scene).walls[j]->getY2()) || (completeRay[i]->getX2() != (*scene).walls[j]->getX1() && completeRay[i]->getY2() != (*scene).walls[j]->getY1());
+            if(inter && (!extremity1 || !extremity2)){
                 delete(current_ray);
                 completeRay.clear();
                 completeRay.shrink_to_fit();
@@ -439,18 +456,6 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
             outlinePen.setColor(QColor(0,255 -  (255/(*scene).reflectionsNumber)*(i),255,255));
             //receiver_ray->setPen(outlinePen);
             scene->addLine(completeRay[i]->getX1(),completeRay[i]->getY1(),completeRay[i]->getX2(),completeRay[i]->getY2(),outlinePen);
-//            cout<<"Ray's slope: ";
-//            cout<<completeRay[i]->getSlope()<<endl;
-//            cout<<"Intersection x: ";
-//            cout<<(*scene).intersection(completeRay[i],(*scene).walls[4])[0]<<endl;
-//            cout<<"Intersection y: ";
-//            cout<<(*scene).intersection(completeRay[i],(*scene).walls[4])[1]<<endl;
-//            cout<<"Intersection bool: ";
-//            cout<<(*scene).intersectionCheck(completeRay[i],(*scene).walls[4])<<endl;
-//            cout<<"Ray reflects on wall start: ";
-//            cout<<(*scene).pointOnLine((*scene).walls[4],completeRay[i]->getX1(),completeRay[i]->getY1())<<endl;
-//            cout<<"Ray reflects on wall end: ";
-//            cout<<(*scene).pointOnLine((*scene).walls[4],completeRay[i]->getX2(),completeRay[i]->getY2())<<endl;
 
             cout<<"x1 and y1: ";
             cout<<completeRay[i]->getX1();
@@ -469,9 +474,6 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         delete(receiver_ray);
         completeRay.clear();
         completeRay.shrink_to_fit();
-
-//        cout<<"Ray's power: ";
-//        cout<< (*scene).power<<endl;
     }
 
 }
@@ -547,7 +549,14 @@ void room::buildRay(double transmitterPosX,double transmitterPosY,double originX
 
             receiver_ray = completeRay[i];
             current_ray = new lineo(receiver_ray->getX1(),receiver_ray->getY1(),receiver_ray->getX2(),receiver_ray->getY2());
-            if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
+            //if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
+
+            // Check if there is intersection between current ray and any wall and if this intersection is not the reflexion point.
+            bool inter =(*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1());
+            //Check if we don't reflect on a corner.
+            bool extremity1 = (completeRay[i]->getX1() != (*scene).walls[j]->getX1() && completeRay[i]->getY1() != (*scene).walls[j]->getY1() && completeRay[i]->getX2() != (*scene).walls[j]->getX2() && completeRay[i]->getY2() != (*scene).walls[j]->getY2());
+            bool extremity2 = (completeRay[i]->getX1() != (*scene).walls[j]->getX2() && completeRay[i]->getY1() != (*scene).walls[j]->getY2() && completeRay[i]->getX2() != (*scene).walls[j]->getX1() && completeRay[i]->getY2() != (*scene).walls[j]->getY1());
+            if(inter && extremity1 && extremity2){
                 delete(current_ray);
                 completeRay.clear();
                 dontStop = false;
@@ -584,107 +593,62 @@ void room::drawDiffraction(room* scene){
 
     // Those will check the intersections with the walls.
     lineo* pathTester;
-    lineo* pathTester2;
 
     //Actual rays that we chould obtein when the diffracation happens.
     ray* rayReceiver;
     ray* rayTransmitter;
 
-    (*scene).diffractionPoints.clear();
+    //(*scene).diffractionPoints.clear();
+    vector<std::array <double,2>> usedDiffPoints;
 
-    pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-    bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
-    unsigned int i = 0;
-    while(i<(*scene).amount_all_walls && notDiffracted){
-        // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
-        if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
-            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-            bool check = true;
-            unsigned int j = 0;
-            while(j<(*scene).amount_all_walls && check){
-                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            delete(pathTester2);
-            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
-            j =0;
-            while(j<(*scene).amount_all_walls && check){
-                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            if(check){
-                scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),outlinePen);
-                scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),outlinePen);
-                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
-                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
-                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-                (*scene).powerRef = diffractPower;
-                (*scene).powerReceived = (*scene).dBm(diffractPower);
-                //(*scene).diffractedPower+= diffractPower;
-                notDiffracted =false;
-            }
-            delete(pathTester2);
-            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-            j = 0;
-            while(j<(*scene).amount_all_walls && !check){
-                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            delete(pathTester2);
-            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
-            j=0;
-            while(j<(*scene).amount_all_walls && !check){
-                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            if(!check){
-                scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),outlinePen);
-                scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),outlinePen);
-                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
-                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
-                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-                (*scene).powerRef = diffractPower;
-                (*scene).powerReceived = (*scene).dBm(diffractPower);
-                //(*scene).diffractedPower+= diffractPower;
-                delete(rayReceiver);
-                delete(rayTransmitter);
-                notDiffracted = false;
-            }
-            delete(pathTester2);
 
+    for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
+        if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
         }
-        i++;
+        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+        }
+        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+        }
+        else if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+        }
     }
+
+    bool notDiffracted = true;
+    unsigned int i =0;
+    while(i<usedDiffPoints.size() && notDiffracted){
+        pathTester = new lineo(usedDiffPoints[i][0],usedDiffPoints[i][1],(*scene).Receiver->getPosX(), (*scene).Receiver->getPosY());
+        bool noTrans = true;
+        unsigned int j = 0;
+        while(j<(*scene).amount_all_walls){
+        vector<double> inters = (*scene).intersection(pathTester,(*scene).walls[j]);
+        if((*scene).pointOnLine(pathTester,inters[0],inters[1]) && (*scene).pointOnLine((*scene).walls[j],inters[0],inters[1]) && inters[0] != usedDiffPoints[i][0] && inters[1] != usedDiffPoints[i][1]){
+            noTrans = false;
+        }
+        j++;
+        }
+        if(noTrans){
+            scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],outlinePen);
+            scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],outlinePen);
+            rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
+            rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
+            double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+            (*scene).powerRef = diffractPower;
+            (*scene).powerReceived = (*scene).dBm(diffractPower);
+            delete(rayReceiver);
+            delete(rayTransmitter);
+            //(*scene).diffractedPower+= diffractPower;
+            notDiffracted =false;
+        }
     delete(pathTester);
+    i++;
+    }
+    usedDiffPoints.clear();
+    usedDiffPoints.shrink_to_fit();
 
-
-
-//    int walls_indices[2];
-//    int indice = 0;
-//    int c = 0;
-//    while(c<(*scene).amount_walls && indice<2){
-//        if((*scene).intersectionCheck(pathTester,(*scene).walls[c])){
-//            walls_indices[indice] = c;
-//            indice += 1;
-//        }
-//        c++;
-//    }
-//    if(indice == 2){
-//        wall* wall1 = (*scene).walls[walls_indices[0]];
-//        wall* wall2 = (*scene).walls[walls_indices[1]];
-//        if((wall1->getX1() == wall2->getX1() && wall1->getY1() == wall2->getY1()) || (wall1->getX1() == wall2->getX2() && wall1->getY1() == wall2->getY2())){
-//            (*scene).diffractionPoints.push_back({wall1->getX1(),wall1->getY1()});
-//        }
-//        else if((wall1->getX2() == wall2->getX2() && wall1->getY2() == wall2->getY2()) || (wall1->getX2() == wall2->getX1() && wall1->getY2() == wall2->getY1())){
-//            (*scene).diffractionPoints.push_back({wall1->getX2(),wall1->getY2()});
-//        }
-//        scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],outlinePen);
-//        scene->addLine((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],outlinePen);
-//        rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
-//        rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).diffractionPoints[0][0],(*scene).diffractionPoints[0][1],0,0);
-//        double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-//        (*scene).diffractedPower+= diffractPower;
-//    }
 }
 
 
@@ -695,81 +659,62 @@ void room::buildDiffraction(room* scene){
 
     // Those will check the intersections with the walls.
     lineo* pathTester;
-    lineo* pathTester2;
 
     //Actual rays that we chould obtein when the diffracation happens.
     ray* rayReceiver;
     ray* rayTransmitter;
 
-    (*scene).diffractionPoints.clear();
 
-    pathTester = new lineo((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-    bool notDiffracted = true;          // Since only one diffracation is allowed this parameter will stop the loop when it happens.
-    unsigned int i = 0;
-    while(i<(*scene).amount_all_walls && notDiffracted){
-        // First we check if the direct ray intersects with any wall. If no then there is on diffraction.
-        if((*scene).intersectionCheck(pathTester,(*scene).walls[i])){
-            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-            bool check = true;
-            unsigned int j = 0;
-            while(j<(*scene).amount_all_walls && check){
-                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            delete(pathTester2);
-            pathTester2 = new lineo((*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
-            j =0;
-            while(j<(*scene).amount_all_walls && check){
-                check = !(*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            if(check){
-                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
-                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX1(),(*scene).walls[i]->getY1(),0,0);
-                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-                (*scene).powerRef = diffractPower;
-                (*scene).powerReceived = (*scene).dBm(diffractPower);
-                //(*scene).diffractedPower+= diffractPower;
-                notDiffracted =false;
-            }
-            delete(pathTester2);
-            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Receiver->getPosX(),(*scene).Receiver->getPosY());
-            j = 0;
-            while(j<(*scene).amount_all_walls && !check){
-                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            delete(pathTester2);
-            pathTester2 = new lineo((*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),(*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY());
-            j=0;
-            while(j<(*scene).amount_all_walls && !check){
-                check = (*scene).intersectionCheckNonInclusive(pathTester2,(*scene).walls[j]);
-                j++;
-            }
-            delete(pathTester2);
-            if(!check){
-                rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
-                rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),(*scene).walls[i]->getX2(),(*scene).walls[i]->getY2(),0,0);
-                double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-                (*scene).powerRef = diffractPower;
-                (*scene).powerReceived = (*scene).dBm(diffractPower);
-                double binary = (*scene).binaryDebit((*scene).powerReceived);
-                if(binary !=0){
-                    //cout<<binary<<endl;
-                    (*scene).penetrationDepth();
-                }
+    vector<std::array <double,2>> usedDiffPoints;
 
-                //(*scene).diffractedPower+= diffractPower;
-                delete(rayReceiver);
-                delete(rayTransmitter);
-                notDiffracted = false;
-            }
 
+    for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
+        if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
         }
-        i++;
+        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+        }
+        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+        }
+        else if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+        }
     }
-    delete(pathTester);
 
+    bool notDiffracted = true;
+    unsigned int i =0;
+    while(i<usedDiffPoints.size() && notDiffracted){
+        pathTester = new lineo(usedDiffPoints[i][0],usedDiffPoints[i][1],(*scene).Receiver->getPosX(), (*scene).Receiver->getPosY());
+        bool noTrans = true;
+        unsigned int j = 0;
+        while(j<(*scene).amount_all_walls){
+        vector<double> inters = (*scene).intersection(pathTester,(*scene).walls[j]);
+        if((*scene).pointOnLine(pathTester,inters[0],inters[1]) && (*scene).pointOnLine((*scene).walls[j],inters[0],inters[1]) && inters[0] != usedDiffPoints[i][0] && inters[1] != usedDiffPoints[i][1]){
+            noTrans = false;
+        }
+        j++;
+        }
+        if(noTrans){
+            rayReceiver = new ray((*scene).Receiver->getPosX(),(*scene).Receiver->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
+            rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
+            double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
+            (*scene).powerRef = diffractPower;
+            (*scene).powerReceived = (*scene).dBm(diffractPower);
+            if((*scene).powerReceived > -70){
+                (*scene).penetrationDepth();
+            }
+            delete(rayTransmitter);
+            delete(rayReceiver);
+            //(*scene).diffractedPower+= diffractPower;
+            notDiffracted =false;
+        }
+    delete(pathTester);
+    i++;
+    }
+    usedDiffPoints.clear();
+    usedDiffPoints.shrink_to_fit();
 
 }
 
@@ -856,79 +801,16 @@ bool room::pointOnLine(lineo* line1,const double xp,const double yp){
     int y = yp;
 
     if(x1 == x2){   // Cas du mur vertical
-        answer = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
+        answer = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
     }
     else if (y1 == y2){   // Cas du mur horizental
-        answer = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
+        answer = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
     }
     else {
-       answer = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
+       answer = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
     }
     return answer;
 
-
-//    bool answer1 = false;
-
-//    int x = ceil(xp);
-//    int y = ceil(yp);
-
-//    if(x1 == x2){   // Cas du mur vertical
-//        answer1 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
-//    }
-//    else if (y1 == y2){   // Cas du mur horizental
-//        answer1 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
-//    }
-//    else {
-//       answer1 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
-//    }
-
-
-//    x = floor(xp);
-//    y = floor(yp);
-
-//    bool answer2;
-
-//    if(x1 == x2){   // Cas du mur vertical
-//        answer2 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
-//    }
-//    else if (y1 == y2){   // Cas du mur horizental
-//        answer2 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
-//    }
-//    else {
-//       answer2 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
-//    }
-
-//    x = floor(xp);
-//    y = ceil(yp);
-
-//    bool answer3;
-
-//    if(x1 == x2){   // Cas du mur vertical
-//        answer3 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
-//    }
-//    else if (y1 == y2){   // Cas du mur horizental
-//        answer3 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
-//    }
-//    else {
-//       answer3 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
-//    }
-
-//    x = ceil(xp);
-//    y = floor(yp);
-
-//    bool answer4;
-
-//    if(x1 == x2){   // Cas du mur vertical
-//        answer4 = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
-//    }
-//    else if (y1 == y2){   // Cas du mur horizental
-//        answer4 = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
-//    }
-//    else {
-//       answer4 = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
-//    }
-
-//    return answer1 || answer2 || answer3 || answer4;
 }
 
 bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp){
@@ -944,55 +826,39 @@ bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp)
     int x2 = (int)line1->getX2();
     int y2 = (int)line1->getY2();
 
-    bool answer1 = false;
+    bool answer = false;
 
-    int x = ceil(xp);
-    int y = ceil(yp);
-
-    if(x1 == x2){   // Cas du mur vertical
-        answer1 = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
-    }
-    else if (y1 == y2){   // Cas du mur horizental
-        answer1 = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
-    }
-    else {
-       answer1 = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
-    }
-
-
-    x = floor(xp);
-    y = floor(yp);
-
-    bool answer2;
+    int x = xp;
+    int y = yp;
 
     if(x1 == x2){   // Cas du mur vertical
-        answer2 = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
+        answer = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
     }
     else if (y1 == y2){   // Cas du mur horizental
-        answer2 = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
+        answer = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
     }
     else {
-       answer2 = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
+       answer = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
     }
 
-    return answer1 || answer2;
 
-// bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp){
-//     double x1 = line1->getX1();
-//     double y1 = line1->getY1();
-//     double x2 = line1->getX2();
-//     double y2 = line1->getY2();
+//    x = floor(xp);
+//    y = floor(yp);
 
-//     bool answer;
-    
-//     if(x1==x2){ // Cas du mur vertical
-//         answer = (x1=<xp && xp=<x1+1 && ( (y1<yp && yp<y2) || (y2<yp && yp<y1) ) )
-//     }else if(y1 == y2){ // Cas du mur horizontal
-//         answer = (y1=<yp && yp=<y1+1 && ( (x1<xp && xp<x2) || (x2<xp && xp<x1) ) )
-//     }else{
-//         answer = false;
-//     }
-//     return answer;
+//    bool answer2;
+
+//    if(x1 == x2){   // Cas du mur vertical
+//        answer2 = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
+//    }
+//    else if (y1 == y2){   // Cas du mur horizental
+//        answer2 = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
+//    }
+//    else {
+//       answer2 = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
+//    }
+
+    return answer;
+
 }
 
 bool room::intersectionCheck(lineo* line1, lineo* line2){
@@ -1023,6 +889,8 @@ bool room::intersectionCheck(lineo* line1, lineo* line2){
     xpos = (d - b)/(a - c);
     ypos = (a * xpos) + b;
     }
+    xpos = round(xpos);
+    ypos = round(ypos);
 
     return (pointOnLine(line1,xpos,ypos) && pointOnLine(line2,xpos,ypos));
 
@@ -1056,6 +924,9 @@ bool room::intersectionCheckNonInclusive(lineo* line1, lineo* line2){
     xpos = (d - b)/(a - c);
     ypos = (a * xpos) + b;
     }
+
+    xpos = round(xpos);
+    ypos = round(ypos);
 
     return (pointOnLineNonInclusive(line1,xpos,ypos) && pointOnLineNonInclusive(line2,xpos,ypos));
 
@@ -1178,7 +1049,7 @@ complex <double> room::computeEfieldGround(){
 
 double room::computePrx(complex <double> totalEfield){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-    complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
+    complex <double> groundEfield = 0;//this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
     double distance = this->distance();
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
     complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
@@ -1238,26 +1109,6 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 //    totalEfield += Efield*fresnelCoef;
 
     delete(directRay);
-//    cout<< "Fresnel coeffiecient: ";
-//    cout<<fresnelCoef<<endl;
-//    cout<< "Fresnel norm: ";
-//    cout<<fresnelNorm<<endl;
-//    cout<< "Fresnel argument: ";
-//    cout<<fresnelArg<<endl;
-//    cout<< "Fresnel power: ";
-//    cout<<FresnelPower<<endl;
-//    cout<< "Electric field: ";
-//    cout<<Efield<<endl;
-//    cout<< "Electric field power: ";
-//    cout<<1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2)<<endl;
-//    cout<< "Electric field power(dBm): ";
-//    cout<<dBm(1/(8*Ra)*pow(norm((lambda/M_PI)*Efield),2))<<endl;
-//    cout<< "power: ";
-//    cout<<power<<endl;
-//    cout<< "power(dBm): ";
-//    cout<<dBm(power)<<endl;
-//    cout<< "nu: ";
-//    cout<<nu<<endl;
     return power;
 }
 
@@ -1318,8 +1169,16 @@ void room::clearLocalParameters(){
     LOS = 0.0;
     NLOS = 0.0;
     rayNumber = 0;
+
     //Efield = 0.0;
 }
+
+void room::clearPenDepth(){
+    for(int i = 0; i<5;i++){
+        stDepth[i]=0;
+    }
+}
+
 
 void room::readSettingsFile(){
     /*
@@ -1518,7 +1377,11 @@ void room::drawCoverege(){
 
             // Plot results
             // Change binaryDebit which is different for 5G
-            if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
+            //if(250 - 250*resultsBinaryDebit/250>=0){color.setHsv((250 - 250*resultsBinaryDebit/250),255,105 + resultsBinaryDebit*150/260,255);}
+            if((-20 - powerReceived)*3>=0){color.setHsv((-20 - powerReceived)*3,255,255 - (-20 - powerReceived),255);}
+            else if(powerReceived == 0){
+                color.setHsv(240,150,80,255);
+            }
             else{color.setHsv(0,255,255,255);}
             brush->setColor(color);
             this->addRect(i*square_size,j*square_size,square_size,square_size,pen,*brush);
@@ -1534,7 +1397,8 @@ void room::drawCoverege(){
     cout<< streetsPenDep["spa"]<<endl;
     cout<< "Rue de l'Industrie: ";
     cout<< streetsPenDep["indu"]<<endl;
-    this->myParent->writePenetrationDepth(&streetsPenDep);
+    cout<< stDepth<<endl;
+    this->myParent->writePenetrationDepth(stDepth);
     drawWalls();
     this->clearAll();
     coverageDone = true;

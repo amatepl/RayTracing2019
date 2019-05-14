@@ -99,7 +99,7 @@ void MainWindow::on_receiver_clicked()
 
 
 void MainWindow::on_helpButton_clicked()
-{   
+{
     scene_help->show();
 }
 
@@ -123,6 +123,7 @@ void MainWindow::on_plotButton_clicked()
 void MainWindow::on_clearWorkspaceButton_clicked(){
 
     scene->clearAll();
+    scene->clearPenDepth();
     scene = new room(this);
     scene->setSceneRect(ui->graphicsView->rect());
        ui->graphicsView->setScene(scene);
@@ -168,7 +169,7 @@ void MainWindow::on_commandLinkButton_clicked()
         // dBm display
         ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->dBm(scene->getpowerEmettor())));
         ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getReceivedPower()));
-        
+
         ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->distance()));
         ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR_local()));
         ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay_local()));
@@ -178,17 +179,18 @@ void MainWindow::on_commandLinkButton_clicked()
     }
 }
 
-void MainWindow::writePenetrationDepth(map<const char *, int>* text){
-    map<const char*,int>* st = scene->getStreetsPenDep();
-    ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*st)["commerceUp"]));
-    cout<<(*st)["commerceUp"]<<endl;
-    cout<<(*text)["commerceUp"]<<endl;
-    cout<<(*text).size()<<endl;
-    cout<<(*text)["deuxEg"]<<endl;
-    //ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*text)["commerceUp"]));
-    ui->commerceDown->setText(QString("Rue du Commerce Down: ") + QString::number((*text)["commerceDown"]));
-    ui->deuxEg->setText(QString("Rue de deux Eglises: ") + QString::number((*text)["deuxEg"]));
-    ui->spa->setText(QString("Rue de spa: ") + QString::number((*text)["spa"]));
-    ui->indu->setText(QString("Rue de l'Industrie: ") + QString::number((*text)["indu"]));
-}
 
+void MainWindow::writePenetrationDepth(double text[5]){
+//    map<const char*,int>* st = scene->getStreetsPenDep();
+//    ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*st)["commerceUp"]));
+//    cout<<(*st)["commerceUp"]<<endl;
+//    cout<<(*text)["commerceUp"]<<endl;
+//    cout<<(*text).size()<<endl;
+//    cout<<(*text)["deuxEg"]<<endl;
+    ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number(text[0]));
+    ui->commerceDown->setText(QString("Rue du Commerce Down: ") + QString::number(text[3]));
+    ui->deuxEg->setText(QString("Rue de deux Eglises: ") + QString::number(text[1]));
+    ui->spa->setText(QString("Rue de spa: ") + QString::number(text[2]));
+    ui->indu->setText(QString("Rue de l'Industrie: ") + QString::number(text[4]));
+
+}
