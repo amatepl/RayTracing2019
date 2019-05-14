@@ -56,6 +56,7 @@ public:
     int getSquare_size();
     double getPxToMeter();
     int getRayNumber();
+    int getSpecNumber();
     double* getChannelData();
     double* getSpectrumData();
     double getDirection();
@@ -243,6 +244,7 @@ private:
     double NLOS;
 
     int rayNumber = 0; // Help to keep track of the number of rays
+    int specNumber = 0;
     bool computePhysicalResponse; // If we compute the channel response or not
     double channelData[2*20] = {}; // 2 * 10 rays
     double spectrumData[2*20] = {}; // 2*10 rays

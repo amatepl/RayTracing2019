@@ -449,12 +449,12 @@ void plots::TDL_US(room* scene){
 }
 
 void plots::dopplerSpectrum(room* scene){
-    int rayNumber = scene->getRayNumber();
+    int specNumber = scene->getSpecNumber();
     double *spectrumData = scene->getSpectrumData();
 
-    QVector<double> Prx(rayNumber), omega(rayNumber);
-    for (int i=0; i<(rayNumber); ++i){
-        Prx[i] = spectrumData[i];
+    QVector<double> Prx(specNumber), omega(specNumber);
+    for (int i=0; i<(specNumber); ++i){
+        Prx[i] = scene->dBm(spectrumData[i]);
         omega[i] = spectrumData[i+20];
         QCPItemLine *line = new QCPItemLine(ui->customPlot_7);
         line->start->setCoords(omega[i], Prx[i]);

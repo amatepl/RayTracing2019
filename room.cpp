@@ -1014,8 +1014,19 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         channelData[rayNumber+20] = completeLength;
         complex <double> Voc = (lambda/M_PI)*Efield;
         double Prx = 1/(8*Ra)*norm(Voc);
-        spectrumData[rayNumber] = dBm(Prx);
-        spectrumData[rayNumber+20] = (2.0*M_PI/lambda)*speedReal*cos(theta+direction);
+        double degangle = round(cos(theta+direction)*180/M_PI);
+        double radangle = degangle*M_PI/180;
+        spectrumData[specNumber] = Prx;
+        spectrumData[specNumber+20] = (2.0*M_PI/lambda)*speedReal*radangle;
+        int save = specNumber;
+        for (int j = 0; j < specNumber; j++){
+            if (spectrumData[j+20] == radangle){
+                spectrumData[j] += Prx;
+                save -= save;
+            }
+        }
+        specNumber = save;
+        specNumber += 1;
         rayNumber += 1;
     }
     return Efield;
@@ -1169,6 +1180,7 @@ void room::clearLocalParameters(){
     LOS = 0.0;
     NLOS = 0.0;
     rayNumber = 0;
+    specNumber = 0;
 
     //Efield = 0.0;
 }
@@ -1298,6 +1310,7 @@ int room::getSquare_size(){return square_size;}
 double room::getPxToMeter(){return pxToMeter;}
 double* room::getData(){return this->Data;}
 int room::getRayNumber(){return this->rayNumber;}
+int room::getSpecNumber(){return this->specNumber;}
 double* room::getChannelData(){return this->channelData;}
 double* room::getSpectrumData(){return this->spectrumData;}
 double room::getDirection(){return direction;}
