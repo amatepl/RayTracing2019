@@ -79,6 +79,7 @@ public:
     double getCoherenceBandwidth_local();
     double getRiceFactor_local();
     double getSNR_local();
+    double getCoTime();
 
     void setTransmitter(antena *new_transmitter);
     void setReceiver(antena *new_receiver);
@@ -101,6 +102,7 @@ public:
     double dBm(double power);
     double dBmRev(double dbm);
     double binaryDebit(double power);
+
 
 signals:
 

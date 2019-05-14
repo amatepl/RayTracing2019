@@ -1006,7 +1006,6 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     if(completeLength > this->maxLength){
         this->maxLength = completeLength; // for delay spread computation
     } 
-
     // Store ray parameter for Physical impulse response
     if(computePhysicalResponse){
         // Store attenuation a and distance completeLength 
@@ -1316,6 +1315,7 @@ double room::getDirection(){return direction;}
 map<const char *, int> *room::getStreetsPenDep(){return &(this->streetsPenDep);}
 double room::getLambda(){return lambda;}
 double room::getRa(){return Ra;}
+double room::getCoTime(){return 1.0/2.0*lambda/speedReal*1e+6;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

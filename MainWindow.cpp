@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->SNR->setText("SNR [dB]: ");
         ui->DelaySpread->setText("Delay spread [s]: ");
         ui->RiceFactor->setText("Rice Factor [dB]: ");
+        ui->coherTime->setText("Coherence time [\u03bcs]: ");
 }
 
 MainWindow::~MainWindow()
@@ -74,6 +75,7 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
             ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR(i, j)));
             ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay(i, j)));
             ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor(i, j)));
+            ui->coherTime->setText(QString("Coherence time [s]: ") + QString::number(scene->getCoTime()));
         }else{
             ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->getpowerEmettor()));
             ui->Prx->setText("Prx [dBm]: ");
@@ -81,6 +83,7 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
             ui->SNR->setText("SNR [dB]: ");
             ui->DelaySpread->setText("Delay spread [s]: ");
             ui->RiceFactor->setText("Rice Factor [dB]: ");
+            ui->coherTime->setText(QString("Coherence time [\u03bcs]: ") + QString::number(scene->getCoTime()));
         }
     }
 }
@@ -174,6 +177,7 @@ void MainWindow::on_commandLinkButton_clicked()
         ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR_local()));
         ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay_local()));
         ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor_local()));
+        ui->coherTime->setText(QString("Coherence time [\u03bcs]: ") + QString::number(scene->getCoTime()));
     }else{
         statusBar()->showMessage("Placing the emettor/receptor is requiered");
     }
