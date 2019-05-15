@@ -1015,7 +1015,6 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
         double radangle = degangle*M_PI/180;
         spectrumField[specNumber] = Efield;
         spectrumAngle[specNumber] = (2.0*M_PI/lambda)*speedReal*cos(radangle);
-        cout << (2.0*M_PI/lambda)*speedReal*cos(radangle)<< endl;
         int save = specNumber;
         for (int j = 0; j < save; j++){
             if (spectrumAngle[j] == spectrumAngle[save]){
@@ -1057,7 +1056,7 @@ complex <double> room::computeEfieldGround(){
 
 double room::computePrx(complex <double> totalEfield){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-    complex <double> groundEfield = 0;//this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
+    complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
     double distance = this->distance();
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
     complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
@@ -1077,7 +1076,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // Direct distance between the receiver and the transmitter
     double direct_dist = sqrt(pow(Transmitter->getPosX()-Receiver->getPosX(),2) + pow(Transmitter->getPosY()-Receiver->getPosY(),2)); //convertir px to cm?
-
+    cout << "direct distance: " << direct_dist << endl;
     // The vactor that will contain the direct ray.
     //vector<ray*> rayLine;
     //rayLine.clear();
@@ -1086,15 +1085,19 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
 
-    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist*pow(10, -1.0);
+    double delta_r = (rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist)*pow(10, -1.0);
+    cout << "length rx: " << rayReceiver->getLength() << endl;
+    cout << "length tx: " << rayTransmitter->getLength() << endl;
+    cout << "delta_r: " << delta_r << endl;
 
-
-    double nu = sqrt(2*Beta*delta_r/M_PI);
-
+    double nu = sqrt(2*2*M_PI/lambda*delta_r/M_PI);
+    cout << "nu: " << nu << endl;
     // The ITU's approximation for |F(nu)|^2
     double FresnelPowerdB = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+    cout << "dB Fresnel: " << FresnelPowerdB << endl;
 //    double FresnelPowerdB = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
     double FresnelPower = pow(10,FresnelPowerdB/20);
+    cout << "Fresnel: " << FresnelPower << endl;
 //    double fresnelPowerW = pow(10,FresnelPower/20);
     //double fresnelNorm = sqrt(-6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1));
 //    double fresnelNorm = sqrt(fresnelPowerW);
@@ -1113,6 +1116,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
     double power = 1/(8*Ra)*norm((lambda/M_PI)*Efield)*FresnelPower;
+    cout << "power: " << power << endl;
 
 //    totalEfield += Efield*fresnelCoef;
 
