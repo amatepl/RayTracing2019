@@ -219,11 +219,31 @@ void room::findDiffractionPoints(){
 
 
 void room::drawWalls(){
+    QPainterPath path;
     QPen outlinePen(QColor(0, 0, 0, 255));
+    QPixmap pmap(100,100);
+    QGraphicsItem *parent = nullptr;
+   // QGraphicsPixmapItem* piit(pmap,parent);
+    //QImage::Format_Mono format;
+    QImage im(100,100,QImage::Format_Mono);
+    QWidget wid(QWidget* parent = 0);
     outlinePen.setWidth(2);
-    for(int i = 0;i<amount_all_walls;i++){
+    for(unsigned int i = 0;i<amount_all_walls;i++){
         this->addLine(walls[i]->getX1(),walls[i]->getY1(),walls[i]->getX2(),walls[i]->getY2(),outlinePen);
     }
+    QFont serifFont("Times", 15, QFont::Bold);
+    QPainter painter(&im);
+    path.addText(200,100,serifFont,"Rue du Caca");
+
+
+
+    QRectF* rect = new QRectF(0,0,100,100);
+    painter.rotate(90);
+    painter.drawText(0,0,"Rue du Caca");
+    painter.rotate(-90);
+
+    this->drawForeground(&painter,*rect);
+    this->addPath(path, QPen(QBrush(Qt::black), 1), QBrush(Qt::black));
 }
 
 
@@ -701,7 +721,7 @@ void room::buildDiffraction(room* scene){
             double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
             (*scene).powerRef = diffractPower;
             (*scene).powerReceived = (*scene).dBm(diffractPower);
-            if((*scene).powerReceived > -70){
+            if((*scene).powerReceived > (*scene).minPrx ){
                 (*scene).penetrationDepth();
             }
             delete(rayTransmitter);
@@ -1073,7 +1093,7 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
 
-    double delta_r = rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist*pow(10, -1.0);
+    double delta_r = (rayReceiver->getLength()+rayTransmitter->getLength() - direct_dist)*pow(10, -1.0);
 
 
     double nu = sqrt(2*Beta*delta_r/M_PI);
