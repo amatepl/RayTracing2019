@@ -29,9 +29,14 @@ void settings::writeSettings(){
     settingsData << toStringInt(wallType) + "\n";
     settingsData << toStringInt(amountReflect) + "\n";
     settingsData << toStringDoub(wallThick) + "\n";
-    settingsData << toStringInt(discret) + "\n";
+    settingsData << toStringInt(square_size) + "\n";
     settingsData << toStringDoub(emettorPower) + "\n";
+<<<<<<< HEAD
 
+=======
+    settingsData << toStringDoub(speed) + "\n";
+    settingsData << toStringInt(direction) + "\n";
+>>>>>>> 53ba75b33f215625b867a220d5f3f2f4d08f4f89
     settingsData.close();
 }
 
@@ -53,9 +58,16 @@ void settings::readSettings(){
           }else if(count == 2){
               wallThick = stod(line);
           }else if(count == 3){
-              discret = stoi(line);
+              square_size = stoi(line);
           }else if(count == 4){
               emettorPower = stod(line);
+<<<<<<< HEAD
+=======
+          }else if(count == 5){
+              speed = stod(line);
+          }else if(count == 6){
+              direction = stoi(line);
+>>>>>>> 53ba75b33f215625b867a220d5f3f2f4d08f4f89
           }
           count++;
       }
@@ -73,8 +85,13 @@ void settings::updateSettings(){
     ui->powerSpinBox->setValue(emettorPower);
     ui->wallThickSpinBox->setValue(wallThick);
     ui->reboundSpin->setValue(amountReflect);
-    ui->discretSubBox->setValue(discret);
+    ui->discretSubBox->setValue(square_size);
     ui->typeComboBox->setCurrentIndex(wallType); //0 index = Concrete Wall
+<<<<<<< HEAD
+=======
+    ui->speedBox->setValue(speed);
+    ui->directionBox->setCurrentIndex(direction); //0 index = east
+>>>>>>> 53ba75b33f215625b867a220d5f3f2f4d08f4f89
 }
 
 
@@ -90,8 +107,13 @@ void settings::setToDefault(){
     wallType = 0;
     amountReflect = 2;
     wallThick = 50;  //Cm
-    discret = 50;
+    square_size = 10;
     emettorPower = 20; //dBm
+<<<<<<< HEAD
+=======
+    speed = 2.0; // km/h
+    direction = 0;
+>>>>>>> 53ba75b33f215625b867a220d5f3f2f4d08f4f89
 
     updateSettings();
     writeSettings();
@@ -109,8 +131,13 @@ void settings::on_applyChangesButton_clicked(){
     wallType = ui->typeComboBox->currentIndex();   // 0 == CONCRETE, 1 == BRICK WALL, 2 == SEPARATORS
     amountReflect = ui->reboundSpin->value();
     wallThick = ui->wallThickSpinBox->value();  //Cm
-    discret = ui->discretSubBox->value();
+    square_size = ui->discretSubBox->value();
     emettorPower = ui->powerSpinBox->value(); //dBm
+<<<<<<< HEAD
+=======
+    speed = ui->speedBox->value(); //km/h
+    direction = ui->directionBox->currentIndex();
+>>>>>>> 53ba75b33f215625b867a220d5f3f2f4d08f4f89
 
     updateSettings();
     writeSettings();

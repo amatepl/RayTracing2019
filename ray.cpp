@@ -20,28 +20,55 @@ ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall
     tetai = Tetai;
     wallIBouncedOn = indWall;
     updateMeterLength();
+    double a;
+    if(x01 == x02){
+        if (y02 - y01 >= 0){
+            a = -INFINITY;
+            theta = -M_PI/2;
+        }else{
+        // If the line is vertically oriented, the slope is infinite
+            a = INFINITY;
+            theta = M_PI/2;
+        }
+    }
+    else{
+        if (x02-x01 >= 0){
+            a =(y02 - y01)/(x02 - x01);
+            theta = atan(a)+M_PI;
+        }else{
+            a =(y02 - y01)/(x02 - x01);
+            theta = atan(a);
+        }
+    }
+}
+
+ray::~ray(void){
+    //std::cout<<"Ray destroyed"<<std::endl;
 }
 
 /*
  * It is necessary to update the real length when the ray is transmitted through a wall. See function in room::distInWall()
  */
 
-void ray::updateLength(double length_inWall){
-    meterLength += length_inWall;
-    d += length_inWall/(2*pow(10,-2));
-}
+// void ray::updateLength(double length_inWall){
+//     meterLength += length_inWall;
+//     d += length_inWall/(2*pow(10,-2));
+// }
 
 
 /*
- * The scale chosen for the meter-pixels conversion is 1px = 2cm
+ * The scale chosen for the meter-pixels conversion is 1px = 1dm
  */
 
-void ray::updateMeterLength(){meterLength = d*2*pow(10, -2.0);}
+
+void ray::updateMeterLength(){meterLength = d*0.1;} // pxToMeter = 0.1
+
 
 
 // --> Getters && Settets
 
 int ray::getWallInd(){return wallInd;}
 double ray::getTetai(){return tetai;}
+double ray::getTheta(){return theta;}
 int ray::getIndWall(){return wallIBouncedOn;}
 double ray::getMeterLength(){return meterLength;}

@@ -9,15 +9,11 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QWidget>
 #include <QSpinBox>
-#include "help.h"
-#include "room.h"
-#include "settings.h"
-
 #include "ui_ieee80211g.h"
 #include "room.h"
 #include "help.h"
 #include "settings.h"
-
+#include "plots.h"
 
 class coverage;
 
@@ -32,6 +28,8 @@ class QGraphicsScene;
 
 class room;
 
+class plots;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -42,6 +40,7 @@ public:
 
     void onMouseEvent(const QString &eventName, const QPoint &pos);
     void setMap(QPointF &pos);
+    void writePenetrationDepth(double text[5]);
 
 private slots:
     void on_commandLinkButton_clicked();
@@ -49,6 +48,7 @@ private slots:
     void on_receiver_clicked();
     void on_helpButton_clicked();
     void on_settingsButton_clicked();
+    void on_plotButton_clicked();
     void on_generateCoveragePushButton_clicked();
     void on_clearWorkspaceButton_clicked();
 
@@ -68,6 +68,7 @@ private:
     coverage *cov;
     help *scene_help;
     settings *scene_settings;
+    plots *scene_plots;
     QGraphicsEllipseItem *ellipse;
     QGraphicsRectItem *rectangle;
     QGraphicsTextItem *text;

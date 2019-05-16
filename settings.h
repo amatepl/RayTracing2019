@@ -46,9 +46,10 @@ private:
     int wallType;
     int amountReflect;
     double wallThick;
-    int discret;
+    int square_size;
     double emettorPower;
-    bool diffractOnBool;
+    double speed;
+    int direction;
 
     // tools
     string toStringInt(int input);

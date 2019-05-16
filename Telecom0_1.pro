@@ -7,7 +7,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets   # Simple version checking for portability
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets  printsupport # Simple version checking for portability
 
 CONFIG += c++11
 TARGET = Telecom0_1
@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     wall.cpp \
     settings.cpp \
     ray.cpp \
-    lineo.cpp
+    lineo.cpp \
+    qcustomplot.cpp \
+    plots.cpp
 
 HEADERS  += \
     room.h \
@@ -31,9 +33,12 @@ HEADERS  += \
     wall.h \
     settings.h \
     ray.h \
-    lineo.h
+    lineo.h \
+    qcustomplot.h \
+    plots.h
 RESOURCES = icon.qrc
 
 FORMS    += ieee80211g.ui \     #Qt design template
     help.ui \
-    settings.ui
+    settings.ui \
+    plots.ui
