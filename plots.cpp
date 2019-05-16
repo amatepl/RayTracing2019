@@ -339,7 +339,7 @@ void plots::TDLImpulseResponse(room* scene){
     QVector<double> BW(lengthData), h_l(lengthData);
     complex <double> h_l_temp[lengthData];
     complex <double> p(0.0, 1.0);
-    int l = 0;
+    int l = 1;
     double tau = 0;
     for (int i=0; i<lengthData; ++i){
         BW[i] = minBW + i*step;
@@ -362,7 +362,7 @@ void plots::TDLImpulseResponse(room* scene){
     ui->customPlot_5->addGraph();
     ui->customPlot_5->graph(0)->setPen(QPen(Qt::blue));
 //    ui->customPlot_5->graph(0)->setLineStyle(QCPGraph::lsNone);
-    ui->customPlot_5->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    //ui->customPlot_5->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
 
     ui->customPlot_5->graph(0)->setData(BW, h_l);
 
