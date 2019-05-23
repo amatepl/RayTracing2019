@@ -231,9 +231,16 @@ void room::drawWalls(){
     for(unsigned int i = 0;i<amount_all_walls;i++){
         this->addLine(walls[i]->getX1(),walls[i]->getY1(),walls[i]->getX2(),walls[i]->getY2(),outlinePen);
     }
+
+    QPen outlPen(QColor(255, 255, 255, 255));
     QFont serifFont("Times", 15, QFont::Bold);
+    this->addLine(50,400,150,400,outlPen);
+    path.addText(75,390,serifFont,"10 m");
+
+
+
     QPainter painter(&im);
-    path.addText(200,100,serifFont,"Rue du Caca");
+    //path.addText(200,100,serifFont,"Rue du Caca");
 
 
 
@@ -242,8 +249,8 @@ void room::drawWalls(){
     painter.drawText(0,0,"Rue du Caca");
     painter.rotate(-90);
 
-    this->drawForeground(&painter,*rect);
-    this->addPath(path, QPen(QBrush(Qt::black), 1), QBrush(Qt::black));
+    //this->drawForeground(&painter,*rect);
+    this->addPath(path, QPen(QBrush(Qt::white), 1), QBrush(Qt::white));
 }
 
 
@@ -283,7 +290,8 @@ void room::launch_algo(bool drawR){
                 drawDiffraction(this);}
         }
         else{
-            if(reflection){recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);}
+            if(reflection){recursion(Transmitter->getPosX(), Transmitter->getPosY(),Receiver->getPosX(),Receiver->getPosY(),reflectionsNumber, buildRay);
+            }
             else{buildDiffraction((this));}
         }
         //cout<<diffractedPower<<endl;
