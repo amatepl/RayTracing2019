@@ -1021,7 +1021,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
 
     double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
-    Efield = -i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
 
     if(amountSegment==1){
         this->minLength = completeLength; // for delay spread computation
@@ -1055,7 +1055,7 @@ complex <double> room::computeEfieldGround(){
     if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application
-    double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;
+    double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI)) /completeLength;
     complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
     this->NLOS += pow(a,2);
 
@@ -1072,7 +1072,7 @@ complex <double> room::computeEfieldGround(){
 
 double room::computePrx(complex <double> totalEfield){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-    complex <double> groundEfield = 0;//this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
+    complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
     double distance = this->distance();
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
     complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
