@@ -29,7 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->Prx->setText("Prx [dBm]: ");
         ui->Distance->setText("Distance [m]: ");
         ui->SNR->setText("SNR [dB]: ");
-        ui->DelaySpread->setText("Delay spread [s]: ");
+        ui->DelaySpread->setText("Delay spread [ns]: ");
+        ui->CoherenceBW->setText("Coherence BW[Hz]: ");
         ui->RiceFactor->setText("Rice Factor [dB]: ");
         ui->coherTime->setText("Coherence time [\u03bcs]: ");
 }
@@ -73,15 +74,17 @@ void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
             ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getPrx(i, j)));
             ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->getDistance(i, j)));
             ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR(i, j)));
-            ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay(i, j)));
+            ui->DelaySpread->setText(QString("Delay spread [ns]: ") + QString::number(scene->getDelay(i, j)*1e+9));
+            ui->CoherenceBW->setText(QString("Coherence BW[MHz]: ") + QString::number(1/(scene->getDelay(i, j))*1e-6));
             ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor(i, j)));
             ui->coherTime->setText(QString("Coherence time [s]: ") + QString::number(scene->getCoTime()));
         }else{
-            ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->getpowerEmettor()));
+            ui->Ptx->setText("Ptx [dBm]: ");
             ui->Prx->setText("Prx [dBm]: ");
             ui->Distance->setText("Distance [m]: ");
             ui->SNR->setText("SNR [dB]: ");
-            ui->DelaySpread->setText("Delay spread [s]: ");
+            ui->DelaySpread->setText("Delay spread [ns]: ");
+            ui->CoherenceBW->setText("Coherence BW[Hz]: ");
             ui->RiceFactor->setText("Rice Factor [dB]: ");
             ui->coherTime->setText(QString("Coherence time [\u03bcs]: ") + QString::number(scene->getCoTime()));
         }
@@ -136,9 +139,9 @@ void MainWindow::on_clearWorkspaceButton_clicked(){
        ui->spinBoxPosY->setReadOnly(true);
        ui->spinBoxPosX->setValue(cursor().pos().x());
        ui->spinBoxPosY->setValue(cursor().pos().y());
-       ui->spinBoxResult->setValue(0);
-       ui->powerResultSpinBox->setValue(0);
-       ui->binaryResultsSpinBox->setValue(0);
+//       ui->spinBoxResult->setValue(0);
+//       ui->powerResultSpinBox->setValue(0);
+//       ui->binaryResultsSpinBox->setValue(0);
 }
 
 void MainWindow::on_generateCoveragePushButton_clicked()
@@ -156,13 +159,13 @@ void MainWindow::on_generateCoveragePushButton_clicked()
 void MainWindow::on_commandLinkButton_clicked()
 {   statusBar()->showMessage("Launch Ray-Tracing");
     if(scene->getReceiver() != NULL || scene->getTransmitter() != NULL){
-        ui->spinBoxResult->setValue(scene->distance());
+//        ui->spinBoxResult->setValue(scene->distance());
 
         scene->readSettingsFile();
         scene->launch_algo(true);
 
-        ui->powerResultSpinBox->setValue(scene->getReceivedPower());
-        if(scene->getBinaryDebit() > 0){ui->binaryResultsSpinBox->setValue(scene->getBinaryDebit());}
+//        ui->powerResultSpinBox->setValue(scene->getReceivedPower());
+//        if(scene->getBinaryDebit() > 0){ui->binaryResultsSpinBox->setValue(scene->getBinaryDebit());}
 
         // Display results
         // Watt display
@@ -175,7 +178,8 @@ void MainWindow::on_commandLinkButton_clicked()
 
         ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->distance()));
         ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR_local()));
-        ui->DelaySpread->setText(QString("Delay spread [s]: ") + QString::number(scene->getDelay_local()));
+        ui->DelaySpread->setText(QString("Delay spread [ns]: ") + QString::number(scene->getDelay_local()*1e+9));
+        ui->CoherenceBW->setText(QString("Coherence BW[MHz]: ") + QString::number(1/(scene->getDelay_local())*1e-6));
         ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor_local()));
         ui->coherTime->setText(QString("Coherence time [\u03bcs]: ") + QString::number(scene->getCoTime()));
     }else{
@@ -191,10 +195,10 @@ void MainWindow::writePenetrationDepth(double text[5]){
 //    cout<<(*text)["commerceUp"]<<endl;
 //    cout<<(*text).size()<<endl;
 //    cout<<(*text)["deuxEg"]<<endl;
-    ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number(text[0]));
-    ui->commerceDown->setText(QString("Rue du Commerce Down: ") + QString::number(text[3]));
-    ui->deuxEg->setText(QString("Rue de deux Eglises: ") + QString::number(text[1]));
-    ui->spa->setText(QString("Rue de spa: ") + QString::number(text[2]));
-    ui->indu->setText(QString("Rue de l'Industrie: ") + QString::number(text[4]));
+    ui->commerceUp->setText(QString("Rue du Commerce Up [m]: ") + QString::number(text[0]));
+    ui->commerceDown->setText(QString("Rue du Commerce Down [m]: ") + QString::number(text[3]));
+    ui->deuxEg->setText(QString("Rue de deux Eglises [m]: ") + QString::number(text[1]));
+    ui->spa->setText(QString("Rue de spa [m]: ") + QString::number(text[2]));
+    ui->indu->setText(QString("Rue de l'Industrie [m]: ") + QString::number(text[4]));
 
 }

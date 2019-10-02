@@ -168,12 +168,9 @@
       </item>
      </widget>
     </item>
-<<<<<<< HEAD
-=======
     <item row="2" column="2">
      <widget class="QDoubleSpinBox" name="speedBox"/>
     </item>
->>>>>>> 53ba75b33f215625b867a220d5f3f2f4d08f4f89
    </layout>
    <zorder>label_5</zorder>
    <zorder>label_6</zorder>

@@ -995,7 +995,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     }
     double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
-    Efield = -i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
 
     if(amountSegment==1){
         this->minLength = completeLength; // for delay spread computation
