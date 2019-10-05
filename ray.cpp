@@ -14,32 +14,31 @@
 
 
 ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall):
-    lineo(x01, y01, x02, y02)
+    Line(x01, y01, x02, y02),wallIBouncedOn(indWall)
 
 {
-    tetai = Tetai;
-    wallIBouncedOn = indWall;
+    setTetai(Tetai);
     updateMeterLength();
-    double a;
-    if(x01 == x02){
-        if (y02 - y01 >= 0){
-            a = -INFINITY;
-            theta = -M_PI/2;
-        }else{
-        // If the line is vertically oriented, the slope is infinite
-            a = INFINITY;
-            theta = M_PI/2;
-        }
-    }
-    else{
-        if (x02-x01 >= 0){
-            a =(y02 - y01)/(x02 - x01);
-            theta = atan(a)+M_PI;
-        }else{
-            a =(y02 - y01)/(x02 - x01);
-            theta = atan(a);
-        }
-    }
+//    double a;
+//    if(x01 == x02){
+//        if (y02 - y01 >= 0){
+//            a = -INFINITY;
+//            theta = -M_PI/2;
+//        }else{
+//        // If the line is vertically oriented, the slope is infinite
+//            a = INFINITY;
+//            theta = M_PI/2;
+//        }
+//    }
+//    else{
+//        if (x02-x01 >= 0){
+//            a =(y02 - y01)/(x02 - x01);
+//            theta = atan(a)+M_PI;
+//        }else{
+//            a =(y02 - y01)/(x02 - x01);
+//            theta = atan(a);
+//        }
+//    }
 }
 
 ray::~ray(void){
@@ -61,14 +60,23 @@ ray::~ray(void){
  */
 
 
-void ray::updateMeterLength(){meterLength = d*0.1;} // pxToMeter = 0.1
+void ray::updateMeterLength(){meterLength = length()*0.1;} // pxToMeter = 0.1
 
 
 
 // --> Getters && Settets
 
-int ray::getWallInd(){return wallInd;}
-double ray::getTetai(){return tetai;}
-double ray::getTheta(){return theta;}
-int ray::getIndWall(){return wallIBouncedOn;}
-double ray::getMeterLength(){return meterLength;}
+int ray::getWallInd() const{return wallInd;}
+double ray::getTetai()const{return m_tetai;}
+double ray::getTheta()const{return theta;}
+int ray::getIndWall()const{return wallIBouncedOn;}
+double ray::getMeterLength()const{return meterLength;}
+
+void ray::setTetai(double tetai){
+    if(tetai > 180){
+        m_tetai = (tetai-180)*M_PI/180;
+    }
+    else
+        m_tetai = tetai*M_PI/180;
+}
+

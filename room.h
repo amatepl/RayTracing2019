@@ -6,7 +6,7 @@
 #include "MainWindow.h"
 #include "antena.h"
 #include "math.h"
-#include "wall.h"
+#include "Wall.h"
 #include "ray.h"
 #include "lineo.h"
 
@@ -18,7 +18,7 @@
 using namespace std;
 
 class antena;
-class wall;
+class Wall;
 class MainWindow;
 class ray;
 
@@ -39,7 +39,7 @@ public:
     double getReceivedPower();
     antena* getTransmitter();
     antena* getReceiver();
-    wall* getWalls(int i);
+    Wall* getWalls(int i);
     int getAmountWalls();
     double getBinaryDebit();
     int getAmountDiscret();
@@ -130,7 +130,7 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    wall *walls[28];    // For easier use walls are put in arrays
+    Wall *walls[28];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
     //lineo *uselessWalls[10];
 
@@ -173,11 +173,11 @@ private:
 
 
     //lineo *current_wall = NULL;
-    lineo *current_ray;
+    Line *current_ray;
     QLineF lineToVirtualSource;
 
     int recursionState = 0;
-    wall* wallRecursiveNumber[9];
+    Wall* wallRecursiveNumber[9];
     double transmitterSerie[9][2];
 
 
@@ -262,9 +262,9 @@ private:
     void recursion(double transmitterPosX, double transmitterPosY, double receiverPosX, double receiverPosY, int numberOfReflections, void (*draw)(double, double, double, double, room *));
     static void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, room *scene);
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
-    bool intersectionCheck(lineo* line1, lineo* line2);
+    bool intersectionCheck(Line* line1, Line* line2);
     bool intersectionCheckNonInclusive(lineo* line1, lineo* line2);
-    bool checkTransmission(lineo* line1, lineo* line2, int x1, int y1,int x2,int y2);
+    bool checkTransmission(Line *line1, Line *line2, int x1, int y1, int x2, int y2);
     static void drawDiffraction(room* scene);
     static void buildDiffraction(room* scene);
     void setUpStreets();
@@ -277,12 +277,12 @@ private:
 
     // Geometric methods
     //bool pointOnLine(lineo* line1, double x, double y);
-    bool pointOnLine(lineo* line1, const double xp, const double yp);
+    bool pointOnLine(Line *line1, const double xp, const double yp);
     bool pointOnLineNonInclusive(lineo* line1, const double xp, const double yp);
-    vector<double> intersection(lineo* line1, lineo* line2 );
+    vector<double> intersection(Line* line1, Line* line2 );
 
 //    double distInWall(double tetai);
-    void distCorrection(vector<ray*> oneCompleteRay, wall walls[]);
+    void distCorrection(vector<ray*> oneCompleteRay, Wall walls[]);
 
     bool commonToAnyWall(double posX, double posY, int indWall);
 

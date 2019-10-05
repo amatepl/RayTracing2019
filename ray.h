@@ -3,8 +3,8 @@
 
 
 // Dependencies
-#include "lineo.h"
-#include "wall.h"
+#include "Line.h"
+#include "Wall.h"
 
 // Libraries
 #include "math.h"
@@ -12,9 +12,7 @@
 #include <vector>
 
 
-class lineo;
-
-class ray: public lineo
+class ray: public Line
 {
 private:
 
@@ -26,12 +24,12 @@ private:
     double G;   // Reflection coefficient
 
     int wallInd;
-    double tetai ;
+    double m_tetai ;
     double meterLength;
     int wallIBouncedOn;
     double theta;
 
-    std::vector <wall*> walls_intersected;   // Pas la meilleure approche, trop à enregsitrer.
+    std::vector <Wall*> walls_intersected;   // Pas la meilleure approche, trop à enregsitrer.
 
     void updateMeterLength();
 
@@ -43,13 +41,14 @@ public:
     // Getters && Setters
 
     // void updateLength(double length_inWall);
-    double getCoefficient();
-    int getWallInd();
-    void setCoefficient(double iAngle, wall inWall);
-    double getTetai();
-    double getTheta();
-    double getMeterLength();
-    int getIndWall();
+    double getCoefficient()const;
+    int getWallInd()const;
+    void setCoefficient(double iAngle, Wall inWall);
+    double getTetai()const;
+    void setTetai(double tetai);
+    double getTheta()const;
+    double getMeterLength()const;
+    int getIndWall()const;
 
 };
 

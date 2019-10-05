@@ -18,24 +18,26 @@ SOURCES += main.cpp\
     MainWindow.cpp \
     help.cpp \
     antena.cpp \
-    wall.cpp \
     settings.cpp \
     ray.cpp \
     lineo.cpp \
     qcustomplot.cpp \
-    plots.cpp
+    plots.cpp \
+    Line.cpp \
+    Wall.cpp
 
 HEADERS  += \
     room.h \
     MainWindow.h \
     help.h \
     antena.h \
-    wall.h \
     settings.h \
     ray.h \
     lineo.h \
     qcustomplot.h \
-    plots.h
+    plots.h \
+    Line.h \
+    Wall.h
 RESOURCES = icon.qrc
 
 FORMS    += ieee80211g.ui \     #Qt design template
