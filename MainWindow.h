@@ -2,20 +2,21 @@
 #define IEEE80211G_H
 
 #include <QMainWindow>
-#include <QGraphicsScene>
+//#include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QMouseEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QWidget>
 #include <QSpinBox>
+#include <QString>
 #include "ui_ieee80211g.h"
 #include "room.h"
 #include "help.h"
 #include "settings.h"
 #include "plots.h"
 
-class coverage;
+//class coverage;
 
 namespace Ui {
 class IEEE80211g;
@@ -38,9 +39,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void onMouseEvent(const QString &eventName, const QPoint &pos);
+    void onMouseEvent(const QPointF &pos);
     void setMap(QPointF &pos);
-    void writePenetrationDepth(double text[5]);
+    void writePenetrationDepth();
+    bool eventFilter(QObject *target, QEvent *event);
 
 private slots:
     void on_commandLinkButton_clicked();
@@ -65,7 +67,7 @@ private:
     Ui::IEEE80211g *ui;
 
     room *scene;
-    coverage *cov;
+    //coverage *cov;
     help *scene_help;
     settings *scene_settings;
     plots *scene_plots;

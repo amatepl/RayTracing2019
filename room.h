@@ -4,11 +4,11 @@
 
 // Dependencies
 #include "MainWindow.h"
+//#include <QGraphicsScene>
 #include "antena.h"
 #include "math.h"
-#include "Wall.h"
+//#include "Wall.h"
 #include "ray.h"
-#include "lineo.h"
 
 // Libraries
 #include <complex>
@@ -18,16 +18,16 @@
 using namespace std;
 
 class antena;
-class Wall;
-class MainWindow;
-class ray;
+//class Wall;
+//class MainWindow;
+//class ray;
 
 class room : public QGraphicsScene//, private QImage
 {
 
     Q_OBJECT
 public:
-    explicit room(MainWindow *parent = 0);
+    explicit room(QObject *parent = nullptr);
     ~room(void);
 
     void launch_algo(bool drawR);
@@ -85,6 +85,10 @@ public:
     void setReceiver(antena *new_receiver);
     void setAntenaType(int type);
 
+    QPoint getMousePosition()const;
+
+    float *getStPenetrationDepth();
+
     //Misc tools
     void readSettingsFile();
     void clearAll();
@@ -116,8 +120,9 @@ protected:
 private:
 
     // Qt visuals
-    MainWindow *myParent;
+    //MainWindow *myParent;
     QGraphicsView *graphicsView;
+    QPoint mousePosition;
 
     // Graphical parameters
     double pxToMeter = 0.1;
@@ -201,7 +206,7 @@ private:
     int amount_discret = 20;
     map<const char*,int> streetsPenDep;
 
-    double stDepth[5] = {0,0,0,0,0}; // 0 - commerce up, 1 - deux eg, 2 - spa, 3, commrece down, 4 - ind
+    float stDepth[5] = {0,0,0,0,0}; // 0 - commerce up, 1 - deux eg, 2 - spa, 3, commrece down, 4 - ind
 
     struct streets{
         int laLoi[4]= {1,200,950,300};
@@ -263,7 +268,7 @@ private:
     static void drawRay(double TransmitterImagePosX, double TransmitterImagePosY, double OriginX, double OriginY, room *scene);
     static void buildRay(double TransmitterPosX, double TransmitterPosY, double OriginX, double OriginY, room *scene);
     bool intersectionCheck(Line* line1, Line* line2);
-    bool intersectionCheckNonInclusive(lineo* line1, lineo* line2);
+
     bool checkTransmission(Line *line1, Line *line2, int x1, int y1, int x2, int y2);
     static void drawDiffraction(room* scene);
     static void buildDiffraction(room* scene);
@@ -276,10 +281,9 @@ private:
     complex <double> FtIntegral(double x);
 
     // Geometric methods
-    //bool pointOnLine(lineo* line1, double x, double y);
     bool pointOnLine(Line *line1, const double xp, const double yp);
-    bool pointOnLineNonInclusive(lineo* line1, const double xp, const double yp);
-    vector<double> intersection(Line* line1, Line* line2 );
+
+
 
 //    double distInWall(double tetai);
     void distCorrection(vector<ray*> oneCompleteRay, Wall walls[]);

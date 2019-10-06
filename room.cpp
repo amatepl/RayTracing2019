@@ -5,10 +5,10 @@
 
 using namespace std;
 
-room::room(MainWindow *parente) :
-    QGraphicsScene(parente)
+room::room(QObject *parente) :
+    QGraphicsScene()
   //, QImage(1000,1000, QImage::Format_RGB32)
-{   myParent = parente;
+{   //myParent = parente;
 
     readSettingsFile();
 
@@ -112,7 +112,7 @@ void room::setUpStreets(){
 
 void room::penetrationDepth(){
     int Ry = Receiver->getPosY();
-    double depth;
+    float depth;
 
     if(onStreet(st->commerceUp)){
         depth = (st->commerceUp[3] - Ry)*0.1;
@@ -771,48 +771,6 @@ bool room::commonToAnyWall(double posX, double posY, int indwall){
 
 
 
-std::vector<double> room::intersection(Line* line1, Line* line2){
-
-   /*
-    * Two-equations line system, determines the intersection point if it exists
-    *    y = ax + b
-    *    y = cx + d
-    */
-
-   std::vector<double> coord(2);
-
-//   double xpos;
-//   double ypos;
-
-//   long double a = line1->getSlope();
-//   double b = line1->getYorigin();
-//   long double c = line2->getSlope();
-//   double d = line2->getYorigin();
-
-//   if(a == INFINITY){
-//       xpos = line1->getX1();
-//       ypos = c * xpos + d;
-//   }
-
-//   else if(c == INFINITY){
-//       xpos = line2->getX1();
-//       ypos = a * xpos + b;
-//   }
-//   else{
-//   xpos = (d - b)/(a - c);
-//   ypos = (a * xpos) + b;
-//   }
-
-//   coord[0] = round(xpos);
-//   coord[1] = round(ypos);
-   QPointF* point;
-   line1->intersect(*line2,point);
-   coord[0] = round(point->x());
-   coord[1] = round(point->y());
-   return coord;
-}
-
-
 //bool room::pointOnLine(lineo* line1, double x, double y){
 bool room::pointOnLine(Line* line1,const double xp,const double yp){
     /*
@@ -843,53 +801,7 @@ bool room::pointOnLine(Line* line1,const double xp,const double yp){
 
 }
 
-bool room::pointOnLineNonInclusive(lineo* line1,const double xp,const double yp){
 
-    /*
-     * As the intersection is computed by lines equations, it is required to check whether or not the intersection is placed on the the wall line, an line
-     * equation being define from [-INF, +INF]
-     */
-
-
-    int x1 = (int)line1->getX1();
-    int y1 = (int)line1->getY1();
-    int x2 = (int)line1->getX2();
-    int y2 = (int)line1->getY2();
-
-    bool answer = false;
-
-    int x = xp;
-    int y = yp;
-
-    if(x1 == x2){   // Cas du mur vertical
-        answer = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
-    }
-    else if (y1 == y2){   // Cas du mur horizental
-        answer = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
-    }
-    else {
-       answer = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
-    }
-
-
-//    x = floor(xp);
-//    y = floor(yp);
-
-//    bool answer2;
-
-//    if(x1 == x2){   // Cas du mur vertical
-//        answer2 = ((y<y2 && y>y1) || ( y>y2 && y<y1)) && x == x1;
-//    }
-//    else if (y1 == y2){   // Cas du mur horizental
-//        answer2 = ((x>x2 && x<x1) || (x<x2 && x>x1)) && y == y1;
-//    }
-//    else {
-//       answer2 = ((x1<x && y1<y && x2>x && y2 >y) ||(x1>x && y1>y && x2<x && y2 <y)||(x>x2 && y<y2 && x<x1 && y>y1) || (x<x2 && y>y2 && x>x1 && y<y1));
-//    }
-
-    return answer;
-
-}
 
 bool room::intersectionCheck(Line* line1, Line* line2){
     /*
@@ -936,41 +848,7 @@ bool room::intersectionCheck(Line* line1, Line* line2){
 
 }
 
-bool room::intersectionCheckNonInclusive(lineo* line1, lineo* line2){
-    /*
-     * Two-equations line system, determines the intersection point if it exists
-     *    y = ax + b
-     *    y = cx + d
-     */
 
-    double xpos;
-    double ypos;
-
-    long double a = line1->getSlope();
-    double b = line1->getYorigin();
-    long double c = line2->getSlope();
-    double d = line2->getYorigin();
-
-    if(a == INFINITY){
-        xpos = line1->getX1();
-        ypos = c * xpos + d;
-    }
-
-    else if(c == INFINITY){
-        xpos = line2->getX1();
-        ypos = a * xpos + b;
-    }
-    else{
-    xpos = (d - b)/(a - c);
-    ypos = (a * xpos) + b;
-    }
-
-    xpos = round(xpos);
-    ypos = round(ypos);
-
-    return (pointOnLineNonInclusive(line1,xpos,ypos) && pointOnLineNonInclusive(line2,xpos,ypos));
-
-}
 
 
 bool room::checkTransmission(Line* line1, Line* line2, int x1, int y1,int x2,int y2){
@@ -1360,13 +1238,16 @@ map<const char *, int> *room::getStreetsPenDep(){return &(this->streetsPenDep);}
 double room::getLambda(){return lambda;}
 double room::getRa(){return Ra;}
 double room::getCoTime(){return 1.0/2.0*lambda/speedReal*1e+6;}
+QPoint room::getMousePosition()const{
+    return mousePosition;
+}
+float* room::getStPenetrationDepth(){return stDepth;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
 void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {   QPointF x = event->scenePos();
-    QPoint X = x.toPoint();
-
-    myParent->onMouseEvent("ll",X);
+    mousePosition = x.toPoint();
+    //myParent->onMouseEvent("ll",X);
 }
 
 
@@ -1376,7 +1257,7 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
             delete Transmitter;
             Transmitter = NULL;};
 
-        Transmitter = new antena(this, event->scenePos(),antenaType);
+        Transmitter = new antena(/*this,*/ event->scenePos(),antenaType);
         this->addItem(Transmitter);
     }
 
@@ -1385,7 +1266,7 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
             delete Receiver;
             Receiver = NULL;};
 
-        Receiver = new antena(this, event->scenePos(),antenaType);
+        Receiver = new antena(/*this,*/ event->scenePos(),antenaType);
         this->addItem(Receiver);
     }
 }
@@ -1405,7 +1286,7 @@ void room::drawCoverege(){
         Receiver = NULL;
     }
     if(coverageDone) free(Data);
-    Receiver = new antena(this,QPointF(0,0),1);
+    Receiver = new antena(/*this,*/QPointF(0,0),1);
     //QBrush brush;
     QBrush *brush = new QBrush(QColor(0, 0, 0, 220));
     QPen pen;
@@ -1417,8 +1298,8 @@ void room::drawCoverege(){
         printf("mem failure, exiting \n");
         exit(EXIT_FAILURE);
     }
-    cout<<"Ptx[W] = ";
-    cout<<powerEmettor<<endl;
+//    cout<<"Ptx[W] = ";
+//    cout<<powerEmettor<<endl;
     for(int i=0; i<columns; i++){
         for(int j=0; j<rows; j++){
             this->clearLocalParameters();
@@ -1456,7 +1337,7 @@ void room::drawCoverege(){
     cout<< "Rue de l'Industrie: ";
     cout<< streetsPenDep["indu"]<<endl;
     cout<< stDepth<<endl;
-    this->myParent->writePenetrationDepth(stDepth);
+    //this->myParent->writePenetrationDepth(stDepth);
     drawWalls();
     this->clearAll();
     coverageDone = true;

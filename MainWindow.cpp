@@ -7,7 +7,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);   // basic Qt, arrow -> is the same as (ui*).setupUi()
 
-    scene = new room(this);
+    this->setMouseTracking(true);
+
+
+    //scene = new room(this);
+    scene = new room;
+
+    scene->installEventFilter(this);
+
+
     scene_help = new help();
     scene_settings = new settings();
     scene->setSceneRect(ui->graphicsView->rect());
@@ -33,6 +41,11 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->CoherenceBW->setText("Coherence BW[Hz]: ");
         ui->RiceFactor->setText("Rice Factor [dB]: ");
         ui->coherTime->setText("Coherence time [\u03bcs]: ");
+        //setCentralWidget(ui->graphicsView);
+        this->centralWidget()->setMouseTracking(true);
+        ui->graphicsView->setMouseTracking(true);
+
+
 }
 
 MainWindow::~MainWindow()
@@ -45,8 +58,32 @@ void MainWindow::configureSpinBox(QSpinBox *spinBox, int min, int max)const{
     spinBox->setMaximum(max);
 }
 
+bool MainWindow::eventFilter(QObject *target, QEvent *event)
+{
+    if (target == scene)
+    {
+        if (event->type() == QEvent::GraphicsSceneMouseMove)
+        {
+            const QGraphicsSceneMouseEvent* const me = static_cast<const QGraphicsSceneMouseEvent*>(event);
+            const QPointF position = me->scenePos();
+
+//            ui->spinBoxPosX->setValue(position.x());
+//            ui->spinBoxPosY->setValue(position.y());
+
+            onMouseEvent(position);
+        }
+    }
+    return QMainWindow::eventFilter(target, event);
+}
+
+
+
 void MainWindow::mouseMoveEvent(QMouseEvent *event){
     QWidget::mouseMoveEvent(event);
+
+//    cout<<event->x()<<endl;
+//    cout<<event->y()<<endl;
+
 }
 
 
@@ -61,8 +98,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event){
 }
 
 
-void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
-    statusBar()->showMessage(eventName);
+//void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
+void MainWindow::onMouseEvent(const QPointF &pos){
+    //QPoint scene->getMousePosition() ;
+
+    QString message = "x = "+ QString::number(pos.x())+", y = "+ QString::number(pos.y());
+    statusBar()->showMessage(message);
     ui->spinBoxPosX->setValue(pos.x());
     ui->spinBoxPosY->setValue(pos.y());
 
@@ -150,6 +191,7 @@ void MainWindow::on_generateCoveragePushButton_clicked()
     if(scene->getTransmitter() != NULL){
         scene->readSettingsFile();
         scene->drawCoverege();
+        writePenetrationDepth();
 
     }else{
         statusBar()->showMessage("Placing emettor is needed to generate coverage");
@@ -188,13 +230,14 @@ void MainWindow::on_commandLinkButton_clicked()
 }
 
 
-void MainWindow::writePenetrationDepth(double text[5]){
+void MainWindow::writePenetrationDepth(){
 //    map<const char*,int>* st = scene->getStreetsPenDep();
 //    ui->commerceUp->setText(QString("Rue du Commerce Up: ") + QString::number((*st)["commerceUp"]));
 //    cout<<(*st)["commerceUp"]<<endl;
 //    cout<<(*text)["commerceUp"]<<endl;
 //    cout<<(*text).size()<<endl;
 //    cout<<(*text)["deuxEg"]<<endl;
+    float text[5] = {scene->getStPenetrationDepth()[0],scene->getStPenetrationDepth()[1],scene->getStPenetrationDepth()[2],scene->getStPenetrationDepth()[3],scene->getStPenetrationDepth()[4]};
     ui->commerceUp->setText(QString("Rue du Commerce Up [m]: ") + QString::number(text[0]));
     ui->commerceDown->setText(QString("Rue du Commerce Down [m]: ") + QString::number(text[3]));
     ui->deuxEg->setText(QString("Rue de deux Eglises [m]: ") + QString::number(text[1]));

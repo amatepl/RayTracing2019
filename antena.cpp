@@ -2,14 +2,13 @@
 
 // Very basic antena type object
 
-antena::antena(room *scene, QPointF p, int type):
-QGraphicsEllipseItem()
+antena::antena(QPointF p, int type):
+QGraphicsEllipseItem(),pos(p),antenaType(type)
 
 {
-    pos = p;
     this->setRect(pos.x(),pos.y(),1,1);
-    antenaType = type;     // 0 for output (transmiter) 1 for input (receiver)
-    myRoom = scene;
+    // 0 for output (transmiter) 1 for input (receiver)
+    //myRoom = scene;
     QBrush noBrush(Qt::NoBrush);
 
     this->setBrush(noBrush);

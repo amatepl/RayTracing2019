@@ -20,7 +20,6 @@ SOURCES += main.cpp\
     antena.cpp \
     settings.cpp \
     ray.cpp \
-    lineo.cpp \
     qcustomplot.cpp \
     plots.cpp \
     Line.cpp \
@@ -33,7 +32,6 @@ HEADERS  += \
     antena.h \
     settings.h \
     ray.h \
-    lineo.h \
     qcustomplot.h \
     plots.h \
     Line.h \
