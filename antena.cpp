@@ -3,7 +3,7 @@
 // Very basic antena type object
 
 antena::antena(QPointF p, int type):
-QGraphicsEllipseItem(),pos(p),antenaType(type)
+QGraphicsEllipseItem()/*,QPointF()*/,pos(p),antenaType(type)
 
 {
     this->setRect(pos.x(),pos.y(),1,1);
@@ -47,6 +47,7 @@ QPen antena::setColor(){
 int antena::getPosX(){return pos.x();}
 //int antena::getPosX(){return this->x();}
 int antena::getPosY(){return pos.y();}
+QPointF antena::getPos()const{return pos;}
 
 void antena::setPosi(QPointF posi){this->pos = posi;
             this->setRect(posi.x(),posi.y(),1,1);

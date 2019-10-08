@@ -18,16 +18,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     scene_help = new help();
     scene_settings = new settings();
+
     scene->setSceneRect(ui->graphicsView->rect());
         ui->graphicsView->setScene(scene);
         ui->graphicsView->ensureVisible(scene->sceneRect());
 
-        ui->spinBoxPosX->setReadOnly(true);
-        ui->spinBoxPosY->setReadOnly(true);
-        ui->spinBoxPosX->setValue(cursor().pos().x());
-        ui->spinBoxPosY->setValue(cursor().pos().y());
-        configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
-        configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
+//        ui->spinBoxPosX->setReadOnly(true);
+//        ui->spinBoxPosY->setReadOnly(true);
+//        ui->spinBoxPosX->setValue(cursor().pos().x());
+//        ui->spinBoxPosY->setValue(cursor().pos().y());
+//        configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
+//        configureSpinBox(ui->spinBoxPosX, -INT_MIN, +INT_MAX);
         QBrush greenBrush(Qt::green);
         QBrush blueBrush(Qt::blue);
         QPen outlinePen(Qt::black);
@@ -104,8 +105,8 @@ void MainWindow::onMouseEvent(const QPointF &pos){
 
     QString message = "x = "+ QString::number(pos.x())+", y = "+ QString::number(pos.y());
     statusBar()->showMessage(message);
-    ui->spinBoxPosX->setValue(pos.x());
-    ui->spinBoxPosY->setValue(pos.y());
+//    ui->spinBoxPosX->setValue(pos.x());
+//    ui->spinBoxPosY->setValue(pos.y());
 
     if(scene->DataComputed()){
         int i = 0, j = 0;
@@ -176,10 +177,10 @@ void MainWindow::on_clearWorkspaceButton_clicked(){
        ui->graphicsView->setScene(scene);
        ui->graphicsView->ensureVisible(scene->sceneRect());
 
-       ui->spinBoxPosX->setReadOnly(true);
-       ui->spinBoxPosY->setReadOnly(true);
-       ui->spinBoxPosX->setValue(cursor().pos().x());
-       ui->spinBoxPosY->setValue(cursor().pos().y());
+//       ui->spinBoxPosX->setReadOnly(true);
+//       ui->spinBoxPosY->setReadOnly(true);
+//       ui->spinBoxPosX->setValue(cursor().pos().x());
+//       ui->spinBoxPosY->setValue(cursor().pos().y());
 //       ui->spinBoxResult->setValue(0);
 //       ui->powerResultSpinBox->setValue(0);
 //       ui->binaryResultsSpinBox->setValue(0);

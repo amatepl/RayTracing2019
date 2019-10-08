@@ -5,6 +5,11 @@ Line::Line(qreal x1, qreal y1, qreal x2, qreal y2):QLineF(x1,y1,x2,y2)
 
 }
 
+Line::Line(const QPointF &p1,const QPointF &p2):QLineF(p1,p2)
+{
+
+}
+
 double Line::getAngleRad()const{
     double angle_in_radians;
     if(angle()>180){

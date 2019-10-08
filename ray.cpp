@@ -41,6 +41,13 @@ ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall
 //    }
 }
 
+ray::ray(const QPointF &p1,const QPointF &p2, double Tetai, int indWall):
+    Line(p1,p2),wallIBouncedOn(indWall)
+{
+    setTetai(Tetai);
+    updateMeterLength();
+}
+
 ray::~ray(void){
     //std::cout<<"Ray destroyed"<<std::endl;
 }

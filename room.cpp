@@ -188,30 +188,44 @@ void room::findDiffractionPoints(){
      * This fonction adds the diffraction points (corners) to the list of diffraction points.
     */
 
-
+    //QPointF* diffractionPoint = new QPointF(0,0);
+    QPointF diffractionPoint(0,0);
     for(unsigned int i = 0;i<amount_walls;i++){
         for(unsigned int j = 0;j<amount_walls;j++){
-            if(walls[i]->getIndWall() != walls[j]->getIndWall()){
-                if(pointOnLine(walls[j],walls[i]->x1(),walls[i]->y1())){
+//            if(walls[i]->getIndWall() != walls[j]->getIndWall()){
+//                if(pointOnLine(walls[j],walls[i]->x1(),walls[i]->y1())){
+//                    bool check = true;
+//                    unsigned int c = 0;
+//                    while(c<diffractionPoints.size()&& check){
+//                        check = (diffractionPoints[c][0] != walls[i]->x1() || diffractionPoints[c][1] != walls[i]->y1());
+//                        c++;
+//                        //cout<<(double)950/500<<endl;
+//                    }
+
+//                    if(check){diffractionPoints.push_back({walls[i]->x1(),walls[i]->y1()});}
+//                }
+//                else if(pointOnLine(walls[j],walls[i]->x2(),walls[i]->y2())){
+//                    bool check = true;
+//                    unsigned int c = 0;
+//                    while(c<diffractionPoints.size()&& check){
+//                        check = (diffractionPoints[c][0] != walls[i]->x2() || diffractionPoints[c][1] !=walls[i]->y2());
+//                        c++;
+//                    }
+
+//                    if(check){diffractionPoints.push_back({walls[i]->x2(),walls[i]->y2()});}
+//                }
+//            }
+            if(walls[i]!= walls[j]){
+                if(walls[i]->intersect(*walls[j],&diffractionPoint)==1){
                     bool check = true;
                     unsigned int c = 0;
                     while(c<diffractionPoints.size()&& check){
-                        check = (diffractionPoints[c][0] != walls[i]->x1() || diffractionPoints[c][1] != walls[i]->y1());
+                        check = (diffractionPoints[c][0] !=  (&diffractionPoint)->x()||diffractionPoints[c][1] !=   (&diffractionPoint)->y() );
                         c++;
                         //cout<<(double)950/500<<endl;
                     }
 
-                    if(check){diffractionPoints.push_back({walls[i]->x1(),walls[i]->y1()});}
-                }
-                else if(pointOnLine(walls[j],walls[i]->x2(),walls[i]->y2())){
-                    bool check = true;
-                    unsigned int c = 0;
-                    while(c<diffractionPoints.size()&& check){
-                        check = (diffractionPoints[c][0] != walls[i]->x2() || diffractionPoints[c][1] !=walls[i]->y2());
-                        c++;
-                    }
-
-                    if(check){diffractionPoints.push_back({walls[i]->x2(),walls[i]->y2()});}
+                    if(check&& !(&diffractionPoint)->isNull()){diffractionPoints.push_back({(&diffractionPoint)->x(),(&diffractionPoint)->y()});}
                 }
             }
         }
@@ -605,21 +619,37 @@ void room::drawDiffraction(room* scene){
     ray* rayReceiver;
     ray* rayTransmitter;
 
+
     //(*scene).diffractionPoints.clear();
     vector<std::array <double,2>> usedDiffPoints;
 
 
+//    for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
+//        if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+//        }
+//        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+//        }
+//        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+//        }
+//        else if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
+//        }
+//    }
+
     for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
-        if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+        if((*scene).diffractionPoints[i][0] >(*scene).Receiver->x() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->y() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->y()){
             usedDiffPoints.push_back((*scene).diffractionPoints[i]);
         }
-        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->x() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->y() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->y()){
             usedDiffPoints.push_back((*scene).diffractionPoints[i]);
         }
-        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
+        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->x() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->y() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->y()){
             usedDiffPoints.push_back((*scene).diffractionPoints[i]);
         }
-        else if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
+        else if((*scene).diffractionPoints[i][0]>(*scene).Receiver->x() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->y() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->y()){
             usedDiffPoints.push_back((*scene).diffractionPoints[i]);
         }
     }
@@ -878,7 +908,14 @@ bool room::checkTransmission(Line* line1, Line* line2, int x1, int y1,int x2,int
 // --> Electrical power calculation --------------------------------------------------------------------------------------------------------------------
 
 double room::computeReflexionPer(double thetaI, double epsilonR){
-    double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
+    //double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
+    /*
+     * Now in the code thatai is the angle between the ray and the wall and not between the ray and the normal to the wall.
+     * Basicly thetai = pi/2 - thetai.
+     * Because of that cos and sin are inverted and we take their absolute value because of the angles given by Qt.
+     */
+
+    double R = (abs(sin(thetaI)) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(cos(thetaI),2)))/(abs(sin(thetaI)) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(cos(thetaI),2)));
     return R;
 }
 

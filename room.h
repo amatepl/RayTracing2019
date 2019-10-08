@@ -3,24 +3,22 @@
 
 
 // Dependencies
-#include "MainWindow.h"
-//#include <QGraphicsScene>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 #include "antena.h"
 #include "math.h"
-//#include "Wall.h"
+#include "Wall.h"
 #include "ray.h"
 
 // Libraries
 #include <complex>
 #include <vector>
 #include "math.h"
+#include <fstream>
 
 using namespace std;
 
 class antena;
-//class Wall;
-//class MainWindow;
-//class ray;
 
 class room : public QGraphicsScene//, private QImage
 {
@@ -137,6 +135,7 @@ private:
     antena *Receiver;
     Wall *walls[28];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
+    //vector <QPointF*> diffractionPoints;
     //lineo *uselessWalls[10];
 
 

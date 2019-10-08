@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     plots.cpp \
     Line.cpp \
-    Wall.cpp
+    Wall.cpp \
+    DiffractionPoints.cpp \
+    Building.cpp
 
 HEADERS  += \
     room.h \
@@ -35,7 +37,9 @@ HEADERS  += \
     qcustomplot.h \
     plots.h \
     Line.h \
-    Wall.h
+    Wall.h \
+    DiffractionPoints.h \
+    Building.h
 RESOURCES = icon.qrc
 
 FORMS    += ieee80211g.ui \     #Qt design template

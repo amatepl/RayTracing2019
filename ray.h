@@ -3,14 +3,15 @@
 
 
 // Dependencies
-//#include "Line.h"
-#include "Wall.h"
+#include "Line.h"
+//#include "Wall.h"
 
 // Libraries
 #include "math.h"
 #include <iostream>
 #include <vector>
 
+class Wall;
 
 class ray: public Line
 {
@@ -36,6 +37,7 @@ private:
 public:
 
     ray(double x01 = 0, double y01 = 0, double x02 = 0, double y02 = 0, double tetai = 0, int indWall = 0);
+    ray(const QPointF &p1, const QPointF &p2, double Tetai = 0, int indWall = 0);
     ~ray(void);
 
     // Getters && Setters
@@ -43,7 +45,7 @@ public:
     // void updateLength(double length_inWall);
     double getCoefficient()const;
     int getWallInd()const;
-    void setCoefficient(double iAngle, Wall inWall);
+    void setCoefficient(double iAngle, Wall& inWall);
     double getTetai()const;
     void setTetai(double tetai);
     double getTheta()const;

@@ -13,6 +13,9 @@ Wall::Wall(double x01, double y01, double x02, double y02, double thickness, dou
 }
 
 // --> Getters && Setters
+Wall::~Wall(void){
+
+}
 
 double Wall::getEpsilon() const{return thick;}
 double Wall::getSigma() const{return epsilon;}
