@@ -3,6 +3,7 @@
 
 #include <QLineF>
 #include <math.h>
+#include <iostream>
 
 class Line: public QLineF
 {
@@ -11,6 +12,8 @@ public:
     Line(const QPointF &p1,const QPointF &p2);
     double getAngleRad()const;
     double getSlope()const;
+    QPointF symetricalPoint(const QPointF &point);
+    QPointF symetricalPoint(const double x, const double y);
 
 };
 

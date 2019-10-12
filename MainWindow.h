@@ -15,6 +15,7 @@
 #include "help.h"
 #include "settings.h"
 #include "plots.h"
+#include "Model.h"
 
 //class coverage;
 

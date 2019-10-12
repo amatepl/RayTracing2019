@@ -3,7 +3,7 @@
 // Very basic antena type object
 
 antena::antena(QPointF p, int type):
-QGraphicsEllipseItem()/*,QPointF()*/,pos(p),antenaType(type)
+QGraphicsEllipseItem()/*,QPointF()*/,pos(p),antenaType(type),m_vector(QPointF(1,1))
 
 {
     this->setRect(pos.x(),pos.y(),1,1);
@@ -52,3 +52,12 @@ QPointF antena::getPos()const{return pos;}
 void antena::setPosi(QPointF posi){this->pos = posi;
             this->setRect(posi.x(),posi.y(),1,1);
             }
+
+QPolygonF antena::getIluminationZone()const{
+    QPolygonF iluminationZone;
+    // Roation matrix is applied for 60 deg.
+    QPointF point2((0.5*m_vector.x() - 0.866*m_vector.y())*1000,(0.5*m_vector.y() + 0.866*m_vector.x())*1000);
+    QPointF point3((0.5*m_vector.x() + 0.866*m_vector.y())*1000,(0.5*m_vector.y() - 0.866*m_vector.x())*1000);
+    iluminationZone<<pos<<point2+pos<<point3+pos;
+    return iluminationZone;
+}

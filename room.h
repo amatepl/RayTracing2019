@@ -9,18 +9,22 @@
 #include "math.h"
 #include "Wall.h"
 #include "ray.h"
+//#include "Visualizer.h"
 
 // Libraries
 #include <complex>
 #include <vector>
 #include "math.h"
 #include <fstream>
+#include <chrono>
+
+using namespace std::chrono;
 
 using namespace std;
 
 class antena;
 
-class room : public QGraphicsScene//, private QImage
+class room : public QGraphicsScene /*public Visualizer*/ //, private QImage
 {
 
     Q_OBJECT
@@ -104,6 +108,10 @@ public:
     double dBm(double power);
     double dBmRev(double dbm);
     double binaryDebit(double power);
+
+
+    void drawWalls();
+    void draw(QGraphicsItem *item);
 
 
 signals:
@@ -289,7 +297,7 @@ private:
 
     bool commonToAnyWall(double posX, double posY, int indWall);
 
-    void drawWalls();
+
     void findDiffractionPoints();
 
     double diffractedRayPower(ray* rayReceiver, ray*rayTransmitter);

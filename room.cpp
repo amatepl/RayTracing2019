@@ -334,8 +334,10 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
 
                 //------------TRANSMITTER IMAGE CONSTRUCTION--------------------------
 
-                double ray_vector_length = sqrt(pow(transmitterPosY - current_wall->y2(),2) + pow(transmitterPosX - current_wall->x2(),2));
-                double virtual_slope;
+                //auto start = high_resolution_clock::now();
+
+                int ray_vector_length = sqrt(pow(transmitterPosY - current_wall->y2(),2) + pow(transmitterPosX - current_wall->x2(),2));
+                float virtual_slope;
 
                 if (transmitterPosY - current_wall->y2() < 0 && transmitterPosX - current_wall->x2()){
                     virtual_slope = -acos((transmitterPosX - current_wall->x2())/ray_vector_length);
@@ -345,21 +347,32 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
                     virtual_slope = acos((transmitterPosX - current_wall->x2())/ray_vector_length);
                 }
 
-                double ray_slope = angle_wall + (angle_wall - virtual_slope);
-                double ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
-                double x2 = ray_vector_length * ray_vector[0];
-                double y2 = ray_vector_length * ray_vector[1];
+                float ray_slope = angle_wall + (angle_wall - virtual_slope);
+                float ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
+                float x2 = ray_vector_length * ray_vector[0];
+                float y2 = ray_vector_length * ray_vector[1];
                 double transmitterImagePosX = current_wall->x2() + x2;
                 double transmitterImagePosY = current_wall->y2() + y2;
 
+
+
+
+                //QPointF transmitterImagePos = current_wall->symetricalPoint(transmitterPosX,transmitterPosY);
+//                auto stop = high_resolution_clock::now();
+
+//                auto duration = duration_cast<nanoseconds>(stop - start);
+
+//                cout << duration.count() << endl;
+
                 //---------END OF TRANSMITTER IMAGE CONSTRUCTION--------------------------
 
-                current_ray = new Line(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY);
+                //current_ray = new Line(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY);
                 //imCoordinates[0] = intersection(current_ray,current_wall)[0];
                 //imCoordinates[1] = intersection(current_ray,current_wall)[1];
-                delete(current_ray);
+                //delete(current_ray);
                 //if(pointOnLine(current_wall,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
                     recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
+                    //recursion(transmitterImagePos.x(), transmitterImagePos.y(),receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
                 //}
 
             }
@@ -377,6 +390,7 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
      * Called back from the recursion method, draws the rays when necessary, then removes the excess
      */
 
+    auto start = high_resolution_clock::now();
     // Freeing memory
     vector <ray*> completeRay;
     completeRay.clear();
@@ -493,6 +507,12 @@ void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,
         completeRay.clear();
         completeRay.shrink_to_fit();
     }
+
+    auto stop = high_resolution_clock::now();
+
+    auto duration = duration_cast<nanoseconds>(stop - start);
+
+    cout << duration.count() << endl;
 
 }
 
@@ -1443,4 +1463,9 @@ double room::getDistance(int i, int j){
 double room::getSNR(int i, int j){
     double SNR = this->Data[i*rows+j+totalArea*4];
     return SNR;
+}
+
+void room::draw(QGraphicsItem *item){
+    addItem(item);
+    update();
 }

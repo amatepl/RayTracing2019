@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //scene = new room(this);
     scene = new room;
+    Model model(scene);
 
     scene->installEventFilter(this);
 
@@ -172,10 +173,12 @@ void MainWindow::on_clearWorkspaceButton_clicked(){
 
     scene->clearAll();
     scene->clearPenDepth();
-    scene = new room(this);
-    scene->setSceneRect(ui->graphicsView->rect());
-       ui->graphicsView->setScene(scene);
-       ui->graphicsView->ensureVisible(scene->sceneRect());
+    scene->clear();
+    scene->drawWalls();
+//    scene = new room;
+//    scene->setSceneRect(ui->graphicsView->rect());
+//       ui->graphicsView->setScene(scene);
+//       ui->graphicsView->ensureVisible(scene->sceneRect());
 
 //       ui->spinBoxPosX->setReadOnly(true);
 //       ui->spinBoxPosY->setReadOnly(true);
