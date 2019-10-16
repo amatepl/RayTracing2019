@@ -1301,11 +1301,7 @@ QPoint room::getMousePosition()const{
 float* room::getStPenetrationDepth(){return stDepth;}
 
 // ---> Events listeners ----------------------------------------------------------------------------------------------------------------
-void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{   QPointF x = event->scenePos();
-    mousePosition = x.toPoint();
-    //myParent->onMouseEvent("ll",X);
-}
+
 
 
 void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
@@ -1326,9 +1322,14 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
         Receiver = new antena(/*this,*/ event->scenePos(),antenaType);
         this->addItem(Receiver);
     }
+    QGraphicsScene::mousePressEvent(event);
 }
 
-void room::mouseReleaseEvent(QGraphicsSceneMouseEvent */*unused event*/){antenaType = 2;}
+void room::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    antenaType = 2;
+    QGraphicsScene::mouseReleaseEvent(event);
+}
 
 
 
@@ -1469,3 +1470,19 @@ void room::draw(QGraphicsItem *item){
     addItem(item);
     update();
 }
+
+void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+    QPointF pos = event->scenePos();
+    mouseScenePosition(pos);
+    QGraphicsScene::mouseMoveEvent(event);
+}
+
+//void room::mouseScenePos(QPointF &pos){
+
+//}
+
+//void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+//{   QPointF x = event->scenePos();
+//    mousePosition = x.toPoint();
+//    //myParent->onMouseEvent("ll",X);
+//}

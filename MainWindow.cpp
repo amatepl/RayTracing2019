@@ -11,10 +11,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //scene = new room(this);
-    scene = new room;
+    scene = new room(this);
     Model model(scene);
 
-    scene->installEventFilter(this);
+    connect(scene,SIGNAL(mouseScenePosition(QPointF&)),this,SLOT(onMouseEvent(QPointF&)));
+    //scene->installEventFilter(this);
 
 
     scene_help = new help();
@@ -60,54 +61,52 @@ void MainWindow::configureSpinBox(QSpinBox *spinBox, int min, int max)const{
     spinBox->setMaximum(max);
 }
 
-bool MainWindow::eventFilter(QObject *target, QEvent *event)
-{
-    if (target == scene)
-    {
-        if (event->type() == QEvent::GraphicsSceneMouseMove)
-        {
-            const QGraphicsSceneMouseEvent* const me = static_cast<const QGraphicsSceneMouseEvent*>(event);
-            const QPointF position = me->scenePos();
+//bool MainWindow::eventFilter(QObject *target, QEvent *event)
+//{
+//    if (target == scene)
+//    {
+//        if (event->type() == QEvent::GraphicsSceneMouseMove)
+//        {
+//            const QGraphicsSceneMouseEvent* const me = static_cast<const QGraphicsSceneMouseEvent*>(event);
+//            const QPointF position = me->scenePos();
 
-//            ui->spinBoxPosX->setValue(position.x());
-//            ui->spinBoxPosY->setValue(position.y());
+//            //scene->mouseMoveEvent(event)
 
-            onMouseEvent(position);
-        }
-    }
-    return QMainWindow::eventFilter(target, event);
-}
-
+//            onMouseEvent(position);
+//        }
+//    }
+//    return QMainWindow::eventFilter(target, event);
+//}
 
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event){
-    QWidget::mouseMoveEvent(event);
 
-//    cout<<event->x()<<endl;
-//    cout<<event->y()<<endl;
+//void MainWindow::mouseMoveEvent(QMouseEvent *event){
+//    QWidget::mouseMoveEvent(event);
 
-}
+////    cout<<event->x()<<endl;
+////    cout<<event->y()<<endl;
 
-
-void MainWindow::mousePressEvent(QMouseEvent *event){
-    //onMouseEvent("lala", event->pos());
-    QWidget::mousePressEvent(event);
-}
+//}
 
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event){
-    QWidget::mouseReleaseEvent(event);
-}
+//void MainWindow::mousePressEvent(QMouseEvent *event){
+//    //onMouseEvent("lala", event->pos());
+//    QWidget::mousePressEvent(event);
+//}
+
+
+//void MainWindow::mouseReleaseEvent(QMouseEvent *event){
+//    QWidget::mouseReleaseEvent(event);
+//}
 
 
 //void MainWindow::onMouseEvent(const QString &eventName, const QPoint &pos){
-void MainWindow::onMouseEvent(const QPointF &pos){
+void MainWindow::onMouseEvent(QPointF &pos){
     //QPoint scene->getMousePosition() ;
+
 
     QString message = "x = "+ QString::number(pos.x())+", y = "+ QString::number(pos.y());
     statusBar()->showMessage(message);
-//    ui->spinBoxPosX->setValue(pos.x());
-//    ui->spinBoxPosY->setValue(pos.y());
 
     if(scene->DataComputed()){
         int i = 0, j = 0;

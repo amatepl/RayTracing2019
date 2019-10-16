@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     Wall.cpp \
     DiffractionPoints.cpp \
     Building.cpp \
-    Model.cpp
+    Model.cpp \
+    GraphicsBuilding.cpp
 
 HEADERS  += \
     room.h \
@@ -42,7 +43,9 @@ HEADERS  += \
     DiffractionPoints.h \
     Building.h \
     Model.h \
-    Visualizer.h
+    Visualizer.h \
+    GraphicsBuilding.h \
+    MovableObject.h
 RESOURCES = icon.qrc
 
 FORMS    += ieee80211g.ui \     #Qt design template

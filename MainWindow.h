@@ -40,10 +40,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void onMouseEvent(const QPointF &pos);
+//    void onMouseEvent(const QPointF &pos);
     void setMap(QPointF &pos);
     void writePenetrationDepth();
-    bool eventFilter(QObject *target, QEvent *event);
+    //bool eventFilter(QObject *target, QEvent *event);
 
 private slots:
     void on_commandLinkButton_clicked();
@@ -54,12 +54,13 @@ private slots:
     void on_plotButton_clicked();
     void on_generateCoveragePushButton_clicked();
     void on_clearWorkspaceButton_clicked();
+    void onMouseEvent(QPointF &pos);
 
 
 protected:
-    void mouseMoveEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+//    void mouseMoveEvent(QMouseEvent *event);
+//    void mousePressEvent(QMouseEvent *event);
+//    void mouseReleaseEvent(QMouseEvent *event);
 
 
 private:

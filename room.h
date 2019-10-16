@@ -115,11 +115,12 @@ public:
 
 
 signals:
+    void mouseScenePosition(QPointF &pos);
 
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
     int antenaType;
 
