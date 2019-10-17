@@ -14,6 +14,7 @@ TARGET = Telecom0_1
 TEMPLATE = app
 
 SOURCES += main.cpp\
+    AntenaImage.cpp \
     room.cpp \
     MainWindow.cpp \
     help.cpp \
@@ -30,6 +31,7 @@ SOURCES += main.cpp\
     GraphicsBuilding.cpp
 
 HEADERS  += \
+    AntenaImage.h \
     room.h \
     MainWindow.h \
     help.h \

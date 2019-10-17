@@ -32,6 +32,23 @@ room::room(QObject *parente) :
 
     // Let us define the walls and draw the view
 
+
+    Building *building1 = new Building(1,1,1,200,200,200,200,1,this);
+    Building *building2 = new Building(250, 1,250, 200,450, 200,450, 1,this);
+    Building *building3 = new Building(500, 1, 500, 200,700, 200, 700, 1,this);
+    Building *building4 = new Building(750, 1, 750, 200,950, 200, 950, 1,this);
+    Building *building5 = new Building(1, 300, 1, 500,200, 500, 200, 300,this);
+    Building *building6 = new Building(250, 300, 250, 500,600, 500, 600, 300,this);
+    Building *building7 = new Building(650, 300, 650, 500,950, 500, 950, 300,this);
+
+    m_buildings.push_back(building1);
+    m_buildings.push_back(building2);
+    m_buildings.push_back(building3);
+    m_buildings.push_back(building4);
+    m_buildings.push_back(building5);
+    m_buildings.push_back(building6);
+    m_buildings.push_back(building7);
+
     //Building 1
     walls[0] = new Wall(200,1,200,200, 0.0, 0.0, 0.0, 0);
     walls[18] = new Wall(200,1,1,1, 0.0, 0.0, 0.0, 18);
@@ -261,6 +278,8 @@ void room::launch_algo(bool drawR){
 
     clearAll();     // Resets the power, binary debit and ray vector --> 0
     computePhysicalResponse = drawR;
+    buildingsInIlluminationZone();
+    addPolygon(Transmitter->getIluminationZone());
 
     if(!workingZone(Receiver->getPosX(), Receiver->getPosY())){
         // Calculate power -- Reflexion and transmission
@@ -390,10 +409,13 @@ vector <Building*> room::buildingsInIlluminationZone()
     vector <Building*> illuminatedBuldings;
     foreach(Building *building, m_buildings){
         QPolygonF p_building(*building);
-//        if(p_building.intersects(antena.getIluminationZone())){
-//            illuminatedBuldings.push_back(building);
-//        }
+
+        if(p_building.intersects(Transmitter->getIluminationZone())){
+            illuminatedBuldings.push_back(building);
+        }
     }
+    cout<<"Number of buildings: "<<illuminatedBuldings.size()<<endl;
+    return illuminatedBuldings;
 }
 
 

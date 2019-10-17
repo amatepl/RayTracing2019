@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //scene = new room(this);
     scene = new room(this);
-    Model model(scene);
+    //Model model(scene);
 
     connect(scene,SIGNAL(mouseScenePosition(QPointF&)),this,SLOT(onMouseEvent(QPointF&)));
     //connect(ui->antena,SIGNAL(on_antena_clicked()),scene,SLOT(setMode(room::MoveItem));
