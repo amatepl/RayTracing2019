@@ -9,6 +9,7 @@
 #include "math.h"
 #include "Wall.h"
 #include "ray.h"
+#include "Building.h"
 //#include "Visualizer.h"
 
 // Libraries
@@ -31,7 +32,10 @@ class room : public QGraphicsScene /*public Visualizer*/ //, private QImage
 public:
     explicit room(QObject *parent = nullptr);
     ~room(void);
+    enum Mode { InsertItem, InsertLine, InsertText, MoveItem };
 
+
+    void setMode(Mode mode);
     void launch_algo(bool drawR);
 
     float distance();
@@ -112,6 +116,7 @@ public:
 
     void drawWalls();
     void draw(QGraphicsItem *item);
+    vector <Building*> buildingsInIlluminationZone();
 
 
 signals:
@@ -131,6 +136,8 @@ private:
     QGraphicsView *graphicsView;
     QPoint mousePosition;
 
+    Mode m_mode;
+    vector <Building*> m_buildings;
     // Graphical parameters
     double pxToMeter = 0.1;
     int square_size = 10;
@@ -143,6 +150,7 @@ private:
     antena *Transmitter;
     antena *Receiver;
     Wall *walls[28];    // For easier use walls are put in arrays
+    vector<Wall*> m_walls;
     vector <std::array <double,2>> diffractionPoints;
     //vector <QPointF*> diffractionPoints;
     //lineo *uselessWalls[10];
@@ -314,6 +322,7 @@ private:
     double computeSNR(double Prx);
 
 public slots:
+
 
 
 };

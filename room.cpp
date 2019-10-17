@@ -16,6 +16,8 @@ room::room(QObject *parente) :
     Transmitter = NULL;
     Receiver = NULL;
 
+    m_mode = MoveItem;
+
     // Absolute electric permittivity
     //eps = epsilonAir*epsilonWallRel;
 
@@ -382,6 +384,17 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
     }
 }
 
+
+vector <Building*> room::buildingsInIlluminationZone()
+{
+    vector <Building*> illuminatedBuldings;
+    foreach(Building *building, m_buildings){
+        QPolygonF p_building(*building);
+//        if(p_building.intersects(antena.getIluminationZone())){
+//            illuminatedBuldings.push_back(building);
+//        }
+    }
+}
 
 
 void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,double originY,room* scene){
@@ -1325,13 +1338,21 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsScene::mousePressEvent(event);
 }
 
+void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+    QPointF pos = event->scenePos();
+    mouseScenePosition(pos);
+    QGraphicsScene::mouseMoveEvent(event);
+}
+
 void room::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     antenaType = 2;
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
-
+void room::setMode(Mode mode){
+    m_mode = mode;
+}
 
 
 //---> Draw the heatmap-------------------------------------------------------------------------------------------------------------------
@@ -1471,11 +1492,7 @@ void room::draw(QGraphicsItem *item){
     update();
 }
 
-void room::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
-    QPointF pos = event->scenePos();
-    mouseScenePosition(pos);
-    QGraphicsScene::mouseMoveEvent(event);
-}
+
 
 //void room::mouseScenePos(QPointF &pos){
 

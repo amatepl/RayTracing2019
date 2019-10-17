@@ -38,9 +38,6 @@ QVariant GraphicsBuilding::itemChange(GraphicsItemChange change, const QVariant 
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
 
-//        foreach (Arrow *arrow, arrows) {
-//            arrow->updatePosition();
-//        }
         //cout<<"ScenePos() x: "<<mapToScene(QPointF(0,0)).x()<<" y: "<<scenePos().y()<<endl;
         //m_building->moveToPosition(scenePos());
         //m_building->moveToPosition(mapToScene(QPointF(0,0)));

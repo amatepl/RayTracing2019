@@ -14,3 +14,7 @@ Model::Model(QGraphicsScene *scene)
 
 }
 
+vector <Building*> Model::inIlluminationZone()
+{
+
+}

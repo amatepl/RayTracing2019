@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Model model(scene);
 
     connect(scene,SIGNAL(mouseScenePosition(QPointF&)),this,SLOT(onMouseEvent(QPointF&)));
+    //connect(ui->antena,SIGNAL(on_antena_clicked()),scene,SLOT(setMode(room::MoveItem));
     //scene->installEventFilter(this);
 
 
@@ -136,6 +137,7 @@ void MainWindow::onMouseEvent(QPointF &pos){
 
 void MainWindow::on_antena_clicked()
 {   statusBar()->showMessage("Place the antena");
+    scene->setMode(room::InsertItem);
     scene->setAntenaType(0);
 }
 

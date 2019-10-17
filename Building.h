@@ -22,6 +22,8 @@ public:
     ~Building(void);
     void addToScene();
     void moveToPosition(const QPointF &pos);
+    void moveWalls();
+    Wall *getWalls() ;
 
 private:
     Wall *m_walls[4]; // Array of pointers.
