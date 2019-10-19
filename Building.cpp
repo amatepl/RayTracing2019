@@ -134,7 +134,85 @@ void Building::moveWalls()
 
 }
 
+QPointF Building::closestPoint(const QPointF &point)
+{
+    array <QLineF,4> points = {QLineF(point, topLeft()),
+                              QLineF(point, topRight()),
+                              QLineF(point, bottomLeft()),
+                              QLineF(point, bottomRight())};
+
+    sort(points.begin(),points.end(),[](QLineF a, QLineF b){
+       return a.length()<b.length();
+    });
+    return points[0].p2();
+}
+
+vector <Wall*>Building::nearestWalls(const QPointF &point)
+{
+    vector<Wall*> walls;
+    if(point == topLeft()){
+
+        walls.push_back(m_walls[3]);
+        walls.push_back(m_walls[0]);
+    }
+    else if(point == bottomLeft()){
+        walls.push_back(m_walls[0]);
+        walls.push_back(m_walls[1]);
+    }
+    else if(point == bottomRight()){
+        walls.push_back(m_walls[1]);
+        walls.push_back(m_walls[2]);
+    }
+    else if(point == topRight()){
+        walls.push_back(m_walls[2]);
+        walls.push_back(m_walls[3]);
+    }
+    return walls;
+}
+
 Wall* Building::getWalls()
 {
     return *m_walls;
+}
+
+QPolygonF Building::shadow(const QPointF &light){
+    QPolygonF shadow;
+    //shadow<<closestPoint(light);
+    vector <QPointF> corners = extremities(light);
+    //shadow<<corners.at(0);
+    QLineF line1(light, corners.at(0));
+    line1.setLength(5000);
+    QLineF line2(light, corners.at(1));
+    line2.setLength(5000);
+    shadow<<closestPoint(light)
+          <<corners.at(0)
+          <<line1.p2()
+          <<line2.p2()
+          <<corners.at(1);
+
+    return shadow;
+}
+
+vector <QPointF> Building::extremities(const QPointF &light){
+    /*
+     * Looking for the corners that will cast the shadow.
+     */
+
+    vector <Wall*> walls = nearestWalls(closestPoint(light));
+    vector <QPointF> extremities;
+    QPointF intersectionPoint;
+    cout<<"Number of walls: "<<walls.size()<<endl;
+   if (walls.at(1)->intersect(QLineF(light,walls.at(0)->p1()),&intersectionPoint) == 1){
+       extremities.push_back(walls.at(1)->p2());
+       extremities.push_back(walls.at(1)->p1());
+   }
+   else if (walls.at(0)->intersect(QLineF(light,walls.at(1)->p2()),&intersectionPoint) == 1){
+       extremities.push_back(walls.at(0)->p2());
+       extremities.push_back(walls.at(0)->p1());
+   }
+   else {
+       extremities.push_back(walls.at(1)->p2());
+       extremities.push_back(walls.at(0)->p1());
+   }
+   return extremities;
 }

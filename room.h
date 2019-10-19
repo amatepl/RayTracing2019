@@ -117,6 +117,7 @@ public:
     void drawWalls();
     void draw(QGraphicsItem *item);
     vector <Building*> buildingsInIlluminationZone();
+    vector <Line> illuminatedWalls(vector <Wall*> &walls, const QPolygonF &zone);
 
 
 signals:

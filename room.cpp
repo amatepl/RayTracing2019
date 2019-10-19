@@ -9,6 +9,7 @@ room::room(QObject *parente) :
     QGraphicsScene()
   //, QImage(1000,1000, QImage::Format_RGB32)
 {   //myParent = parente;
+    setSceneRect(0,0,950,500);
 
     readSettingsFile();
 
@@ -17,6 +18,7 @@ room::room(QObject *parente) :
     Receiver = NULL;
 
     m_mode = MoveItem;
+
 
     // Absolute electric permittivity
     //eps = epsilonAir*epsilonWallRel;
@@ -278,8 +280,16 @@ void room::launch_algo(bool drawR){
 
     clearAll();     // Resets the power, binary debit and ray vector --> 0
     computePhysicalResponse = drawR;
+
+    // TEST -----------------------
+
     buildingsInIlluminationZone();
-    addPolygon(Transmitter->getIluminationZone());
+//    QColor illumination;
+//    illumination.setBlue(255);
+//    illumination.setAlpha(100);
+//    addPolygon(Transmitter->getIluminationZone(itemsBoundingRect()),QPen(),illumination);
+
+    // END TEST--------------------
 
     if(!workingZone(Receiver->getPosX(), Receiver->getPosY())){
         // Calculate power -- Reflexion and transmission
@@ -404,20 +414,79 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
 }
 
 
+
 vector <Building*> room::buildingsInIlluminationZone()
 {
     vector <Building*> illuminatedBuldings;
+    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
+    vector <Wall*> nearestWalls;
+
+    // Painting tools
+    QColor illumination;
+    illumination.setBlue(255);
+    illumination.setAlpha(100);
+
     foreach(Building *building, m_buildings){
         QPolygonF p_building(*building);
 
-        if(p_building.intersects(Transmitter->getIluminationZone())){
+        if(p_building.intersects(illuminationZone)){
             illuminatedBuldings.push_back(building);
+
+            // TEST -----------
+
+
+            illuminationZone = illuminationZone.subtracted(building->shadow(Transmitter->getPos()));
+            QPointF corner = building->closestPoint(Transmitter->getPos());
+            nearestWalls.push_back(building->nearestWalls(corner).at(0));
+            nearestWalls.push_back(building->nearestWalls(corner).at(1));
+//            addPolygon(intitIlluminationZone,QPen(),illumination);
+
+
+//            QPen linePen(Qt::red);
+//            QPen linePen1(Qt::green);
+
+//            linePen.setWidth(3);
+//            QPointF corner = building->closestPoint(Transmitter->getPos());
+//            addLine(QLineF(Transmitter->getPos(),corner),linePen1);
+
+//            addLine(*(building->nearestWalls(corner).at(0)),linePen);
+//            addLine(*(building->nearestWalls(corner).at(1)),linePen);
+
+            // END TEST -------
+
         }
     }
     cout<<"Number of buildings: "<<illuminatedBuldings.size()<<endl;
+
+    addPolygon(illuminationZone,QPen(),illumination);
+    illuminatedWalls(nearestWalls,illuminationZone);
+
     return illuminatedBuldings;
 }
 
+vector <Line> room::illuminatedWalls(vector <Wall*> &walls, const QPolygonF &zone){
+    vector <Line> illuminatedWalls;
+
+    QPen redPen(Qt::red);
+    redPen.setWidth(3);
+
+    for(int i=1; i < zone.length()-2 ;i++){
+        int j =0;
+        bool cont = true;
+        while(j<walls.size() && cont){
+            if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))){
+                illuminatedWalls.push_back(Line(zone.at(i),zone.at(i+1)));
+                walls.erase(walls.begin()+j);
+                addLine(Line(zone.at(i),zone.at(i+1)),redPen);
+                cont = false;
+            }
+            j++;
+        }
+    }
+
+
+    return  illuminatedWalls;
+}
 
 void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,double originY,room* scene){
 
@@ -1192,6 +1261,7 @@ void room::clearLocalParameters(){
     NLOS = 0.0;
     rayNumber = 0;
     specNumber = 0;
+    //coverageDone = false;
 
     //Efield = 0.0;
 }

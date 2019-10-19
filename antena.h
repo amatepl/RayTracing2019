@@ -6,6 +6,10 @@
 #include <QPen>
 #include <QBrush>
 #include <QPolygonF>
+#include <iostream>
+#include <QLineF>
+
+using namespace std;
 //class room;
 //class QPen;
 
@@ -20,7 +24,9 @@ public:
     int getPosY();
     QPointF getPos()const;
     void setPosi(QPointF posi);
-    QPolygonF getIluminationZone()const;
+    QPolygonF getIluminationZone(const QRectF &rect)const;
+    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
+    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
 private:
     //room *myRoom;
     QPointF pos;

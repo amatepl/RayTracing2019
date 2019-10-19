@@ -107,3 +107,10 @@ QPointF Line::symetricalPoint(const double x, const double y){
 //    return finalVector.p2();
 
 }
+
+bool Line::onLine(const QPointF &point){
+    /*
+     * Check if the given point is on the line.
+     */
+    return (intersect(QLineF(point,p2()),nullptr) == 0);
+}

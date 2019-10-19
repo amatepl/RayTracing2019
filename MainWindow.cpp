@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //scene = new room(this);
     scene = new room(this);
     //Model model(scene);
+    //scene->setSceneRect(0,0,950,500);
 
     connect(scene,SIGNAL(mouseScenePosition(QPointF&)),this,SLOT(onMouseEvent(QPointF&)));
     //connect(ui->antena,SIGNAL(on_antena_clicked()),scene,SLOT(setMode(room::MoveItem));
@@ -25,6 +26,11 @@ MainWindow::MainWindow(QWidget *parent) :
     scene->setSceneRect(ui->graphicsView->rect());
         ui->graphicsView->setScene(scene);
         ui->graphicsView->ensureVisible(scene->sceneRect());
+        cout<<"Scene bottom right x: " <<scene->sceneRect().bottomRight().x()<<endl;
+        cout<<"Scene bottom right y: " <<scene->sceneRect().bottomRight().y()<<endl;
+
+        cout<<"Scene top left x: " <<scene->sceneRect().topLeft().x()<<endl;
+        cout<<"Scene top left y: " <<scene->sceneRect().topLeft().y()<<endl;
 
 //        ui->spinBoxPosX->setReadOnly(true);
 //        ui->spinBoxPosY->setReadOnly(true);

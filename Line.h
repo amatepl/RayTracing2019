@@ -14,6 +14,7 @@ public:
     double getSlope()const;
     QPointF symetricalPoint(const QPointF &point);
     QPointF symetricalPoint(const double x, const double y);
+    bool onLine(const QPointF &point);
 
 };
 

@@ -5,12 +5,14 @@
 #include <QVector>
 #include <QPointF>
 #include <QGraphicsRectItem>
+#include <QPolygonF>
 #include "Wall.h"
 //#include "Visualizer.h"
 #include <QGraphicsScene>
 #include "GraphicsBuilding.h"
 #include "MovableObject.h"
 #include <iostream>
+
 
 using namespace std;
 
@@ -24,6 +26,10 @@ public:
     void moveToPosition(const QPointF &pos);
     void moveWalls();
     Wall *getWalls() ;
+    QPointF closestPoint(const QPointF &point);
+    vector<Wall *> nearestWalls(const QPointF &point);
+    QPolygonF shadow(const QPointF &light);
+    vector <QPointF> extremities(const QPointF &light);
 
 private:
     Wall *m_walls[4]; // Array of pointers.
@@ -34,6 +40,7 @@ private:
 //    QPointF m_p4;
     //Visualizer *m_view;
     QGraphicsScene *m_scene;
+
 
 
 };
