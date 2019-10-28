@@ -10,6 +10,7 @@
 #include "Wall.h"
 #include "ray.h"
 #include "Building.h"
+#include "AntenaImage.h"
 //#include "Visualizer.h"
 
 // Libraries
@@ -22,6 +23,8 @@
 using namespace std::chrono;
 
 using namespace std;
+
+struct forImage;
 
 class antena;
 
@@ -116,8 +119,16 @@ public:
 
     void drawWalls();
     void draw(QGraphicsItem *item);
-    vector <Building*> buildingsInIlluminationZone();
-    vector <Line> illuminatedWalls(vector <Wall*> &walls, const QPolygonF &zone);
+//    vector <Building*> buildingsInIlluminationZone(int nbReflections);
+//    QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
+
+
+    QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
+//    QPolygonF transmitterIllumination();
+    forImage transmitterIllumination();
+
+    vector <Line> illuminatedWalls(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+    void createImages();
 
 
 signals:
@@ -155,6 +166,11 @@ private:
     vector <std::array <double,2>> diffractionPoints;
     //vector <QPointF*> diffractionPoints;
     //lineo *uselessWalls[10];
+//    struct forImage{
+//        vector <Wall*> &walls;
+//        const QPolygonF &zone;
+//    };
+
 
 
     // --> Global variables (electrical constants)
@@ -321,6 +337,8 @@ private:
     double computeReflexionPer(double thetaI, double epsilonR);
     complex <double> computeEfieldGround();
     double computeSNR(double Prx);
+
+
 
 public slots:
 

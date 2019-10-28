@@ -2,7 +2,7 @@
 #define WALL_H
 
 #include "Line.h"
-
+class Building;
 
 class Wall: public Line
 {
@@ -15,6 +15,8 @@ public:
     double getEpsilon()const;
     int getIndWall()const;
     QPointF symetricalPoint(const QPointF &point);
+    void setBuilding(Building *building);
+    Building* getBuilding()const;
 
 
 private:
@@ -25,6 +27,7 @@ private:
     double epsilon;
     double sigma;
     int indWall;
+    Building *m_building;
 };
 
 #endif // WALL_H

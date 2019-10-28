@@ -61,3 +61,10 @@ QPointF Wall::symetricalPoint(const QPointF &point){
 //    double transmitterImagePosY = current_wall->y2() + y2;
 
 }
+
+void Wall::setBuilding(Building *building){
+    m_building = building;
+}
+Building* Wall::getBuilding()const{
+    return m_building;
+}

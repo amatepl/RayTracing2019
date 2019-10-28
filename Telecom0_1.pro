@@ -14,11 +14,13 @@ TARGET = Telecom0_1
 TEMPLATE = app
 
 SOURCES += main.cpp\
+    AbstractAntena.cpp \
     AntenaImage.cpp \
+    Receiver.cpp \
+    antena.cpp \
     room.cpp \
     MainWindow.cpp \
     help.cpp \
-    antena.cpp \
     settings.cpp \
     ray.cpp \
     qcustomplot.cpp \
@@ -31,11 +33,14 @@ SOURCES += main.cpp\
     GraphicsBuilding.cpp
 
 HEADERS  += \
+    AbstractAntena.h \
     AntenaImage.h \
+    Receiver.h \
+    ReceiverObserver.h \
+    antena.h \
     room.h \
     MainWindow.h \
     help.h \
-    antena.h \
     settings.h \
     ray.h \
     qcustomplot.h \

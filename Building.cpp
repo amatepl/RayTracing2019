@@ -21,6 +21,11 @@ Building::Building(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y
     Wall *wall3 = new Wall(x3,y3,x4,y4,0.0,0.0,0.0,0);
     Wall *wall4 = new Wall(x4,y4,x1,y1,0.0,0.0,0.0,0);
 
+    wall1->setBuilding(this);
+    wall2->setBuilding(this);
+    wall3->setBuilding(this);
+    wall4->setBuilding(this);
+
     m_walls[0] = wall1;
     m_walls[1] = wall2;
     m_walls[2] = wall3;
@@ -56,9 +61,13 @@ Building::Building(const QPointF &p1, const QPointF &p3, QGraphicsScene *scene):
 
     //Wall wall1(p1,p2,0.0,0.0,0.0,0),wall2(p2,p3,0.0,0.0,0.0,0),wall3(p3,p4,0.0,0.0,0.0,0),wall4(p4,p1,0.0,0.0,0.0,0);
     Wall *wall1 = new Wall(p1,p2,0.0,0.0,0.0,0);
+    wall1->setBuilding(this);
     Wall *wall2 = new Wall(p2,p3,0.0,0.0,0.0,0);
+    wall2->setBuilding(this);
     Wall *wall3 = new Wall(p3,p4,0.0,0.0,0.0,0);
+    wall3->setBuilding(this);
     Wall *wall4 = new Wall(p4,p1,0.0,0.0,0.0,0);
+    wall4->setBuilding(this);
 
 
     m_walls[0] = wall1;
@@ -181,9 +190,9 @@ QPolygonF Building::shadow(const QPointF &light){
     vector <QPointF> corners = extremities(light);
     //shadow<<corners.at(0);
     QLineF line1(light, corners.at(0));
-    line1.setLength(5000);
+    line1.setLength(50000);
     QLineF line2(light, corners.at(1));
-    line2.setLength(5000);
+    line2.setLength(50000);
     shadow<<closestPoint(light)
           <<corners.at(0)
           <<line1.p2()
@@ -201,7 +210,7 @@ vector <QPointF> Building::extremities(const QPointF &light){
     vector <Wall*> walls = nearestWalls(closestPoint(light));
     vector <QPointF> extremities;
     QPointF intersectionPoint;
-    cout<<"Number of walls: "<<walls.size()<<endl;
+    //cout<<"Number of walls: "<<walls.size()<<endl;
    if (walls.at(1)->intersect(QLineF(light,walls.at(0)->p1()),&intersectionPoint) == 1){
        extremities.push_back(walls.at(1)->p2());
        extremities.push_back(walls.at(1)->p1());

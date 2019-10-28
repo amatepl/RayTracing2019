@@ -1,11 +1,13 @@
 #include "antena.h"
 
-// Very basic antena type object
+// Very basic Trasmitter type object
 
 antena::antena(QPointF p, int type):
 QGraphicsEllipseItem()/*,QPointF()*/,pos(p),antenaType(type),m_vector(QPointF(1,1))
 
 {
+    m_building = nullptr;
+
     this->setRect(pos.x(),pos.y(),1,1);
     // 0 for output (transmiter) 1 for input (receiver)
     //myRoom = scene;
@@ -25,7 +27,7 @@ antena::~antena(){
 QPen antena::setColor(){
 
     /*
-     * Changes the color according to the antena type, for more display visibility
+     * Changes the color according to the Trasmitter type, for more display visibility
      */
 
     QPen pen;
@@ -45,7 +47,7 @@ QPen antena::setColor(){
 // --> Getters && Setters
 
 int antena::getPosX(){return pos.x();}
-//int antena::getPosX(){return this->x();}
+//int Trasmitter::getPosX(){return this->x();}
 int antena::getPosY(){return pos.y();}
 QPointF antena::getPos()const{return pos;}
 
@@ -53,7 +55,7 @@ void antena::setPosi(QPointF posi){this->pos = posi;
             this->setRect(posi.x(),posi.y(),1,1);
             }
 
-QPolygonF antena::getIluminationZone(const QRectF &rect)const{
+QPolygonF antena::getIlluminationZone(const QRectF &rect)const{
     QPolygonF iluminationZone;
     QPolygonF unboundedZone;
     // Roation matrix is applied for 60 deg.
@@ -75,6 +77,45 @@ QPolygonF antena::getIluminationZone(const QRectF &rect)const{
     iluminationZone<<sceneRectIntersection(rect,QLineF(pos,pos+point3));
 
     return iluminationZone;
+}
+
+QPolygonF antena::getIlluminationZone()const{
+
+    /*
+     * This method is used right now in the code BUT we've got to make sure that the user don't add
+     * any element to the scene once the antena is set.
+     */
+
+    QPolygonF iluminationZone;
+    QPolygonF unboundedZone;
+    // Roation matrix is applied for 60 deg.
+    QPointF point2((0.5*m_vector.x() - 0.866*m_vector.y())*5000,(0.5*m_vector.y() + 0.866*m_vector.x())*5000);
+    QPointF point3((0.5*m_vector.x() + 0.866*m_vector.y())*5000,(0.5*m_vector.y() - 0.866*m_vector.x())*5000);
+
+    //cout<<"Rect bottom right: " <<m_sceneBoundary.bottomRight().x()<<", "<<m_sceneBoundary.bottomRight().y()<<endl;
+    //cout<<"Rect top left: " <<m_sceneBoundary.topLeft().x()<<", "<<m_sceneBoundary.topLeft().y()<<endl;
+
+    unboundedZone<<pos<<point2+pos<<point3+pos;
+
+    iluminationZone<<pos
+                  << sceneRectIntersection(m_sceneBoundary,QLineF(pos,pos+point2));
+
+    for (QPointF p: boundaryCorners(m_sceneBoundary,unboundedZone)) {
+        iluminationZone<<p;
+    }
+
+    iluminationZone<<sceneRectIntersection(m_sceneBoundary,QLineF(pos,pos+point3));
+
+    return iluminationZone;
+}
+
+QPolygonF antena::getIlluminatedZone()const{
+    return m_zone;
+}
+
+
+void antena::setSceneBoundary(const QRectF &rect){
+    m_sceneBoundary = rect;
 }
 
 QPointF antena::sceneRectIntersection(const QRectF &rect, const QLineF  &line)const{
@@ -117,4 +158,14 @@ vector <QPointF> antena::boundaryCorners(const QRectF &rect, const QPolygonF &un
         points.push_back(rect.topRight());
     }
     return points;
+}
+
+void antena::notifyParent(const QPointF &point) {}
+
+QPointF antena::getPosition()const {
+    return getPos();
+}
+
+void antena::setIlluminatedZone(const QPolygonF &zone){
+    m_zone = zone;
 }

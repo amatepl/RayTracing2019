@@ -34,9 +34,33 @@ double Line::getSlope()const{
 }
 
 QPointF Line::symetricalPoint(const QPointF &point){
-    QLineF pointToWall(p1(), point);
-    pointToWall.setAngle(angle()-angleTo(pointToWall));
-    return pointToWall.p2();
+
+    qreal ray_vector_length = sqrt(pow(point.y() - y2(),2) + pow(point.x() - x2(),2));
+    qreal virtual_slope;
+
+    if (point.y() - y2() < 0 && point.x() - x2()){
+        virtual_slope = -acos((point.x() - x2())/ray_vector_length);
+    }
+    else{
+        virtual_slope = acos((point.x() - x2())/ray_vector_length);
+    }
+
+//    float ray_slope = angle_wall + (angle_wall - virtual_slope);
+    qreal ray_slope = 2*getAngleRad() - virtual_slope;
+    qreal ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
+    qreal x2 = ray_vector_length * ray_vector[0];
+    qreal y2 = ray_vector_length * ray_vector[1];
+    qreal transmitterImagePosX = this->x2() + x2;
+    qreal transmitterImagePosY = this->y2() + y2;
+
+    return QPointF(transmitterImagePosX,transmitterImagePosY);
+
+
+
+
+//    QLineF pointToWall(p1(), point);
+//    pointToWall.setAngle(angle()-angleTo(pointToWall));
+//    return pointToWall.p2();
 
 
 
@@ -61,21 +85,44 @@ QPointF Line::symetricalPoint(const QPointF &point){
 }
 
 QPointF Line::symetricalPoint(const double x, const double y){
-    double vec1x = (p2().x() - p1().x())/length();
-    double vec1y = (p2().y() - p1().y())/length();
-    double length = sqrt(pow(x-p1().x(),2) + pow(y-p1().y(),2));
-    double vec2x = (x-p1().x())/length;
-    double vec2y = (y-p1().y())/length;
 
-    vec2x = vec1x*vec2x + vec1y*vec2y;              //  cos(theta) = vec1.vec2
+    qreal ray_vector_length = sqrt(pow(y - y2(),2) + pow(x - x2(),2));
+    qreal virtual_slope;
 
-    vec2x = sqrt(1 - pow(vec2x,2));                 //  sin(theta) = sqrt(1 - cos(theta)^2)
+    if (y - y2() < 0 && x - x2()){
+        virtual_slope = -acos((x - x2())/ray_vector_length);
+    }
+    else{
+        virtual_slope = acos((x - x2())/ray_vector_length);
+    }
 
-    vec2x = vec2x*2*length;   // Distance from the initial point to p1
+//    float ray_slope = angle_wall + (angle_wall - virtual_slope);
+    qreal ray_slope = 2*getAngleRad() - virtual_slope;
+    qreal ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
+    qreal x2 = ray_vector_length * ray_vector[0];
+    qreal y2 = ray_vector_length * ray_vector[1];
+    qreal transmitterImagePosX = this->x2() + x2;
+    qreal transmitterImagePosY = this->y2() + y2;
 
-    vec2y = -vec1x*vec2x;
+    return QPointF(transmitterImagePosX,transmitterImagePosY);
 
-    vec1x = vec1y*vec2x;
+
+
+//    double vec1x = (p2().x() - p1().x())/length();
+//    double vec1y = (p2().y() - p1().y())/length();
+//    double length = sqrt(pow(x-p1().x(),2) + pow(y-p1().y(),2));
+//    double vec2x = (x-p1().x())/length;
+//    double vec2y = (y-p1().y())/length;
+
+//    vec2x = vec1x*vec2x + vec1y*vec2y;              //  cos(theta) = vec1.vec2
+
+//    vec2x = sqrt(1 - pow(vec2x,2));                 //  sin(theta) = sqrt(1 - cos(theta)^2)
+
+//    vec2x = vec2x*2*length;   // Distance from the initial point to p1
+
+//    vec2y = -vec1x*vec2x;
+
+//    vec1x = vec1y*vec2x;
 
 //    if(x == vec1x && y == vec2y){
 //        vec2y = -vec2y;
@@ -83,9 +130,9 @@ QPointF Line::symetricalPoint(const double x, const double y){
 //        vec1x = -vec1x;
 //    }
 
-    QPointF image(x+vec1x,y+vec2y);
+//    QPointF image(x+vec1x,y+vec2y);
 
-    return image;
+//    return image;
 
 
 
@@ -111,6 +158,13 @@ QPointF Line::symetricalPoint(const double x, const double y){
 bool Line::onLine(const QPointF &point){
     /*
      * Check if the given point is on the line.
+     *
      */
-    return (intersect(QLineF(point,p2()),nullptr) == 0);
+
+    QLineF testLine1(point,p2());
+    QLineF testLine2(point,p1());
+
+    return (intersect(testLine1,nullptr)==0
+            && testLine1.length() <= length()
+            && testLine2.length() <= length());
 }

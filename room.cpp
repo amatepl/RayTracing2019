@@ -283,7 +283,9 @@ void room::launch_algo(bool drawR){
 
     // TEST -----------------------
 
-    buildingsInIlluminationZone();
+
+    createImages();
+    //buildingsInIlluminationZone();
 //    QColor illumination;
 //    illumination.setBlue(255);
 //    illumination.setAlpha(100);
@@ -367,28 +369,28 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
 
                 //auto start = high_resolution_clock::now();
 
-                int ray_vector_length = sqrt(pow(transmitterPosY - current_wall->y2(),2) + pow(transmitterPosX - current_wall->x2(),2));
-                float virtual_slope;
+//                int ray_vector_length = sqrt(pow(transmitterPosY - current_wall->y2(),2) + pow(transmitterPosX - current_wall->x2(),2));
+//                float virtual_slope;
 
-                if (transmitterPosY - current_wall->y2() < 0 && transmitterPosX - current_wall->x2()){
-                    virtual_slope = -acos((transmitterPosX - current_wall->x2())/ray_vector_length);
-                }
+//                if (transmitterPosY - current_wall->y2() < 0 && transmitterPosX - current_wall->x2()){
+//                    virtual_slope = -acos((transmitterPosX - current_wall->x2())/ray_vector_length);
+//                }
 
-                else{
-                    virtual_slope = acos((transmitterPosX - current_wall->x2())/ray_vector_length);
-                }
+//                else{
+//                    virtual_slope = acos((transmitterPosX - current_wall->x2())/ray_vector_length);
+//                }
 
-                float ray_slope = angle_wall + (angle_wall - virtual_slope);
-                float ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
-                float x2 = ray_vector_length * ray_vector[0];
-                float y2 = ray_vector_length * ray_vector[1];
-                double transmitterImagePosX = current_wall->x2() + x2;
-                double transmitterImagePosY = current_wall->y2() + y2;
-
-
+//                float ray_slope = angle_wall + (angle_wall - virtual_slope);
+//                float ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
+//                float x2 = ray_vector_length * ray_vector[0];
+//                float y2 = ray_vector_length * ray_vector[1];
+//                double transmitterImagePosX = current_wall->x2() + x2;
+//                double transmitterImagePosY = current_wall->y2() + y2;
 
 
-                //QPointF transmitterImagePos = current_wall->symetricalPoint(transmitterPosX,transmitterPosY);
+
+
+                QPointF transmitterImagePos = current_wall->symetricalPoint(transmitterPosX,transmitterPosY);
 //                auto stop = high_resolution_clock::now();
 
 //                auto duration = duration_cast<nanoseconds>(stop - start);
@@ -402,8 +404,8 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
                 //imCoordinates[1] = intersection(current_ray,current_wall)[1];
                 //delete(current_ray);
                 //if(pointOnLine(current_wall,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
-                    recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
-                    //recursion(transmitterImagePos.x(), transmitterImagePos.y(),receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
+                    //recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
+                    recursion(transmitterImagePos.x(), transmitterImagePos.y(),receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
                 //}
 
             }
@@ -413,71 +415,157 @@ void room::recursion(double transmitterPosX, double transmitterPosY, double rece
     }
 }
 
+struct forImage{
+    vector <Wall*> walls;
+    const QPolygonF zone;
+};
 
 
-vector <Building*> room::buildingsInIlluminationZone()
-{
-    vector <Building*> illuminatedBuldings;
-    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
-    vector <Wall*> nearestWalls;
+void room::createImages(){
+    int recursionDepth = reflectionsNumber;
+//    int recursionDepth = 0;
+//    QPolygonF illuminatedZone =  transmitterIllumination();
+    forImage data = transmitterIllumination();
+    illuminatedWalls(data.walls,data.zone,recursionDepth -1 ,Transmitter);
+//    buildingsInIlluminationZone(Transmitter, recursionDepth);
+
+}
+
+
+//QPolygonF room::transmitterIllumination(){
+forImage room::transmitterIllumination(){
 
     // Painting tools
     QColor illumination;
     illumination.setBlue(255);
     illumination.setAlpha(100);
 
+
+    vector <Building*> illuminatedBuldings; // Buildings lying in the initial illumination zone.
+//    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
+    QPolygonF illuminationZone = Transmitter->getIlluminationZone();
+    vector <Wall*> nearestWalls;
+
     foreach(Building *building, m_buildings){
         QPolygonF p_building(*building);
 
         if(p_building.intersects(illuminationZone)){
             illuminatedBuldings.push_back(building);
+            illuminationZone = illuminationZone.subtracted(building->shadow(Transmitter->getPosition()));
+            QPointF corner = building->closestPoint(Transmitter->getPosition()); // Closest point of the building to the transmitter
+            nearestWalls.push_back(building->nearestWalls(corner).at(0));   // Add the 2 walls that are at the corner.
+            nearestWalls.push_back(building->nearestWalls(corner).at(1));
+
+        }
+    }
+    Transmitter->setIlluminatedZone(illuminationZone);
+    addPolygon(illuminationZone,QPen(),illumination);
+
+    forImage result{nearestWalls,illuminationZone};
+
+    return result;
+}
+
+
+QPolygonF room::buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections)
+//vector <Building*> room::buildingsInIlluminationZone(int nbReflections)
+{
+    // Painting tools
+    QColor illumination;
+    illumination.setBlue(255);
+    illumination.setAlpha(100);
+    QColor illumination2;
+    illumination2.setRed(255);
+    illumination2.setAlpha(50);
+
+    int recursionDepth = nbReflections;
+
+    vector <Building*> illuminatedBuldings; // Buildings lying in the initial illumination zone.
+//    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
+    QPolygonF illuminationZone = ant->getIlluminationZone();
+    //addPolygon(illuminationZone,QPen(),illumination2);
+    vector <Wall*> nearestWalls;
+
+
+
+    foreach(Building *building, m_buildings){
+        QPolygonF p_building(*building);
+
+        if(p_building.intersects(illuminationZone) && building != ant->getBuilding()){
+            illuminatedBuldings.push_back(building);
 
             // TEST -----------
+            //addPolygon(building->shadow(ant->getPosition()),QPen(),illumination2);
 
 
-            illuminationZone = illuminationZone.subtracted(building->shadow(Transmitter->getPos()));
-            QPointF corner = building->closestPoint(Transmitter->getPos());
-            nearestWalls.push_back(building->nearestWalls(corner).at(0));
+            illuminationZone = illuminationZone.subtracted(building->shadow(ant->getPosition()));
+            QPointF corner = building->closestPoint(ant->getPosition()); // Closest point of the building to the transmitter
+            nearestWalls.push_back(building->nearestWalls(corner).at(0));   // Add the 2 walls that are at the corner.
             nearestWalls.push_back(building->nearestWalls(corner).at(1));
 //            addPolygon(intitIlluminationZone,QPen(),illumination);
 
-
-//            QPen linePen(Qt::red);
-//            QPen linePen1(Qt::green);
-
-//            linePen.setWidth(3);
-//            QPointF corner = building->closestPoint(Transmitter->getPos());
-//            addLine(QLineF(Transmitter->getPos(),corner),linePen1);
-
-//            addLine(*(building->nearestWalls(corner).at(0)),linePen);
-//            addLine(*(building->nearestWalls(corner).at(1)),linePen);
 
             // END TEST -------
 
         }
     }
-    cout<<"Number of buildings: "<<illuminatedBuldings.size()<<endl;
+    //cout<<"Number of buildings: "<<illuminatedBuldings.size()<<endl;
 
     addPolygon(illuminationZone,QPen(),illumination);
-    illuminatedWalls(nearestWalls,illuminationZone);
+     //addPolygon(ant->getIlluminationZone(),QPen(),illumination);
+    //ant->setIlluminatedZone(illuminationZone.intersected(Transmitter->getIlluminatedZone()));
+    ant->setIlluminatedZone(illuminationZone);
+    //addPolygon(illuminationZone.intersected(Transmitter->getIlluminatedZone()),QPen(),illumination);
 
-    return illuminatedBuldings;
+    if(recursionDepth > 0){
+        illuminatedWalls(nearestWalls,illuminationZone, recursionDepth -1,ant);
+//        illuminatedWalls(nearestWalls,illuminationZone.intersected(Transmitter->getIlluminatedZone()), recursionDepth -1,ant);
+    }
+
+//    return illuminatedBuldings;
+    return illuminationZone;
 }
 
-vector <Line> room::illuminatedWalls(vector <Wall*> &walls, const QPolygonF &zone){
+vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent){
     vector <Line> illuminatedWalls;
 
     QPen redPen(Qt::red);
     redPen.setWidth(3);
 
-    for(int i=1; i < zone.length()-2 ;i++){
+    QColor illumination1;
+    illumination1.setGreen(255);
+    illumination1.setAlpha(100);
+
+    vector <AntenaImage *> images; // vector for tests
+
+    for(int i=1; i <  zone.length()-2 ;i++){ // !!!!!!!!!!!!!! -2
+
+        /*
+         * Here we go thorough the sides of the illumination zone and check if they are a part of a wall
+         * If yes, then the part is used to build the image of the transmitter.
+         */
+
         int j =0;
         bool cont = true;
         while(j<walls.size() && cont){
             if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))){
                 illuminatedWalls.push_back(Line(zone.at(i),zone.at(i+1)));
-                walls.erase(walls.begin()+j);
+
                 addLine(Line(zone.at(i),zone.at(i+1)),redPen);
+
+                //Creation of the trasmitter image
+                AntenaImage *image = new AntenaImage(Line(zone.at(i),zone.at(i+1)),parent);
+                image->setBuilding(walls.at(j)->getBuilding());
+                image->setSceneBoundary(itemsBoundingRect());
+                images.push_back(image);
+                walls.erase(walls.begin()+j);
+                //QPolygonF imagesZone = zone.intersected(image->getIlluminationZone());
+
+                QPolygonF imagesZone = buildingsInIlluminationZone(image,nbReflections);
+                //image->setIlluminatedZone(imagesZone);
+                //addPolygon(imagesZone, QPen(),illumination1);
+
+                //cout<<"Image created: "<< image->x() <<", "<<image->y() <<endl;
                 cont = false;
             }
             j++;
@@ -1416,6 +1504,10 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
             Transmitter = NULL;};
 
         Transmitter = new antena(/*this,*/ event->scenePos(),antenaType);
+        //Transmitter->setSceneBoundary(sceneRect());
+        Transmitter->setSceneBoundary(itemsBoundingRect());
+
+
         this->addItem(Transmitter);
     }
 

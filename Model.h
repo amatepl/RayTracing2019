@@ -14,8 +14,10 @@ public:
     vector <Building*> inIlluminationZone();
     void addAntena();
 
+
 private:
     vector <antena*> m_antennas;
+
 };
 
 #endif // MODEL_H
