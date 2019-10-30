@@ -45,6 +45,8 @@ public:
     int getAmountDiscret();
     double getpowerEmettor();
     double getInitBinaryDeb();
+    complex <double> ArrayFactor(double row, double col, double dx,
+                                 double alphax, double alphaz,ray *line);
     complex <double> getTotalEfield();
     int getRows();
     int getColumns();

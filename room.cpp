@@ -969,6 +969,15 @@ double room::computeReflexionPar(double thetaI, double epsilonR){
     return R;
 }
 
+complex <double> room::ArrayFactor(double row, double col, double dx, double alphax, double alphaz,ray *line){
+    complex <double> phi = line->getTheta()*M_PI/180;
+    complex <double> psy = (2.0*M_PI/lambda)*dx*sin(phi)+alphax;
+    complex <double> i(0.0, 1.0);
+    complex <double> xarray = (1.0-exp(i*row*psy))/(1.0-exp(i*psy));
+    complex <double> zarray = (1.0-exp(i*col*alphaz)/(1.0-exp(i*alphaz)));
+    return xarray*zarray;
+}
+
 complex <double> room::computeEfield(vector<ray*> rayLine){
     /* One vector<ray*> is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
      * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
@@ -995,7 +1004,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     }
     double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
-    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength)*ArrayFactor(4,4,lambda/4,1,1,rayLine.at(0));
 
     if(amountSegment==1){
         this->minLength = completeLength; // for delay spread computation
