@@ -31,8 +31,8 @@ room::room(MainWindow *parente) :
     // Let us define the walls and draw the view
 
     //Building 1
-    walls[0] = new wall(200,1,200,200, 0.0, 0.0, 0.0, 0);
-    walls[18] = new wall(200,1,1,1, 0.0, 0.0, 0.0, 18);
+    //walls[0] = new wall(200,1,200,200, 0.0, 0.0, 0.0, 0);
+    /*walls[18] = new wall(200,1,1,1, 0.0, 0.0, 0.0, 18);
     walls[1] = new wall(200,200,1,200, 0.0, 0.0, 0.0, 1);
     walls[19] = new wall(1,200,1,1, 0.0, 0.0, 0.0, 19);
 
@@ -69,8 +69,8 @@ room::room(MainWindow *parente) :
     //Building 7
     walls[16] = new wall(650, 300, 650, 500, 0.0, 0.0, 0.0, 16);
     walls[26] = new wall(650, 500, 950, 500, 0.0, 0.0, 0.0, 26);
-    //walls[27] = new wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
-    walls[17] = new wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);
+    walls[27] = new wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
+    walls[17] = new wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);*/
     drawWalls();
 
     streetsPenDep["commerceUp"] = 0;
@@ -178,7 +178,7 @@ bool room::workingZone(int Rx, int Ry){
 
 
     result = building1 || building2 || building3 || building4 || building5 || building6 || building7;
-    return result ;
+    return false;//result ;
 }
 
 void room::findDiffractionPoints(){
@@ -969,7 +969,7 @@ double room::computeReflexionPar(double thetaI, double epsilonR){
 }
 
 complex <double> room::ArrayFactor(double row, double col, double dx, double alphax, double alphaz,ray *line){
-    complex <double> phi = line->getTheta();
+    complex <double> phi = line->getTheta()+M_PI;
     complex <double> psy = ((2.0*M_PI/lambda)*dx*sin(phi))+alphax;
     complex <double> i(0.0, 1.0);
     complex <double> xarray = (1.0-exp(i*row*psy))/(1.0-exp(i*psy));
@@ -1009,7 +1009,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     }
     double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
-    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength)*ArrayFactor(64,64,lambda/4,0,0,rayLine.at(0));
+    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength)*ArrayFactor(4,4,lambda/2,2*cos(M_PI/2),0,rayLine.at(0));
 
     if(amountSegment==1){
         this->minLength = completeLength; // for delay spread computation

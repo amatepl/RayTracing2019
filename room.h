@@ -132,7 +132,7 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    wall *walls[27];    // For easier use walls are put in arrays
+    wall *walls[28];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
     //lineo *uselessWalls[10];
 
@@ -197,9 +197,9 @@ private:
 
     // Problem parameters
     int reflectionsNumber;
-    unsigned int amount_walls = 18;
-    int amount_useless_walls = 10;
-    unsigned int amount_all_walls = 28;
+    unsigned int amount_walls = 0;
+    int amount_useless_walls = 0;
+    unsigned int amount_all_walls = 0;
     int amount_discret = 20;
     map<const char*,int> streetsPenDep;
 

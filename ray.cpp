@@ -71,4 +71,4 @@ int ray::getWallInd(){return wallInd;}
 double ray::getTetai(){return tetai;}
 double ray::getTheta(){return theta;}
 int ray::getIndWall(){return wallIBouncedOn;}
-double ray::getMeterLength(){return meterLength*10;}
+double ray::getMeterLength(){return meterLength;}
