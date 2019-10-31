@@ -132,7 +132,7 @@ private:
     // General objects
     antena *Transmitter;
     antena *Receiver;
-    wall *walls[28];    // For easier use walls are put in arrays
+    wall *walls[27];    // For easier use walls are put in arrays
     vector <std::array <double,2>> diffractionPoints;
     //lineo *uselessWalls[10];
 

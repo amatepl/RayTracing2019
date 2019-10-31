@@ -69,9 +69,8 @@ room::room(MainWindow *parente) :
     //Building 7
     walls[16] = new wall(650, 300, 650, 500, 0.0, 0.0, 0.0, 16);
     walls[26] = new wall(650, 500, 950, 500, 0.0, 0.0, 0.0, 26);
-    walls[27] = new wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
+    //walls[27] = new wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
     walls[17] = new wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);
-
     drawWalls();
 
     streetsPenDep["commerceUp"] = 0;
@@ -970,11 +969,17 @@ double room::computeReflexionPar(double thetaI, double epsilonR){
 }
 
 complex <double> room::ArrayFactor(double row, double col, double dx, double alphax, double alphaz,ray *line){
-    complex <double> phi = line->getTheta()*M_PI/180;
-    complex <double> psy = (2.0*M_PI/lambda)*dx*sin(phi)+alphax;
+    complex <double> phi = line->getTheta();
+    complex <double> psy = ((2.0*M_PI/lambda)*dx*sin(phi))+alphax;
     complex <double> i(0.0, 1.0);
     complex <double> xarray = (1.0-exp(i*row*psy))/(1.0-exp(i*psy));
     complex <double> zarray = (1.0-exp(i*col*alphaz)/(1.0-exp(i*alphaz)));
+    if (psy == 0.0){
+        xarray = row;
+    }
+    if (alphaz == 0.0){
+        zarray = col;
+    }
     return xarray*zarray;
 }
 
@@ -1004,7 +1009,7 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     }
     double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
-    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength)*ArrayFactor(4,4,lambda/4,1,1,rayLine.at(0));
+    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength)*ArrayFactor(64,64,lambda/4,0,0,rayLine.at(0));
 
     if(amountSegment==1){
         this->minLength = completeLength; // for delay spread computation
@@ -1068,7 +1073,7 @@ double room::computePrx(complex <double> totalEfield){
     complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
     double distance = this->distance();
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
-    complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
+    complex <double> Voc = (lambda/M_PI)*(totalEfield);// + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI));
     double Prx = 1/(8*Ra)*norm(Voc);
     return Prx;
 }
