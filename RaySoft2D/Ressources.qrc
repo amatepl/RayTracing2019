@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/antenna.png</file>
+        <file>images/mousePointerMove.png</file>
+    </qresource>
+</RCC>
