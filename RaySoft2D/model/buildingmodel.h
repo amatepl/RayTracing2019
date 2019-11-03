@@ -14,6 +14,7 @@ class BuildingModel : public UsableObject, public QRect
     public:
         BuildingModel(int x, int y, int width, int height,
                       double relPerm = 0.0, double cond = 0.0);
+        BuildingModel(int x, int y, int width, int height, int type);
         ~BuildingModel();
 
         map<string,int>* getIntValues();

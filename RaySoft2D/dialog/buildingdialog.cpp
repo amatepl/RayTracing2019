@@ -104,9 +104,13 @@ void BuildingDialog::setIntValues(map<string,int>* values)
     int type = (*values)["type"];
     if(type == 1){
         buildingTypeBox->setCurrentText("Concrete");
+        conductivityBox->setEnabled(false);
+        permittivityBox->setEnabled(false);
     }
     else if (type == 2){
         buildingTypeBox->setCurrentText("Brick");
+        conductivityBox->setEnabled(false);
+        permittivityBox->setEnabled(false);
     }
     else {
         buildingTypeBox->setCurrentText("None");

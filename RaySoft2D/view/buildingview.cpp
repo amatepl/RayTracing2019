@@ -39,7 +39,7 @@ QPixmap BuildingView::image()
 
 void BuildingView::typeProperties(int type)
 {
-    QPen pen(Qt::black, 5);
+    QPen pen(Qt::black, 2);
     switch(type){
         case 1 :
             pen.setColor(Qt::gray);

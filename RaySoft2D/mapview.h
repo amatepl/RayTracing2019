@@ -6,7 +6,10 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPolygonF>
+#include <QFile>
+#include <QTextStream>
 
+#include <iostream>
 
 #include "model/antennamodel.h"
 #include "dialog/antennadialog.h"
@@ -21,6 +24,8 @@
 #include "usableobject.h"
 #include "viewableobject.h"
 
+using namespace std;
+
 class MapView : public QGraphicsScene
 {
     Q_OBJECT
@@ -29,6 +34,7 @@ class MapView : public QGraphicsScene
 
         MapView(QMenu *itemMenu,QWidget *parent = nullptr);
         void setMode(Mode mode);
+        void readExamples(const QString &fileName);
         void deleteObject();
 
     protected:

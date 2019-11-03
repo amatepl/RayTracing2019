@@ -5,5 +5,7 @@
         <file>images/bringToFront.png</file>
         <file>images/delete.png</file>
         <file>images/sendToBack.png</file>
+        <file>examples/canyonmodel.txt</file>
+        <file>examples/streetlaw.txt</file>
     </qresource>
 </RCC>

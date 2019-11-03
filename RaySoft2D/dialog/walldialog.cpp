@@ -97,9 +97,13 @@ void WallDialog::setIntValues(map<string,int>* values)
     int type = (*values)["type"];
     if(type == 1){
         wallTypeBox->setCurrentText("Concrete");
+        conductivityBox->setEnabled(false);
+        permittivityBox->setEnabled(false);
     }
     else if (type == 2){
         wallTypeBox->setCurrentText("Brick");
+        conductivityBox->setEnabled(false);
+        permittivityBox->setEnabled(false);
     }
     else {
         wallTypeBox->setCurrentText("None");

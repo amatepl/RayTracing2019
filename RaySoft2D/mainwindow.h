@@ -59,13 +59,18 @@ class MainWindow : public QMainWindow
         QAction *toFrontAction;
         QAction *sendBackAction;
         QAction *deleteAction;
+        QAction *canyonAction;
+        QAction *lawstreetAction;
 
         QMenu *itemMenu;
+        QMenu *sceneMenu;
 
     private slots:
         void bringToFront();
         void sendToBack();
         void deleteItem();
+        void readLawstreet();
+        void readCanyon();
         void itemInserted();
         void modeButtonClicked(int id);
         void modeButtonChoice(int);

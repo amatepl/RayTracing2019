@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     createMenus();
 
     newScene = new MapView(itemMenu,this);
-    newScene->setSceneRect(QRect(0,0,5000,5000));
+    //newScene->setSceneRect(QRect(0,0,3000,3000));
 
     map = new QGraphicsView(this);
     map->setScene(newScene);
@@ -60,7 +60,7 @@ void MainWindow::generateToolBar()
 
     sceneScaleCombo = new QComboBox;
     QStringList scales;
-    scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
+    scales << tr("25%") << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
     sceneScaleCombo->addItems(scales);
     sceneScaleCombo->setCurrentIndex(2);
     connect(sceneScaleCombo, QOverload<const QString &>::of(&QComboBox::currentIndexChanged),
@@ -137,7 +137,6 @@ void MainWindow::createActions()
     toFrontAction->setShortcut(tr("Ctrl+F"));
     toFrontAction->setStatusTip(tr("Bring item to front"));
     connect(toFrontAction, &QAction::triggered, this, &MainWindow::bringToFront);
-//! [23]
 
     sendBackAction = new QAction(QIcon(":/images/sendToBack.png"), tr("Send to &Back"), this);
     sendBackAction->setShortcut(tr("Ctrl+T"));
@@ -153,6 +152,12 @@ void MainWindow::createActions()
     exitAction->setShortcuts(QKeySequence::Quit);
     exitAction->setStatusTip(tr("Quit Scenediagram example"));
     connect(exitAction, &QAction::triggered, this, &QWidget::close);
+
+    lawstreetAction = new QAction(tr("Law street neighborhood"), this);
+    connect(lawstreetAction,&QAction::triggered,this,&MainWindow::readLawstreet);
+
+    canyonAction = new QAction(tr("Canyon model"), this);
+    connect(canyonAction,&QAction::triggered,this,&MainWindow::readCanyon);
 }
 
 void MainWindow::createMenus()
@@ -162,6 +167,10 @@ void MainWindow::createMenus()
     itemMenu->addSeparator();
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
+
+    sceneMenu = menuBar()->addMenu(tr("&Example"));
+    sceneMenu->addAction(canyonAction);
+    sceneMenu->addAction(lawstreetAction);
 }
 
 void MainWindow::deleteItem()
@@ -222,4 +231,12 @@ void MainWindow::modeButtonClicked(int id)
 void MainWindow::modeButtonChoice(int)
 {
     newScene->setMode(MapView::Mode(modeButton->checkedId()));
+}
+
+void MainWindow::readLawstreet(){
+    newScene->readExamples(":/examples/streetlaw.txt");
+}
+
+void MainWindow::readCanyon(){
+    newScene->readExamples(":/examples/canyonmodel.txt");
 }

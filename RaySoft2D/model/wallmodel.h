@@ -13,6 +13,7 @@ class WallModel : public UsableObject, public QLine
     public:
         WallModel(int x1, int y1, int x2, int y2,
                   double relPerm = 0.0, double cond = 0.0);
+        WallModel(int x1, int y1, int x2, int y2, int type);
         ~WallModel();
 
         map<string,int>* getIntValues();
