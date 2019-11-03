@@ -1,10 +1,11 @@
-#include "buildingview.h"
+#include "view/buildingview.h"
 
-BuildingView::BuildingView(UsableObject *building, DialogableObject *dialog) : QGraphicsRectItem()
+BuildingView::BuildingView(UsableObject *building, DialogableObject *dialog, QMenu *itemMenu) : QGraphicsRectItem()
 {
     m_buildingModel = building;
     m_buildingDialog = dialog;
     m_intProperties = building->getIntValues();
+    m_itemMenu = itemMenu;
     setRect((*m_intProperties)["top left x"],(*m_intProperties)["top left y"],
             (*m_intProperties)["width"],(*m_intProperties)["height"]);
     setRotation((*m_intProperties)["orientation"]);
@@ -16,6 +17,12 @@ BuildingView::BuildingView(UsableObject *building, DialogableObject *dialog) : Q
 
     connect(m_buildingDialog,SIGNAL(propertiesChanged(map<string,int>*,map<string,double>*)),
             this,SLOT(propertiesChanged(map<string,int>*,map<string,double>*)));
+}
+
+BuildingView::~BuildingView(){
+    cout << "Building view has been removed" << endl;
+    delete(m_buildingDialog);
+    delete(m_buildingModel);
 }
 
 QPixmap BuildingView::image()
@@ -62,6 +69,13 @@ void BuildingView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     m_buildingDialog->setDoubleValues(m_buildingModel->getDoubleValues());
     m_buildingDialog->exec();
     QGraphicsItem::mouseDoubleClickEvent(event);
+}
+
+void BuildingView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    scene()->clearSelection();
+    setSelected(true);
+    m_itemMenu->exec(event->screenPos());
 }
 
 void BuildingView::propertiesChanged(map<string,int>* intValues,map<string,double>* doubleValues)

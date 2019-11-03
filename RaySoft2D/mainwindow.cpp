@@ -2,7 +2,10 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    newScene = new MapView(this);
+    createActions();
+    createMenus();
+
+    newScene = new MapView(itemMenu,this);
     newScene->setSceneRect(QRect(0,0,5000,5000));
 
     map = new QGraphicsView(this);
@@ -125,6 +128,77 @@ void MainWindow::generateCentralWidget()
     mainWidget->setLayout(mainLayout);
 
     setCentralWidget(mainWidget);
+}
+
+void MainWindow::createActions()
+{
+    toFrontAction = new QAction(QIcon(":/images/bringToFront.png"),
+                                tr("Bring to &Front"), this);
+    toFrontAction->setShortcut(tr("Ctrl+F"));
+    toFrontAction->setStatusTip(tr("Bring item to front"));
+    connect(toFrontAction, &QAction::triggered, this, &MainWindow::bringToFront);
+//! [23]
+
+    sendBackAction = new QAction(QIcon(":/images/sendToBack.png"), tr("Send to &Back"), this);
+    sendBackAction->setShortcut(tr("Ctrl+T"));
+    sendBackAction->setStatusTip(tr("Send item to back"));
+    connect(sendBackAction, &QAction::triggered, this, &MainWindow::sendToBack);
+
+    deleteAction = new QAction(QIcon(":/images/delete.png"), tr("&Delete"), this);
+    deleteAction->setShortcut(tr("Delete"));
+    deleteAction->setStatusTip(tr("Delete item from diagram"));
+    connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteItem);
+
+    exitAction = new QAction(tr("E&xit"), this);
+    exitAction->setShortcuts(QKeySequence::Quit);
+    exitAction->setStatusTip(tr("Quit Scenediagram example"));
+    connect(exitAction, &QAction::triggered, this, &QWidget::close);
+}
+
+void MainWindow::createMenus()
+{
+    itemMenu = menuBar()->addMenu(tr("&Item"));
+    itemMenu->addAction(deleteAction);
+    itemMenu->addSeparator();
+    itemMenu->addAction(toFrontAction);
+    itemMenu->addAction(sendBackAction);
+}
+
+void MainWindow::deleteItem()
+{
+    newScene->deleteObject();
+}
+
+void MainWindow::bringToFront()
+{
+    if (newScene->selectedItems().isEmpty())
+        return;
+
+    QGraphicsItem *selectedItem = newScene->selectedItems().first();
+    const QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
+
+    qreal zValue = 0;
+    for (const QGraphicsItem *item : overlapItems) {
+        if (item->zValue() >= zValue)
+            zValue = item->zValue() + 0.1;
+    }
+    selectedItem->setZValue(zValue);
+}
+
+void MainWindow::sendToBack()
+{
+    if (newScene->selectedItems().isEmpty())
+        return;
+
+    QGraphicsItem *selectedItem = newScene->selectedItems().first();
+    const QList<QGraphicsItem *> overlapItems = selectedItem->collidingItems();
+
+    qreal zValue = 0;
+    for (const QGraphicsItem *item : overlapItems) {
+        if (item->zValue() <= zValue)
+            zValue = item->zValue() - 0.1;
+    }
+    selectedItem->setZValue(zValue);
 }
 
 void MainWindow::itemInserted()

@@ -13,6 +13,9 @@
 #include <QButtonGroup>
 #include <QToolBar>
 #include <QComboBox>
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
 
 #include "mapview.h"
 
@@ -25,13 +28,14 @@ class MainWindow : public QMainWindow
         void sceneScaleChanged(const QString &scale);
         void generateToolBar();
         void generateCentralWidget();
+        void createActions();
+        void createMenus();
 
     protected:
 
     private:
         MapView *newScene;
         QGraphicsView *map;
-
         QLineEdit *powTx;
         QLineEdit *powRx;
         QLineEdit *distance;
@@ -42,22 +46,26 @@ class MainWindow : public QMainWindow
         QLineEdit *coherenceTime;
         QFormLayout *channelFormLayout;
         QGroupBox *channelProperties;
-
         QPushButton *quit;
         QPushButton *launch;
         QHBoxLayout *buttonWindow;
-
         QGridLayout *mainLayout;
-
         QWidget *mainWidget;
-
         QButtonGroup *modeButton;
-
         QToolBar *modeToolBar;
+        QComboBox *sceneScaleCombo;  
 
-        QComboBox *sceneScaleCombo;
+        QAction *exitAction;
+        QAction *toFrontAction;
+        QAction *sendBackAction;
+        QAction *deleteAction;
+
+        QMenu *itemMenu;
 
     private slots:
+        void bringToFront();
+        void sendToBack();
+        void deleteItem();
         void itemInserted();
         void modeButtonClicked(int id);
         void modeButtonChoice(int);

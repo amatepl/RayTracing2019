@@ -1,10 +1,11 @@
-#include "antennaview.h"
+#include "view/antennaview.h"
 
-AntennaView::AntennaView(UsableObject *antenna, DialogableObject *dialog) : QGraphicsPixmapItem()
+AntennaView::AntennaView(UsableObject *antenna, DialogableObject *dialog, QMenu *itemMenu) : QGraphicsPixmapItem()
 {
     m_antennaModel = antenna;
     m_antennaDialog = dialog;
     m_intProperties = antenna->getIntValues();
+    m_itemMenu = itemMenu;
     icon = new QPixmap(":/images/antenna.png");
     setPixmap(*icon);
 
@@ -20,6 +21,12 @@ AntennaView::AntennaView(UsableObject *antenna, DialogableObject *dialog) : QGra
             this,SLOT(propertiesChanged(map<string,int>*,map<string,double>*)));
 }
 
+AntennaView::~AntennaView(){
+    cout << "Antenna view has been removed" << endl;
+    delete(m_antennaDialog);
+    delete(m_antennaModel);
+}
+
 QPixmap AntennaView::image()
 {
     QPixmap icon(":/images/antenna.png");
@@ -31,6 +38,13 @@ void AntennaView::changePos(QPointF &pos){
     (*m_intProperties)["x center"]=int(pos.x());
     (*m_intProperties)["y center"]=int(pos.y());
     m_antennaModel->setIntValues(m_intProperties);
+}
+
+void AntennaView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    scene()->clearSelection();
+    setSelected(true);
+    m_itemMenu->exec(event->screenPos());
 }
 
 void AntennaView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)

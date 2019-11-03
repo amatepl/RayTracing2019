@@ -1,17 +1,23 @@
-#ifndef BUILDINGMODEL_H
-#define BUILDINGMODEL_H
+#ifndef ANTENNAMODEL_H
+#define ANTENNAMODEL_H
 
 #include <QObject>
 #include <QWidget>
+#include <QRect>
 
 #include <usableobject.h>
+#include <cmath>
+#include <map>
+#include <string>
+#include <iostream>
 
-class BuildingModel : public UsableObject, public QRect
+using namespace std;
+
+class AntennaModel :public UsableObject, public QRect
 {
     public:
-        BuildingModel(int x, int y, int width, int height,
-                      double relPerm = 0.0, double cond = 0.0);
-        ~BuildingModel() {}
+        AntennaModel(int x, int y, int width, int height);
+        ~AntennaModel();
 
         map<string,int>* getIntValues();
         void setIntValues(map<string,int>* values);
@@ -20,7 +26,6 @@ class BuildingModel : public UsableObject, public QRect
 
     private:
         map<string,int>* m_intProperties;
-        map<string,double>* m_doubleProperties;
 };
 
-#endif // BUILDINGMODEL_H
+#endif // ANTENNAMODEL_H

@@ -1,10 +1,11 @@
-#include "wallview.h"
+#include "view/wallview.h"
 
-WallView::WallView(UsableObject *wall, DialogableObject *dialog) : QGraphicsLineItem()
+WallView::WallView(UsableObject *wall, DialogableObject *dialog, QMenu *itemMenu) : QGraphicsLineItem()
 {
     m_wallModel = wall;
     m_wallDialog = dialog;
     m_intProperties = wall->getIntValues();
+    m_itemMenu = itemMenu;
     setLine((*m_intProperties)["x1"],(*m_intProperties)["y1"],
             (*m_intProperties)["x2"],(*m_intProperties)["y2"]);
     typeProperties((*m_intProperties)["type"]);
@@ -15,6 +16,12 @@ WallView::WallView(UsableObject *wall, DialogableObject *dialog) : QGraphicsLine
 
     connect(m_wallDialog,SIGNAL(propertiesChanged(map<string,int>*,map<string,double>*)),
             this,SLOT(propertiesChanged(map<string,int>*,map<string,double>*)));
+}
+
+WallView::~WallView(){
+    cout << "Wall view has been removed" << endl;
+    delete(m_wallDialog);
+    delete(m_wallModel);
 }
 
 QPixmap WallView::image()
@@ -66,6 +73,13 @@ void WallView::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     m_wallDialog->setDoubleValues(m_wallModel->getDoubleValues());
     m_wallDialog->exec();
     QGraphicsItem::mouseDoubleClickEvent(event);
+}
+
+void WallView::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    scene()->clearSelection();
+    setSelected(true);
+    m_itemMenu->exec(event->screenPos());
 }
 
 void WallView::propertiesChanged(map<string,int>* intValues,map<string,double>* doubleValues)

@@ -1,4 +1,4 @@
-#include "walldialog.h"
+#include "dialog/walldialog.h"
 
 WallDialog::WallDialog()
 {
@@ -61,6 +61,11 @@ WallDialog::WallDialog()
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
     connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
     connect(wallTypeBox,SIGNAL(activated(QString)),this,SLOT(changeType(QString)));
+}
+
+WallDialog::~WallDialog()
+{
+    cout << "Wall dialog has been removed" << endl;
 }
 
 map<string,int>* WallDialog::getIntValues()

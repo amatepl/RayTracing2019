@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>images/antenna.png</file>
         <file>images/mousePointerMove.png</file>
+        <file>images/bringToFront.png</file>
+        <file>images/delete.png</file>
+        <file>images/sendToBack.png</file>
     </qresource>
 </RCC>

@@ -8,15 +8,15 @@
 #include <QPolygonF>
 
 
-#include "antennamodel.h"
-#include "antennadialog.h"
-#include "antennaview.h"
-#include "buildingmodel.h"
-#include "buildingdialog.h"
-#include "buildingview.h"
-#include "wallmodel.h"
-#include "walldialog.h"
-#include "wallview.h"
+#include "model/antennamodel.h"
+#include "dialog/antennadialog.h"
+#include "view/antennaview.h"
+#include "model/buildingmodel.h"
+#include "dialog/buildingdialog.h"
+#include "view/buildingview.h"
+#include "model/wallmodel.h"
+#include "dialog/walldialog.h"
+#include "view/wallview.h"
 #include "dialogableobject.h"
 #include "usableobject.h"
 #include "viewableobject.h"
@@ -27,8 +27,9 @@ class MapView : public QGraphicsScene
     public:
         enum Mode {InsertWall,InsertBuilding,InsertAntenna,MoveItem};
 
-        MapView(QWidget *parent = nullptr);
+        MapView(QMenu *itemMenu,QWidget *parent = nullptr);
         void setMode(Mode mode);
+        void deleteObject();
 
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -36,10 +37,12 @@ class MapView : public QGraphicsScene
 
     private:
         Mode myMode;
+        QMenu *m_itemMenu;
         vector <ViewableObject*> m_viewableObject;
+        vector <ViewableObject*>::iterator viewable;
 
     signals:
-        void itemInserted(QGraphicsItem *item);
+        void itemInserted(QGraphicsItem* item);
 };
 
 #endif // MAPVIEW_H

@@ -1,4 +1,4 @@
-#include "buildingdialog.h"
+#include "dialog/buildingdialog.h"
 
 BuildingDialog::BuildingDialog()
 {
@@ -66,6 +66,11 @@ BuildingDialog::BuildingDialog()
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
     connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
     connect(buildingTypeBox,SIGNAL(activated(QString)),this,SLOT(changeType(QString)));
+}
+
+BuildingDialog::~BuildingDialog()
+{
+    cout << "Building dialog has been removed" << endl;
 }
 
 map<string,int>* BuildingDialog::getIntValues()

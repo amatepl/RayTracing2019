@@ -1,34 +1,32 @@
 QT += widgets
 
-HEADERS += \
-    antennadialog.h \
-    antennamodel.h \
-    antennaview.h \
-    buildingdialog.h \
-    buildingmodel.h \
-    buildingview.h \
+HEADERS += dialog/antennadialog.h \
+    dialog/buildingdialog.h \
+    dialog/walldialog.h \
     dialogableobject.h \
     mainwindow.h \
     mapview.h \
+    model/antennamodel.h \
+    model/buildingmodel.h \
+    model/wallmodel.h \
     usableobject.h \
-    viewableobject.h \
-    walldialog.h \
-    wallmodel.h \
-    wallview.h
+    view/antennaview.h \
+    view/buildingview.h \
+    view/wallview.h \
+    viewableobject.h
 
-SOURCES += \
-    antennadialog.cpp \
-    antennamodel.cpp \
-    antennaview.cpp \
-    buildingdialog.cpp \
-    buildingmodel.cpp \
-    buildingview.cpp \
+SOURCES += dialog/antennadialog.cpp \
+    dialog/buildingdialog.cpp \
+    dialog/walldialog.cpp \
     main.cpp \
     mainwindow.cpp \
     mapview.cpp \
-    walldialog.cpp \
-    wallmodel.cpp \
-    wallview.cpp
+    model/antennamodel.cpp \
+    model/buildingmodel.cpp \
+    model/wallmodel.cpp \
+    view/antennaview.cpp \
+    view/buildingview.cpp \
+    view/wallview.cpp
 
 RESOURCES += \
     Ressources.qrc

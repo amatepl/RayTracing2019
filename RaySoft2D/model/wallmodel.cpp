@@ -1,4 +1,4 @@
-#include "wallmodel.h"
+#include "model/wallmodel.h"
 
 WallModel::WallModel(int x1, int y1, int x2, int y2,
                      double relPerm, double cond) : QLine(x1,y1,x2,y2)
@@ -13,6 +13,10 @@ WallModel::WallModel(int x1, int y1, int x2, int y2,
     (*m_intProperties)["x2"] = x2;
     (*m_intProperties)["y2"] = y2;
     (*m_intProperties)["type"] = 3;
+}
+
+WallModel::~WallModel(){
+    cout << "Wall model has been removed" << endl;
 }
 
 map<string,int>* WallModel::getIntValues(){

@@ -1,4 +1,4 @@
-#include "buildingmodel.h"
+#include "model/buildingmodel.h"
 
 BuildingModel::BuildingModel(int x, int y, int width, int height,
                              double relPerm, double cond) : QRect(x,y,width,height)
@@ -14,6 +14,10 @@ BuildingModel::BuildingModel(int x, int y, int width, int height,
     (*m_intProperties)["height"] = height;
     (*m_intProperties)["orientation"] = 0;
     (*m_intProperties)["type"] = 3;
+}
+
+BuildingModel::~BuildingModel(){
+    cout << "Building model has been removed" << endl;
 }
 
 map<string,int>* BuildingModel::getIntValues(){

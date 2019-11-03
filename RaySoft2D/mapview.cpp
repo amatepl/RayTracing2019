@@ -1,7 +1,8 @@
 #include "mapview.h"
 
-MapView::MapView(QWidget *parent) : QGraphicsScene(parent)
+MapView::MapView(QMenu *itemMenu,QWidget *parent) : QGraphicsScene(parent)
 {
+    m_itemMenu = itemMenu;
     myMode = MoveItem;
 }
 
@@ -19,7 +20,7 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
         UsableObject *m_antenna = new AntennaModel(0,0,20,20);
         DialogableObject *m_dialog = new AntennaDialog();
-        AntennaView *m_antennaView = new AntennaView(m_antenna,m_dialog);
+        AntennaView *m_antennaView = new AntennaView(m_antenna,m_dialog,m_itemMenu);
         addItem(m_antennaView);
         m_antennaView->changePos(p);
         m_viewableObject.push_back(m_antennaView);
@@ -29,7 +30,7 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
         UsableObject *m_wall = new WallModel(0,0,0,20);
         DialogableObject *m_dialog = new WallDialog();
-        WallView *m_wallView = new WallView(m_wall,m_dialog);
+        WallView *m_wallView = new WallView(m_wall,m_dialog,m_itemMenu);
         addItem(m_wallView);
         m_wallView->changePos(p);
         m_viewableObject.push_back(m_wallView);
@@ -39,13 +40,26 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
         UsableObject *m_building = new BuildingModel(0,0,50,50);
         DialogableObject *m_dialog = new BuildingDialog();
-        BuildingView *m_buildingView = new BuildingView(m_building,m_dialog);
+        BuildingView *m_buildingView = new BuildingView(m_building,m_dialog,m_itemMenu);
         addItem(m_buildingView);
         m_buildingView->changePos(p);
         emit itemInserted(m_buildingView);
         m_viewableObject.push_back(m_buildingView);
     }
     QGraphicsScene::mousePressEvent(mouseEvent);
+}
+
+void MapView::deleteObject()
+{
+    const QList<QGraphicsItem *> items = selectedItems();
+    viewable=m_viewableObject.begin();
+    for (unsigned long long i = 0; i <m_viewableObject.size(); i++){
+        if (m_viewableObject.at(i)->isSelectedView()){
+            delete(m_viewableObject.at(i));
+            m_viewableObject.erase(viewable);
+        }
+        ++viewable;
+    }
 }
 
 void MapView::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)

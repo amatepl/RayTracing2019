@@ -1,4 +1,4 @@
-#include "antennamodel.h"
+#include "model/antennamodel.h"
 
 AntennaModel::AntennaModel(int x, int y, int width, int height) : QRect(x,y,width,height)
 {
@@ -10,6 +10,9 @@ AntennaModel::AntennaModel(int x, int y, int width, int height) : QRect(x,y,widt
     (*m_intProperties)["height"] = height;
 }
 
+AntennaModel::~AntennaModel(){
+    cout << "Antenna model has been removed" << endl;
+}
 
 map<string,int>* AntennaModel::getIntValues(){
     return m_intProperties;

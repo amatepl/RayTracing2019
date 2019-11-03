@@ -1,4 +1,4 @@
-#include "antennadialog.h"
+#include "dialog/antennadialog.h"
 
 AntennaDialog::AntennaDialog()
 {
@@ -35,6 +35,11 @@ AntennaDialog::AntennaDialog()
 
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
     connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
+}
+
+AntennaDialog::~AntennaDialog()
+{
+    cout << "Antenna dialog has been removed" << endl;
 }
 
 map<string,int>* AntennaDialog::getIntValues(){

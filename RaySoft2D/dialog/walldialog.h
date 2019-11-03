@@ -14,14 +14,17 @@
 
 #include <dialogableobject.h>
 
-#include "wallview.h"
+#include "view/wallview.h"
+
+#include <iostream>
+using namespace std;
 
 class WallDialog : public DialogableObject
 {
     Q_OBJECT
     public:
         WallDialog();
-        ~WallDialog() {}
+        ~WallDialog();
 
         map<string,int>* getIntValues();
         void setIntValues(map<string,int>* values);

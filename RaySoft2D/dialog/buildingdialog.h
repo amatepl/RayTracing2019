@@ -12,17 +12,21 @@
 #include <QGroupBox>
 #include <QFormLayout>
 
+#include <iostream>
+
 
 #include <dialogableobject.h>
 
-#include "buildingview.h"
+#include "view/buildingview.h"
+
+using namespace std;
 
 class BuildingDialog :public DialogableObject
 {
     Q_OBJECT
     public:
         BuildingDialog();
-        ~BuildingDialog() {}
+        ~BuildingDialog();
 
         map<string,int>* getIntValues();
         void setIntValues(map<string,int>* values);

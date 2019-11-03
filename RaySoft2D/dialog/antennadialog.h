@@ -12,14 +12,18 @@
 #include <QString>
 #include <dialogableobject.h>
 
-#include "antennaview.h"
+#include <iostream>
+
+#include "view/antennaview.h"
+
+using namespace std;
 
 class AntennaDialog :public DialogableObject
 {
     Q_OBJECT
     public:
         AntennaDialog();
-        ~AntennaDialog() {}
+        ~AntennaDialog();
 
         map<string,int>* getIntValues();
         void setIntValues(map<string,int>* values);
