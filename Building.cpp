@@ -1,6 +1,6 @@
 #include "Building.h"
 
-Building::Building(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, QGraphicsScene *scene):
+Building::Building(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, AbstractScene *scene):
     QRectF(x1,y1,x4-x1,y2-y1),m_scene(scene)
 {
 
@@ -10,7 +10,6 @@ Building::Building(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y
 //    |           |
 //    2----(2)----3
 
-    //m_scene = scene;
 
     //m_p1 = QPointF(x1,y1);m_p2 = QPointF(x2,y2);m_p3 = QPointF(x3,y3);m_p4 = QPointF(x4,y4);
     //m_initialPosition = topLeft();
@@ -34,25 +33,14 @@ Building::Building(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y
     //QGraphicsRectItem graphicsBuidling((QRectF)*this);
 
     //m_view->draw(&graphicsBuidling);
-//    QPen outlinePen(QColor(0, 0, 0, 255));
-//    outlinePen.setWidth(2);
 
-//    QBrush brush(Qt::BDiagPattern);
-
-
-
-//    QGraphicsRectItem *rect = scene->addRect(*this, outlinePen, brush );
-//    rect->setFlag(QGraphicsItem::ItemIsMovable, true);
-//    rect->setFlag(QGraphicsItem::ItemIsSelectable, true);
-//    rect->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
     addToScene();
 
 }
 
-Building::Building(const QPointF &p1, const QPointF &p3, QGraphicsScene *scene): QRectF(p1,p3),m_scene(scene)
+Building::Building(const QPointF &p1, const QPointF &p3, AbstractScene *scene): QRectF(p1,p3),m_scene(scene)
 {
-    //m_view = view;
-    //m_scene = scene;
+
     //m_initialPosition = topLeft();
 
     QPointF p2(p1.x(),p3.y()), p4(p1.y(),p3.x());
@@ -117,7 +105,9 @@ void Building::addToScene()
      m_graphicsBuilding->setPos(topLeft());
    //  m_graphicsBuilding->setPos();
     //QGraphicsItem *it = m_graphicsBuilding->parentItem();
-    m_scene->addItem(m_graphicsBuilding);
+
+     m_scene->addToScene(m_graphicsBuilding);
+    //m_scene->addItem(m_graphicsBuilding);
 
     //cout<<"Before x: "<<m_graphicsBuilding->scenePos().x()<< " y: "<<m_graphicsBuilding->scenePos().y()<<endl;
     //cout<<"Before x: "<<m_graphicsBuilding->mapToScene(m_graphicsBuilding->pos()).x()<<" y: "<<m_graphicsBuilding->scenePos().y()<<endl;

@@ -8,7 +8,8 @@
 #include <QPolygonF>
 #include "Wall.h"
 //#include "Visualizer.h"
-#include <QGraphicsScene>
+//#include <QGraphicsScene>
+#include "AbstractScene.h"
 #include "GraphicsBuilding.h"
 #include "MovableObject.h"
 #include <iostream>
@@ -19,8 +20,8 @@ using namespace std;
 class Building: public QRectF, public MovableObject
 {
 public:
-    Building(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, QGraphicsScene *scene);
-    Building(const QPointF &p1, const QPointF &p3, QGraphicsScene *scene);
+    Building(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, AbstractScene *scene);
+    Building(const QPointF &p1, const QPointF &p3, AbstractScene *scene);
     ~Building(void);
     void addToScene();
     void moveToPosition(const QPointF &pos);
@@ -39,7 +40,7 @@ private:
 //    QPointF m_p3;
 //    QPointF m_p4;
     //Visualizer *m_view;
-    QGraphicsScene *m_scene;
+    AbstractScene *m_scene;
 
 
 

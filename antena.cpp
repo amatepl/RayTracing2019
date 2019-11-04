@@ -3,12 +3,12 @@
 // Very basic Trasmitter type object
 
 antena::antena(QPointF p, int type):
-QGraphicsEllipseItem()/*,QPointF()*/,pos(p),antenaType(type),m_vector(QPointF(1,1))
+QGraphicsEllipseItem()/*,QPointF()*/,m_pos(p),antenaType(type),m_vector(QPointF(1,1))
 
 {
     m_building = nullptr;
 
-    this->setRect(pos.x(),pos.y(),1,1);
+    this->setRect(m_pos.x(),m_pos.y(),1,1);
     // 0 for output (transmiter) 1 for input (receiver)
     //myRoom = scene;
     QBrush noBrush(Qt::NoBrush);
@@ -46,12 +46,12 @@ QPen antena::setColor(){
 
 // --> Getters && Setters
 
-int antena::getPosX(){return pos.x();}
+int antena::getPosX(){return m_pos.x();}
 //int Trasmitter::getPosX(){return this->x();}
-int antena::getPosY(){return pos.y();}
-QPointF antena::getPos()const{return pos;}
+int antena::getPosY(){return m_pos.y();}
+QPointF antena::getPos()const{return m_pos;}
 
-void antena::setPosi(QPointF posi){this->pos = posi;
+void antena::setPosi(QPointF posi){this->m_pos = posi;
             this->setRect(posi.x(),posi.y(),1,1);
             }
 
@@ -65,16 +65,16 @@ QPolygonF antena::getIlluminationZone(const QRectF &rect)const{
     cout<<"Rect bottom right: " <<rect.bottomRight().x()<<", "<<rect.bottomRight().y()<<endl;
     cout<<"Rect top left: " <<rect.topLeft().x()<<", "<<rect.topLeft().y()<<endl;
 
-    unboundedZone<<pos<<point2+pos<<point3+pos;
+    unboundedZone<<m_pos<<point2+m_pos<<point3+m_pos;
 
-    iluminationZone<<pos
-                  << sceneRectIntersection(rect,QLineF(pos,pos+point2));
+    iluminationZone<<m_pos
+                  << sceneRectIntersection(rect,QLineF(m_pos,m_pos+point2));
 
     for (QPointF p: boundaryCorners(rect,unboundedZone)) {
         iluminationZone<<p;
     }
 
-    iluminationZone<<sceneRectIntersection(rect,QLineF(pos,pos+point3));
+    iluminationZone<<sceneRectIntersection(rect,QLineF(m_pos,m_pos+point3));
 
     return iluminationZone;
 }
@@ -95,16 +95,16 @@ QPolygonF antena::getIlluminationZone()const{
     //cout<<"Rect bottom right: " <<m_sceneBoundary.bottomRight().x()<<", "<<m_sceneBoundary.bottomRight().y()<<endl;
     //cout<<"Rect top left: " <<m_sceneBoundary.topLeft().x()<<", "<<m_sceneBoundary.topLeft().y()<<endl;
 
-    unboundedZone<<pos<<point2+pos<<point3+pos;
+    unboundedZone<<m_pos<<point2+m_pos<<point3+m_pos;
 
-    iluminationZone<<pos
-                  << sceneRectIntersection(m_sceneBoundary,QLineF(pos,pos+point2));
+    iluminationZone<<m_pos
+                  << sceneRectIntersection(m_sceneBoundary,QLineF(m_pos,m_pos+point2));
 
     for (QPointF p: boundaryCorners(m_sceneBoundary,unboundedZone)) {
         iluminationZone<<p;
     }
 
-    iluminationZone<<sceneRectIntersection(m_sceneBoundary,QLineF(pos,pos+point3));
+    iluminationZone<<sceneRectIntersection(m_sceneBoundary,QLineF(m_pos,m_pos+point3));
 
     return iluminationZone;
 }
@@ -160,7 +160,11 @@ vector <QPointF> antena::boundaryCorners(const QRectF &rect, const QPolygonF &un
     return points;
 }
 
-void antena::notifyParent(const QPointF &point) {}
+void antena::notifyParent(const QPointF &point, vector<ray> *wholeRay) {
+    ray newRay(m_pos,point);
+    wholeRay->push_back(newRay);
+    m_receiver->addWholeRay(wholeRay);
+}
 
 QPointF antena::getPosition()const {
     return getPos();
@@ -168,4 +172,17 @@ QPointF antena::getPosition()const {
 
 void antena::setIlluminatedZone(const QPolygonF &zone){
     m_zone = zone;
+}
+
+void antena::notifyObserver(const QPointF &pos){
+    if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
+        vector<ray> *wholeRay = new vector<ray>;
+        ray newRay(m_pos,pos);
+        wholeRay->push_back(newRay);
+        m_receiver->addWholeRay(wholeRay);
+    }
+}
+
+void antena::setReceiver(AbstractReceiver *receiver){
+    m_receiver = receiver;
 }

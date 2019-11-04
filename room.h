@@ -12,6 +12,8 @@
 #include "Building.h"
 #include "AntenaImage.h"
 //#include "Visualizer.h"
+#include "AbstractScene.h"
+#include "Receiver.h"
 
 // Libraries
 #include <complex>
@@ -28,7 +30,7 @@ struct forImage;
 
 class antena;
 
-class room : public QGraphicsScene /*public Visualizer*/ //, private QImage
+class room : public QGraphicsScene, public AbstractScene /*public Visualizer*/ //, private QImage
 {
 
     Q_OBJECT
@@ -129,15 +131,21 @@ public:
 
     vector <Line> illuminatedWalls(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
     void createImages();
+    void addToScene(QGraphicsItem *item) override;
 
+    // AbstractScene methods
+    void drawRays(vector<ray> *rays) override;
+    void clearRays() override;
+    void computeEMField(vector<ray> *rays) override;
+    void clearEMFIeld() override;
 
 signals:
     void mouseScenePosition(QPointF &pos);
 
 protected:
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
     int antenaType;
 
@@ -160,10 +168,12 @@ private:
 
     // General objects
     antena *Transmitter;
-    antena *Receiver;
+    antena *m_Receiver;     //old receiver
+    Receiver *m_receiver;   // new receiver
     Wall *walls[28];    // For easier use walls are put in arrays
     vector<Wall*> m_walls;
     vector <std::array <double,2>> diffractionPoints;
+    vector <QGraphicsLineItem*> m_rays;
     //vector <QPointF*> diffractionPoints;
     //lineo *uselessWalls[10];
 //    struct forImage{
@@ -333,6 +343,7 @@ private:
 
     double computePrx(complex <double> totalEfield);
     complex <double> computeEfield(vector<ray*> rayLine);
+    complex <double> computeEfield(vector<ray> *rayLine);
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
     complex <double> computeEfieldGround();

@@ -16,6 +16,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
     AbstractAntena.cpp \
     AntenaImage.cpp \
+    GraphicsReceiver.cpp \
     Receiver.cpp \
     antena.cpp \
     room.cpp \
@@ -34,7 +35,10 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     AbstractAntena.h \
+    AbstractReceiver.h \
+    AbstractScene.h \
     AntenaImage.h \
+    GraphicsReceiver.h \
     Receiver.h \
     ReceiverObserver.h \
     antena.h \

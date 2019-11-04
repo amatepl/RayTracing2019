@@ -9,6 +9,9 @@
 #include <iostream>
 #include <QLineF>
 #include <AbstractAntena.h>
+#include "ReceiverObserver.h"
+#include "ray.h"
+#include "AbstractReceiver.h"
 
 using namespace std;
 //class room;
@@ -16,7 +19,7 @@ using namespace std;
 
 //class QBrush;
 
-class antena: public QGraphicsEllipseItem,public AbstractAntena/*, public QPointF*/
+class antena: public QGraphicsEllipseItem,public AbstractAntena, public ReceiverObserver/*, public QPointF*/
 {
 public:
     antena(/*room *scene = 0,*/ QPointF p = QPointF() , int type = 0);
@@ -29,21 +32,24 @@ public:
 
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
-    void notifyParent(const QPointF &point) override;
+    void notifyParent(const QPointF &point, vector<ray>* wholeRay) override;
     QPointF getPosition()const override;
     QPolygonF getIlluminationZone()const override;
     void setSceneBoundary(const QRectF &rect);
     void setIlluminatedZone(const QPolygonF &zone) override;
     QPolygonF getIlluminatedZone()const override;
+    void notifyObserver(const QPointF &pos) override;
+    void setReceiver(AbstractReceiver *receiver);
 
 private:
     //room *myRoom;
-    QPointF pos;
+    QPointF m_pos;
     int antenaType;
     QPen setColor();
     QPointF m_vector;
     QRectF m_sceneBoundary;
     QPolygonF m_zone;
+    AbstractReceiver *m_receiver;
 };
 
 #endif // ANTENA_H

@@ -1,8 +1,6 @@
 #ifndef RECEIVEROBSERVER_H
 #define RECEIVEROBSERVER_H
 
-#endif // RECEIVEROBSERVER_H
-
 class QPointF;
 
 class ReceiverObserver
@@ -12,3 +10,8 @@ class ReceiverObserver
     //virtual ~ReceiverObserver(void);
 
 };
+
+
+#endif // RECEIVEROBSERVER_H
+
+

@@ -1,6 +1,6 @@
 #include "Model.h"
 
-Model::Model(QGraphicsScene *scene)
+Model::Model(AbstractScene *scene)
 {
     QPointF p1(50,50),p2(800,800);
     //Building building1(1,1,1,200,200,200,200,1,scene);

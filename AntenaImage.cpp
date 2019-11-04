@@ -56,11 +56,24 @@ void AntenaImage::setIlluminatedZone(const QPolygonF &zone){
 }
 
 void AntenaImage::notifyObserver(const QPointF &pos){
-
+    if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
+        vector<ray> *wholeRay = new vector<ray>;
+        QLineF line(*this,pos);
+        QPointF reflectionPoint;
+        m_wall.intersect(line,&reflectionPoint);
+        ray newRay(reflectionPoint,pos,line.angleTo(m_wall));
+        wholeRay->push_back(newRay);
+        m_parent->notifyParent(reflectionPoint,wholeRay);
+    }
 }
 
-void AntenaImage::notifyParent(const QPointF &point){
-
+void AntenaImage::notifyParent(const QPointF &point, vector<ray> *wholeRay){
+    QLineF line(*this,point);
+    QPointF reflectionPoint;
+    m_wall.intersect(line,&reflectionPoint);
+    ray newRay(reflectionPoint,point,line.angleTo(m_wall));
+    wholeRay->push_back(newRay);
+    m_parent->notifyParent(reflectionPoint,wholeRay);
 }
 
 QPointF AntenaImage::getPosition() const {

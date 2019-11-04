@@ -8,6 +8,7 @@
 #include "Line.h"
 #include "ReceiverObserver.h"
 #include "AbstractAntena.h"
+#include "ray.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ public:
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
     void setIlluminatedZone(const QPolygonF &zone) override;
     void notifyObserver(const QPointF &pos) override;
-    void notifyParent(const QPointF &point) override;
+    void notifyParent(const QPointF &point, vector<ray>* wholeRay) override;
     QPointF getPosition() const override;
     QPolygonF getIlluminatedZone()const override;
     void setBuilding(Building *building);

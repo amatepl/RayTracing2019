@@ -10,7 +10,7 @@
 class Model
 {
 public:
-    Model(QGraphicsScene *scene);
+    Model(AbstractScene *scene);
     vector <Building*> inIlluminationZone();
     void addAntena();
 

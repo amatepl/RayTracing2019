@@ -4,14 +4,18 @@
 #include <QPolygonF>
 #include <QLineF>
 
+
+using namespace std;
+
 class QPointF;
 class QPolygonF;
 class  Building;
+class ray;
 
 class AbstractAntena
 {
 public:
-    virtual void notifyParent(const QPointF &point) = 0;
+    virtual void notifyParent(const QPointF &point, vector<ray>* wholeRay) = 0;
     virtual QPointF getPosition()const = 0;
     virtual QPolygonF getIlluminationZone()const = 0;
     virtual QPolygonF getIlluminationZone(const QRectF &rect)const = 0;
