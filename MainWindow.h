@@ -43,6 +43,7 @@ public:
 //    void onMouseEvent(const QPointF &pos);
     void setMap(QPointF &pos);
     void writePenetrationDepth();
+
     //bool eventFilter(QObject *target, QEvent *event);
 
 private slots:
@@ -55,6 +56,7 @@ private slots:
     void on_generateCoveragePushButton_clicked();
     void on_clearWorkspaceButton_clicked();
     void onMouseEvent(QPointF &pos);
+    void displayResults();
 
 
 protected:

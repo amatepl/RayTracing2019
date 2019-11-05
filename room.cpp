@@ -16,6 +16,7 @@ room::room(QObject *parente) :
     antenaType = 2; // 0 for transmitter 1 for receiver 2 for nothing
     Transmitter = NULL;
     m_Receiver = NULL;
+    m_receiver = NULL;
 
     m_mode = MoveItem;
 
@@ -93,7 +94,7 @@ room::room(QObject *parente) :
     walls[27] = new Wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
     walls[17] = new Wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);
 
-    drawWalls();
+    //drawWalls();
 
     streetsPenDep["commerceUp"] = 0;
     streetsPenDep["commerceDown"] = 0;
@@ -426,15 +427,19 @@ void room::createImages(){
     int recursionDepth = reflectionsNumber;
 //    int recursionDepth = 0;
 //    QPolygonF illuminatedZone =  transmitterIllumination();
-    forImage data = transmitterIllumination();
-    illuminatedWalls(data.walls,data.zone,recursionDepth -1 ,Transmitter);
+    foreach(antena* transmitter,m_transmitters){
+        transmitter->setReceiver(m_receiver);
+        forImage data = transmitterIllumination(transmitter);
+        illuminatedWalls(data.walls,data.zone,recursionDepth -1 ,transmitter);
+    }
+
 //    buildingsInIlluminationZone(Transmitter, recursionDepth);
 
 }
 
 
 //QPolygonF room::transmitterIllumination(){
-forImage room::transmitterIllumination(){
+forImage room::transmitterIllumination(antena *transmitter){
 
     // Painting tools
     QColor illumination;
@@ -444,7 +449,7 @@ forImage room::transmitterIllumination(){
 
     vector <Building*> illuminatedBuldings; // Buildings lying in the initial illumination zone.
 //    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
-    QPolygonF illuminationZone = Transmitter->getIlluminationZone();
+    QPolygonF illuminationZone = transmitter->getIlluminationZone();
     vector <Wall*> nearestWalls;
 
     foreach(Building *building, m_buildings){
@@ -452,14 +457,14 @@ forImage room::transmitterIllumination(){
 
         if(p_building.intersects(illuminationZone)){
             illuminatedBuldings.push_back(building);
-            illuminationZone = illuminationZone.subtracted(building->shadow(Transmitter->getPosition()));
-            QPointF corner = building->closestPoint(Transmitter->getPosition()); // Closest point of the building to the transmitter
+            illuminationZone = illuminationZone.subtracted(building->shadow(transmitter->getPosition()));
+            QPointF corner = building->closestPoint(transmitter->getPosition()); // Closest point of the building to the transmitter
             nearestWalls.push_back(building->nearestWalls(corner).at(0));   // Add the 2 walls that are at the corner.
             nearestWalls.push_back(building->nearestWalls(corner).at(1));
 
         }
     }
-    Transmitter->setIlluminatedZone(illuminationZone);
+    transmitter->setIlluminatedZone(illuminationZone);
     //addPolygon(illuminationZone,QPen(),illumination);
 
     forImage result{nearestWalls,illuminationZone};
@@ -1125,10 +1130,14 @@ void room::computeEMField(vector<ray> *rays){
     totalEfield += computeEfield(rays);
     powerRef = computePrx(totalEfield);
     powerReceived = dBm(powerRef);
+    displayResults();
 }
 
+
+
 void room::clearEMFIeld(){
-    totalEfield = 0;
+    //totalEfield = 0;
+    clearLocalParameters();
 }
 
 complex <double> room::computeEfield(vector<ray> *rayLine){
@@ -1169,24 +1178,24 @@ complex <double> room::computeEfield(vector<ray> *rayLine){
         this->maxLength = completeLength; // for delay spread computation
     }
     // Store ray parameter for Physical impulse response
-//    if(computePhysicalResponse){
-//        // Store attenuation a and distance completeLength
-//        channelData[rayNumber] = R/completeLength;
-//        channelData[rayNumber+20] = completeLength;
-//        double degangle = round((theta+direction)*180/M_PI);
-//        double radangle = degangle*M_PI/180;
-//        spectrumField[specNumber] = Efield;
-//        spectrumAngle[specNumber] = (2.0*M_PI/lambda)*speedReal*cos(radangle);
-//        int save = specNumber;
-//        for (int j = 0; j < save; j++){
-//            if (spectrumAngle[j] == spectrumAngle[save]){
-//                spectrumField[j] += Efield;
-//                specNumber -= 1;
-//            }
-//        }
-//        specNumber += 1;
-//        rayNumber += 1;
-//    }
+    if(computePhysicalResponse){
+        // Store attenuation a and distance completeLength
+        channelData[rayNumber] = R/completeLength;
+        channelData[rayNumber+20] = completeLength;
+        double degangle = round((theta+direction)*180/M_PI);
+        double radangle = degangle*M_PI/180;
+        spectrumField[specNumber] = Efield;
+        spectrumAngle[specNumber] = (2.0*M_PI/lambda)*speedReal*cos(radangle);
+        int save = specNumber;
+        for (int j = 0; j < save; j++){
+            if (spectrumAngle[j] == spectrumAngle[save]){
+                spectrumField[j] += Efield;
+                specNumber -= 1;
+            }
+        }
+        specNumber += 1;
+        rayNumber += 1;
+    }
     return Efield;
 }
 
@@ -1266,12 +1275,12 @@ complex <double> room::computeEfieldGround(){
     this->NLOS += pow(a,2);
 
     // Store ray parameter for Physical impulse response
-//    if(computePhysicalResponse){
-//        // Store attenuation a and distance completeLength
-//        channelData[rayNumber] = R/completeLength;
-//        channelData[rayNumber+20] = completeLength;
-//        rayNumber += 1;
-//    }
+    if(computePhysicalResponse){
+        // Store attenuation a and distance completeLength
+        channelData[rayNumber] = R/completeLength;
+        channelData[rayNumber+20] = completeLength;
+        rayNumber += 1;
+    }
 
     return Efield;
 }
@@ -1492,8 +1501,8 @@ float room::distance(){
 
     int x1 = Transmitter->getPosX();
     int y1 = Transmitter->getPosY();
-    int x2 = m_Receiver->getPosX();
-    int y2 = m_Receiver->getPosY();
+    int x2 = m_receiver->x();
+    int y2 = m_receiver->y();
 
     // dist = new QGraphicsLineItem(x1,y1,x2,y2,NULL);
     // //this->addItem(dist);
@@ -1554,13 +1563,14 @@ float* room::getStPenetrationDepth(){return stDepth;}
 
 void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
     if (antenaType == 0){
-        if (Transmitter != NULL){
-            delete Transmitter;
-            Transmitter = NULL;};
+//        if (Transmitter != NULL){
+//            delete Transmitter;
+//            Transmitter = NULL;};
 
         Transmitter = new antena(/*this,*/ event->scenePos(),antenaType);
         //Transmitter->setSceneBoundary(sceneRect());
         Transmitter->setSceneBoundary(itemsBoundingRect());
+        m_transmitters.push_back(Transmitter);
 
 
         this->addItem(Transmitter);
@@ -1574,8 +1584,11 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
         m_Receiver = new antena(/*this,*/ event->scenePos(),antenaType);
         this->addItem(m_Receiver);
         m_receiver = new Receiver(event->scenePos(),this);
-        m_receiver->addAntenaImage(Transmitter);
-        Transmitter->setReceiver(m_receiver);
+        foreach(antena* transmitter,m_transmitters){
+            m_receiver->addAntenaImage(transmitter);
+            transmitter->setReceiver(m_receiver);
+        }
+
     }
     QGraphicsScene::mousePressEvent(event);
 }
@@ -1606,12 +1619,18 @@ void room::addToScene(QGraphicsItem *item){
 
 void room::drawCoverege(){
     this->clearAll();
-    if(m_Receiver !=NULL){
-        delete m_Receiver;
-        m_Receiver = NULL;
+    if(m_receiver !=NULL){
+        delete m_receiver;
+        m_receiver = NULL;
     }
     if(coverageDone) free(Data);
-    m_Receiver = new antena(/*this,*/QPointF(0,0),1);
+    //m_Receiver = new antena(/*this,*/QPointF(0,0),1);
+    m_receiver = new Receiver(QPointF(0,0),this,Receiver::Coverege);
+    foreach(antena* transmitter,m_transmitters){
+        transmitter->setReceiver(m_receiver);
+        m_receiver->addAntenaImage(transmitter);
+    }
+    launch_algo(false);
     //QBrush brush;
     QBrush *brush = new QBrush(QColor(0, 0, 0, 220));
     QPen pen;
@@ -1627,12 +1646,16 @@ void room::drawCoverege(){
 //    cout<<powerEmettor<<endl;
     for(int i=0; i<columns; i++){
         for(int j=0; j<rows; j++){
-            this->clearLocalParameters();
+            //this->clearLocalParameters();
             double xRece = square_size/2 + i*square_size;
             double yRece = square_size/2 + j*square_size;
 
-            m_Receiver->setPosi(QPointF(xRece,yRece));
-            launch_algo(false);
+            //m_receiver->setPosi(QPointF(xRece,yRece));
+//            m_receiver->setX(xRece);
+//            m_receiver->setY(yRece);
+            m_receiver->moveToPosition(QPointF(xRece,yRece));
+            //m_receiver->notifyObservers();
+            //launch_algo(false);
             this->Data[i*rows+j] = (powerReceived); // Received Power[dBm]
             this->Data[i*rows+j+totalArea] = abs(maxLength-minLength)/c; // Delay Spread
             this->Data[i*rows+j+totalArea*2] = 10*log10(LOS/NLOS); // Rice factor
@@ -1663,9 +1686,27 @@ void room::drawCoverege(){
     cout<< streetsPenDep["indu"]<<endl;
     cout<< stDepth<<endl;
     //this->myParent->writePenetrationDepth(stDepth);
-    drawWalls();
+    //drawWalls();
+    drawBuildings();
+
+
     this->clearAll();
     coverageDone = true;
+}
+
+void room::drawBuildings(){
+    foreach(Building* building,m_buildings){
+        building->addToScene();
+    }
+}
+
+void room::removeAntenas(){
+    delete(m_receiver);
+    foreach(antena* transmitter,m_transmitters){
+        delete(transmitter);
+        m_transmitters.clear();
+        m_transmitters.shrink_to_fit();
+    }
 }
 
 bool room::DataComputed(){

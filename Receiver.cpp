@@ -1,8 +1,15 @@
 #include "Receiver.h"
 
-Receiver::Receiver(QPointF pos, AbstractScene *scene):QPointF(pos), m_scene(scene)
+Receiver::Receiver(QPointF pos, AbstractScene *scene,Mode myMode):QPointF(pos), m_scene(scene)
 {
-    addToScene();
+    m_mode = myMode;
+    switch(myMode){
+        case RayTracing:addToScene();
+    }
+}
+
+Receiver::~Receiver(void){
+    m_scene->clearRays();
 }
 
 void Receiver::addAntenaImage(ReceiverObserver* antenaImage){
@@ -36,17 +43,13 @@ void Receiver::notifyObservers(){
 void Receiver::addWholeRay(vector<ray> *wholeRay){
     m_wholeRays.push_back(wholeRay);
     //addWholeRayToScene(wholeRay);
-    m_scene->drawRays(wholeRay);
+    switch(m_mode){
+        case RayTracing:m_scene->drawRays(wholeRay);
+    }
     m_scene->computeEMField(wholeRay);
 }
 
 void Receiver::addRaysToScene(){
-//    foreach(vector<ray>* wholeRay, m_wholeRays){
-//        foreach(ray Ray,wholeRay){
-//            QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(Ray);
-//            m_scene->addToScene(graphicsRay);
-//        }
-//    }
     for(int i = 0;i<m_wholeRays.size();i++){
         for(int j = 0;j<m_wholeRays.at(i)->size();j++){
             QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(m_wholeRays.at(i)->at(j));
@@ -56,10 +59,6 @@ void Receiver::addRaysToScene(){
 }
 
 void Receiver::addWholeRayToScene(vector<ray> *wholeRay){
-//    foreach(ray Ray,wholeRay){
-//        QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(Ray);
-//        m_scene->addToScene(graphicsRay);
-//    }
     for(int j = 0;j<wholeRay->size();j++){
         QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(wholeRay->at(j));
         m_scene->addToScene(graphicsRay);

@@ -127,11 +127,14 @@ public:
 
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
 //    QPolygonF transmitterIllumination();
-    forImage transmitterIllumination();
+    forImage transmitterIllumination(antena* transmitter);
 
     vector <Line> illuminatedWalls(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
     void createImages();
     void addToScene(QGraphicsItem *item) override;
+
+    void drawBuildings();
+    void removeAntenas();
 
     // AbstractScene methods
     void drawRays(vector<ray> *rays) override;
@@ -141,6 +144,7 @@ public:
 
 signals:
     void mouseScenePosition(QPointF &pos);
+    void displayResults();
 
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
@@ -168,6 +172,7 @@ private:
 
     // General objects
     antena *Transmitter;
+    vector<antena*> m_transmitters;
     antena *m_Receiver;     //old receiver
     Receiver *m_receiver;   // new receiver
     Wall *walls[28];    // For easier use walls are put in arrays

@@ -17,11 +17,12 @@ using namespace  std;
 class Receiver:public MovableObject, public QPointF, public AbstractReceiver
 {
 public:
-    Receiver(QPointF pos, AbstractScene *scene);
+    enum Mode {RayTracing, Coverege};
+    Receiver(QPointF pos, AbstractScene *scene, Mode myMode = RayTracing);
+    ~Receiver(void);
     void computeEMField();
     void addAntenaImage(ReceiverObserver *antenaImage);
     void addToScene();
-    enum Mode {RayTracing, Coverege};
     void moveToPosition(const QPointF &pos) override;
     void notifyObservers();
     void addWholeRay(vector<ray> *wholeRay) override;
@@ -33,6 +34,7 @@ private:
     GraphicsReceiver* m_graphicsReceiver;
     vector <vector <ray>*> m_wholeRays;
     vector <ReceiverObserver*> m_antenaImages;
+    Mode m_mode;
 };
 
 #endif // RECEIVER_H

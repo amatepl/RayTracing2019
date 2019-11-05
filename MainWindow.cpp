@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //scene->setSceneRect(0,0,950,500);
 
     connect(scene,SIGNAL(mouseScenePosition(QPointF&)),this,SLOT(onMouseEvent(QPointF&)));
+    connect(scene,SIGNAL(displayResults()),this,SLOT(displayResults()));
     //connect(ui->antena,SIGNAL(on_antena_clicked()),scene,SLOT(setMode(room::MoveItem));
     //scene->installEventFilter(this);
 
@@ -180,8 +181,10 @@ void MainWindow::on_clearWorkspaceButton_clicked(){
 
     scene->clearAll();
     scene->clearPenDepth();
+    scene->removeAntenas();
     scene->clear();
-    scene->drawWalls();
+    scene->drawBuildings();
+//    scene->drawWalls();
 //    scene = new room;
 //    scene->setSceneRect(ui->graphicsView->rect());
 //       ui->graphicsView->setScene(scene);
@@ -226,20 +229,24 @@ void MainWindow::on_commandLinkButton_clicked()
         // ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->dBmRev(scene->getReceivedPower())));
 
         // dBm display
-        ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->dBm(scene->getpowerEmettor())));
-        ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getReceivedPower()));
-
-        ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->distance()));
-        ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR_local()));
-        ui->DelaySpread->setText(QString("Delay spread [ns]: ") + QString::number(scene->getDelay_local()*1e+9));
-        ui->CoherenceBW->setText(QString("Coherence BW[MHz]: ") + QString::number(1/(scene->getDelay_local())*1e-6));
-        ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor_local()));
-        ui->coherTime->setText(QString("Coherence time [\u03bcs]: ") + QString::number(scene->getCoTime()));
+        displayResults();
     }else{
         statusBar()->showMessage("Placing the emettor/receptor is requiered");
     }
 }
 
+
+void MainWindow::displayResults(){
+    ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->dBm(scene->getpowerEmettor())));
+    ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getReceivedPower()));
+
+    ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->distance()));
+    ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR_local()));
+    ui->DelaySpread->setText(QString("Delay spread [ns]: ") + QString::number(scene->getDelay_local()*1e+9));
+    ui->CoherenceBW->setText(QString("Coherence BW[MHz]: ") + QString::number(1/(scene->getDelay_local())*1e-6));
+    ui->RiceFactor->setText(QString("Rice Factor [dB]: ") + QString::number(scene->getRiceFactor_local()));
+    ui->coherTime->setText(QString("Coherence time [\u03bcs]: ") + QString::number(scene->getCoTime()));
+}
 
 void MainWindow::writePenetrationDepth(){
 //    map<const char*,int>* st = scene->getStreetsPenDep();
