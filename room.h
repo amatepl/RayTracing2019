@@ -14,6 +14,7 @@
 //#include "Visualizer.h"
 #include "AbstractScene.h"
 #include "Receiver.h"
+#include "AntenaDiffraction.h"
 
 // Libraries
 #include <complex>
@@ -43,7 +44,7 @@ public:
     void setMode(Mode mode);
     void launch_algo(bool drawR);
 
-    float distance();
+    double distance(AbstractAntena* transmit);
     void drawWall(qreal &x1, qreal &y1, qreal &x2, qreal &y2);
 
     // Getters && Setters
@@ -128,6 +129,7 @@ public:
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
 //    QPolygonF transmitterIllumination();
     forImage transmitterIllumination(antena* transmitter);
+    void buildDiffractionPoints(const QPolygonF &zone, vector<Wall*> illuminatedWalls, int nbReflections, AbstractAntena *parent);
 
     vector <Line> illuminatedWalls(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
     void createImages();
@@ -138,9 +140,13 @@ public:
 
     // AbstractScene methods
     void drawRays(vector<ray> *rays) override;
+    void drawChosenRays(vector<vector<ray> *> *rays, AbstractAntena *ant) override;
+    void drawChosenRays() override;
     void clearRays() override;
-    void computeEMField(vector<ray> *rays) override;
+    //void computeEMField(vector<ray> *rays) override;
     void clearEMFIeld() override;
+    complex<double> computeEMField(vector<ray> *rays) override;
+
 
 signals:
     void mouseScenePosition(QPointF &pos);
@@ -179,6 +185,7 @@ private:
     vector<Wall*> m_walls;
     vector <std::array <double,2>> diffractionPoints;
     vector <QGraphicsLineItem*> m_rays;
+    double m_meanPower;
     //vector <QPointF*> diffractionPoints;
     //lineo *uselessWalls[10];
 //    struct forImage{
@@ -346,12 +353,12 @@ private:
     //Misc
     void setDefaultSettings();
 
-    double computePrx(complex <double> totalEfield);
+    double computePrx(complex <double> totalEfield, AbstractAntena *transmit) override;
     complex <double> computeEfield(vector<ray*> rayLine);
     complex <double> computeEfield(vector<ray> *rayLine);
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
-    complex <double> computeEfieldGround();
+    complex <double> computeEfieldGround(AbstractAntena *transmit);
     double computeSNR(double Prx);
 
 

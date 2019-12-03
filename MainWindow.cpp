@@ -240,7 +240,7 @@ void MainWindow::displayResults(){
     ui->Ptx->setText(QString("Ptx [dBm]: ") + QString::number(scene->dBm(scene->getpowerEmettor())));
     ui->Prx->setText(QString("Prx [dBm]: ") + QString::number(scene->getReceivedPower()));
 
-    ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->distance()));
+    //ui->Distance->setText(QString("Distance [m]: ") + QString::number(scene->distance()));
     ui->SNR->setText(QString("SNR [dB]: ") + QString::number(scene->getSNR_local()));
     ui->DelaySpread->setText(QString("Delay spread [ns]: ") + QString::number(scene->getDelay_local()*1e+9));
     ui->CoherenceBW->setText(QString("Coherence BW[MHz]: ") + QString::number(1/(scene->getDelay_local())*1e-6));

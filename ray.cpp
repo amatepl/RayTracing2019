@@ -14,7 +14,7 @@
 
 
 ray::ray(double x01, double y01, double x02, double y02,double Tetai,int indWall):
-    Line(x01, y01, x02, y02),wallIBouncedOn(indWall)
+    Line(x01, y01, x02, y02),wallIBouncedOn(indWall),m_diffracted(false)
 
 {
     setTetai(Tetai);
@@ -87,3 +87,6 @@ void ray::setTetai(double tetai){
         m_tetai = tetai*M_PI/180;
 }
 
+void ray::setDiffracted(bool diffracted){
+    m_diffracted = diffracted;
+}

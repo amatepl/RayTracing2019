@@ -195,6 +195,7 @@ QPolygonF Building::shadow(const QPointF &light){
 vector <QPointF> Building::extremities(const QPointF &light){
     /*
      * Looking for the corners that will cast the shadow.
+     * light    - ponctual source of light.
      */
 
     vector <Wall*> walls = nearestWalls(closestPoint(light));
@@ -214,4 +215,35 @@ vector <QPointF> Building::extremities(const QPointF &light){
        extremities.push_back(walls.at(0)->p1());
    }
    return extremities;
+}
+
+QPointF Building::forDiffraction(Wall *wall, const QPointF &corner) const{
+    QPointF p2;
+    Wall *w = cornerSecondWall(wall,corner);
+    if(w->p1() == corner){
+        p2 = w->p2();
+    }
+    else{
+        p2 = w->p1();
+    }
+    return p2;
+}
+
+
+Wall* Building::cornerSecondWall(Wall *wall,const QPointF &corner)const {
+    /*
+     * Get the second wall composing the corner of a building.
+     * wall     - one of the walls at the corner
+     * corner   - the position of the corner
+     */
+
+    bool cont = true;
+    int i =0;
+    while(i<4 && cont){
+        if ((corner == m_walls[i]->p1() || corner == m_walls[i]->p2()) && wall != m_walls[i]){
+            cont = false;
+        }
+        i+=1;
+    }
+    return m_walls[i-1];
 }

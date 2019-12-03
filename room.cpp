@@ -6,7 +6,7 @@
 using namespace std;
 
 room::room(QObject *parente) :
-    QGraphicsScene()
+    QGraphicsScene(),m_meanPower(0)
   //, QImage(1000,1000, QImage::Format_RGB32)
 {   //myParent = parente;
     setSceneRect(0,0,950,500);
@@ -334,89 +334,6 @@ void room::launch_algo(bool drawR){
 // ------------------------------ Image method ------------------------------------------------
 
 
-void room::recursion(double transmitterPosX, double transmitterPosY, double receiverPosX, double receiverPosY, int numberOfReflections,void (*draw)(double, double, double, double,room*)){
-
-    /*
-     * The recursion method generalize the image method for any amount of reflections. Keeps track of the depth of the recursive algorithm.
-     * Calls drawRay and stores the rays as they are being created.
-     */
-
-    transmitterSerie[recursionState][0] = transmitterPosX;
-    transmitterSerie[recursionState][1] = transmitterPosY;
-
-    Line* current_wall = wallRecursiveNumber[recursionState];
-
-    int NumberOfReflections = numberOfReflections;
-
-    // ---- Drawing of the ray on the screen && saving ----
-    (*draw)(transmitterPosX,transmitterPosY,receiverPosX,receiverPosY,this);
-
-
-
-    // --- Re-loop starts -------------
-    if(NumberOfReflections > 0 ){
-        recursionState += 1;
-
-        //Direct ray beteween the transmitter and the receiver
-        for(unsigned int i = 0;i < amount_walls;i++){
-
-           current_wall = walls[i];
-
-            if(current_wall != wallRecursiveNumber[recursionState -1]){
-                wallRecursiveNumber[recursionState] = walls[i];
-
-                angle_wall = current_wall->getAngleRad();
-
-                //------------TRANSMITTER IMAGE CONSTRUCTION--------------------------
-
-                //auto start = high_resolution_clock::now();
-
-//                int ray_vector_length = sqrt(pow(transmitterPosY - current_wall->y2(),2) + pow(transmitterPosX - current_wall->x2(),2));
-//                float virtual_slope;
-
-//                if (transmitterPosY - current_wall->y2() < 0 && transmitterPosX - current_wall->x2()){
-//                    virtual_slope = -acos((transmitterPosX - current_wall->x2())/ray_vector_length);
-//                }
-
-//                else{
-//                    virtual_slope = acos((transmitterPosX - current_wall->x2())/ray_vector_length);
-//                }
-
-//                float ray_slope = angle_wall + (angle_wall - virtual_slope);
-//                float ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
-//                float x2 = ray_vector_length * ray_vector[0];
-//                float y2 = ray_vector_length * ray_vector[1];
-//                double transmitterImagePosX = current_wall->x2() + x2;
-//                double transmitterImagePosY = current_wall->y2() + y2;
-
-
-
-
-                QPointF transmitterImagePos = current_wall->symetricalPoint(transmitterPosX,transmitterPosY);
-//                auto stop = high_resolution_clock::now();
-
-//                auto duration = duration_cast<nanoseconds>(stop - start);
-
-//                cout << duration.count() << endl;
-
-                //---------END OF TRANSMITTER IMAGE CONSTRUCTION--------------------------
-
-                //current_ray = new Line(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY);
-                //imCoordinates[0] = intersection(current_ray,current_wall)[0];
-                //imCoordinates[1] = intersection(current_ray,current_wall)[1];
-                //delete(current_ray);
-                //if(pointOnLine(current_wall,imCoordinates[0],imCoordinates[1]) && pointOnLine(current_ray,imCoordinates[0],imCoordinates[1])){
-                    //recursion(transmitterImagePosX, transmitterImagePosY,receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
-                    recursion(transmitterImagePos.x(), transmitterImagePos.y(),receiverPosX,receiverPosY,NumberOfReflections - 1,draw);
-                //}
-
-            }
-
-        if(i == amount_walls - 1){recursionState -=1;}
-        }
-    }
-}
-
 struct forImage{
     vector <Wall*> walls;
     const QPolygonF zone;
@@ -425,14 +342,15 @@ struct forImage{
 
 void room::createImages(){
     int recursionDepth = reflectionsNumber;
-//    int recursionDepth = 0;
-//    QPolygonF illuminatedZone =  transmitterIllumination();
+
     foreach(antena* transmitter,m_transmitters){
+        m_receiver->addAntenaImage(transmitter);
         transmitter->setReceiver(m_receiver);
         forImage data = transmitterIllumination(transmitter);
-        illuminatedWalls(data.walls,data.zone,recursionDepth -1 ,transmitter);
+        if(recursionDepth > 0){
+                illuminatedWalls(data.walls,data.zone,recursionDepth -1 ,transmitter);
+        }
     }
-
 //    buildingsInIlluminationZone(Transmitter, recursionDepth);
 
 }
@@ -450,7 +368,7 @@ forImage room::transmitterIllumination(antena *transmitter){
     vector <Building*> illuminatedBuldings; // Buildings lying in the initial illumination zone.
 //    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
     QPolygonF illuminationZone = transmitter->getIlluminationZone();
-    vector <Wall*> nearestWalls;
+    vector <Wall*> nearestWalls;		// Vector containing the nearest walls to the transmitter of every building.
 
     foreach(Building *building, m_buildings){
         QPolygonF p_building(*building);
@@ -520,6 +438,7 @@ QPolygonF room::buildingsInIlluminationZone(AbstractAntena *ant, int nbReflectio
 
 vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent){
     vector <Line> illuminatedWalls;
+    vector <Wall*> usedWalls;
 
     QPen redPen(Qt::red);
     redPen.setWidth(3);
@@ -530,7 +449,7 @@ vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone,
 
     vector <AntenaImage *> images; // vector for tests
 
-    for(int i=1; i <  zone.length()-2 ;i++){
+    for(int i=1; i <  zone.length()-1 ;i++){
 
         /*
          * Here we go thorough the sides of the illumination zone and check if they are a part of a wall
@@ -539,9 +458,11 @@ vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone,
 
         int j =0;
         bool cont = true;
+        bool contDiffraction = true;
         while(j<walls.size() && cont){
             if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))){
                 illuminatedWalls.push_back(Line(zone.at(i),zone.at(i+1)));
+                usedWalls.push_back(walls.at(j));
 
                 addLine(Line(zone.at(i),zone.at(i+1)),redPen);
 
@@ -551,253 +472,126 @@ vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone,
                 image->setSceneBoundary(itemsBoundingRect());
                 m_receiver->addAntenaImage(image);
                 images.push_back(image);
-                walls.erase(walls.begin()+j);
+
                 //QPolygonF imagesZone = zone.intersected(image->getIlluminationZone());
 
                 QPolygonF imagesZone = buildingsInIlluminationZone(image,nbReflections);
 
+		/*
+		 * Creation of diffracted points. Since it's done here it won't work for the case without
+		 * any reflections.
+		 */
+
+
+
+
+                //usedWalls.push_back(walls.at(j));
+                walls.erase(walls.begin()+j);
                 cont = false;
             }
-            j++;
+
+
+
+//            else if (contDiffraction){
+//                QPointF p2;
+//                if(zone.at(i) == walls.at(j)->p1() ||  zone.at(i) == walls.at(j)->p2()){
+//                    if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i-1))){
+//                        p2 = walls.at(j)->getBuilding()->forDiffraction(walls.at(j),zone.at(i));
+//                    }
+//                    else{
+//                        p2 = walls.at(j)->otherPoint(zone.at(i));
+//                    }
+
+//                    AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), zone.at(i+1),p2, parent,itemsBoundingRect());
+//                    m_receiver->addAntenaImage(corner);
+//                    QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
+//                    addPolygon(cornerZone,QPen(),illumination1);
+//                    contDiffraction = false;
+
+//                }
+//                else if(zone.at(i+1) == walls.at(j)->p1() ||  zone.at(i+1) == walls.at(j)->p2()){
+//                    if(walls.at(j)->onLine(zone.at(i+1)) && walls.at(j)->onLine(zone.at(i+2))){
+//                        p2 = walls.at(j)->getBuilding()->forDiffraction(walls.at(j),zone.at(i+1));
+//                    }
+//                    else{
+//                        p2 = walls.at(j)->otherPoint(zone.at(i+1));
+//                    }
+
+//                    AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i+1), zone.at(i),p2, parent,itemsBoundingRect());
+//                    m_receiver->addAntenaImage(corner);
+//                    QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
+//                    addPolygon(cornerZone,QPen(),illumination1);
+//                    contDiffraction = false;
+//                }
+
+                j++;
+            }
+
+
+
+
+
         }
-    }
+
+        buildDiffractionPoints(zone,usedWalls,nbReflections,parent);
+
+
 
 
     return  illuminatedWalls;
 }
 
-void room::drawRay(double transmitterPosX,double transmitterPosY,double originX,double originY,room* scene){
+void room::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent){
 
-    /*
-     * Called back from the recursion method, draws the rays when necessary, then removes the excess
-     */
+    QColor illumination1;
+    illumination1.setGreen(255);
+    illumination1.setAlpha(100);
 
-    auto start = high_resolution_clock::now();
-    // Freeing memory
-    vector <ray*> completeRay;
-    completeRay.clear();
-    Line *current_ray;
-    ray* receiver_ray;
+    for(int i = 0;i<zone.length()-1;i++){
+        const QPointF *corner = nullptr;
+        QPointF p2;
+        QPointF p1;
+        int j = 0;
+        bool cond = true;
+        while(j<illuminatedWalls.size() && cond){
+            if(zone.at(i) == illuminatedWalls.at(j)->p1()||zone.at(i) == illuminatedWalls.at(j)->p2()){
+                if(corner == nullptr){
+                    corner = &zone.at(i);
+                    if(illuminatedWalls.at(j)->onLine(zone.at(i+1))){
+                        p1 = zone.at(i-1);
+                    }else{p1 = zone.at(i+1);}
 
-    // Setting up drawing tool
-    QPen outlinePen(QColor(0, 0, 255, 255));
-    outlinePen.setWidth(1);
-
-    unsigned char j = 0;
-    while(j<=(*scene).recursionState){
-
-        /*
-         * We need to check if our rays reflects on the right walls. For that purpouse we check the
-         * intersection of the last ray component with the wall that was used to build the transmitter image.
-        */
-
-        Wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
-        transmitterPosX = (*scene).transmitterSerie[(*scene).recursionState-j][0];
-        transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
-        current_ray= new Line(transmitterPosX,transmitterPosY,originX,originY);
-
-        // To get rid of this if the original transmitter has to be added to the transmitterSrerie
-        if(j != (*scene).recursionState){
-
-            //double imageCoordinates[2] = {(*scene).intersection(current_ray,walle)[0],(*scene).intersection(current_ray,walle)[1]};
-            QPointF imageCoordinates;
-
-
-            //if((*scene).pointOnLine(walle,imageCoordinates[0],imageCoordinates[1]) && (*scene).pointOnLine(current_ray,imageCoordinates[0],imageCoordinates[1])){
-            if(current_ray->intersect(*walle,&imageCoordinates)==1){
-
-
-                receiver_ray = new ray(imageCoordinates.x(),imageCoordinates.y(),originX,originY,current_ray->angleTo(*walle),walle->getIndWall());
-
-                completeRay.push_back(receiver_ray);
-                originX = imageCoordinates.x();
-                originY = imageCoordinates.y();
-                delete(current_ray);
-
+                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i));
+                }
+                else{
+                    cond = false;
+                }
             }
-            else{
-                /*
-                 * Here we know that the ray doesn't reflect on any real wall so we've got to destroy it and also its past.
-                */
-
-                completeRay.clear();
-                delete(current_ray);
-                j = (*scene).recursionState+1; // Setting j to this value stops the while loop
-            }
+//            else if(zone.at(i+1) == illuminatedWalls.at(j)->p1()||zone.at(i+1) == illuminatedWalls.at(j)->p2()){
+//                if(corner == nullptr){
+//                    corner = &zone.at(i+1);
+//                    if(illuminatedWalls.at(j)->onLine(zone.at(i))){
+//                        p1 = zone.at(i-1);
+//                    }else{p1 = zone.at(i+1);}
+//                    p1 = zone.at(i);
+//                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i+1));
+//                }
+//                else{
+//                    cond = false;
+//                }
+//            }
+            j++;
         }
-        else if(j == (*scene).recursionState){
 
-            //Ray from transmitter
-            receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0);
-            completeRay.push_back(receiver_ray);
+        if(cond){
+
+            AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), p1,p2, parent,itemsBoundingRect());
+            m_receiver->addAntenaImage(corner);
+            QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
+            //addPolygon(cornerZone,QPen(),illumination1);
         }
-        j++;
-    }
-
-    unsigned int i = 0;
-    bool dontStop = true;
-    while(i<completeRay.size() && dontStop){
-        for (unsigned int j = 0;j<(*scene).amount_walls;j++){
-            /*
-             This loop checks if there is any intersection of the ray with the walls. If this is the case we destroy the ray since
-             there is no transmission.
-            */
-
-            receiver_ray = completeRay[i];
-            current_ray = new Line(receiver_ray->x1(),receiver_ray->y1(),receiver_ray->x2(),receiver_ray->y2());
-
-//            if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
-
-            // Check if there is intersection between current ray and any wall and if this intersection is not the reflexion point.
-            bool inter =(*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->x2(), completeRay[i]->y2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->x1(), completeRay[i]->y1());
-            //Check if we don't reflect on a corner.
-            bool extremity1 = (completeRay[i]->x1() != (*scene).walls[j]->x1() && completeRay[i]->y1() != (*scene).walls[j]->y1()) || (completeRay[i]->x2() != (*scene).walls[j]->x2() && completeRay[i]->y2() != (*scene).walls[j]->y2());
-            bool extremity2 = (completeRay[i]->x1() != (*scene).walls[j]->x2() && completeRay[i]->y1() != (*scene).walls[j]->y2()) || (completeRay[i]->x2() != (*scene).walls[j]->x1() && completeRay[i]->y2() != (*scene).walls[j]->y1());
-            if(inter && (!extremity1 || !extremity2)){
-                delete(current_ray);
-                completeRay.clear();
-                completeRay.shrink_to_fit();
-                dontStop = false;
-                break;
-            }
-        }
-        i++;
-    }
-
-    if(!completeRay.empty()){
-        unsigned int i = 0;
-        while(i<completeRay.size()){
-            outlinePen.setColor(QColor(0,255 -  (255/(*scene).reflectionsNumber)*(i),255,255));
-            //receiver_ray->setPen(outlinePen);
-            scene->addLine(completeRay[i]->x1(),completeRay[i]->y1(),completeRay[i]->x2(),completeRay[i]->y2(),outlinePen);
-
-//            cout<<"x1 and y1: ";
-//            cout<<completeRay[i]->x1();
-//            cout<<", ";
-//            cout<<completeRay[i]->y1()<<endl;
-
-//            cout<<"x2 and y2: ";
-//            cout<<completeRay[i]->x2();
-//            cout<<", ";
-//            cout<<completeRay[i]->y2()<<endl;
-//            cout<<"--------------------------"<<endl;
-            i++;
-        }
-        (*scene).totalEfield += scene->computeEfield(completeRay);
-
-        delete(receiver_ray);
-        completeRay.clear();
-        completeRay.shrink_to_fit();
-    }
-
-    auto stop = high_resolution_clock::now();
-
-    auto duration = duration_cast<nanoseconds>(stop - start);
-
-    cout << duration.count() << endl;
-
-}
-
-///////////////////////////////build///////////////////////////////
-
-void room::buildRay(double transmitterPosX,double transmitterPosY,double originX,double originY,room* scene){
-
-    /*
-     * Called back from the recursion method, draws the rays when necessary, then removes the excess
-     */
-
-    // Freeing memory
-    vector <ray*> completeRay;
-    completeRay.clear();
-    Line *current_ray;
-    ray* receiver_ray;
-
-    unsigned char j = 0;
-    while(j<=(*scene).recursionState){
-
-        /*
-         * We need to check if our rays reflects on the right walls. For that purpouse we check the
-         * intersection of the last ray component with the wall that was used to build the transmitter image.
-        */
-
-        Wall* walle = (*scene).wallRecursiveNumber[(*scene).recursionState -j];
-        transmitterPosX = (*scene).transmitterSerie[(*scene).recursionState-j][0];
-        transmitterPosY = (*scene).transmitterSerie[(*scene).recursionState-j][1];
-        current_ray= new Line(transmitterPosX,transmitterPosY,originX,originY);
-
-        // To get rid of this if the original transmitter has to be added to the transmitterSrerie
-        if(j != (*scene).recursionState){
-
-            //double imageCoordinates[2] = {(*scene).intersection(current_ray,walle)[0],(*scene).intersection(current_ray,walle)[1]};
-            QPointF imageCoordinates;
-
-
-            //if((*scene).pointOnLine(walle,imageCoordinates[0],imageCoordinates[1]) && (*scene).pointOnLine(current_ray,imageCoordinates[0],imageCoordinates[1])){
-            if(current_ray->intersect(*walle,&imageCoordinates) == 1){
-
-                receiver_ray = new ray(imageCoordinates.x(),imageCoordinates.y(),originX,originY,current_ray->angleTo(*walle),walle->getIndWall());
-                delete(current_ray);
-                completeRay.push_back(receiver_ray);
-                originX = imageCoordinates.x();
-                originY = imageCoordinates.y();
-
-            }
-            else{
-                /*
-                 * Here we know that the ray doesn't reflect on any real wall so we've got to destroy it and also its past.
-                */
-                delete(current_ray);
-                completeRay.clear();
-                completeRay.shrink_to_fit();
-                j = (*scene).recursionState+1; // Setting j to this value stops the while loop
-            }
-        }
-        else if(j == (*scene).recursionState){
-
-            //Ray from transmitter
-            receiver_ray = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),originX,originY,0,0);
-            completeRay.push_back(receiver_ray);
-        }
-        j++;
-    }
-
-    unsigned int i = 0;
-    bool dontStop = true;
-    while(i<completeRay.size() && dontStop){
-        for (unsigned int j = 0;j<(*scene).amount_walls;j++){
-            /*
-             This loop checks if there is any intersection of the ray with the walls. If this is the case we destroy the ray since
-             there is no transmission.
-            */
-
-            receiver_ray = completeRay[i];
-            current_ray = new Line(receiver_ray->x1(),receiver_ray->y1(),receiver_ray->x2(),receiver_ray->y2());
-            //if((*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX2(), completeRay[i]->getY2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->getX1(), completeRay[i]->getY1())){
-
-            // Check if there is intersection between current ray and any wall and if this intersection is not the reflexion point.
-            bool inter =(*scene).intersectionCheck(current_ray,(*scene).walls[j])&& !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->x2(), completeRay[i]->y2()) && !(*scene).pointOnLine((*scene).walls[j], completeRay[i]->x1(), completeRay[i]->x1());
-            //Check if we don't reflect on a corner.
-            bool extremity1 = (completeRay[i]->x1() != (*scene).walls[j]->x1() && completeRay[i]->y1() != (*scene).walls[j]->y1() && completeRay[i]->x2() != (*scene).walls[j]->x2() && completeRay[i]->y2() != (*scene).walls[j]->y2());
-            bool extremity2 = (completeRay[i]->x1() != (*scene).walls[j]->x2() && completeRay[i]->y1() != (*scene).walls[j]->y2() && completeRay[i]->x2() != (*scene).walls[j]->x1() && completeRay[i]->y2() != (*scene).walls[j]->y1());
-            if(inter && extremity1 && extremity2){
-                delete(current_ray);
-                completeRay.clear();
-                dontStop = false;
-                break;
-            }
-        }
-        i++;
-    }
-
-    if(!completeRay.empty()){
-        //(*scene).power +=1/(8*(*scene).Ra)*(*scene).calculateRay(completeRay);
-        (*scene).totalEfield += scene->computeEfield(completeRay);
-        delete(receiver_ray);
-        completeRay.clear();
-        completeRay.shrink_to_fit();
     }
 }
-
 
 
 
@@ -824,22 +618,6 @@ void room::drawDiffraction(room* scene){
 
     //(*scene).diffractionPoints.clear();
     vector<std::array <double,2>> usedDiffPoints;
-
-
-//    for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
-//        if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
-//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-//        }
-//        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
-//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-//        }
-//        else if((*scene).diffractionPoints[i][0]<(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
-//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-//        }
-//        else if((*scene).diffractionPoints[i][0]>(*scene).Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
-//            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-//        }
-//    }
 
     for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
         if((*scene).diffractionPoints[i][0] >(*scene).m_Receiver->x() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]>(*scene).m_Receiver->y() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->y()){
@@ -1126,11 +904,18 @@ double room::computeReflexionPar(double thetaI, double epsilonR){
     return R;
 }
 
-void room::computeEMField(vector<ray> *rays){
-    totalEfield += computeEfield(rays);
-    powerRef = computePrx(totalEfield);
-    powerReceived = dBm(powerRef);
-    displayResults();
+//void room::computeEMField(vector<ray> *rays){
+//    totalEfield += computeEfield(rays);
+//    powerRef = computePrx(totalEfield);
+//    powerReceived = dBm(powerRef);
+//    displayResults();
+//}
+
+complex <double> room::computeEMField(vector<ray> *rays){
+    return computeEfield(rays);
+//    powerRef = computePrx(totalEfield);
+//    powerReceived = dBm(powerRef);
+//    displayResults();
 }
 
 
@@ -1259,10 +1044,10 @@ complex <double> room::computeEfield(vector<ray*> rayLine){
     return Efield;
 }
 
-complex <double> room::computeEfieldGround(){
+complex <double> room::computeEfieldGround(AbstractAntena *transmit){
     // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
     // To Do: check if there is a wall between the TX and RX
-    double distance = this->distance(); // conversion (1px == 2cm)
+    double distance = this->distance(transmit); // conversion (1px == 2cm)
     double thetaG = atan((distance/2)/antennaHeight);
     double thetaI = M_PI - thetaG;
     double R = computeReflexionPar(thetaG,epsilonWallRel);
@@ -1285,13 +1070,23 @@ complex <double> room::computeEfieldGround(){
     return Efield;
 }
 
-double room::computePrx(complex <double> totalEfield){
+double room::computePrx(complex <double> totalEfield, AbstractAntena *transmit){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-    complex <double> groundEfield = this->computeEfieldGround(); // Compute the electrical field from the ray reflected off the ground
-    double distance = this->distance();
+    complex <double> groundEfield = this->computeEfieldGround(transmit); // Compute the electrical field from the ray reflected off the ground
+    double distance = this->distance(transmit);
     double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
     complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
     double Prx = 1/(8*Ra)*norm(Voc);
+
+
+
+    cout<<"Chosen antena: x =  "<<m_transmitters[0]->x()<<", y =  "<<m_transmitters[0]->y()<<endl;
+
+    //totalEfield = m_transmitters[0]->getEMfield();
+    powerRef = m_transmitters[0]->getPower();
+    powerReceived = dBm(powerRef);
+    displayResults();
+
     return Prx;
 }
 
@@ -1322,22 +1117,10 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     cout << "delta_r: " << delta_r << endl;
 
     double nu = sqrt(2*2*M_PI/lambda*delta_r/M_PI);
-    cout << "nu: " << nu << endl;
     // The ITU's approximation for |F(nu)|^2
     double FresnelPowerdB = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
-    cout << "dB Fresnel: " << FresnelPowerdB << endl;
-//    double FresnelPowerdB = 6.9 + 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
+
     double FresnelPower = pow(10,FresnelPowerdB/20);
-    cout << "Fresnel: " << FresnelPower << endl;
-//    double fresnelPowerW = pow(10,FresnelPower/20);
-    //double fresnelNorm = sqrt(-6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1));
-//    double fresnelNorm = sqrt(fresnelPowerW);
-//    double fresnelArg = -(M_PI/4)-(M_PI/2)*pow(nu,2);
-//    double fresnelArg = -(1/4)-(1/2)*pow(nu,2);
-//    complex <double> fresnelCoef = fresnelNorm*exp(fresnelArg);
-//    complex <double> fresnelCoef = (fresnelNorm*cos(M_PI*fresnelArg),fresnelNorm*sin(M_PI*fresnelArg));
-//    norm(fresnelCoef) = fresnelNorm;
-//    arg(fresnelCoef) = fresnelArg;
     ray* directRay = new ray(m_Receiver->getPosX(),m_Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY(),0,0);
     //rayLine.push_back(directRay);
     //Efield = computeEfield(rayLine);
@@ -1491,7 +1274,7 @@ void room::readSettingsFile(){
 }
 
 
-float room::distance(){
+double room::distance(AbstractAntena* transmit){
 
     /*
      * For display, it calcultes the direct Euclidian distance from the receiver to the emettor, displays the results on the UI
@@ -1499,10 +1282,12 @@ float room::distance(){
 
     // QGraphicsLineItem* dist ;
 
-    int x1 = Transmitter->getPosX();
-    int y1 = Transmitter->getPosY();
-    int x2 = m_receiver->x();
-    int y2 = m_receiver->y();
+//    int x1 = Transmitter->getPosX();
+//    int y1 = Transmitter->getPosY();
+    double x1 = transmit->getPosition().x();
+    double y1 = transmit->getPosition().y();
+    double x2 = m_receiver->x();
+    double y2 = m_receiver->y();
 
     // dist = new QGraphicsLineItem(x1,y1,x2,y2,NULL);
     // //this->addItem(dist);
@@ -1568,6 +1353,7 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
 //            Transmitter = NULL;};
 
         Transmitter = new antena(/*this,*/ event->scenePos(),antenaType);
+        Transmitter->setScene(this);
         //Transmitter->setSceneBoundary(sceneRect());
         Transmitter->setSceneBoundary(itemsBoundingRect());
         m_transmitters.push_back(Transmitter);
@@ -1584,10 +1370,7 @@ void room::mousePressEvent(QGraphicsSceneMouseEvent *event){
         m_Receiver = new antena(/*this,*/ event->scenePos(),antenaType);
         this->addItem(m_Receiver);
         m_receiver = new Receiver(event->scenePos(),this);
-        foreach(antena* transmitter,m_transmitters){
-            m_receiver->addAntenaImage(transmitter);
-            transmitter->setReceiver(m_receiver);
-        }
+
 
     }
     QGraphicsScene::mousePressEvent(event);
@@ -1629,6 +1412,7 @@ void room::drawCoverege(){
     foreach(antena* transmitter,m_transmitters){
         transmitter->setReceiver(m_receiver);
         m_receiver->addAntenaImage(transmitter);
+        transmitter->setMode(antena::Coverege);
     }
     launch_algo(false);
     //QBrush brush;
@@ -1656,10 +1440,13 @@ void room::drawCoverege(){
             m_receiver->moveToPosition(QPointF(xRece,yRece));
             //m_receiver->notifyObservers();
             //launch_algo(false);
+//            foreach (AbstractAntena*transmit, m_transmitters) {
+
+//            }
             this->Data[i*rows+j] = (powerReceived); // Received Power[dBm]
             this->Data[i*rows+j+totalArea] = abs(maxLength-minLength)/c; // Delay Spread
             this->Data[i*rows+j+totalArea*2] = 10*log10(LOS/NLOS); // Rice factor
-            this->Data[i*rows+j+totalArea*3] = this->distance(); // Distance from TX
+            //this->Data[i*rows+j+totalArea*3] = this->distance(); // Distance from TX
             this->Data[i*rows+j+totalArea*4] = this->computeSNR(powerReceived); // Compute SNR from Prx in dBm
 
             // Plot results
@@ -1785,6 +1572,60 @@ void room::drawRays(vector<ray> *rays){
         addItem(graphicsRay);
         m_rays.push_back(graphicsRay);
     }
+}
+
+void room::drawChosenRays(vector<vector<ray> *>* rays, AbstractAntena *ant){
+    sort(m_transmitters.begin(),m_transmitters.end(),[](antena* a, antena* b){
+       return a->getPower()>b->getPower();
+    });
+
+    double meanPower = 0;
+
+    for(int i = 0;i<m_transmitters.size();i++){
+        meanPower += m_transmitters[i]->getPower()/m_transmitters.size();
+    }
+
+    if(Transmitter->getPower()<meanPower){
+        Transmitter = m_transmitters[0];
+    }
+
+    if(Transmitter == ant){
+        for(int j = 0;j<rays->size();j++){
+            for(int i = 0; i<rays->at(j)->size();i++){
+                QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(rays->at(j)->at(i));
+                addItem(graphicsRay);
+                m_rays.push_back(graphicsRay);
+            }
+        }
+    }
+}
+
+void room::drawChosenRays(){
+    sort(m_transmitters.begin(),m_transmitters.end(),[](antena* a, antena* b){
+       return a->getPower()>b->getPower();
+    });
+
+    double meanPower = 0;
+
+    for(int i = 0;i<m_transmitters.size();i++){
+        meanPower += m_transmitters[i]->getPower()/(100*m_transmitters.size());
+    }
+
+    if(Transmitter->getPower()<meanPower){
+        Transmitter = m_transmitters[0];
+    }
+
+    vector<vector<ray>*>* rays = Transmitter->getWholeRays();
+
+    for(int j = 0;j<rays->size();j++){
+        for(int i = 0; i<rays->at(j)->size();i++){
+            QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(rays->at(j)->at(i));
+            addItem(graphicsRay);
+            m_rays.push_back(graphicsRay);
+        }
+    }
+
+
 }
 
 void room::clearRays(){

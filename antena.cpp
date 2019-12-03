@@ -3,7 +3,7 @@
 // Very basic Trasmitter type object
 
 antena::antena(QPointF p, int type):
-QGraphicsEllipseItem()/*,QPointF()*/,m_pos(p),antenaType(type),m_vector(QPointF(1,1))
+QGraphicsEllipseItem()/*,QPointF()*/,m_pos(p),antenaType(type),m_vector(QPointF(1,1)),m_EMfield(0),m_power(0),m_mode(RayTracing)
 
 {
     m_building = nullptr;
@@ -56,27 +56,28 @@ void antena::setPosi(QPointF posi){this->m_pos = posi;
             }
 
 QPolygonF antena::getIlluminationZone(const QRectF &rect)const{
-    QPolygonF iluminationZone;
-    QPolygonF unboundedZone;
-    // Roation matrix is applied for 60 deg.
-    QPointF point2((0.5*m_vector.x() - 0.866*m_vector.y())*5000,(0.5*m_vector.y() + 0.866*m_vector.x())*5000);
-    QPointF point3((0.5*m_vector.x() + 0.866*m_vector.y())*5000,(0.5*m_vector.y() - 0.866*m_vector.x())*5000);
+//    QPolygonF iluminationZone;
+//    QPolygonF unboundedZone;
+//    // Roation matrix is applied for 60 deg.
+//    QPointF point2((0.5*m_vector.x() - 0.866*m_vector.y())*5000,(0.5*m_vector.y() + 0.866*m_vector.x())*5000);
+//    QPointF point3((0.5*m_vector.x() + 0.866*m_vector.y())*5000,(0.5*m_vector.y() - 0.866*m_vector.x())*5000);
 
-    cout<<"Rect bottom right: " <<rect.bottomRight().x()<<", "<<rect.bottomRight().y()<<endl;
-    cout<<"Rect top left: " <<rect.topLeft().x()<<", "<<rect.topLeft().y()<<endl;
+//    cout<<"Rect bottom right: " <<rect.bottomRight().x()<<", "<<rect.bottomRight().y()<<endl;
+//    cout<<"Rect top left: " <<rect.topLeft().x()<<", "<<rect.topLeft().y()<<endl;
 
-    unboundedZone<<m_pos<<point2+m_pos<<point3+m_pos;
+//    unboundedZone<<m_pos<<point2+m_pos<<point3+m_pos;
 
-    iluminationZone<<m_pos
-                  << sceneRectIntersection(rect,QLineF(m_pos,m_pos+point2));
+//    iluminationZone<<m_pos
+//                  << sceneRectIntersection(rect,QLineF(m_pos,m_pos+point2));
 
-    for (QPointF p: boundaryCorners(rect,unboundedZone)) {
-        iluminationZone<<p;
-    }
+//    for (QPointF p: boundaryCorners(rect,unboundedZone)) {
+//        iluminationZone<<p;
+//    }
 
-    iluminationZone<<sceneRectIntersection(rect,QLineF(m_pos,m_pos+point3));
+//    iluminationZone<<sceneRectIntersection(rect,QLineF(m_pos,m_pos+point3));
 
-    return iluminationZone;
+//    return iluminationZone;
+    return QPolygonF(rect);
 }
 
 QPolygonF antena::getIlluminationZone()const{
@@ -86,27 +87,28 @@ QPolygonF antena::getIlluminationZone()const{
      * any element to the scene once the antena is set.
      */
 
-    QPolygonF iluminationZone;
-    QPolygonF unboundedZone;
-    // Roation matrix is applied for 60 deg.
-    QPointF point2((0.5*m_vector.x() - 0.866*m_vector.y())*5000,(0.5*m_vector.y() + 0.866*m_vector.x())*5000);
-    QPointF point3((0.5*m_vector.x() + 0.866*m_vector.y())*5000,(0.5*m_vector.y() - 0.866*m_vector.x())*5000);
+//    QPolygonF iluminationZone;
+//    QPolygonF unboundedZone;
+//    // Roation matrix is applied for 60 deg.
+//    QPointF point2((0.5*m_vector.x() - 0.866*m_vector.y())*5000,(0.5*m_vector.y() + 0.866*m_vector.x())*5000);
+//    QPointF point3((0.5*m_vector.x() + 0.866*m_vector.y())*5000,(0.5*m_vector.y() - 0.866*m_vector.x())*5000);
 
-    //cout<<"Rect bottom right: " <<m_sceneBoundary.bottomRight().x()<<", "<<m_sceneBoundary.bottomRight().y()<<endl;
-    //cout<<"Rect top left: " <<m_sceneBoundary.topLeft().x()<<", "<<m_sceneBoundary.topLeft().y()<<endl;
+//    //cout<<"Rect bottom right: " <<m_sceneBoundary.bottomRight().x()<<", "<<m_sceneBoundary.bottomRight().y()<<endl;
+//    //cout<<"Rect top left: " <<m_sceneBoundary.topLeft().x()<<", "<<m_sceneBoundary.topLeft().y()<<endl;
 
-    unboundedZone<<m_pos<<point2+m_pos<<point3+m_pos;
+//    unboundedZone<<m_pos<<point2+m_pos<<point3+m_pos;
 
-    iluminationZone<<m_pos
-                  << sceneRectIntersection(m_sceneBoundary,QLineF(m_pos,m_pos+point2));
+//    iluminationZone<<m_pos
+//                  << sceneRectIntersection(m_sceneBoundary,QLineF(m_pos,m_pos+point2));
 
-    for (QPointF p: boundaryCorners(m_sceneBoundary,unboundedZone)) {
-        iluminationZone<<p;
-    }
+//    for (QPointF p: boundaryCorners(m_sceneBoundary,unboundedZone)) {
+//        iluminationZone<<p;
+//    }
 
-    iluminationZone<<sceneRectIntersection(m_sceneBoundary,QLineF(m_pos,m_pos+point3));
+//    iluminationZone<<sceneRectIntersection(m_sceneBoundary,QLineF(m_pos,m_pos+point3));
 
-    return iluminationZone;
+//    return iluminationZone;
+    return QPolygonF(m_sceneBoundary);
 }
 
 QPolygonF antena::getIlluminatedZone()const{
@@ -163,7 +165,13 @@ vector <QPointF> antena::boundaryCorners(const QRectF &rect, const QPolygonF &un
 void antena::notifyParent(const QPointF &point, vector<ray> *wholeRay) {
     ray newRay(m_pos,point);
     wholeRay->push_back(newRay);
-    m_receiver->addWholeRay(wholeRay);
+    m_wholeRays.push_back(wholeRay);
+    //m_receiver->addWholeRay(wholeRay);
+    m_EMfield += m_scene->computeEMField(wholeRay);
+    m_power = m_scene->computePrx(m_EMfield,this);
+//    switch(m_mode){
+//        case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);
+//    }
 }
 
 QPointF antena::getPosition()const {
@@ -175,14 +183,41 @@ void antena::setIlluminatedZone(const QPolygonF &zone){
 }
 
 void antena::notifyObserver(const QPointF &pos){
+    m_EMfield = 0;
+    m_power = 0;
+    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
     if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
         vector<ray> *wholeRay = new vector<ray>;
         ray newRay(m_pos,pos);
         wholeRay->push_back(newRay);
-        m_receiver->addWholeRay(wholeRay);
+        m_wholeRays.push_back(wholeRay);
+        m_EMfield += m_scene->computeEMField(wholeRay);
+        m_power = m_scene->computePrx(m_EMfield,this);
+        //m_receiver->addWholeRay(wholeRay);
+//        switch(m_mode){
+//            case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);
+//        }
     }
 }
 
 void antena::setReceiver(AbstractReceiver *receiver){
     m_receiver = receiver;
+}
+
+void antena::setScene(AbstractScene *scene){
+    m_scene = scene;
+}
+
+complex<double> antena::getEMfield()const{
+    return m_EMfield;
+}
+
+double antena::getPower() const{
+    return m_power;
+}
+
+void antena::setMode(Mode mode){m_mode = mode;}
+
+vector<vector<ray>*>* antena::getWholeRays(){
+    return &m_wholeRays;
 }

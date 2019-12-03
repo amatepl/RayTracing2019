@@ -68,3 +68,14 @@ void Wall::setBuilding(Building *building){
 Building* Wall::getBuilding()const{
     return m_building;
 }
+
+QPointF Wall::otherPoint(const QPointF &point) const{
+    QPointF res;
+    if(point == p1()){
+        res = p2();
+    }
+    else{
+        res = p1();
+    }
+    return res;
+}

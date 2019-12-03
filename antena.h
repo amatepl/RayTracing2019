@@ -12,6 +12,8 @@
 #include "ReceiverObserver.h"
 #include "ray.h"
 #include "AbstractReceiver.h"
+#include "AbstractScene.h"
+#include <complex>
 
 using namespace std;
 //class room;
@@ -24,6 +26,7 @@ class antena: public QGraphicsEllipseItem,public AbstractAntena, public Receiver
 public:
     antena(/*room *scene = 0,*/ QPointF p = QPointF() , int type = 0);
     ~antena();
+    enum Mode {RayTracing, Coverege};
     int getPosX();
     int getPosY();
     QPointF getPos()const;
@@ -40,6 +43,11 @@ public:
     QPolygonF getIlluminatedZone()const override;
     void notifyObserver(const QPointF &pos) override;
     void setReceiver(AbstractReceiver *receiver);
+    void setScene(AbstractScene* scene);
+    complex<double>getEMfield()const;
+    double getPower()const;
+    void setMode(Mode mode);
+    vector<vector<ray>*>* getWholeRays();
 
 private:
     //room *myRoom;
@@ -50,6 +58,12 @@ private:
     QRectF m_sceneBoundary;
     QPolygonF m_zone;
     AbstractReceiver *m_receiver;
+    AbstractScene* m_scene;
+    complex<double> m_EMfield;
+    vector<vector<ray>*> m_wholeRays;
+    double m_power;
+    Mode m_mode;
+
 };
 
 #endif // ANTENA_H

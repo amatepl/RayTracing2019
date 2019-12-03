@@ -38,6 +38,10 @@ void Receiver::notifyObservers(){
     foreach(ReceiverObserver* observer, m_antenaImages){
         observer->notifyObserver(*this);
     }
+    switch(m_mode){
+        case RayTracing:m_scene->drawChosenRays();
+    }
+
 }
 
 void Receiver::addWholeRay(vector<ray> *wholeRay){

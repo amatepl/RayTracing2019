@@ -31,6 +31,8 @@ public:
     vector<Wall *> nearestWalls(const QPointF &point);
     QPolygonF shadow(const QPointF &light);
     vector <QPointF> extremities(const QPointF &light);
+    Wall* cornerSecondWall(Wall *wall, const QPointF &corner)const;
+    QPointF forDiffraction(Wall *wall, const QPointF &corner)const;
 
 private:
     Wall *m_walls[4]; // Array of pointers.

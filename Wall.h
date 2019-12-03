@@ -17,6 +17,7 @@ public:
     QPointF symetricalPoint(const QPointF &point);
     void setBuilding(Building *building);
     Building* getBuilding()const;
+    QPointF otherPoint(const QPointF &point)const;
 
 
 private:
