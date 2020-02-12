@@ -50,7 +50,7 @@ void Receiver::addWholeRay(vector<ray> *wholeRay){
     switch(m_mode){
         case RayTracing:m_scene->drawRays(wholeRay);
     }
-    m_scene->computeEMField(wholeRay);
+    //m_scene->computeEMField(wholeRay,this);
 }
 
 void Receiver::addRaysToScene(){
@@ -69,3 +69,6 @@ void Receiver::addWholeRayToScene(vector<ray> *wholeRay){
     }
 }
 
+QPointF Receiver::getPosition() const{
+    return *this;
+}

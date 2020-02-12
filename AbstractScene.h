@@ -20,7 +20,9 @@ public:
     virtual void clearRays() = 0;
     //virtual void computeEMField(vector <ray>* rays) = 0; // Probably shouldent be done here.
     virtual void clearEMFIeld() =0; // Probably shouldent be done here.
-    virtual complex <double> computeEMField(vector <ray>* rays) =0;
+    virtual complex <double> computeEMField(vector <ray>* rays,AbstractAntena *transmit) =0;
+    virtual complex <double> computeDiffractedEfield(vector<ray> *rayLine, AbstractAntena* transmitter) = 0;
+    virtual void display() = 0;
     virtual double computePrx(complex <double> totalEfield,AbstractAntena* transmit)=0;
 };
 

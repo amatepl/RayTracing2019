@@ -33,6 +33,8 @@ public:
     vector <QPointF> extremities(const QPointF &light);
     Wall* cornerSecondWall(Wall *wall, const QPointF &corner)const;
     QPointF forDiffraction(Wall *wall, const QPointF &corner)const;
+    vector<QPointF> getCorners();
+    bool adjacentWall(const QLineF &line,Wall* &wall);
 
 private:
     Wall *m_walls[4]; // Array of pointers.

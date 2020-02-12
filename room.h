@@ -127,16 +127,23 @@ public:
 
 
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
+    QPolygonF buildIlluminationZone(AbstractAntena *ant);
+
 //    QPolygonF transmitterIllumination();
     forImage transmitterIllumination(antena* transmitter);
     void buildDiffractionPoints(const QPolygonF &zone, vector<Wall*> illuminatedWalls, int nbReflections, AbstractAntena *parent);
 
-    vector <Line> illuminatedWalls(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
-    void createImages();
+    void setDiffraction(vector<Wall *> walls,const QPolygonF &zone, AbstractAntena *parent);
+    vector <Line> createImages(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+    void illuminationZones();
+
     void addToScene(QGraphicsItem *item) override;
 
     void drawBuildings();
     void removeAntenas();
+
+    complex <double> walfischIkegami(vector<ray> *rayLine, AbstractAntena* transmitter);
+    double trapezHeight(vector<ray> *rayLine);
 
     // AbstractScene methods
     void drawRays(vector<ray> *rays) override;
@@ -145,7 +152,9 @@ public:
     void clearRays() override;
     //void computeEMField(vector<ray> *rays) override;
     void clearEMFIeld() override;
-    complex<double> computeEMField(vector<ray> *rays) override;
+    complex<double> computeEMField(vector<ray> *rays, AbstractAntena *transmit) override;
+    complex <double> computeDiffractedEfield(vector<ray> *rayLine, AbstractAntena* transmitter) override;
+    void display() override;
 
 
 signals:
@@ -355,7 +364,7 @@ private:
 
     double computePrx(complex <double> totalEfield, AbstractAntena *transmit) override;
     complex <double> computeEfield(vector<ray*> rayLine);
-    complex <double> computeEfield(vector<ray> *rayLine);
+    complex <double> computeEfield(vector<ray> *rayLine, AbstractAntena *transmit);
     double computeReflexionPar(double thetaI, double epsilonR);
     double computeReflexionPer(double thetaI, double epsilonR);
     complex <double> computeEfieldGround(AbstractAntena *transmit);

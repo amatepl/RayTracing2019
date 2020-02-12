@@ -53,6 +53,7 @@ public:
     double getMeterLength()const;
     int getIndWall()const;
     void setDiffracted(bool diffracted);
+    bool getDiffracted()const;
 
 };
 

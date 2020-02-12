@@ -90,3 +90,7 @@ void ray::setTetai(double tetai){
 void ray::setDiffracted(bool diffracted){
     m_diffracted = diffracted;
 }
+
+bool ray::getDiffracted() const{
+    return m_diffracted;
+}

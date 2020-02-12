@@ -167,8 +167,14 @@ void antena::notifyParent(const QPointF &point, vector<ray> *wholeRay) {
     wholeRay->push_back(newRay);
     m_wholeRays.push_back(wholeRay);
     //m_receiver->addWholeRay(wholeRay);
-    m_EMfield += m_scene->computeEMField(wholeRay);
+    if(wholeRay->at(0).getDiffracted()){
+        m_EMfield += m_scene->computeDiffractedEfield(wholeRay,this);
+    }
+    else{
+        m_EMfield += m_scene->computeEMField(wholeRay,this);
+    }
     m_power = m_scene->computePrx(m_EMfield,this);
+    m_scene->display();
 //    switch(m_mode){
 //        case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);
 //    }
@@ -191,8 +197,10 @@ void antena::notifyObserver(const QPointF &pos){
         ray newRay(m_pos,pos);
         wholeRay->push_back(newRay);
         m_wholeRays.push_back(wholeRay);
-        m_EMfield += m_scene->computeEMField(wholeRay);
+        m_EMfield += m_scene->computeEMField(wholeRay,this);
         m_power = m_scene->computePrx(m_EMfield,this);
+        m_scene->display();
+        cout<<"my power"<<m_power<<endl;
         //m_receiver->addWholeRay(wholeRay);
 //        switch(m_mode){
 //            case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);

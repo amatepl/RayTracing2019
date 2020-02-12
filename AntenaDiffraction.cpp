@@ -13,7 +13,12 @@ void AntenaDiffraction::buildIlluminationZone(const QPointF &p1,const QPointF &p
     QLineF line2(*this,p1);
     line2.setLength(50000);
     illuminationZone<<*this << line1.p2()<<line2.p2();
-    m_zone = illuminationZone.intersected(m_sceneBoundary);
+    QRectF sceneBoundary(m_sceneBoundary);
+    sceneBoundary.setTop(m_sceneBoundary.top() + 1);
+    sceneBoundary.setBottom(m_sceneBoundary.bottom() - 1);
+    sceneBoundary.setRight(m_sceneBoundary.right() - 1);
+    sceneBoundary.setLeft(m_sceneBoundary.left() + 1);
+    m_zone = illuminationZone.intersected(sceneBoundary);
 
 }
 

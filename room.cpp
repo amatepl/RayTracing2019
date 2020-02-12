@@ -52,56 +52,11 @@ room::room(QObject *parente) :
     m_buildings.push_back(building6);
     m_buildings.push_back(building7);
 
-    //Building 1
-    walls[0] = new Wall(200,1,200,200, 0.0, 0.0, 0.0, 0);
-    walls[18] = new Wall(200,1,1,1, 0.0, 0.0, 0.0, 18);
-    walls[1] = new Wall(200,200,1,200, 0.0, 0.0, 0.0, 1);
-    walls[19] = new Wall(1,200,1,1, 0.0, 0.0, 0.0, 19);
-
-    //Building 2
-    walls[2] = new Wall(250, 1, 250, 200, 0.0, 0.0, 0.0, 2);
-    walls[3] = new Wall(250, 200, 450, 200, 0.0, 0.0, 0.0, 3);
-    walls[4] = new Wall(450, 200, 450, 1, 0.0, 0.0, 0.0, 4);
-    walls[20] = new Wall(450, 1, 250, 1, 0.0, 0.0, 0.0,20);
-
-    //Building 3
-    walls[5] = new Wall(500, 1, 500, 200, 0.0, 0.0, 0.0, 5);
-    walls[6] = new Wall(500, 200, 700, 200, 0.0, 0.0, 0.0, 6);
-    walls[7] = new Wall(700, 200, 700, 1, 0.0, 0.0, 0.0, 7);
-    walls[21] = new Wall(700, 1, 500, 1, 0.0, 0.0, 0.0, 21);
-
-    //Building 4
-    walls[8] = new Wall(750, 1, 750, 200, 0.0, 0.0, 0.0, 8);
-    walls[9] = new Wall(750, 200, 950, 200, 0.0, 0.0, 0.0, 9);
-    walls[10] = new Wall(950, 200, 950, 1, 0.0, 0.0, 0.0, 10);
-    walls[22] = new Wall(950, 1, 750, 1, 0.0, 0.0, 0.0, 22);
-
-    //Building 5
-    walls[11] = new Wall(200, 300, 200, 500, 0.0, 0.0, 0.0, 11);
-    walls[23] = new Wall(200, 500, 1, 500, 0.0, 0.0, 0.0, 23);
-    walls[24] = new Wall(1, 500, 1, 300, 0.0, 0.0, 0.0, 24);
-    walls[12] = new Wall(1, 300, 200, 300, 0.0, 0.0, 0.0, 12);
-
-    //Building 6
-    walls[13] = new Wall(250, 300, 250, 500, 0.0, 0.0, 0.0, 13);
-    walls[25] = new Wall(250, 500, 600, 500, 0.0, 0.0, 0.0, 25);
-    walls[14] = new Wall(600, 500, 600, 300, 0.0, 0.0, 0.0, 14);
-    walls[15] = new Wall(600, 300, 250, 300, 0.0, 0.0, 0.0, 15);
-
-    //Building 7
-    walls[16] = new Wall(650, 300, 650, 500, 0.0, 0.0, 0.0, 16);
-    walls[26] = new Wall(650, 500, 950, 500, 0.0, 0.0, 0.0, 26);
-    walls[27] = new Wall(950, 500, 950, 300, 0.0, 0.0, 0.0, 27);
-    walls[17] = new Wall(950, 300, 650, 300, 0.0, 0.0, 0.0, 17);
-
-    //drawWalls();
-
     streetsPenDep["commerceUp"] = 0;
     streetsPenDep["commerceDown"] = 0;
     streetsPenDep["spa"] = 0;
     streetsPenDep["indu"] = 0;
     streetsPenDep["deuxEg"] = 0;
-    findDiffractionPoints();
 
 }
 room::~room(void){}
@@ -204,65 +159,6 @@ bool room::workingZone(int Rx, int Ry){
     return result ;
 }
 
-void room::findDiffractionPoints(){
-
-    /*
-     * This fonction adds the diffraction points (corners) to the list of diffraction points.
-    */
-
-    //QPointF* diffractionPoint = new QPointF(0,0);
-    QPointF diffractionPoint(0,0);
-    for(unsigned int i = 0;i<amount_walls;i++){
-        for(unsigned int j = 0;j<amount_walls;j++){
-//            if(walls[i]->getIndWall() != walls[j]->getIndWall()){
-//                if(pointOnLine(walls[j],walls[i]->x1(),walls[i]->y1())){
-//                    bool check = true;
-//                    unsigned int c = 0;
-//                    while(c<diffractionPoints.size()&& check){
-//                        check = (diffractionPoints[c][0] != walls[i]->x1() || diffractionPoints[c][1] != walls[i]->y1());
-//                        c++;
-//                        //cout<<(double)950/500<<endl;
-//                    }
-
-//                    if(check){diffractionPoints.push_back({walls[i]->x1(),walls[i]->y1()});}
-//                }
-//                else if(pointOnLine(walls[j],walls[i]->x2(),walls[i]->y2())){
-//                    bool check = true;
-//                    unsigned int c = 0;
-//                    while(c<diffractionPoints.size()&& check){
-//                        check = (diffractionPoints[c][0] != walls[i]->x2() || diffractionPoints[c][1] !=walls[i]->y2());
-//                        c++;
-//                    }
-
-//                    if(check){diffractionPoints.push_back({walls[i]->x2(),walls[i]->y2()});}
-//                }
-//            }
-            if(walls[i]!= walls[j]){
-                if(walls[i]->intersect(*walls[j],&diffractionPoint)==1){
-                    bool check = true;
-                    unsigned int c = 0;
-                    while(c<diffractionPoints.size()&& check){
-                        check = (diffractionPoints[c][0] !=  (&diffractionPoint)->x()||diffractionPoints[c][1] !=   (&diffractionPoint)->y() );
-                        c++;
-                        //cout<<(double)950/500<<endl;
-                    }
-
-                    if(check&& !(&diffractionPoint)->isNull()){diffractionPoints.push_back({(&diffractionPoint)->x(),(&diffractionPoint)->y()});}
-                }
-            }
-        }
-    }
-}
-
-
-void room::drawWalls(){
-    QPen outlinePen(QColor(0, 0, 0, 255));
-    outlinePen.setWidth(2);
-    for(unsigned int i = 0;i<amount_all_walls;i++){
-        this->addLine(walls[i]->x1(),walls[i]->y1(),walls[i]->x2(),walls[i]->y2(),outlinePen);
-    }
-}
-
 
 void room::setAntenaType(int type){antenaType = type;}
 
@@ -285,7 +181,7 @@ void room::launch_algo(bool drawR){
     // TEST -----------------------
 
 
-    createImages();
+    illuminationZones();
     m_receiver->notifyObservers();
     //buildingsInIlluminationZone();
 //    QColor illumination;
@@ -340,15 +236,16 @@ struct forImage{
 };
 
 
-void room::createImages(){
+void room::illuminationZones(){
     int recursionDepth = reflectionsNumber;
 
     foreach(antena* transmitter,m_transmitters){
         m_receiver->addAntenaImage(transmitter);
         transmitter->setReceiver(m_receiver);
         forImage data = transmitterIllumination(transmitter);
+        setDiffraction(data.walls,data.zone,transmitter);
         if(recursionDepth > 0){
-                illuminatedWalls(data.walls,data.zone,recursionDepth -1 ,transmitter);
+                createImages(data.walls,data.zone,recursionDepth -1 ,transmitter);
         }
     }
 //    buildingsInIlluminationZone(Transmitter, recursionDepth);
@@ -356,7 +253,99 @@ void room::createImages(){
 }
 
 
-//QPolygonF room::transmitterIllumination(){
+void room::setDiffraction(vector<Wall *> walls,const QPolygonF &zone, AbstractAntena *parent){
+    vector <Line> illuminatedWalls;
+    vector <Wall*> usedWalls;
+
+    for(int i=1; i <  zone.length()-1 ;i++){
+
+        /*
+         * Here we go thorough the sides of the illumination zone and check if they are a part of a wall
+         * If yes, then the part is used to build the image of the transmitter.
+         */
+
+        int j =0;
+        bool cont = true;
+        while(j<walls.size() && cont){
+            if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))){
+                illuminatedWalls.push_back(Line(zone.at(i),zone.at(i+1)));
+                usedWalls.push_back(walls.at(j));
+                walls.erase(walls.begin()+j);
+                cont = false;
+            }
+            j++;
+        }
+    }
+    buildDiffractionPoints(zone,usedWalls,0,parent);
+}
+
+void room::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent){
+
+    QColor illumination1;
+    illumination1.setGreen(255);
+    illumination1.setAlpha(100);
+
+    QPen redPen(Qt::red);
+    redPen.setWidth(3);
+
+    for(int i = 0;i<zone.length()-1;i++){
+        const QPointF *cornerP = nullptr;
+        QPointF p2;
+        QPointF p1;
+        int j = 0;
+        bool cond = true;
+        while(j<illuminatedWalls.size() && cond){
+            if(zone.at(i) == illuminatedWalls.at(j)->p1()||zone.at(i) == illuminatedWalls.at(j)->p2()){
+                if(cornerP == nullptr){
+                    cornerP = &zone.at(i);
+                    if(illuminatedWalls.at(j)->onLine(zone.at(i+1))){
+                        p1 = zone.at(i-1);
+                    }else{p1 = zone.at(i+1);}
+
+                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i));
+                    cond = false;
+                }
+                else{
+                    cond = false;
+                }
+            }
+            j++;
+        }
+
+        //QPolygonF zoneCorn = buildIlluminationZone(zone.at(i));
+        if(!cond){
+            AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), p1,p2, parent,itemsBoundingRect());
+            QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
+            if(cornerZone.length() == 0){
+                delete(corner);
+            }
+            else{
+                m_receiver->addAntenaImage(corner);
+                //addPolygon(cornerZone,QPen(),illumination1);
+//                QLineF line(cornerZone.at(0),cornerZone.at(1));
+//                addLine(line,redPen);
+            }
+
+            for(int i=0; i<m_buildings.size();i++){
+                QPolygonF build(*m_buildings.at(i));
+                if(build.intersects(cornerZone)){
+                    QLineF line(cornerZone.at(0),cornerZone.at(1));
+                    //addLine(line,redPen);
+                    Wall* wall = nullptr;
+                    if(m_buildings.at(i)->adjacentWall(line, wall)){
+                        QPointF pos(wall->farestExtrem(cornerZone.at(0)));
+                        QPointF p2 = m_buildings.at(i)->forDiffraction(wall,pos);
+                        AntenaDiffraction *corner2 = new AntenaDiffraction(pos, cornerZone.at(1),p2, corner,itemsBoundingRect());
+                        m_receiver->addAntenaImage(corner2);
+                        QPolygonF cornerZone = buildingsInIlluminationZone(corner2,nbReflections);
+                        //addPolygon(cornerZone,QPen(),illumination1);
+                    }
+                }
+            }
+        }
+    }
+}
+
 forImage room::transmitterIllumination(antena *transmitter){
 
     // Painting tools
@@ -388,6 +377,40 @@ forImage room::transmitterIllumination(antena *transmitter){
     forImage result{nearestWalls,illuminationZone};
 
     return result;
+}
+
+QPolygonF room::buildIlluminationZone(AbstractAntena *ant){
+
+    // Painting tools
+    QColor illumination;
+    illumination.setBlue(255);
+    illumination.setAlpha(100);
+    QColor illumination2;
+    illumination2.setRed(255);
+    illumination2.setAlpha(50);
+
+    //vector <Building*> illuminatedBuldings; // Buildings lying in the initial illumination zone.
+//    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
+    QPolygonF illuminationZone = ant->getIlluminationZone();
+    //addPolygon(illuminationZone,QPen(),illumination2);
+    vector <Wall*> nearestWalls;
+
+    foreach(Building *building, m_buildings){
+        QPolygonF p_building(*building);
+
+        if(p_building.intersects(illuminationZone) && building != ant->getBuilding()){
+            //illuminatedBuldings.push_back(building);
+
+            //addPolygon(building->shadow(ant->getPosition()),QPen(),illumination2);
+
+            illuminationZone = illuminationZone.subtracted(building->shadow(ant->getPosition()));
+            QPointF corner = building->closestPoint(ant->getPosition()); // Closest point of the building to the transmitter
+            nearestWalls.push_back(building->nearestWalls(corner).at(0));   // Add the 2 walls that are at the corner.
+            nearestWalls.push_back(building->nearestWalls(corner).at(1));
+//            addPolygon(intitIlluminationZone,QPen(),illumination);
+        }
+    }
+    return illuminationZone;
 }
 
 
@@ -430,13 +453,14 @@ QPolygonF room::buildingsInIlluminationZone(AbstractAntena *ant, int nbReflectio
     ant->setIlluminatedZone(illuminationZone);
     //addPolygon(illuminationZone.intersected(Transmitter->getIlluminatedZone()),QPen(),illumination);
 
+
     if(recursionDepth > 0){
-        illuminatedWalls(nearestWalls,illuminationZone, recursionDepth -1,ant);
+        createImages(nearestWalls,illuminationZone, recursionDepth -1,ant);
     }
     return illuminationZone;
 }
 
-vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent){
+vector <Line> room::createImages(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent) {
     vector <Line> illuminatedWalls;
     vector <Wall*> usedWalls;
 
@@ -464,7 +488,7 @@ vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone,
                 illuminatedWalls.push_back(Line(zone.at(i),zone.at(i+1)));
                 usedWalls.push_back(walls.at(j));
 
-                addLine(Line(zone.at(i),zone.at(i+1)),redPen);
+                //addLine(Line(zone.at(i),zone.at(i+1)),redPen);
 
                 //Creation of the trasmitter image
                 AntenaImage *image = new AntenaImage(Line(zone.at(i),zone.at(i+1)),parent);
@@ -477,341 +501,22 @@ vector <Line> room::illuminatedWalls(vector <Wall*> walls, const QPolygonF zone,
 
                 QPolygonF imagesZone = buildingsInIlluminationZone(image,nbReflections);
 
-		/*
-		 * Creation of diffracted points. Since it's done here it won't work for the case without
-		 * any reflections.
-		 */
-
-
-
-
                 //usedWalls.push_back(walls.at(j));
                 walls.erase(walls.begin()+j);
                 cont = false;
             }
-
-
-
-//            else if (contDiffraction){
-//                QPointF p2;
-//                if(zone.at(i) == walls.at(j)->p1() ||  zone.at(i) == walls.at(j)->p2()){
-//                    if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i-1))){
-//                        p2 = walls.at(j)->getBuilding()->forDiffraction(walls.at(j),zone.at(i));
-//                    }
-//                    else{
-//                        p2 = walls.at(j)->otherPoint(zone.at(i));
-//                    }
-
-//                    AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), zone.at(i+1),p2, parent,itemsBoundingRect());
-//                    m_receiver->addAntenaImage(corner);
-//                    QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
-//                    addPolygon(cornerZone,QPen(),illumination1);
-//                    contDiffraction = false;
-
-//                }
-//                else if(zone.at(i+1) == walls.at(j)->p1() ||  zone.at(i+1) == walls.at(j)->p2()){
-//                    if(walls.at(j)->onLine(zone.at(i+1)) && walls.at(j)->onLine(zone.at(i+2))){
-//                        p2 = walls.at(j)->getBuilding()->forDiffraction(walls.at(j),zone.at(i+1));
-//                    }
-//                    else{
-//                        p2 = walls.at(j)->otherPoint(zone.at(i+1));
-//                    }
-
-//                    AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i+1), zone.at(i),p2, parent,itemsBoundingRect());
-//                    m_receiver->addAntenaImage(corner);
-//                    QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
-//                    addPolygon(cornerZone,QPen(),illumination1);
-//                    contDiffraction = false;
-//                }
-
                 j++;
-            }
-
-
-
-
-
         }
-
-        buildDiffractionPoints(zone,usedWalls,nbReflections,parent);
-
-
-
-
+    }
+    //buildDiffractionPoints(zone,usedWalls,nbReflections,parent);  // Uncomment for diffraction + relfection
     return  illuminatedWalls;
 }
 
-void room::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent){
-
-    QColor illumination1;
-    illumination1.setGreen(255);
-    illumination1.setAlpha(100);
-
-    for(int i = 0;i<zone.length()-1;i++){
-        const QPointF *corner = nullptr;
-        QPointF p2;
-        QPointF p1;
-        int j = 0;
-        bool cond = true;
-        while(j<illuminatedWalls.size() && cond){
-            if(zone.at(i) == illuminatedWalls.at(j)->p1()||zone.at(i) == illuminatedWalls.at(j)->p2()){
-                if(corner == nullptr){
-                    corner = &zone.at(i);
-                    if(illuminatedWalls.at(j)->onLine(zone.at(i+1))){
-                        p1 = zone.at(i-1);
-                    }else{p1 = zone.at(i+1);}
-
-                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i));
-                }
-                else{
-                    cond = false;
-                }
-            }
-//            else if(zone.at(i+1) == illuminatedWalls.at(j)->p1()||zone.at(i+1) == illuminatedWalls.at(j)->p2()){
-//                if(corner == nullptr){
-//                    corner = &zone.at(i+1);
-//                    if(illuminatedWalls.at(j)->onLine(zone.at(i))){
-//                        p1 = zone.at(i-1);
-//                    }else{p1 = zone.at(i+1);}
-//                    p1 = zone.at(i);
-//                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i+1));
-//                }
-//                else{
-//                    cond = false;
-//                }
-//            }
-            j++;
-        }
-
-        if(cond){
-
-            AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), p1,p2, parent,itemsBoundingRect());
-            m_receiver->addAntenaImage(corner);
-            QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
-            //addPolygon(cornerZone,QPen(),illumination1);
-        }
-    }
-}
-
-
-
 // ----------------------------------------------- Diffraction -----------------------------------------------------
-
-
-void room::drawDiffraction(room* scene){
-
-    /* This function draws the diffracted ray and asks to calculate its power.
-     * Only one diffraction is allowed for a given position of the transmitter and the receiver.
-     */
-
-    // Setting-up the drawing tool.
-    QPen outlinePen(QColor(255, 0, 0, 220));
-    outlinePen.setWidth(1);
-
-    // Those will check the intersections with the walls.
-    Line* pathTester;
-
-    //Actual rays that we chould obtein when the diffracation happens.
-    ray* rayReceiver;
-    ray* rayTransmitter;
-
-
-    //(*scene).diffractionPoints.clear();
-    vector<std::array <double,2>> usedDiffPoints;
-
-    for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
-        if((*scene).diffractionPoints[i][0] >(*scene).m_Receiver->x() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]>(*scene).m_Receiver->y() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->y()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-        else if((*scene).diffractionPoints[i][0]<(*scene).m_Receiver->x() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]<(*scene).m_Receiver->y() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->y()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-        else if((*scene).diffractionPoints[i][0]<(*scene).m_Receiver->x() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]>(*scene).m_Receiver->y() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->y()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-        else if((*scene).diffractionPoints[i][0]>(*scene).m_Receiver->x() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->x() && (*scene).diffractionPoints[i][1]<(*scene).m_Receiver->y() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->y()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-    }
-
-    bool notDiffracted = true;
-    unsigned int i =0;
-    while(i<usedDiffPoints.size() && notDiffracted){
-        pathTester = new Line(usedDiffPoints[i][0],usedDiffPoints[i][1],(*scene).m_Receiver->getPosX(), (*scene).m_Receiver->getPosY());
-        bool noTrans = true;
-
-        unsigned int j = 0;
-        while(j<(*scene).amount_all_walls){
-            //vector<double> inters = (*scene).intersection(pathTester,(*scene).walls[j]);
-            QPointF inters;
-            if(pathTester->intersect(*(*scene).walls[j],&inters)==1 && inters.x() != usedDiffPoints[i][0] && inters.y() != usedDiffPoints[i][1]){
-            //if((*scene).pointOnLine(pathTester,inters[0],inters[1]) && (*scene).pointOnLine((*scene).walls[j],inters[0],inters[1]) && inters[0] != usedDiffPoints[i][0] && inters[1] != usedDiffPoints[i][1]){
-                noTrans = false;
-            }
-            j++;
-        }
-
-        if(noTrans){
-            scene->addLine((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],outlinePen);
-            scene->addLine((*scene).m_Receiver->getPosX(),(*scene).m_Receiver->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],outlinePen);
-            rayReceiver = new ray((*scene).m_Receiver->getPosX(),(*scene).m_Receiver->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
-            rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
-            double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-            (*scene).powerRef = diffractPower;
-            (*scene).powerReceived = (*scene).dBm(diffractPower);
-            delete(rayReceiver);
-            delete(rayTransmitter);
-            //(*scene).diffractedPower+= diffractPower;
-            notDiffracted =false;
-        }
-    delete(pathTester);
-    i++;
-    }
-    usedDiffPoints.clear();
-    usedDiffPoints.shrink_to_fit();
-
-}
-
-
-void room::buildDiffraction(room* scene){
-    /* This function builds the diffracted ray and asks to calculate its power.
-     * Only one diffraction is allowed for a given position of the transmitter and the receiver.
-     */
-
-    // Those will check the intersections with the walls.
-    Line* pathTester;
-
-    //Actual rays that we chould obtein when the diffracation happens.
-    ray* rayReceiver;
-    ray* rayTransmitter;
-
-
-    vector<std::array <double,2>> usedDiffPoints;
-
-
-    for(unsigned int i =0;i< (*scene).diffractionPoints.size();i++){
-
-        /*
-         * This for loop choses omly the possible diffraction points i.e. the diffraction point lying in the rectanglw which two opposite
-         * corners are the positions of the transmitter and the receiver.
-         */
-
-        if((*scene).diffractionPoints[i][0]>(*scene).m_Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).m_Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-        else if((*scene).diffractionPoints[i][0]<(*scene).m_Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).m_Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-        else if((*scene).diffractionPoints[i][0]<(*scene).m_Receiver->getPosX() && (*scene).diffractionPoints[i][0]>(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]>(*scene).m_Receiver->getPosY() && (*scene).diffractionPoints[i][1]<(*scene).Transmitter->getPosY()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-        else if((*scene).diffractionPoints[i][0]>(*scene).m_Receiver->getPosX() && (*scene).diffractionPoints[i][0]<(*scene).Transmitter->getPosX() && (*scene).diffractionPoints[i][1]<(*scene).m_Receiver->getPosY() && (*scene).diffractionPoints[i][1]>(*scene).Transmitter->getPosY()){
-            usedDiffPoints.push_back((*scene).diffractionPoints[i]);
-        }
-    }
-
-    bool notDiffracted = true;
-    unsigned int i =0;
-    while(i<usedDiffPoints.size() && notDiffracted){
-        pathTester = new Line(usedDiffPoints[i][0],usedDiffPoints[i][1],(*scene).m_Receiver->getPosX(), (*scene).m_Receiver->getPosY());
-        bool noTrans = true;
-        unsigned int j = 0;
-
-        while(j<(*scene).amount_all_walls){
-
-            /*
-             * Here we check if the path tester intersect any wall. If yes the diffraction is canceled.
-             */
-
-            //vector<double> inters = (*scene).intersection(pathTester,(*scene).walls[j]);
-            QPointF inters;
-            //if((*scene).pointOnLine(pathTester,inters[0],inters[1]) && (*scene).pointOnLine((*scene).walls[j],inters[0],inters[1]) && inters[0] != usedDiffPoints[i][0] && inters[1] != usedDiffPoints[i][1]){
-            if(pathTester->intersect(*(*scene).walls[j],&inters)==1 && inters.x() != usedDiffPoints[i][0] && inters.y() != usedDiffPoints[i][1]){
-                noTrans = false;
-            }
-            j++;
-        }
-
-        if(noTrans){
-            rayReceiver = new ray((*scene).m_Receiver->getPosX(),(*scene).m_Receiver->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
-            rayTransmitter = new ray((*scene).Transmitter->getPosX(),(*scene).Transmitter->getPosY(),usedDiffPoints[i][0],usedDiffPoints[i][1],0,0);
-            double diffractPower = (*scene).diffractedRayPower(rayReceiver,rayTransmitter);
-            (*scene).powerRef = diffractPower;
-            (*scene).powerReceived = (*scene).dBm(diffractPower);
-            if((*scene).powerReceived > -70){
-                (*scene).penetrationDepth();
-            }
-            delete(rayTransmitter);
-            delete(rayReceiver);
-            //(*scene).diffractedPower+= diffractPower;
-            notDiffracted =false;
-        }
-    delete(pathTester);
-    i++;
-    }
-    usedDiffPoints.clear();
-    usedDiffPoints.shrink_to_fit();
-
-}
-
 
 // --> Numerical computing --------------------------------------------------------------------------------------------------------------
 
-
-
 // --> geometric tools ------------------------------------------------------------------------------------------------------------------
-
-
-bool room::commonToAnyWall(double posX, double posY, int indwall){
-
-    /*
-     * To know whether or not an extremety of a wall is an edge, it is requered to check if the point is shared with another wall of the list
-     */
-
-    bool ans = true;
-
-    for (unsigned int i = 0; i < amount_walls; i ++){
-
-            if(pointOnLine(walls[i], posX, posY)  && i != indwall /*&& walls[i]->line().intersect(walls[indwall]->line(), NULL) == 0*/){
-                ans = false;
-            }
-    }
-    return ans;
-}
-
-
-
-//bool room::pointOnLine(lineo* line1, double x, double y){
-bool room::pointOnLine(Line* line1,const double xp,const double yp){
-    /*
-     * As the intersection is computed by lines equations, it is required to check whether or not the intersection is placed on the the wall line, an line
-     * equation being define from [-INF, +INF]
-     */
-
-    int x1 = (int)line1->x1();
-    int y1 = (int)line1->y1();
-    int x2 = (int)line1->x2();
-    int y2 = (int)line1->y2();
-
-    bool answer = false;
-
-    int x = xp;
-    int y = yp;
-
-    if(x1 == x2){   // Cas du mur vertical
-        answer = ((y<=y2 && y>=y1) || ( y>=y2 && y<=y1)) && x == x1;
-    }
-    else if (y1 == y2){   // Cas du mur horizental
-        answer = ((x>=x2 && x<=x1) || (x<=x2 && x>=x1)) && y == y1;
-    }
-    else {
-       answer = ((x1<=x && y1<=y && x2>=x && y2 >=y) ||(x1>=x && y1>=y && x2<=x && y2 <=y)||(x>=x2 && y<=y2 && x<=x1 && y>=y1) || (x<=x2 && y>=y2 && x>=x1 && y<=y1));
-    }
-    return answer;
-
-}
-
-
 
 bool room::intersectionCheck(Line* line1, Line* line2){
     /*
@@ -858,22 +563,6 @@ bool room::intersectionCheck(Line* line1, Line* line2){
 
 }
 
-
-
-
-bool room::checkTransmission(Line* line1, Line* line2, int x1, int y1,int x2,int y2){
-    bool isNotTransmitted = false;
-    if(intersectionCheck(line1,line2)){
-        if(!pointOnLine(line1,x1,y1)){
-            if(!pointOnLine(line1,x2,y2)){
-                isNotTransmitted = true;
-            }
-
-        }
-    }
-    return isNotTransmitted;
-}
-
 // double room::distInWall(double tetai){
 
 // /*
@@ -911,8 +600,8 @@ double room::computeReflexionPar(double thetaI, double epsilonR){
 //    displayResults();
 //}
 
-complex <double> room::computeEMField(vector<ray> *rays){
-    return computeEfield(rays);
+complex <double> room::computeEMField(vector<ray> *rays,AbstractAntena *transmit){
+    return computeEfield(rays,transmit);
 //    powerRef = computePrx(totalEfield);
 //    powerReceived = dBm(powerRef);
 //    displayResults();
@@ -925,7 +614,7 @@ void room::clearEMFIeld(){
     clearLocalParameters();
 }
 
-complex <double> room::computeEfield(vector<ray> *rayLine){
+complex <double> room::computeEfield(vector<ray> *rayLine,AbstractAntena *transmit){
     /* One vector<ray*> is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
      * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
      *
@@ -952,6 +641,14 @@ complex <double> room::computeEfield(vector<ray> *rayLine){
     double Ia = sqrt(2.0*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
     Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+
+    if(amountSegment==1){
+        // Adding the ground component
+        complex <double> groundEfield = this->computeEfieldGround(transmit); // Compute the electrical field from the ray reflected off the ground
+        double distance = this->distance(transmit);
+        double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
+        Efield += groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI));
+    }
 
     if(amountSegment==1){
         this->minLength = completeLength; // for delay spread computation
@@ -1072,20 +769,26 @@ complex <double> room::computeEfieldGround(AbstractAntena *transmit){
 
 double room::computePrx(complex <double> totalEfield, AbstractAntena *transmit){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-    complex <double> groundEfield = this->computeEfieldGround(transmit); // Compute the electrical field from the ray reflected off the ground
-    double distance = this->distance(transmit);
-    double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
-    complex <double> Voc = (lambda/M_PI)*(totalEfield + groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
+//    complex <double> groundEfield = this->computeEfieldGround(transmit); // Compute the electrical field from the ray reflected off the ground
+//    double distance = this->distance(transmit);
+//    double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
+//    complex <double> Voc = (lambda/M_PI)*(totalEfield+ groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
+    complex <double> Voc = (lambda/M_PI)*(totalEfield);
     double Prx = 1/(8*Ra)*norm(Voc);
 
-
-
-    cout<<"Chosen antena: x =  "<<m_transmitters[0]->x()<<", y =  "<<m_transmitters[0]->y()<<endl;
+    //cout<<"Chosen antena: x =  "<<m_transmitters[0]->x()<<", y =  "<<m_transmitters[0]->y()<<endl;
 
     //totalEfield = m_transmitters[0]->getEMfield();
-    powerRef = m_transmitters[0]->getPower();
-    powerReceived = dBm(powerRef);
-    displayResults();
+
+
+    /*
+     * Here I try to get the power from the receiver before computing it !!!!!!!
+     */
+
+//    powerRef = m_transmitters[0]->getPower();
+
+//    powerReceived = dBm(powerRef);
+//    displayResults();
 
     return Prx;
 }
@@ -1098,6 +801,81 @@ double room::computeSNR(double Prx){
     return SNR;
 }
 
+complex<double> room::computeDiffractedEfield(vector<ray> *rayLine, AbstractAntena *transmitter){
+
+    // Direct distance between the receiver and the transmitter
+//    double direct_dist = sqrt(pow(transmitter->getPosition().x()-m_Receiver->getPosX(),2)
+//                              + pow(transmitter->getPosition().y()-m_Receiver->getPosY(),2)); //convertir px to cm?
+
+    double direct_dist = sqrt(pow(rayLine->at(1).p1().x()-rayLine->at(0).p2().x(),2)
+                              + pow(rayLine->at(1).p1().y()-rayLine->at(0).p2().y(),2)); //convertir px to cm?
+
+    complex<double> Efield =0.0;
+    complex<double> F =0.0;
+    complex <double> i(0.0, 1.0);
+
+    // The length defference between the path going through the tip of the obstacle, and the direct path.
+
+    double delta_r = (rayLine->at(0).length()+rayLine->at(1).length() - direct_dist)*pow(10, -1.0);
+
+    double nu = sqrt(2*2*M_PI/lambda*delta_r/M_PI);
+    // The ITU's approximation for |F(nu)|^2
+
+    double absF = pow(10,-6.9/40)/sqrt((sqrt(pow(nu-0.1,2)+1)+nu-0.1));
+    double argF = -M_PI/4 - pow(nu,2)*M_PI/2;
+    F = absF*exp(i*argF);
+
+    //ray* directRay = new ray(m_Receiver->getPosX(),m_Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY(),0,0);
+
+    ray* directRay = new ray(rayLine->at(0).p2(),rayLine->at(1).p1(),0,0);
+    double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
+    Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
+    Efield = F*Efield;
+    cout<<"Fresnel integral: "<<F<<endl;
+    cout<<"Diffracted field: "<<Efield<<endl;
+    delete(directRay);
+    return Efield;
+}
+
+complex<double>room::walfischIkegami(vector<ray> *rayLine, AbstractAntena *transmitter){
+    /*
+     * Walfisch–Ikegami Model
+     */
+
+    double w = 30;
+    double wm = 15;     // Distance between the building faces. For approximate work: 10-25;
+    double kf = -4 + 0.7*(freq/925 - 1);
+    double R = sqrt(pow(rayLine->at(2).p1().x()-rayLine->at(0).p2().x(),2)
+                              + pow(rayLine->at(2).p1().y()-rayLine->at(0).p2().y(),2)); //convertir px to cm?
+    double hm = trapezHeight(rayLine);
+    double Lsd = -16.9 + 10*log10(freq) + 10*log10(pow(hm,2)/wm) + 4.0 - 0.114*(90 - 55);
+    double Lmsd = 54 + 18*log10(R)+ kf*log10(freq) - 9*log(w);
+    double Lf = 32.4 + 20*log10(R) + 20*log(freq*pow(10,-6));
+    double L = Lf+Lmsd+Lsd;
+    return L;
+}
+
+double room::trapezHeight(vector<ray> *rayLine){
+    /*
+     * In the case of a double diffraction we've got to compute the maximum distance between the direct ray and
+     * the corners. It gives us the "height" in the horizontal plane of the obstacle.
+     */
+
+    double hm = 0.0;
+    for(int i=0;i<3;i+=2){
+        QPointF u = rayLine->at(i).p2()-rayLine->at(i).p1();
+        QPointF v = rayLine->at(2-i).p2()-rayLine->at(i).p1();
+        double rayLength = sqrt(pow(rayLine->at(i).p1().x()-rayLine->at(i).p2().x(),2)
+                                + pow(rayLine->at(i).p1().y()-rayLine->at(i).p2().y(),2));
+        double pointProd = QPointF::dotProduct(u,v);
+        double h = rayLength*sqrt(1-pow(pointProd/abs(pointProd),2));
+        if(h>hm){
+            hm =h;
+        }
+    }
+    return hm;
+}
+
 double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
 
     // Direct distance between the receiver and the transmitter
@@ -1108,16 +886,23 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     //rayLine.clear();
 
     complex<double> Efield =0.0;
+    complex<double> F =0.0;
+    complex <double> i(0.0, 1.0);
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
 
     double delta_r = (rayReceiver->length()+rayTransmitter->length() - direct_dist)*pow(10, -1.0);
-    cout << "length rx: " << rayReceiver->length() << endl;
-    cout << "length tx: " << rayTransmitter->length() << endl;
-    cout << "delta_r: " << delta_r << endl;
+//    cout << "length rx: " << rayReceiver->length() << endl;
+//    cout << "length tx: " << rayTransmitter->length() << endl;
+//    cout << "delta_r: " << delta_r << endl;
 
     double nu = sqrt(2*2*M_PI/lambda*delta_r/M_PI);
     // The ITU's approximation for |F(nu)|^2
+
+    double absF = pow(10,-6.9/40)/sqrt((sqrt(pow(nu-0.1,2)+1)+nu-0.1));
+    double argF = -M_PI/4 - pow(nu,2)*M_PI/2;
+    F = absF*exp(i*argF);
+
     double FresnelPowerdB = -6.9 - 20*log10(sqrt(pow(nu-0.1,2)+1)+nu-0.1);
 
     double FresnelPower = pow(10,FresnelPowerdB/20);
@@ -1126,11 +911,11 @@ double room::diffractedRayPower(ray* rayReceiver, ray* rayTransmitter){
     //Efield = computeEfield(rayLine);
 //    double G = Zvoid/(pow(M_PI, 2)*Ra);
     //Efield = (sqrt(60*G*powerEmettor)/directRay->getMeterLength());  // we can add the phase if we want to take into account the interraction between MPCs
-    complex <double> i(0.0, 1.0);
+
     double Ia = sqrt(2*powerEmettor/Ra); // Ia could be changed for Beamforming application (add exp)
     Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
     double power = 1/(8*Ra)*norm((lambda/M_PI)*Efield)*FresnelPower;
-    cout << "power: " << power << endl;
+//    cout << "power: " << power << endl;
 
 //    totalEfield += Efield*fresnelCoef;
 
@@ -1575,6 +1360,9 @@ void room::drawRays(vector<ray> *rays){
 }
 
 void room::drawChosenRays(vector<vector<ray> *>* rays, AbstractAntena *ant){
+    QPen redPen(Qt::red);
+    redPen.setWidth(3);
+
     sort(m_transmitters.begin(),m_transmitters.end(),[](antena* a, antena* b){
        return a->getPower()>b->getPower();
     });
@@ -1593,6 +1381,7 @@ void room::drawChosenRays(vector<vector<ray> *>* rays, AbstractAntena *ant){
         for(int j = 0;j<rays->size();j++){
             for(int i = 0; i<rays->at(j)->size();i++){
                 QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(rays->at(j)->at(i));
+                graphicsRay->setPen(redPen);
                 addItem(graphicsRay);
                 m_rays.push_back(graphicsRay);
             }
@@ -1601,6 +1390,9 @@ void room::drawChosenRays(vector<vector<ray> *>* rays, AbstractAntena *ant){
 }
 
 void room::drawChosenRays(){
+    QPen redPen(Qt::red);
+    redPen.setWidth(3);
+
     sort(m_transmitters.begin(),m_transmitters.end(),[](antena* a, antena* b){
        return a->getPower()>b->getPower();
     });
@@ -1620,6 +1412,7 @@ void room::drawChosenRays(){
     for(int j = 0;j<rays->size();j++){
         for(int i = 0; i<rays->at(j)->size();i++){
             QGraphicsLineItem *graphicsRay = new QGraphicsLineItem(rays->at(j)->at(i));
+            graphicsRay->setPen(redPen);
             addItem(graphicsRay);
             m_rays.push_back(graphicsRay);
         }
@@ -1646,3 +1439,9 @@ void room::clearRays(){
 //    mousePosition = x.toPoint();
 //    //myParent->onMouseEvent("ll",X);
 //}
+
+void room::display(){
+    powerRef = m_transmitters[0]->getPower();
+    powerReceived = dBm(powerRef);
+    displayResults();
+}

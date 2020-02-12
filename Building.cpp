@@ -247,3 +247,25 @@ Wall* Building::cornerSecondWall(Wall *wall,const QPointF &corner)const {
     }
     return m_walls[i-1];
 }
+
+vector<QPointF> Building::getCorners(){
+    vector<QPointF>corners;
+    for(int i=0;i<4;i++){
+        corners.push_back(m_walls[i]->p1());
+    }
+    return corners;
+}
+
+bool Building::adjacentWall(const QLineF &line, Wall *&wall){
+    bool res = false;
+    int i=0;
+    while( i<4 && !res){
+        QLineF line2(line.p1(),m_walls[i]->p1());
+        QPointF p;
+        //res = !line.intersect(line2,&p);
+        res = !(line.intersect(*m_walls[i],&p) || line.intersect(line2,&p));
+        wall = m_walls[i];
+        i++;
+    }
+    return res;
+}

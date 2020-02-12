@@ -28,6 +28,7 @@ public:
     void addWholeRay(vector<ray> *wholeRay) override;
     void addRaysToScene();
     void addWholeRayToScene(vector<ray> *wholeRay);
+    QPointF getPosition()const override;
 
 private:
     AbstractScene *m_scene;
