@@ -7,7 +7,8 @@ class SceneObserver{
 
 public:
     virtual ~SceneObserver(){}
-    virtual void update(GraphicsComponent*) = 0;
+    virtual void updateNewProperties(GraphicsComponent*) = 0;
+    virtual void updateChangeProperties(GraphicsComponent*) = 0;
 };
 
 #endif // SCENEOBSERVER_H

@@ -17,6 +17,15 @@ void DialogFactory::receiveTransmitterProduct(TransmitterProduct* transmitterpro
     dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPower(transmitterproduct->getPower());
 }
 
+void DialogFactory::receiveBuildingProduct(BuildingProduct* buildingproduct){
+    dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setPosX(buildingproduct->getPosX());
+    dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setPosY(buildingproduct->getPosY());
+    dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setConductivity(buildingproduct->getConductivity());
+    dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setPermittivity(buildingproduct->getPermittivity());
+    dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setModel(buildingproduct->getModel());
+    dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setExtremities(buildingproduct->getExtremities());
+}
+
 TransmitterProduct* DialogFactory::createTransmitterProduct(){
     TransmitterProduct* graphic = dynamic_cast<TransmitterProduct*>(m_graphiccomponent);
     TransmitterProduct* dialog  = new DialogTransmitterProduct(graphic,this);
@@ -24,17 +33,27 @@ TransmitterProduct* DialogFactory::createTransmitterProduct(){
 }
 
 ReceiverProduct* DialogFactory::createReceiverProduct(){
-    /*
-    ReceiverProduct* graphic = dynamic_cast<ReceiverProduct*>(m_graphiccomponent);
-    ReceiverProduct* dialog  = new DialogReceiverProduct(graphic,this);
-    return dialog;*/
+
 }
 
-void DialogFactory::update(GraphicsComponent* graphicscomponent){
+BuildingProduct* DialogFactory::createBuildingProduct(){
+    BuildingProduct* graphic = dynamic_cast<BuildingProduct*>(m_graphiccomponent);
+    BuildingProduct* dialog  = new DialogBuildingProduct(graphic,this);
+    return dialog;
+}
+
+void DialogFactory::updateNewProperties(GraphicsComponent* graphicscomponent){
     m_graphiccomponent = graphicscomponent;
     switch(int (m_graphiccomponent->getType())){
         case int(GraphicsComponent::TransmitterProduct):
             createTransmitterProduct();
             break;
+        case int(GraphicsComponent::BuildingProduct):
+            createBuildingProduct();
+            break;
     }
+}
+
+void DialogFactory::updateChangeProperties(GraphicsComponent* graphicscomponent){
+
 }

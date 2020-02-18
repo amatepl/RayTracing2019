@@ -9,6 +9,7 @@
 #include "scenefactory.h"
 #include "Product/TransmitterProduct/graphicstransmitterproduct.h"
 #include "Product/ReceiverProduct/graphicsreceiverproduct.h"
+#include "Product/BuildingProduct/graphicsbuildingproduct.h"
 #include "Composite/graphicscomposite.h"
 #include "Observer/windowobserver.h"
 #include "Observer/windowobservable.h"
@@ -17,19 +18,21 @@
 class GraphicsFactory :public WindowObserver, public SceneObservable, public SceneFactory, public QGraphicsScene
 {
 public:
-    enum Mode{MoveItem,InsertTransmitter,InsertReceiver};
+    enum Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding};
 
     GraphicsFactory(QGraphicsView *view, WindowObservable* windowobservable);
     ~GraphicsFactory() override;
 
     void update(int mode) override;
 
-    void notify(GraphicsComponent*) override;
+    void notifyNewProperties(GraphicsComponent*) override;
+    void notifyChangeProperties(GraphicsComponent *) override;
     void attachObserver(SceneObserver *) override;
     void detachObserver(SceneObserver *) override;
 
     TransmitterProduct* createTransmitterProduct() override;
     ReceiverProduct * createReceiverProduct() override;
+    BuildingProduct * createBuildingProduct() override;
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;

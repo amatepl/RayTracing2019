@@ -15,12 +15,17 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Observer/sceneobserver.h \
     Observer/windowobservable.h \
     Observer/windowobserver.h \
+    Product/BuildingProduct/buildingproduct.h \
+    Product/BuildingProduct/dialogbuildingproduct.h \
+    Product/BuildingProduct/graphicsbuildingproduct.h \
+    Product/BuildingProduct/mathematicalbuildingproduct.h \
     Product/ReceiverProduct/graphicsreceiverproduct.h \
     Product/ReceiverProduct/receiverproduct.h \
     Product/TransmitterProduct/dialogtransmitterproduct.h \
     Product/TransmitterProduct/graphicstransmitterproduct.h \
     Product/TransmitterProduct/mathematicaltransmitterproduct.h \
     Product/TransmitterProduct/transmitterproduct.h \
+    Share/line.h \
     applicationwindow.h
 
 SOURCES += Abstract_Factory/dialogfactory.cpp \
@@ -29,10 +34,14 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Composite/graphicscomposite.cpp \
     Graphics/patternwindow.cpp \
     Graphics/surface3d.cpp \
+    Product/BuildingProduct/dialogbuildingproduct.cpp \
+    Product/BuildingProduct/graphicsbuildingproduct.cpp \
+    Product/BuildingProduct/mathematicalbuildingproduct.cpp \
     Product/ReceiverProduct/graphicsreceiverproduct.cpp \
     Product/TransmitterProduct/dialogtransmitterproduct.cpp \
     Product/TransmitterProduct/graphicstransmitterproduct.cpp \
     Product/TransmitterProduct/mathematicaltransmitterproduct.cpp \
+    Share/line.cpp \
     applicationwindow.cpp \
     main.cpp
 

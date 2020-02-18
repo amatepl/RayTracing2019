@@ -26,12 +26,21 @@ void GraphicsFactory::update(int mode){
         case int(WindowObservable::InsertReceiver):
             m_mode = InsertReceiver;
         break;
+        case int(WindowObservable::InsertBuilding):
+            m_mode = InsertBuilding;
+        break;
     }
 }
 
-void GraphicsFactory::notify(GraphicsComponent* graphicscomponent){
+void GraphicsFactory::notifyNewProperties(GraphicsComponent* graphicscomponent){
     for (unsigned long long i=0;i<m_sceneobserver.size();i++){
-        m_sceneobserver.at(i)->update(graphicscomponent);
+        m_sceneobserver.at(i)->updateNewProperties(graphicscomponent);
+    }
+}
+
+void GraphicsFactory::notifyChangeProperties(GraphicsComponent * graphicscomponent){
+    for (unsigned long long i=0;i<m_sceneobserver.size();i++){
+        m_sceneobserver.at(i)->updateChangeProperties(graphicscomponent);
     }
 }
 
@@ -63,6 +72,11 @@ ReceiverProduct* GraphicsFactory::createReceiverProduct()
     return graphicsReceiver;
 }
 
+BuildingProduct* GraphicsFactory::createBuildingProduct(){
+    BuildingProduct* graphicsBuilding = new GraphicsBuildingProduct(0,0,0,this);
+    return graphicsBuilding;
+}
+
 void GraphicsFactory::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton)
@@ -83,6 +97,15 @@ void GraphicsFactory::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_graphicscomponent->add(dynamic_cast<GraphicsComponent*>(graphicsReceiver));
         m_windowobservable->answer();
     }
+    if (m_mode == InsertBuilding){
+        QPointF p(event->scenePos());
+        BuildingProduct* graphicsBuilding = createBuildingProduct();
+        graphicsBuilding->setPosX(int(p.x()));
+        graphicsBuilding->setPosY(int(p.y()));
+        m_graphicscomponent->add(dynamic_cast<GraphicsComponent*>(graphicsBuilding));
+        m_windowobservable->answer();
+        notifyChangeProperties(dynamic_cast<GraphicsComponent*>(graphicsBuilding));
+    }
     QGraphicsScene::mousePressEvent(event);
 }
 
@@ -100,6 +123,11 @@ void GraphicsFactory::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
                         dynamic_cast<ReceiverProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
                         dynamic_cast<ReceiverProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
                         break;
+                    case int(GraphicsComponent::BuildingProduct):
+                        dynamic_cast<BuildingProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
+                        dynamic_cast<BuildingProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
+                        notifyChangeProperties(m_graphicscomponent->getGraphicsComponent(i));
+                        break;
                 }
             }
         }
@@ -110,7 +138,7 @@ void GraphicsFactory::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 void GraphicsFactory::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     for (unsigned long long i = 0; i<m_graphicscomponent->getSize();i++){
         if (m_graphicscomponent->getGraphicsComponent(i)->graphicsSelected()){
-            notify(m_graphicscomponent->getGraphicsComponent(i));
+            notifyNewProperties(m_graphicscomponent->getGraphicsComponent(i));
         }
     }
     QGraphicsScene::mouseDoubleClickEvent(event);

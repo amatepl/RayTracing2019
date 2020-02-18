@@ -6,7 +6,10 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     view = new QGraphicsView();
     graphicsfactory = new GraphicsFactory(view,this);
     dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
+    mathematicalfactory = new MathematicalFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
     dynamic_cast<GraphicsFactory*>(graphicsfactory)->attachObserver(dynamic_cast<SceneObserver*>(dialogfactory));
+    dynamic_cast<GraphicsFactory*>(graphicsfactory)->attachObserver(dynamic_cast<SceneObserver*>(mathematicalfactory));
+
     attachObserver(dynamic_cast<WindowObserver*>(graphicsfactory));
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -69,6 +72,9 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
         case int(InsertReceiver):
             icon = QIcon(GraphicsReceiverProduct::getImage());
             break;
+        case int(InsertBuilding):
+            icon = QIcon(GraphicsBuildingProduct::getImage());
+            break;
     }
     button->setIcon(icon);
     m_antennagroup->addButton(button,mode);
@@ -83,24 +89,38 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
 void ApplicationWindow::createToolBox(){
     m_antennagroup = new QButtonGroup(this);
     m_antennagroup->setExclusive(false);
+    m_obstaclegroup = new QButtonGroup(this);
+    m_obstaclegroup->setExclusive(false);
     connect(m_antennagroup,SIGNAL(buttonClicked(int)),this,SLOT(antennaGroupClicked(int)));
-    QGridLayout *layout = new QGridLayout;
+    connect(m_obstaclegroup,SIGNAL(buttonClicked(int)),this,SLOT(obstacleGroupClicked(int)));
+    QGridLayout *antenna_layout = new QGridLayout;
+    QGridLayout *obstacle_layout = new QGridLayout;
 
     QWidget* widget = createToolButton("Insert Transmitter",int(GraphicsFactory::InsertTransmitter));
-    layout->addWidget(widget, 0, 0);
+    antenna_layout->addWidget(widget, 0, 0);
     QWidget* widget1 = createToolButton("Insert Receiver",int(GraphicsFactory::InsertReceiver));
-    layout->addWidget(widget1, 0, 1);
+    antenna_layout->addWidget(widget1, 0, 1);
 
-    layout->setRowStretch(3, 10);
-    layout->setColumnStretch(2, 10);
+    antenna_layout->setRowStretch(3, 10);
+    antenna_layout->setColumnStretch(2, 10);
+
+    QWidget* obstacle_widget = createToolButton("Insert Building",int(GraphicsFactory::InsertBuilding));
+    obstacle_layout->addWidget(obstacle_widget, 0, 0);
+
+    obstacle_layout->setRowStretch(3, 10);
+    obstacle_layout->setColumnStretch(2, 10);
 
     QWidget *itemWidget = new QWidget;
-    itemWidget->setLayout(layout);
+    itemWidget->setLayout(antenna_layout);
+
+    QWidget *obstacleWidget = new QWidget;
+    obstacleWidget->setLayout(obstacle_layout);
 
     m_toolbox = new QToolBox;
     m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     m_toolbox->setMinimumWidth(itemWidget->sizeHint().width());
     m_toolbox->addItem(itemWidget, tr("Antenna"));
+    m_toolbox->addItem(obstacleWidget, tr("Obstacles"));
 }
 
 void ApplicationWindow::setMode(Mode mode){
@@ -108,6 +128,11 @@ void ApplicationWindow::setMode(Mode mode){
 }
 
 void ApplicationWindow::antennaGroupClicked(int mode){
+    setMode(Mode(mode));
+    notify(mode);
+}
+
+void ApplicationWindow::obstacleGroupClicked(int mode){
     setMode(Mode(mode));
     notify(mode);
 }

@@ -20,9 +20,9 @@ public:
                                ,GraphicsFactory* graphicsfactory);
     ~GraphicsTransmitterProduct() override;
 
-    virtual int getType() override;
-    virtual bool graphicsSelected() override;
-    virtual void draw() override;
+    int getType() override;
+    bool graphicsSelected() override;
+    void draw() override;
 
     static QPixmap getImage();
     int getPosX() override;
@@ -43,7 +43,7 @@ public:
     void setRow(int row) override;
     void setColumn(int column) override;
     void setAntennaDistance(double distance) override;
-    virtual void setModel(Model model) override;
+    void setModel(Model model) override;
 
 
 private:

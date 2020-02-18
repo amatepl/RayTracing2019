@@ -15,6 +15,7 @@
 #include "Abstract_Factory/scenefactory.h"
 #include "Abstract_Factory/graphicsfactory.h"
 #include "Abstract_Factory/dialogfactory.h"
+#include "Abstract_Factory/mathematicalfactory.h"
 #include "Observer/windowobservable.h"
 
 using namespace std;
@@ -38,13 +39,14 @@ public:
 
 private:
     QGraphicsView *view;
-    SceneFactory *graphicsfactory,*dialogfactory;
+    SceneFactory *graphicsfactory,*dialogfactory,*mathematicalfactory;
     vector<WindowObserver*> m_windowobserver;
     vector<WindowObserver*>::iterator m_windowobserveriterator;
 
     Mode m_mode;
 
     QButtonGroup *m_antennagroup;
+    QButtonGroup *m_obstaclegroup;
     QToolBox *m_toolbox;
 
 
@@ -52,6 +54,7 @@ signals:
 
 public slots:
     void antennaGroupClicked(int);
+    void obstacleGroupClicked(int);
 };
 
 #endif // APPLICATIONWINDOW_H

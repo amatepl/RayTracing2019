@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>3</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>126</x>
+      <y>162</y>
+      <w>96</w>
+      <h>39</h>
+    </coordinates>
+    <panel_attributes>/SceneFactory/
+--
+-createTransmitterProduct(): TransmitterProduct*
+-createReceiverProduct(): ReceiverProduct*
+-createWallProduct(): WallProduct*
+-createBuildingProduct(): BuildingProduct*
+-createTreeProduct(): TreeProduct*
+-createRayProduct(): RayProduct*</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>81</x>
+      <y>210</y>
+      <w>126</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>GraphicsFactory : QGraphicsScene
+--
+-Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding}
+		:enum
+--
+-m_view: GraphicsView*
+-m_graphicscomponent: GraphicsComposite*
+-m_mode: Mode
+-m_windowobservable: WindowObservable*
+-m_scenecbserver: vector&lt;SceneObserver*&gt;
+-m_scenecbserveriterator: iterator
+--
+-mousePressEvent(QGraphicsSceneMouseEvent*): void
+-mouseMoveEvent(QGraphicsSceneMouseEvent*): void
+-mouseDoubleClickedEvent(QGraphicsSceneMouseEvent*): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>213</x>
+      <y>210</y>
+      <w>126</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>MathematicalFactory 
+--
+-m_graphicsfactory: SceneObservable*
+-m_graphicscomponent: GraphicsComponent*
+-m_mathbuildings: vector&lt;MathematicalBuildingProduct*&gt;
+-m_mathbuildingsiterator: iterator
+--
+-ReceiveBuildingProduct(BuildingProduct*,BuildingProduct*): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>702</x>
+      <y>171</y>
+      <w>48</w>
+      <h>9</h>
+    </coordinates>
+    <panel_attributes>/TransmitterProduct/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>624</x>
+      <y>183</y>
+      <w>57</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>GraphicsTransmitterProduct : 
+QGraphicsPixmapItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>609</x>
+      <y>150</y>
+      <w>72</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>MathematicalTransmitterProduct :
+QPointF</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>702</x>
+      <y>222</y>
+      <w>48</w>
+      <h>9</h>
+    </coordinates>
+    <panel_attributes>/ReceiverProduct/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>624</x>
+      <y>234</y>
+      <w>57</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>GraphicsReceiverProduct : 
+QGraphicsPixmapItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>609</x>
+      <y>201</y>
+      <w>72</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>MathematicalReceiverProduct :
+QPointF</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>357</x>
+      <y>210</y>
+      <w>108</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>DialogFactory
+--
+-m_graphicsfactory: SceneObservable*
+-m_graphiccomponent: GraphicsComponent*
+--
+-receiveTransmitterProduct(TransmitterProduct*): void
+-receiveBuildingProduct(BuildingProduct*): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>624</x>
+      <y>168</y>
+      <w>57</w>
+      <h>12</h>
+    </coordinates>
+    <panel_attributes>DialogTransmitterProduct:
+QDialog</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>624</x>
+      <y>219</y>
+      <w>57</w>
+      <h>12</h>
+    </coordinates>
+    <panel_attributes>DialogReceiverProduct:
+QDialog</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>711</x>
+      <y>324</y>
+      <w>81</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>/BuildingProduct/
+--
+Model{brick,concrete,none}: enum
+--
+-getPosX(): int
+-getPosY(): int
+-getOrientation(): double
+-getConductivity(): double
+-getPermittivity(): double
+-getModel(): int
+-getExtremities: QVector&lt;QPointF&gt;
+-setPosX(int): void
+-setPosY(int): void
+-setOrientation(double): void
+-setConductivity(double): void
+-setPermittivity(double): void
+-setModel(int): void
+-setExtremities(QVector&lt;QPointF&gt;): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>597</x>
+      <y>261</y>
+      <w>96</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>MathematicalBuildingProduct :QPolygonF
+--
+-m_mathematicalfactory: MathematicalFactory*
+-m_extremities: QVector&lt;QPointF&gt;
+-m_model: Model
+-m_posx: int
+-m_posy: int
+-m_orientation: double
+-m_permittivity: double
+-m_conductivity: double
+--
+-getBuildingProduct: BuildingProduct* 
+-setBuildingProduct(BuildingProduct*): void 
+-newProperties(): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>597</x>
+      <y>330</y>
+      <w>69</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>DialogBuildingProduct:QDialog
+--
+-m_dialogfactory: DialogFactory*
+-m_posx: QSpinBox*
+-m_posy: QSpinBox*
+-m_orientation: QDoubleSpinBox*
+-m_permittivity: QDoubleSpinBox*
+-m_conductivity: QDoubleSpinBox*
+-m_modelBox: QComboBox*
+-m_pointX: QSpinBox*
+-m_pointY: QSpinBox*
+-m_extremitiesViewer: QTextEdit*
+-m_points: QVector&lt;QPointF&gt;
+-m_model: Model
+--
+-createDialog():void
+-writeExtremities():void
+--
+/-newProperties(): void slot/
+/-changeModel(QString): void slot/
+/-addExtremities(): void slot/
+/-removeExtremities(): void slot/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>597</x>
+      <y>438</y>
+      <w>99</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>GraphicsBuildingProduct : QGraphicsPolygonItem
+--
+-m_graphicsfactory: GraphicsFactory*
+-m_model: Model
+-m_extremities: QVector&lt;QPointF&gt;
+-m_posx: int
+-m_posy: int
+-m_orientation: double
+-m_permittivity: double
+-m_conductivity: double</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>675</x>
+      <y>519</y>
+      <w>48</w>
+      <h>9</h>
+    </coordinates>
+    <panel_attributes>/TreeProduct/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>498</x>
+      <y>540</y>
+      <w>72</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>MathematicalTreeProduct :
+QRectF</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>498</x>
+      <y>558</y>
+      <w>57</w>
+      <h>12</h>
+    </coordinates>
+    <panel_attributes>DialogTreeProduct:
+QDialog</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>498</x>
+      <y>573</y>
+      <w>57</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>GraphicsTreeProduct : 
+QGraphicsRectItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>603</x>
+      <y>516</y>
+      <w>48</w>
+      <h>9</h>
+    </coordinates>
+    <panel_attributes>/RayProduct/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>498</x>
+      <y>600</y>
+      <w>72</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>MathematicalRayProduct :
+QLineF</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>498</x>
+      <y>624</y>
+      <w>57</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>GraphicsRayProduct : 
+QGraphicsLineItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>294</x>
+      <y>78</y>
+      <w>102</w>
+      <h>87</h>
+    </coordinates>
+    <panel_attributes>ApplicationWindow: QMainWindow
+--
+-view: QGraphicsView*
+-graphicsfactory: SceneFactory*
+-dialogfactory: SceneFactory*
+-mathematicalfactory: SceneFactory*
+-m_antennagroup: QButtonGroup*
+-m_obstaclegroup: QButtonGroup*
+-m_toolbox: QToolBox*
+-m_windowobserver: vector&lt;WindowObserver*&gt;
+-m_windowobserveriterator: iterator
+-m_mode: Mode
+--
+-createToolButton(const QString &amp;text,int id): void
+-createToolBox(): void
+-setMode(Mode mode): void
+--
+/antennaGroupClicked(int): void slot/
+/obstacleGroupClicked(int): void slot/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>393</x>
+      <y>117</y>
+      <w>336</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>1100.0;180.0;1100.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>174</x>
+      <y>120</y>
+      <w>126</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;10.0;400.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>678</x>
+      <y>153</y>
+      <w>30</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;70.0;40.0;70.0;40.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>678</x>
+      <y>171</y>
+      <w>30</w>
+      <h>9</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>678</x>
+      <y>171</y>
+      <w>30</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;40.0;10.0;40.0;70.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>678</x>
+      <y>222</y>
+      <w>30</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;40.0;10.0;40.0;70.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>678</x>
+      <y>222</y>
+      <w>30</w>
+      <h>9</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>678</x>
+      <y>204</y>
+      <w>30</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;70.0;40.0;70.0;40.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>456</x>
+      <y>126</y>
+      <w>144</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>/GraphicsComponent/
+--
+-Type{TransmitterProduct,ReceiverProduct,BuildingProduct}
+--
+-draw(): void
+-add(GraphicsComponent*): void
+-remove(GraphicsComponent*): void
+-graphicsSelected(): bool
+-getType(): int
+-getSize(): unsigned long long
+-getGraphicsComponent(unsigned long long): GraphicsComponent*
+-setGraphicsComponent(unsigned long long, GraphicsComponent*): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>474</x>
+      <y>195</y>
+      <w>108</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>GraphicsComposite
+--
+-m_grapicscomponent: vector&lt;GraphicsComponent*&gt;
+-m_graphicscomponentiterator:iterator</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>447</x>
+      <y>153</y>
+      <w>33</w>
+      <h>51</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>90.0;150.0;10.0;150.0;10.0;10.0;30.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>522</x>
+      <y>177</y>
+      <w>9</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>522</x>
+      <y>177</y>
+      <w>108</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;340.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>522</x>
+      <y>177</y>
+      <w>108</w>
+      <h>69</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;220.0;40.0;220.0;210.0;340.0;210.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>78</x>
+      <y>327</y>
+      <w>63</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>/SceneObservable/
+--
+-attachObserver(): void
+-detachObserver(): void
+-notifyNewProperties(): void
+-notifyChangeProperties(): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>273</x>
+      <y>327</y>
+      <w>108</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>/SceneObserver/
+--
+-updateNewProperties(GraphicsComponent*): void
+-updateChangeProperties(GraphicsComponent*): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>219</x>
+      <y>189</y>
+      <w>162</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;520.0;10.0;520.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>216</x>
+      <y>198</y>
+      <w>9</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>114</x>
+      <y>192</y>
+      <w>18</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>40.0;10.0;10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>282</x>
+      <y>243</y>
+      <w>9</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;280.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>369</x>
+      <y>237</y>
+      <w>9</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;300.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>105</x>
+      <y>279</y>
+      <w>9</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;160.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>138</x>
+      <y>336</y>
+      <w>141</w>
+      <h>12</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m_sceneObserver*</panel_attributes>
+    <additional_attributes>450.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>690</x>
+      <y>291</y>
+      <w>27</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>70.0;310.0;30.0;310.0;30.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>663</x>
+      <y>381</y>
+      <w>54</w>
+      <h>9</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>160.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>693</x>
+      <y>381</y>
+      <w>24</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>60.0;10.0;20.0;10.0;20.0;220.0;10.0;220.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>282</x>
+      <y>0</y>
+      <w>126</w>
+      <h>39</h>
+    </coordinates>
+    <panel_attributes>/WindowObservable/
+--
+-Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding}
+:enum
+--
+-attachObserver(): void
+-detachObserver(): void
+-notify(): void
+-answer(): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>342</x>
+      <y>36</y>
+      <w>9</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>84</x>
+      <y>0</y>
+      <w>108</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>/WindowObserver/
+--
+-update(int mode): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>99</x>
+      <y>18</y>
+      <w>9</w>
+      <h>198</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;640.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>189</x>
+      <y>6</y>
+      <w>99</w>
+      <h>12</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m_windowObserver*</panel_attributes>
+    <additional_attributes>10.0;20.0;310.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>489</x>
+      <y>117</y>
+      <w>285</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>870.0;360.0;930.0;360.0;930.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>489</x>
+      <y>117</y>
+      <w>324</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>1010.0;880.0;1060.0;880.0;1060.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>522</x>
+      <y>177</y>
+      <w>81</w>
+      <h>276</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;220.0;40.0;220.0;900.0;250.0;900.0</additional_attributes>
+  </element>
+</diagram>

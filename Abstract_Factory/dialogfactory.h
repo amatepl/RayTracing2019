@@ -6,6 +6,7 @@
 #include "Observer/sceneobservable.h"
 #include "Product/TransmitterProduct/transmitterproduct.h"
 #include "Product/TransmitterProduct/dialogtransmitterproduct.h"
+#include "Product/BuildingProduct/dialogbuildingproduct.h"
 #include "Composite/graphicscomponent.h"
 
 class DialogFactory : public SceneFactory, public SceneObserver
@@ -15,10 +16,13 @@ public:
     ~DialogFactory() override;
 
     void receiveTransmitterProduct(TransmitterProduct* transmitterproduct);
+    void receiveBuildingProduct(BuildingProduct* buildingproduct);
 
     TransmitterProduct* createTransmitterProduct() override;
     ReceiverProduct* createReceiverProduct() override;
-    void update(GraphicsComponent*) override;
+    BuildingProduct * createBuildingProduct() override;
+    void updateNewProperties(GraphicsComponent*) override;
+    void updateChangeProperties(GraphicsComponent*) override;
 
 private:
     SceneObservable *m_graphicsfactory;

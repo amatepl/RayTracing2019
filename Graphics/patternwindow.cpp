@@ -5,7 +5,7 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     m_dialog = dialog;
     Q3DSurface *graph = new Q3DSurface();
     QWidget *container = QWidget::createWindowContainer(graph);
-    //! [0]
+
 
     if (!graph->hasContext()) {
         QMessageBox msgBox;
@@ -19,14 +19,12 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     container->setFocusPolicy(Qt::StrongFocus);
 
-    //! [1]
     QWidget *widget = new QWidget;
     QHBoxLayout *hLayout = new QHBoxLayout(widget);
     QVBoxLayout *vLayout = new QVBoxLayout();
     hLayout->addWidget(container, 1);
     hLayout->addLayout(vLayout);
     vLayout->setAlignment(Qt::AlignTop);
-    //! [1]
 
     widget->setWindowTitle(QStringLiteral("3D pattern"));
 
@@ -65,22 +63,22 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     selectionVBox->addWidget(modeSliceColumnRB);
     selectionGroupBox->setLayout(selectionVBox);
 
-    QSlider *axisMinSliderX = new QSlider(Qt::Horizontal, widget);
-    axisMinSliderX->setMinimum(0);
-    axisMinSliderX->setTickInterval(1);
-    axisMinSliderX->setEnabled(true);
-    QSlider *axisMaxSliderX = new QSlider(Qt::Horizontal, widget);
-    axisMaxSliderX->setMinimum(1);
-    axisMaxSliderX->setTickInterval(1);
-    axisMaxSliderX->setEnabled(true);
-    QSlider *axisMinSliderZ = new QSlider(Qt::Horizontal, widget);
-    axisMinSliderZ->setMinimum(0);
-    axisMinSliderZ->setTickInterval(1);
-    axisMinSliderZ->setEnabled(true);
-    QSlider *axisMaxSliderZ = new QSlider(Qt::Horizontal, widget);
-    axisMaxSliderZ->setMinimum(1);
-    axisMaxSliderZ->setTickInterval(1);
-    axisMaxSliderZ->setEnabled(true);
+    QSlider *axisMinSliderTheta = new QSlider(Qt::Horizontal, widget);
+    axisMinSliderTheta->setMinimum(0);
+    axisMinSliderTheta->setTickInterval(1);
+    axisMinSliderTheta->setEnabled(true);
+    QSlider *axisMaxSliderTheta = new QSlider(Qt::Horizontal, widget);
+    axisMaxSliderTheta->setMinimum(1);
+    axisMaxSliderTheta->setTickInterval(1);
+    axisMaxSliderTheta->setEnabled(true);
+    QSlider *axisMinSliderY = new QSlider(Qt::Horizontal, widget);
+    axisMinSliderY->setMinimum(0);
+    axisMinSliderY->setTickInterval(1);
+    axisMinSliderY->setEnabled(true);
+    QSlider *axisMaxSliderY = new QSlider(Qt::Horizontal, widget);
+    axisMaxSliderY->setMinimum(1);
+    axisMaxSliderY->setTickInterval(1);
+    axisMaxSliderY->setEnabled(true);
 
     QComboBox *themeList = new QComboBox(widget);
     themeList->addItem(QStringLiteral("Qt"));
@@ -127,11 +125,11 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     vLayout->addWidget(modelGroupBox);
     vLayout->addWidget(selectionGroupBox);
     vLayout->addWidget(new QLabel(QStringLiteral("Column range")));
-    vLayout->addWidget(axisMinSliderX);
-    vLayout->addWidget(axisMaxSliderX);
+    vLayout->addWidget(axisMinSliderTheta);
+    vLayout->addWidget(axisMaxSliderTheta);
     vLayout->addWidget(new QLabel(QStringLiteral("Row range")));
-    vLayout->addWidget(axisMinSliderZ);
-    vLayout->addWidget(axisMaxSliderZ);
+    vLayout->addWidget(axisMinSliderY);
+    vLayout->addWidget(axisMaxSliderY);
     vLayout->addWidget(new QLabel(QStringLiteral("Theme")));
     vLayout->addWidget(themeList);
     vLayout->addWidget(colorGroupBox);
@@ -150,14 +148,14 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
                      modifier, &Surface3D::toggleModeSliceRow);
     QObject::connect(modeSliceColumnRB,  &QRadioButton::toggled,
                      modifier, &Surface3D::toggleModeSliceColumn);
-    QObject::connect(axisMinSliderX, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustXMin);
-    QObject::connect(axisMaxSliderX, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustXMax);
-    QObject::connect(axisMinSliderZ, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustZMin);
-    QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustZMax);
+    QObject::connect(axisMinSliderTheta, &QSlider::valueChanged,
+                     modifier, &Surface3D::adjustThetaMin);
+    QObject::connect(axisMaxSliderTheta, &QSlider::valueChanged,
+                     modifier, &Surface3D::adjustThetaMax);
+    QObject::connect(axisMinSliderY, &QSlider::valueChanged,
+                     modifier, &Surface3D::adjustYMin);
+    QObject::connect(axisMaxSliderY, &QSlider::valueChanged,
+                     modifier, &Surface3D::adjustYMax);
     QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
                      modifier, SLOT(changeTheme(int)));
     QObject::connect(gradientBtoYPB, &QPushButton::pressed,
@@ -165,10 +163,10 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     QObject::connect(gradientGtoRPB, &QPushButton::pressed,
                      modifier, &Surface3D::setGreenToRedGradient);
 
-    modifier->setAxisMinSliderX(axisMinSliderX);
-    modifier->setAxisMaxSliderX(axisMaxSliderX);
-    modifier->setAxisMinSliderZ(axisMinSliderZ);
-    modifier->setAxisMaxSliderZ(axisMaxSliderZ);
+    modifier->setAxisMinSliderTheta(axisMinSliderTheta);
+    modifier->setAxisMaxSliderTheta(axisMaxSliderTheta);
+    modifier->setAxisMinSliderY(axisMinSliderY);
+    modifier->setAxisMaxSliderY(axisMaxSliderY);
 
     patternModelRB->setChecked(true);
     modeItemRB->setChecked(true);

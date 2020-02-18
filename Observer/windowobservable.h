@@ -5,7 +5,7 @@
 
 class WindowObservable{
 public:
-    enum Mode{MoveItem,InsertTransmitter,InsertReceiver};
+    enum Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding};
     virtual ~WindowObservable(){}
 
     virtual void attachObserver(WindowObserver*) = 0;
