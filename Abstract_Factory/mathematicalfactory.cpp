@@ -19,12 +19,22 @@ void MathematicalFactory::receiveBuildingProduct(BuildingProduct *buildingproduc
     dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setExtremities(buildingproduct->getExtremities());
 }
 
+
+void MathematicalFactory::receiveReceiverProduct(ReceiverProduct *buildingproduct, ReceiverProduct *graphic){
+    m_graphiccomponent = dynamic_cast<GraphicsComponent*>(graphic);
+    dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosX(buildingproduct->getPosX());
+    dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosY(buildingproduct->getPosY());
+}
+
 TransmitterProduct* MathematicalFactory::createTransmitterProduct(){
 
 }
 
 ReceiverProduct* MathematicalFactory::createReceiverProduct(){
-
+    ReceiverProduct* graphic = dynamic_cast<ReceiverProduct*>(m_graphiccomponent);
+    ReceiverProduct* receiver  = new MathematicalReceiverProduct(graphic,this);
+    m_mathreceivers.push_back(dynamic_cast<MathematicalReceiverProduct*>(receiver));
+    return receiver;
 }
 
 BuildingProduct* MathematicalFactory::createBuildingProduct(){
@@ -54,6 +64,19 @@ void MathematicalFactory::updateChangeProperties(GraphicsComponent* graphicscomp
         break;
     case int(GraphicsComponent::TransmitterProduct):
         createTransmitterProduct();
+        break;
+    case int(GraphicsComponent::ReceiverProduct):
+        for (m_mathreceiversiterator = m_mathreceivers.begin(); m_mathreceiversiterator != m_mathreceivers.end(); ++m_mathreceiversiterator){
+            if (m_mathreceivers.at(i)->getReceiverProduct() == dynamic_cast<ReceiverProduct*>(m_graphiccomponent)){
+                m_mathreceivers.at(i)->setReceiverProduct(dynamic_cast<ReceiverProduct*>(m_graphiccomponent));
+                exist = true;
+                break;
+            }
+            i++;
+        }
+        if (!exist){
+            createReceiverProduct();
+        }
         break;
     }
 }

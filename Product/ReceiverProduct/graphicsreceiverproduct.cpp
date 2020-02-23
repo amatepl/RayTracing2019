@@ -1,26 +1,53 @@
 #include "graphicsreceiverproduct.h"
 
-GraphicsReceiverProduct::GraphicsReceiverProduct(int posX, int posY,unsigned long frequency,GraphicsFactory *graphicsfactory)
+GraphicsReceiverProduct::GraphicsReceiverProduct(int posX, int posY,unsigned long frequency, bool enable
+                                                 ,GraphicsFactory *graphicsfactory)
 {
-    QPixmap icon(":/Images/Receiver1.png");
-    setPixmap(icon);
-    setPos(posX,posY);
-    setOffset(-icon.width()/2,-icon.height()/2);
-
+    m_sizex = 10;
+    m_sizey = 10;
     m_graphicsfactory = graphicsfactory;
     m_posx = posX;
     m_posy = posY;
+    enableReceiver(enable);
     m_frequency = frequency;
-
-    setFlag(QGraphicsItem::ItemIsMovable);
-    setFlag(QGraphicsItem::ItemIsSelectable);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
     draw();
 }
 
 GraphicsReceiverProduct::~GraphicsReceiverProduct(){
 
+}
+
+void GraphicsReceiverProduct::enableReceiver(bool enable){
+    if (enable) {
+        QPixmap icon(":/Images/Receiver1.png");
+        setPixmap(icon);
+        setOffset(-icon.width()/2,-icon.height()/2);
+        setFlag(QGraphicsItem::ItemIsMovable);
+        setFlag(QGraphicsItem::ItemIsSelectable);
+        setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    }
+    else {
+        QPixmap pixmap(m_sizex,m_sizey);
+        pixmap.fill(scaleColor(10,24,17));
+        QPainter painter(&pixmap);
+        painter.setPen(QPen(Qt::black, 0));
+        setPixmap(pixmap);
+        setOffset(-m_sizex/2,-m_sizey/2);
+        setPos(m_posx,m_posy);
+    }
+}
+
+QColor GraphicsReceiverProduct::scaleColor(double min, double max, double value){
+    double interval = (max-min)/2;
+    QColor color;
+    if (value < min+interval){
+       color.setRgb(255*(value-min)/interval,0,255);
+    }
+    else {
+        color.setRgb(255,0,255*(max-value)/interval);
+    }
+    return color;
 }
 
 QPixmap GraphicsReceiverProduct::getImage(){

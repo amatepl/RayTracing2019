@@ -107,7 +107,7 @@ void DialogTransmitterProduct::createDialog(){
 
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
     connect(save,SIGNAL(clicked()),this,SLOT(newProperties()));
-    connect(plot,SIGNAL(clicked()),this,SLOT(openGnuplot()));
+    connect(plot,SIGNAL(clicked()),this,SLOT(openPlot()));
     connect(m_modelBox,SIGNAL(activated(QString)),this,SLOT(changeModel(QString)));
 
 }
@@ -244,7 +244,7 @@ void DialogTransmitterProduct::newProperties(){
     close();
 }
 
-void DialogTransmitterProduct::openGnuplot(){
+void DialogTransmitterProduct::openPlot(){
     DialogObserver *pattern = new PatternWindow(this);
     attachObserver(pattern);
     notify();

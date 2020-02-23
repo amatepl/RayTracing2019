@@ -13,15 +13,18 @@ class GraphicsFactory;
 class GraphicsReceiverProduct :public QGraphicsPixmapItem, public ReceiverProduct,public GraphicsComponent
 {
 public:
-    GraphicsReceiverProduct(int posX, int posY, unsigned long frequency
+    GraphicsReceiverProduct(int posX, int posY, unsigned long frequency, bool enable
                                ,GraphicsFactory* graphicsfactory);
     ~GraphicsReceiverProduct() override;
 
-    virtual int getType() override;
-    virtual bool graphicsSelected() override;
-    virtual void draw() override;
-
+    void enableReceiver(bool enable);
+    QColor scaleColor(double min, double max, double value);
     static QPixmap getImage();
+
+    int getType() override;
+    bool graphicsSelected() override;
+    void draw() override;
+
     int getPosX() override;
     int getPosY() override;
     double getPower() override;
@@ -29,12 +32,13 @@ public:
 
     void setPosX(int posX) override;
     void setPosY(int posY) override;
-    void setFrequency(unsigned long frequency) override;
+    void setFrequency(unsigned long frequency) override; 
 
 private:
     GraphicsFactory *m_graphicsfactory;
-    int m_posx,m_posy;
-    double m_power;
+    QRgb m_color;
+    int m_posx,m_posy,m_sizex,m_sizey;
+    double m_power, m_efield;
     unsigned long m_frequency;
 };
 

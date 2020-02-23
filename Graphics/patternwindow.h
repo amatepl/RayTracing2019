@@ -2,7 +2,7 @@
 #define PATTERNWINDOW_H
 
 
-#include "surface3D.h"
+#include "surface3d.h"
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>

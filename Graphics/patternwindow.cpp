@@ -28,16 +28,6 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
 
     widget->setWindowTitle(QStringLiteral("3D pattern"));
 
-    QGroupBox *modelGroupBox = new QGroupBox(QStringLiteral("Model"));
-
-    QRadioButton *patternModelRB = new QRadioButton(widget);
-    patternModelRB->setText(QStringLiteral("Pattern"));
-    patternModelRB->setChecked(false);
-
-    QVBoxLayout *modelVBox = new QVBoxLayout;
-    modelVBox->addWidget(patternModelRB);
-    modelGroupBox->setLayout(modelVBox);
-
     QGroupBox *selectionGroupBox = new QGroupBox(QStringLiteral("Selection Mode"));
 
     QRadioButton *modeNoneRB = new QRadioButton(widget);
@@ -48,37 +38,10 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     modeItemRB->setText(QStringLiteral("Item"));
     modeItemRB->setChecked(false);
 
-    QRadioButton *modeSliceRowRB = new QRadioButton(widget);
-    modeSliceRowRB->setText(QStringLiteral("Row Slice"));
-    modeSliceRowRB->setChecked(false);
-
-    QRadioButton *modeSliceColumnRB = new QRadioButton(widget);
-    modeSliceColumnRB->setText(QStringLiteral("Column Slice"));
-    modeSliceColumnRB->setChecked(false);
-
     QVBoxLayout *selectionVBox = new QVBoxLayout;
     selectionVBox->addWidget(modeNoneRB);
     selectionVBox->addWidget(modeItemRB);
-    selectionVBox->addWidget(modeSliceRowRB);
-    selectionVBox->addWidget(modeSliceColumnRB);
     selectionGroupBox->setLayout(selectionVBox);
-
-    QSlider *axisMinSliderTheta = new QSlider(Qt::Horizontal, widget);
-    axisMinSliderTheta->setMinimum(0);
-    axisMinSliderTheta->setTickInterval(1);
-    axisMinSliderTheta->setEnabled(true);
-    QSlider *axisMaxSliderTheta = new QSlider(Qt::Horizontal, widget);
-    axisMaxSliderTheta->setMinimum(1);
-    axisMaxSliderTheta->setTickInterval(1);
-    axisMaxSliderTheta->setEnabled(true);
-    QSlider *axisMinSliderY = new QSlider(Qt::Horizontal, widget);
-    axisMinSliderY->setMinimum(0);
-    axisMinSliderY->setTickInterval(1);
-    axisMinSliderY->setEnabled(true);
-    QSlider *axisMaxSliderY = new QSlider(Qt::Horizontal, widget);
-    axisMaxSliderY->setMinimum(1);
-    axisMaxSliderY->setTickInterval(1);
-    axisMaxSliderY->setEnabled(true);
 
     QComboBox *themeList = new QComboBox(widget);
     themeList->addItem(QStringLiteral("Qt"));
@@ -122,14 +85,7 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     colorHBox->addWidget(gradientGtoRPB);
     colorGroupBox->setLayout(colorHBox);
 
-    vLayout->addWidget(modelGroupBox);
     vLayout->addWidget(selectionGroupBox);
-    vLayout->addWidget(new QLabel(QStringLiteral("Column range")));
-    vLayout->addWidget(axisMinSliderTheta);
-    vLayout->addWidget(axisMaxSliderTheta);
-    vLayout->addWidget(new QLabel(QStringLiteral("Row range")));
-    vLayout->addWidget(axisMinSliderY);
-    vLayout->addWidget(axisMaxSliderY);
     vLayout->addWidget(new QLabel(QStringLiteral("Theme")));
     vLayout->addWidget(themeList);
     vLayout->addWidget(colorGroupBox);
@@ -138,24 +94,10 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
 
     Surface3D *modifier = new Surface3D(graph,m_dialog);
 
-    QObject::connect(patternModelRB, &QRadioButton::toggled,
-                     modifier, &Surface3D::enablePatternModel);
     QObject::connect(modeNoneRB, &QRadioButton::toggled,
                      modifier, &Surface3D::toggleModeNone);
     QObject::connect(modeItemRB,  &QRadioButton::toggled,
                      modifier, &Surface3D::toggleModeItem);
-    QObject::connect(modeSliceRowRB,  &QRadioButton::toggled,
-                     modifier, &Surface3D::toggleModeSliceRow);
-    QObject::connect(modeSliceColumnRB,  &QRadioButton::toggled,
-                     modifier, &Surface3D::toggleModeSliceColumn);
-    QObject::connect(axisMinSliderTheta, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustThetaMin);
-    QObject::connect(axisMaxSliderTheta, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustThetaMax);
-    QObject::connect(axisMinSliderY, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustYMin);
-    QObject::connect(axisMaxSliderY, &QSlider::valueChanged,
-                     modifier, &Surface3D::adjustYMax);
     QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
                      modifier, SLOT(changeTheme(int)));
     QObject::connect(gradientBtoYPB, &QPushButton::pressed,
@@ -163,12 +105,7 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
     QObject::connect(gradientGtoRPB, &QPushButton::pressed,
                      modifier, &Surface3D::setGreenToRedGradient);
 
-    modifier->setAxisMinSliderTheta(axisMinSliderTheta);
-    modifier->setAxisMaxSliderTheta(axisMaxSliderTheta);
-    modifier->setAxisMinSliderY(axisMinSliderY);
-    modifier->setAxisMaxSliderY(axisMaxSliderY);
-
-    patternModelRB->setChecked(true);
+    modifier->enablePatternModel(true);
     modeItemRB->setChecked(true);
     themeList->setCurrentIndex(2);
 }

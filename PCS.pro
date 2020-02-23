@@ -19,7 +19,9 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/BuildingProduct/dialogbuildingproduct.h \
     Product/BuildingProduct/graphicsbuildingproduct.h \
     Product/BuildingProduct/mathematicalbuildingproduct.h \
+    Product/ReceiverProduct/dialogreceiverproduct.h \
     Product/ReceiverProduct/graphicsreceiverproduct.h \
+    Product/ReceiverProduct/mathematicalreceiverproduct.h \
     Product/ReceiverProduct/receiverproduct.h \
     Product/TransmitterProduct/dialogtransmitterproduct.h \
     Product/TransmitterProduct/graphicstransmitterproduct.h \
@@ -37,7 +39,9 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/BuildingProduct/dialogbuildingproduct.cpp \
     Product/BuildingProduct/graphicsbuildingproduct.cpp \
     Product/BuildingProduct/mathematicalbuildingproduct.cpp \
+    Product/ReceiverProduct/dialogreceiverproduct.cpp \
     Product/ReceiverProduct/graphicsreceiverproduct.cpp \
+    Product/ReceiverProduct/mathematicalreceiverproduct.cpp \
     Product/TransmitterProduct/dialogtransmitterproduct.cpp \
     Product/TransmitterProduct/graphicstransmitterproduct.cpp \
     Product/TransmitterProduct/mathematicaltransmitterproduct.cpp \

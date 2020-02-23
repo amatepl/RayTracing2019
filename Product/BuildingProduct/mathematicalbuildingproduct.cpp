@@ -3,9 +3,6 @@
 MathematicalBuildingProduct::MathematicalBuildingProduct(BuildingProduct* graphic, MathematicalFactory* mathematicalFactory) : QPolygonF(){
     m_mathematicalfactory = mathematicalFactory;
     setBuildingProduct(graphic);
-    setPosX(50);
-    setPosY(50);
-    newProperties();
 }
 
 MathematicalBuildingProduct::~MathematicalBuildingProduct(){

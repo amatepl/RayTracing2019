@@ -68,7 +68,7 @@ TransmitterProduct* GraphicsFactory::createTransmitterProduct()
 
 ReceiverProduct* GraphicsFactory::createReceiverProduct()
 {
-    ReceiverProduct* graphicsReceiver = new GraphicsReceiverProduct(0,0,50e6,this);
+    ReceiverProduct* graphicsReceiver = new GraphicsReceiverProduct(0,0,50e6,true,this);
     return graphicsReceiver;
 }
 
@@ -96,6 +96,7 @@ void GraphicsFactory::mousePressEvent(QGraphicsSceneMouseEvent *event)
         graphicsReceiver->setPosY(int(p.y()));
         m_graphicscomponent->add(dynamic_cast<GraphicsComponent*>(graphicsReceiver));
         m_windowobservable->answer();
+        notifyChangeProperties(dynamic_cast<GraphicsComponent*>(graphicsReceiver));
     }
     if (m_mode == InsertBuilding){
         QPointF p(event->scenePos());
@@ -122,6 +123,7 @@ void GraphicsFactory::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
                     case int(GraphicsComponent::ReceiverProduct):
                         dynamic_cast<ReceiverProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
                         dynamic_cast<ReceiverProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
+                        notifyChangeProperties(m_graphicscomponent->getGraphicsComponent(i));
                         break;
                     case int(GraphicsComponent::BuildingProduct):
                         dynamic_cast<BuildingProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));

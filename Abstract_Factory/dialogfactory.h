@@ -6,6 +6,7 @@
 #include "Observer/sceneobservable.h"
 #include "Product/TransmitterProduct/transmitterproduct.h"
 #include "Product/TransmitterProduct/dialogtransmitterproduct.h"
+#include "Product/ReceiverProduct/dialogreceiverproduct.h"
 #include "Product/BuildingProduct/dialogbuildingproduct.h"
 #include "Composite/graphicscomponent.h"
 
@@ -17,6 +18,7 @@ public:
 
     void receiveTransmitterProduct(TransmitterProduct* transmitterproduct);
     void receiveBuildingProduct(BuildingProduct* buildingproduct);
+    void receiveReceiverProduct(ReceiverProduct* receiverproduct);
 
     TransmitterProduct* createTransmitterProduct() override;
     ReceiverProduct* createReceiverProduct() override;

@@ -26,6 +26,12 @@ void DialogFactory::receiveBuildingProduct(BuildingProduct* buildingproduct){
     dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setExtremities(buildingproduct->getExtremities());
 }
 
+void DialogFactory::receiveReceiverProduct(ReceiverProduct* receiverproduct){
+    dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosX(receiverproduct->getPosX());
+    dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosY(receiverproduct->getPosY());
+    dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setFrequency(receiverproduct->getFrequency());
+}
+
 TransmitterProduct* DialogFactory::createTransmitterProduct(){
     TransmitterProduct* graphic = dynamic_cast<TransmitterProduct*>(m_graphiccomponent);
     TransmitterProduct* dialog  = new DialogTransmitterProduct(graphic,this);
@@ -33,7 +39,9 @@ TransmitterProduct* DialogFactory::createTransmitterProduct(){
 }
 
 ReceiverProduct* DialogFactory::createReceiverProduct(){
-
+    ReceiverProduct* graphic = dynamic_cast<ReceiverProduct*>(m_graphiccomponent);
+    ReceiverProduct* dialog  = new DialogReceiverProduct(graphic,this);
+    return dialog;
 }
 
 BuildingProduct* DialogFactory::createBuildingProduct(){
@@ -50,6 +58,9 @@ void DialogFactory::updateNewProperties(GraphicsComponent* graphicscomponent){
             break;
         case int(GraphicsComponent::BuildingProduct):
             createBuildingProduct();
+            break;
+        case int(GraphicsComponent::ReceiverProduct):
+            createReceiverProduct();
             break;
     }
 }

@@ -68,7 +68,7 @@ private:
 
 public slots:
     void newProperties();
-    void openGnuplot();
+    void openPlot();
     void changeModel(QString model);
 };
 
