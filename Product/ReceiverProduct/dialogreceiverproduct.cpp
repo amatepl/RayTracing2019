@@ -19,10 +19,8 @@ void DialogReceiverProduct::createDialog(){
     setWindowIcon(QIcon(GraphicsReceiverProduct::getImage()));
     QPushButton *save = new QPushButton("Save",this);
     QPushButton *cancel = new QPushButton("Cancel",this);
-    QPushButton *plot = new QPushButton("Plot gain",this);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout->addWidget(plot);
     buttonLayout->addWidget(save);
     buttonLayout->addWidget(cancel);
     buttonLayout->setAlignment(Qt::AlignRight);

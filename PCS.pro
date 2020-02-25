@@ -19,6 +19,10 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/BuildingProduct/dialogbuildingproduct.h \
     Product/BuildingProduct/graphicsbuildingproduct.h \
     Product/BuildingProduct/mathematicalbuildingproduct.h \
+    Product/CarProduct/carproduct.h \
+    Product/CarProduct/dialogcarproduct.h \
+    Product/CarProduct/graphicscarproduct.h \
+    Product/CarProduct/mathematicalcarproduct.h \
     Product/ReceiverProduct/dialogreceiverproduct.h \
     Product/ReceiverProduct/graphicsreceiverproduct.h \
     Product/ReceiverProduct/mathematicalreceiverproduct.h \
@@ -27,6 +31,10 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/TransmitterProduct/graphicstransmitterproduct.h \
     Product/TransmitterProduct/mathematicaltransmitterproduct.h \
     Product/TransmitterProduct/transmitterproduct.h \
+    Product/TreeProduct/dialogtreeproduct.h \
+    Product/TreeProduct/graphicstreeproduct.h \
+    Product/TreeProduct/mathematicaltreeproduct.h \
+    Product/TreeProduct/treeproduct.h \
     Share/line.h \
     applicationwindow.h
 
@@ -39,12 +47,18 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/BuildingProduct/dialogbuildingproduct.cpp \
     Product/BuildingProduct/graphicsbuildingproduct.cpp \
     Product/BuildingProduct/mathematicalbuildingproduct.cpp \
+    Product/CarProduct/dialogcarproduct.cpp \
+    Product/CarProduct/graphicscarproduct.cpp \
+    Product/CarProduct/mathematicalcarproduct.cpp \
     Product/ReceiverProduct/dialogreceiverproduct.cpp \
     Product/ReceiverProduct/graphicsreceiverproduct.cpp \
     Product/ReceiverProduct/mathematicalreceiverproduct.cpp \
     Product/TransmitterProduct/dialogtransmitterproduct.cpp \
     Product/TransmitterProduct/graphicstransmitterproduct.cpp \
     Product/TransmitterProduct/mathematicaltransmitterproduct.cpp \
+    Product/TreeProduct/dialogtreeproduct.cpp \
+    Product/TreeProduct/graphicstreeproduct.cpp \
+    Product/TreeProduct/mathematicaltreeproduct.cpp \
     Share/line.cpp \
     applicationwindow.cpp \
     main.cpp

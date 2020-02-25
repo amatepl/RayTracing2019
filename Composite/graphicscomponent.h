@@ -5,7 +5,7 @@
 
 class GraphicsComponent{
 public:
-    enum Type{TransmitterProduct,ReceiverProduct,BuildingProduct};
+    enum Type{TransmitterProduct,ReceiverProduct,BuildingProduct,TreeProduct,CarProduct};
 
     virtual ~GraphicsComponent() {}
 

@@ -32,6 +32,18 @@ void DialogFactory::receiveReceiverProduct(ReceiverProduct* receiverproduct){
     dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setFrequency(receiverproduct->getFrequency());
 }
 
+void DialogFactory::receiveTreeProduct(TreeProduct *treeproduct){
+    dynamic_cast<TreeProduct*>(m_graphiccomponent)->setPosX(treeproduct->getPosX());
+    dynamic_cast<TreeProduct*>(m_graphiccomponent)->setPosY(treeproduct->getPosY());
+}
+
+void DialogFactory::receiveCarProduct(CarProduct *carproduct){
+    dynamic_cast<CarProduct*>(m_graphiccomponent)->setPosX(carproduct->getPosX());
+    dynamic_cast<CarProduct*>(m_graphiccomponent)->setPosY(carproduct->getPosY());
+    dynamic_cast<CarProduct*>(m_graphiccomponent)->setOrientation(carproduct->getOrientation());
+    dynamic_cast<CarProduct*>(m_graphiccomponent)->setSpeed(carproduct->getSpeed());
+}
+
 TransmitterProduct* DialogFactory::createTransmitterProduct(){
     TransmitterProduct* graphic = dynamic_cast<TransmitterProduct*>(m_graphiccomponent);
     TransmitterProduct* dialog  = new DialogTransmitterProduct(graphic,this);
@@ -50,18 +62,36 @@ BuildingProduct* DialogFactory::createBuildingProduct(){
     return dialog;
 }
 
+TreeProduct* DialogFactory::createTreeProduct(){
+    TreeProduct* graphic = dynamic_cast<TreeProduct*>(m_graphiccomponent);
+    TreeProduct* dialog  = new DialogTreeProduct(graphic,this);
+    return dialog;
+}
+
+CarProduct* DialogFactory::createCarProduct(){
+    CarProduct* graphic = dynamic_cast<CarProduct*>(m_graphiccomponent);
+    CarProduct* dialog  = new DialogCarProduct(graphic,this);
+    return dialog;
+}
+
 void DialogFactory::updateNewProperties(GraphicsComponent* graphicscomponent){
     m_graphiccomponent = graphicscomponent;
     switch(int (m_graphiccomponent->getType())){
         case int(GraphicsComponent::TransmitterProduct):
             createTransmitterProduct();
-            break;
+        break;
         case int(GraphicsComponent::BuildingProduct):
             createBuildingProduct();
-            break;
+        break;
         case int(GraphicsComponent::ReceiverProduct):
             createReceiverProduct();
-            break;
+        break;
+        case int(GraphicsComponent::TreeProduct):
+            createTreeProduct();
+        break;
+        case int(GraphicsComponent::CarProduct):
+            createCarProduct();
+        break;
     }
 }
 

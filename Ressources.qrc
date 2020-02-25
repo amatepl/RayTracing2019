@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>Images/Transmitter1.png</file>
         <file>Images/Receiver1.png</file>
+        <file>Images/Tree.png</file>
+        <file>Images/Car.png</file>
     </qresource>
 </RCC>

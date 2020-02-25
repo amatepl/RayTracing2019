@@ -24,11 +24,11 @@ GraphicsBuildingProduct::~GraphicsBuildingProduct(){
 }
 
 QPixmap GraphicsBuildingProduct::getImage(){
-    QPixmap pixmap(50,50);
+    QPixmap pixmap(100,100);
     pixmap.fill(Qt::transparent);
     QPainter painter(&pixmap);
     painter.setPen(QPen(Qt::black, 10));
-    QRectF rect(0,0,50,50);
+    QRectF rect(0,0,100,100);
     painter.drawRect(rect);
 
     return pixmap;

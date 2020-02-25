@@ -2,7 +2,7 @@
 
 GraphicsFactory::GraphicsFactory(QGraphicsView *view,WindowObservable* windowobservable)
 {
-    setSceneRect(0,0,400,400);
+    setSceneRect(0,0,5000,5000);
     m_view = view;
 
     m_view->setScene(this);
@@ -28,6 +28,12 @@ void GraphicsFactory::update(int mode){
         break;
         case int(WindowObservable::InsertBuilding):
             m_mode = InsertBuilding;
+        break;
+        case int(WindowObservable::InsertTree):
+            m_mode = InsertTree;
+        break;
+        case int(WindowObservable::InsertCar):
+            m_mode = InsertCar;
         break;
     }
 }
@@ -77,6 +83,16 @@ BuildingProduct* GraphicsFactory::createBuildingProduct(){
     return graphicsBuilding;
 }
 
+TreeProduct* GraphicsFactory::createTreeProduct(){
+    TreeProduct* graphicstree = new GraphicsTreeProduct(0,0,this);
+    return graphicstree;
+}
+
+CarProduct* GraphicsFactory::createCarProduct(){
+    CarProduct* graphiccar = new GraphicsCarProduct(0,0,0,0,this);
+    return graphiccar;
+}
+
 void GraphicsFactory::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton)
@@ -107,6 +123,24 @@ void GraphicsFactory::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_windowobservable->answer();
         notifyChangeProperties(dynamic_cast<GraphicsComponent*>(graphicsBuilding));
     }
+    if (m_mode == InsertTree){
+        QPointF p(event->scenePos());
+        TreeProduct* graphicsTree = createTreeProduct();
+        graphicsTree->setPosX(int(p.x()));
+        graphicsTree->setPosY(int(p.y()));
+        m_graphicscomponent->add(dynamic_cast<GraphicsComponent*>(graphicsTree));
+        m_windowobservable->answer();
+        notifyChangeProperties(dynamic_cast<GraphicsComponent*>(graphicsTree));
+    }
+    if (m_mode == InsertCar){
+        QPointF p(event->scenePos());
+        CarProduct* graphicsCar = createCarProduct();
+        graphicsCar->setPosX(int(p.x()));
+        graphicsCar->setPosY(int(p.y()));
+        m_graphicscomponent->add(dynamic_cast<GraphicsComponent*>(graphicsCar));
+        m_windowobservable->answer();
+        notifyChangeProperties(dynamic_cast<GraphicsComponent*>(graphicsCar));
+    }
     QGraphicsScene::mousePressEvent(event);
 }
 
@@ -119,17 +153,27 @@ void GraphicsFactory::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
                     case int(GraphicsComponent::TransmitterProduct):
                         dynamic_cast<TransmitterProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
                         dynamic_cast<TransmitterProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
-                        break;
+                    break;
                     case int(GraphicsComponent::ReceiverProduct):
                         dynamic_cast<ReceiverProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
                         dynamic_cast<ReceiverProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
                         notifyChangeProperties(m_graphicscomponent->getGraphicsComponent(i));
-                        break;
+                    break;
                     case int(GraphicsComponent::BuildingProduct):
                         dynamic_cast<BuildingProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
                         dynamic_cast<BuildingProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
                         notifyChangeProperties(m_graphicscomponent->getGraphicsComponent(i));
-                        break;
+                    break;
+                    case int(GraphicsComponent::TreeProduct):
+                        dynamic_cast<TreeProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
+                        dynamic_cast<TreeProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
+                        notifyChangeProperties(m_graphicscomponent->getGraphicsComponent(i));
+                    break;
+                    case int(GraphicsComponent::CarProduct):
+                        dynamic_cast<CarProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
+                        dynamic_cast<CarProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
+                        notifyChangeProperties(m_graphicscomponent->getGraphicsComponent(i));
+                    break;
                 }
             }
         }

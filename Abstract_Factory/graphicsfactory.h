@@ -10,6 +10,8 @@
 #include "Product/TransmitterProduct/graphicstransmitterproduct.h"
 #include "Product/ReceiverProduct/graphicsreceiverproduct.h"
 #include "Product/BuildingProduct/graphicsbuildingproduct.h"
+#include "Product/TreeProduct/graphicstreeproduct.h"
+#include "Product/CarProduct/graphicscarproduct.h"
 #include "Composite/graphicscomposite.h"
 #include "Observer/windowobserver.h"
 #include "Observer/windowobservable.h"
@@ -18,7 +20,7 @@
 class GraphicsFactory :public WindowObserver, public SceneObservable, public SceneFactory, public QGraphicsScene
 {
 public:
-    enum Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding};
+    enum Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding,InsertTree,InsertCar};
 
     GraphicsFactory(QGraphicsView *view, WindowObservable* windowobservable);
     ~GraphicsFactory() override;
@@ -33,6 +35,8 @@ public:
     TransmitterProduct* createTransmitterProduct() override;
     ReceiverProduct * createReceiverProduct() override;
     BuildingProduct * createBuildingProduct() override;
+    TreeProduct * createTreeProduct() override;
+    CarProduct * createCarProduct() override;
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;

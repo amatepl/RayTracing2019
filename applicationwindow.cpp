@@ -62,7 +62,7 @@ void ApplicationWindow::answer(){
 QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
     QWidget *widget = new QWidget;
     QToolButton *button = new QToolButton;
-    button->setIconSize(QSize(30, 30));
+    button->setIconSize(QSize(50, 50));
     button->setCheckable(true);
     QIcon icon;
     switch(mode){
@@ -75,6 +75,12 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
         case int(InsertBuilding):
             icon = QIcon(GraphicsBuildingProduct::getImage());
             break;
+        case int(InsertTree):
+            icon = QIcon(GraphicsTreeProduct::getImage());
+        break;
+        case int(InsertCar):
+            icon = QIcon(GraphicsCarProduct::getImage());
+        break;
     }
     button->setIcon(icon);
     m_antennagroup->addButton(button,mode);
@@ -96,20 +102,25 @@ void ApplicationWindow::createToolBox(){
     QGridLayout *antenna_layout = new QGridLayout;
     QGridLayout *obstacle_layout = new QGridLayout;
 
-    QWidget* widget = createToolButton("Insert Transmitter",int(GraphicsFactory::InsertTransmitter));
+    QWidget* widget = createToolButton("Transmitter",int(GraphicsFactory::InsertTransmitter));
     antenna_layout->addWidget(widget, 0, 0);
-    QWidget* widget1 = createToolButton("Insert Receiver",int(GraphicsFactory::InsertReceiver));
+    QWidget* widget1 = createToolButton("Receiver", int(GraphicsFactory::InsertReceiver));
     antenna_layout->addWidget(widget1, 0, 1);
 
-    antenna_layout->setRowStretch(3, 10);
+    antenna_layout->setRowStretch(1,10);
     antenna_layout->setColumnStretch(2, 10);
+    obstacle_layout->setHorizontalSpacing(10);
 
-    QWidget* obstacle_widget = createToolButton("Insert Building",int(GraphicsFactory::InsertBuilding));
+    QWidget* obstacle_widget = createToolButton("Building",int(GraphicsFactory::InsertBuilding));
     obstacle_layout->addWidget(obstacle_widget, 0, 0);
+    QWidget* tree_widget = createToolButton("Tree", int(GraphicsFactory::InsertTree));
+    obstacle_layout->addWidget(tree_widget,0,1);
+    QWidget* car_layout = createToolButton("Car", int(GraphicsFactory::InsertCar));
+    obstacle_layout->addWidget(car_layout,1,0);
 
     obstacle_layout->setRowStretch(3, 10);
     obstacle_layout->setColumnStretch(2, 10);
-
+    obstacle_layout->setHorizontalSpacing(10);
     QWidget *itemWidget = new QWidget;
     itemWidget->setLayout(antenna_layout);
 
@@ -119,8 +130,8 @@ void ApplicationWindow::createToolBox(){
     m_toolbox = new QToolBox;
     m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     m_toolbox->setMinimumWidth(itemWidget->sizeHint().width());
-    m_toolbox->addItem(itemWidget, tr("Antenna"));
-    m_toolbox->addItem(obstacleWidget, tr("Obstacles"));
+    m_toolbox->addItem(itemWidget, tr("Insert antenna"));
+    m_toolbox->addItem(obstacleWidget, tr("Insert obstacles"));
 }
 
 void ApplicationWindow::setMode(Mode mode){
