@@ -10,7 +10,8 @@ DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *graphic,D
     setFrequency(graphic->getFrequency());
     setOrientation(graphic->getOrientation());
     setModel(dipole);
-    show();
+    setAttribute(Qt::WA_DeleteOnClose,true);
+    exec();
 }
 
 DialogTransmitterProduct::~DialogTransmitterProduct(){

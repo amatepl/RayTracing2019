@@ -1,7 +1,6 @@
 #include "mathematicalcarproduct.h"
 
 MathematicalCarProduct::MathematicalCarProduct(CarProduct* graphic, MathematicalFactory* factory){
-    cout << "New Car" << endl;
     m_mathematicalfactory = factory;
     setCarProduct(graphic);
 }
@@ -53,7 +52,6 @@ void MathematicalCarProduct::setOrientation(double orientation){
 }
 
 void MathematicalCarProduct::setCarProduct(CarProduct* graphic){
-    cout << "I have changed" << endl;
     m_graphic = graphic;
     setPosX(graphic->getPosX());
     setPosY(graphic->getPosY());

@@ -1,7 +1,7 @@
 #include "graphicstransmitterproduct.h"
 
 GraphicsTransmitterProduct::GraphicsTransmitterProduct(int posX, int posY, double orientation,double power
-                                                       ,unsigned long frequency,GraphicsFactory *graphicsfactory)
+                                                       ,unsigned long frequency, QMenu* productmenu, GraphicsFactory *graphicsfactory)
 {
     QPixmap icon(":/Images/Transmitter1.png");
     setPixmap(icon);
@@ -11,6 +11,7 @@ GraphicsTransmitterProduct::GraphicsTransmitterProduct(int posX, int posY, doubl
     setRotation(orientation);
 
     m_graphicsfactory = graphicsfactory;
+    m_productmenu = productmenu;
     m_posx = posX;
     m_posy = posY;
     m_orientation = orientation;
@@ -111,4 +112,10 @@ void GraphicsTransmitterProduct::setAntennaDistance(double distance) {
 
 void  GraphicsTransmitterProduct::setModel(Model model) {
 
+}
+
+void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+        m_graphicsfactory->clearSelection();
+        setSelected(true);
+        m_productmenu->exec(event->screenPos());
 }

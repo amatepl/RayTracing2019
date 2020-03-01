@@ -23,6 +23,9 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/CarProduct/dialogcarproduct.h \
     Product/CarProduct/graphicscarproduct.h \
     Product/CarProduct/mathematicalcarproduct.h \
+    Product/RayProduct/graphicsrayproduct.h \
+    Product/RayProduct/mathematicalrayproduct.h \
+    Product/RayProduct/rayproduct.h \
     Product/ReceiverProduct/dialogreceiverproduct.h \
     Product/ReceiverProduct/graphicsreceiverproduct.h \
     Product/ReceiverProduct/mathematicalreceiverproduct.h \
@@ -50,6 +53,8 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/CarProduct/dialogcarproduct.cpp \
     Product/CarProduct/graphicscarproduct.cpp \
     Product/CarProduct/mathematicalcarproduct.cpp \
+    Product/RayProduct/graphicsrayproduct.cpp \
+    Product/RayProduct/mathematicalrayproduct.cpp \
     Product/ReceiverProduct/dialogreceiverproduct.cpp \
     Product/ReceiverProduct/graphicsreceiverproduct.cpp \
     Product/ReceiverProduct/mathematicalreceiverproduct.cpp \
@@ -65,3 +70,5 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
 
 RESOURCES += \
     Ressources.qrc
+
+DISTFILES +=

@@ -2,6 +2,8 @@
 #define GRAPHICSBUILDINGPRODUCT_H
 
 #include <QGraphicsPolygonItem>
+#include <QMenu>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include "buildingproduct.h"
 #include "Composite/graphicscomponent.h"
@@ -10,7 +12,7 @@
 class GraphicsBuildingProduct : public QGraphicsPolygonItem, public BuildingProduct,public GraphicsComponent
 {
 public:
-    GraphicsBuildingProduct(int posX, int posY, double orientation, GraphicsFactory *graphicsfactory);
+    GraphicsBuildingProduct(int posX, int posY, double orientation, QMenu* productmenu, GraphicsFactory *graphicsfactory);
     ~GraphicsBuildingProduct() override;
 
     static QPixmap getImage();
@@ -35,12 +37,17 @@ public:
     void setModel(int model) override;
     void setExtremities(QVector<QPointF> extremities) override;
 
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+
 private:
     GraphicsFactory *m_graphicsfactory;
     QVector<QPointF> m_extremities;
     Model m_model;
     int m_posx,m_posy;
     double m_orientation,m_permittivity,m_conductivity;
+
+
+    QMenu* m_productmenu;
 };
 
 #endif // GRAPHICSBUILDINGPRODUCT_H

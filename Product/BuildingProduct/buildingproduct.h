@@ -2,6 +2,9 @@
 #define BUILDINGPRODUCT_H
 
 #include <QPointF>
+#include <iostream>
+
+using namespace std;
 
 class BuildingProduct{
 public:

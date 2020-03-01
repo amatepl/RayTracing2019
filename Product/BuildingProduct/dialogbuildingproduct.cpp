@@ -10,7 +10,8 @@ DialogBuildingProduct::DialogBuildingProduct(BuildingProduct *graphic,DialogFact
     setModel(graphic->getModel());
     setExtremities(graphic->getExtremities());
     writeExtremities();
-    show();
+    setAttribute(Qt::WA_DeleteOnClose,true);
+    exec();
 }
 
 DialogBuildingProduct::~DialogBuildingProduct(){

@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 #include "scenefactory.h"
 #include "Product/TransmitterProduct/graphicstransmitterproduct.h"
@@ -22,7 +23,7 @@ class GraphicsFactory :public WindowObserver, public SceneObservable, public Sce
 public:
     enum Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding,InsertTree,InsertCar};
 
-    GraphicsFactory(QGraphicsView *view, WindowObservable* windowobservable);
+    GraphicsFactory(QGraphicsView *view, WindowObservable* windowobservable, QMenu* productmenu);
     ~GraphicsFactory() override;
 
     void update(int mode) override;
@@ -48,8 +49,11 @@ private:
     Mode m_mode;
     WindowObservable *m_windowobservable;
 
+    QMenu *m_productmenu;
+
     vector<SceneObserver*> m_sceneobserver;
     vector<SceneObserver*>::iterator m_sceneobserveriterator;
+
 };
 
 #endif // GRAPHICSFACTORY_H

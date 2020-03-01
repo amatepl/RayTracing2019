@@ -2,6 +2,8 @@
 #define GRAPHICSTREEPRODUCT_H
 
 #include <QGraphicsPixmapItem>
+#include <QMenu>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include "treeproduct.h"
 #include "Composite/graphicscomponent.h"
@@ -10,7 +12,7 @@
 class GraphicsTreeProduct: public QGraphicsPixmapItem, public TreeProduct,public GraphicsComponent
 {
 public:
-    GraphicsTreeProduct(int posX, int posY,GraphicsFactory *graphicsfactory);
+    GraphicsTreeProduct(int posX, int posY, QMenu *productmenu, GraphicsFactory *graphicsfactory);
     ~GraphicsTreeProduct() override;
 
     static QPixmap getImage();
@@ -25,9 +27,13 @@ public:
     void setPosX(int) override;
     void setPosY(int) override;
 
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
 private:
     GraphicsFactory* m_graphicsfactory;
     int m_posx,m_posy;
+
+    QMenu *m_productmenu;
 };
 
 #endif // GRAPHICSTREEPRODUCT_H

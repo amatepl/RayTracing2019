@@ -1,8 +1,9 @@
 #include "graphicsreceiverproduct.h"
 
-GraphicsReceiverProduct::GraphicsReceiverProduct(int posX, int posY,unsigned long frequency, bool enable
+GraphicsReceiverProduct::GraphicsReceiverProduct(int posX, int posY,unsigned long frequency, bool enable, QMenu *menuproduct
                                                  ,GraphicsFactory *graphicsfactory)
 {
+    m_productmenu = menuproduct;
     m_sizex = 10;
     m_sizey = 10;
     m_graphicsfactory = graphicsfactory;
@@ -91,4 +92,10 @@ void GraphicsReceiverProduct::setPosY(int posY)
 void GraphicsReceiverProduct::setFrequency(unsigned long frequency)
 {
     m_frequency = frequency;
+}
+
+void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+    m_graphicsfactory->clearSelection();
+    setSelected(true);
+    m_productmenu->exec(event->screenPos());
 }

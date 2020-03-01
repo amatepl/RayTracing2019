@@ -1,10 +1,10 @@
 #include "graphicsfactory.h"
 
-GraphicsFactory::GraphicsFactory(QGraphicsView *view,WindowObservable* windowobservable)
+GraphicsFactory::GraphicsFactory(QGraphicsView *view,WindowObservable* windowobservable, QMenu *productmenu)
 {
     setSceneRect(0,0,5000,5000);
     m_view = view;
-
+    m_productmenu = productmenu;
     m_view->setScene(this);
     m_graphicscomponent = new GraphicsComposite();
     m_mode = MoveItem;
@@ -19,21 +19,46 @@ void GraphicsFactory::update(int mode){
     switch(mode){
         case int(WindowObservable::MoveItem):
             m_mode = MoveItem;
-            break;
+        break;
+
         case int(WindowObservable::InsertTransmitter):
             m_mode = InsertTransmitter;
-            break;
+        break;
+
         case int(WindowObservable::InsertReceiver):
             m_mode = InsertReceiver;
         break;
+
         case int(WindowObservable::InsertBuilding):
             m_mode = InsertBuilding;
         break;
+
         case int(WindowObservable::InsertTree):
             m_mode = InsertTree;
         break;
+
         case int(WindowObservable::InsertCar):
             m_mode = InsertCar;
+        break;
+
+        case int(WindowObservable::DeleteItem):
+        for(unsigned long long i = 0; i<m_graphicscomponent->getSize();i++){
+            GraphicsComponent *graphic = m_graphicscomponent->getGraphicsComponent(i);
+            if (graphic->graphicsSelected()){
+                m_graphicscomponent->remove(graphic);
+                i--;
+            }
+        }
+        m_windowobservable->answer();
+        break;
+
+        case int(WindowObservable::PropertiesItem):
+        for (unsigned long long i = 0; i<m_graphicscomponent->getSize();i++){
+            if (m_graphicscomponent->getGraphicsComponent(i)->graphicsSelected()){
+                notifyNewProperties(m_graphicscomponent->getGraphicsComponent(i));
+            }
+        }
+        m_windowobservable->answer();
         break;
     }
 }
@@ -68,28 +93,28 @@ void GraphicsFactory::detachObserver(SceneObserver *sceneobserver){
 
 TransmitterProduct* GraphicsFactory::createTransmitterProduct()
 {
-    TransmitterProduct* graphicstransmitter = new GraphicsTransmitterProduct(0,0,70,5.6,50e6,this);
+    TransmitterProduct* graphicstransmitter = new GraphicsTransmitterProduct(0,0,70,5.6,50e6,m_productmenu,this);
     return graphicstransmitter;
 }
 
 ReceiverProduct* GraphicsFactory::createReceiverProduct()
 {
-    ReceiverProduct* graphicsReceiver = new GraphicsReceiverProduct(0,0,50e6,true,this);
+    ReceiverProduct* graphicsReceiver = new GraphicsReceiverProduct(0,0,50e6,true, m_productmenu,   this);
     return graphicsReceiver;
 }
 
 BuildingProduct* GraphicsFactory::createBuildingProduct(){
-    BuildingProduct* graphicsBuilding = new GraphicsBuildingProduct(0,0,0,this);
+    BuildingProduct* graphicsBuilding = new GraphicsBuildingProduct(0,0,0,m_productmenu,this);
     return graphicsBuilding;
 }
 
 TreeProduct* GraphicsFactory::createTreeProduct(){
-    TreeProduct* graphicstree = new GraphicsTreeProduct(0,0,this);
+    TreeProduct* graphicstree = new GraphicsTreeProduct(0,0,m_productmenu,this);
     return graphicstree;
 }
 
 CarProduct* GraphicsFactory::createCarProduct(){
-    CarProduct* graphiccar = new GraphicsCarProduct(0,0,0,0,this);
+    CarProduct* graphiccar = new GraphicsCarProduct(0,0,0,0,m_productmenu,this);
     return graphiccar;
 }
 
@@ -104,6 +129,7 @@ void GraphicsFactory::mousePressEvent(QGraphicsSceneMouseEvent *event)
         graphicstransmitter->setPosY(int(p.y()));
         m_graphicscomponent->add(dynamic_cast<GraphicsComponent*>(graphicstransmitter));
         m_windowobservable->answer();
+        notifyChangeProperties(dynamic_cast<GraphicsComponent*>(graphicstransmitter));
     }
     if (m_mode == InsertReceiver){
         QPointF p(event->scenePos());
@@ -153,6 +179,7 @@ void GraphicsFactory::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
                     case int(GraphicsComponent::TransmitterProduct):
                         dynamic_cast<TransmitterProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));
                         dynamic_cast<TransmitterProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosY(int(p.y()));
+                        notifyChangeProperties(m_graphicscomponent->getGraphicsComponent(i));
                     break;
                     case int(GraphicsComponent::ReceiverProduct):
                         dynamic_cast<ReceiverProduct*>(m_graphicscomponent->getGraphicsComponent(i))->setPosX(int(p.x()));

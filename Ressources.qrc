@@ -4,5 +4,7 @@
         <file>Images/Receiver1.png</file>
         <file>Images/Tree.png</file>
         <file>Images/Car.png</file>
+        <file>Images/Delete.png</file>
+        <file>Images/Properties.png</file>
     </qresource>
 </RCC>

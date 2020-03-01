@@ -1,7 +1,7 @@
 #include "graphicsbuildingproduct.h"
 
-GraphicsBuildingProduct::GraphicsBuildingProduct(int posX, int posY, double orientation, GraphicsFactory *graphicsfactory):
-    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_orientation(orientation)
+GraphicsBuildingProduct::GraphicsBuildingProduct(int posX, int posY, double orientation, QMenu* productmenu, GraphicsFactory *graphicsfactory):
+    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_orientation(orientation),m_productmenu(productmenu)
 {
     QRectF rect(m_posx,m_posy,50,50);
     QPolygonF poly(rect);
@@ -117,4 +117,10 @@ void GraphicsBuildingProduct::setModel(int model){
 void GraphicsBuildingProduct::setExtremities(QVector<QPointF> extremities){
     m_extremities = extremities;
     setPolygon(QPolygonF(m_extremities));
+}
+
+void GraphicsBuildingProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+    m_graphicsfactory->clearSelection();
+    setSelected(true);
+    m_productmenu->exec(event->screenPos());
 }

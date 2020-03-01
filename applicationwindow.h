@@ -11,6 +11,9 @@
 #include <QToolButton>
 #include <QLabel>
 #include <QToolBox>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
 
 #include "Abstract_Factory/scenefactory.h"
 #include "Abstract_Factory/graphicsfactory.h"
@@ -33,6 +36,8 @@ public:
     void answer() override;
 
     QWidget* createToolButton(const QString &text,int id);
+    void createActions();
+    void createMenus();
     void createToolBox();
 
     void setMode(Mode mode);
@@ -49,12 +54,19 @@ private:
     QButtonGroup *m_obstaclegroup;
     QToolBox *m_toolbox;
 
+    QAction *deleteaction;
+    QAction *propertiesaction;
+
+    QMenu *m_productmenu;
+
 
 signals:
 
 public slots:
     void antennaGroupClicked(int);
     void obstacleGroupClicked(int);
+    void deleteProduct();
+    void openProduct();
 };
 
 #endif // APPLICATIONWINDOW_H

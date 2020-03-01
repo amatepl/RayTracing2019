@@ -1,7 +1,9 @@
 #include "graphicscarproduct.h"
 
-GraphicsCarProduct::GraphicsCarProduct(int posX, int posY, double orientation, double speed, GraphicsFactory *graphicsfactory):
-    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_orientation(orientation),m_speed(speed)
+GraphicsCarProduct::GraphicsCarProduct(int posX, int posY, double orientation, double speed, QMenu *productmenu,
+                                       GraphicsFactory *graphicsfactory):
+    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_orientation(orientation),m_speed(speed),
+    m_productmenu(productmenu)
 {
     QPixmap icon(":/Images/Car.png");
     setPixmap(icon);
@@ -67,4 +69,10 @@ void GraphicsCarProduct::setOrientation(double orientation){
 
 void GraphicsCarProduct::setSpeed(double speed){
     m_speed = speed;
+}
+
+void GraphicsCarProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+    m_graphicsfactory->clearSelection();
+    setSelected(true);
+    m_productmenu->exec(event->screenPos());
 }

@@ -7,7 +7,8 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *graphic,DialogFact
     setPosX(graphic->getPosX());
     setPosY(graphic->getPosY());
     setFrequency(graphic->getFrequency());
-    show();
+    setAttribute(Qt::WA_DeleteOnClose,true);
+    exec();
 }
 
 DialogReceiverProduct::~DialogReceiverProduct(){

@@ -2,7 +2,7 @@
 #define GRAPHICSCOMPOSITE_H
 
 #include <vector>
-
+#include <iostream>
 #include <QGraphicsScene>
 
 #include "graphicscomponent.h"

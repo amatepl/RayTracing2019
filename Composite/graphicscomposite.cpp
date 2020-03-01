@@ -25,6 +25,8 @@ void GraphicsComposite::remove(GraphicsComponent *graphicscomponent){
          ++m_graphicscomponentiterator){
         if (m_graphicscomponent.at(i) == graphicscomponent){
             m_graphicscomponent.erase(m_graphicscomponentiterator);
+            delete graphicscomponent;
+            break;
         }
         i++;
     }

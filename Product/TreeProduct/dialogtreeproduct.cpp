@@ -6,6 +6,7 @@ DialogTreeProduct::DialogTreeProduct(TreeProduct *graphic, DialogFactory* factor
     createDialog();
     setPosX(graphic->getPosX());
     setPosY(graphic->getPosY());
+    setAttribute(Qt::WA_DeleteOnClose,true);
     exec();
 }
 

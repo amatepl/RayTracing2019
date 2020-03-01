@@ -1,7 +1,7 @@
 #include "graphicstreeproduct.h"
 
-GraphicsTreeProduct::GraphicsTreeProduct(int posX, int posY,GraphicsFactory *graphicsfactory):
-    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY)
+GraphicsTreeProduct::GraphicsTreeProduct(int posX, int posY, QMenu * productmenu, GraphicsFactory *graphicsfactory):
+    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_productmenu(productmenu)
 {
     QPixmap icon(":/Images/Tree.png");
     setPos(m_posx,m_posy);
@@ -51,4 +51,10 @@ void GraphicsTreeProduct::setPosX(int posX) {
 void GraphicsTreeProduct::setPosY(int posY) {
     m_posy = posY;
     setPos(m_posx,m_posy);
+}
+
+void GraphicsTreeProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+    m_graphicsfactory->clearSelection();
+    setSelected(true);
+    m_productmenu->exec(event->screenPos());
 }

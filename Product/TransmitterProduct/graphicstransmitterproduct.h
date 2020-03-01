@@ -4,6 +4,8 @@
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
+#include <QMenu>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include "transmitterproduct.h"
 #include "Composite/graphicscomponent.h"
@@ -16,7 +18,7 @@ using namespace std;
 class GraphicsTransmitterProduct :public QGraphicsPixmapItem, public TransmitterProduct,public GraphicsComponent
 {
 public:
-    GraphicsTransmitterProduct(int posX, int posY, double orientation,double power, unsigned long frequency
+    GraphicsTransmitterProduct(int posX, int posY, double orientation,double power, unsigned long frequency,QMenu* productmenu
                                ,GraphicsFactory* graphicsfactory);
     ~GraphicsTransmitterProduct() override;
 
@@ -45,12 +47,16 @@ public:
     void setAntennaDistance(double distance) override;
     void setModel(Model model) override;
 
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+
 
 private:
     GraphicsFactory *m_graphicsfactory;
     int m_posx,m_posy;
     double m_orientation,m_power;
     unsigned long m_frequency;
+
+    QMenu* m_productmenu;
 };
 
 #endif // GRAPHICSTRANSMITTERPRODUCT_H

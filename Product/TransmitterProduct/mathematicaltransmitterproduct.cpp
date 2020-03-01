@@ -1,15 +1,16 @@
 #include "mathematicaltransmitterproduct.h"
-MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posx,int posy,double orientation,double power,unsigned long frequency)
+MathematicalTransmitterProduct::MathematicalTransmitterProduct(TransmitterProduct* graphic, MathematicalFactory *factory)
 {
-    m_posx = posx;
-    m_posy = posy;
-    m_orientation = orientation;
-    m_power = power;
-    m_frequency = frequency;
+    m_mathematicalfactory = factory;
+    setTransmitterProduct(graphic);
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
 
+}
+
+void MathematicalTransmitterProduct::newProperties(){
+    m_mathematicalfactory->receiveTransmitterProduct(this,m_graphic);
 }
 
 double MathematicalTransmitterProduct::computeGain(double theta,double phi, double frequency, int row,int column,double antennaDistance){
@@ -46,6 +47,10 @@ double MathematicalTransmitterProduct::computeGain(double theta,double phi, doub
     return gain;
 }
 
+TransmitterProduct* MathematicalTransmitterProduct::getTransmitterProduct(){
+    return m_graphic;
+}
+
 int MathematicalTransmitterProduct::getPosX(){
     return m_posx;
 }
@@ -67,25 +72,29 @@ double MathematicalTransmitterProduct::getPower(){
 }
 
 int MathematicalTransmitterProduct::getRow(){
-
+    return m_row;
 }
 
 int MathematicalTransmitterProduct::getColumn() {
-
+    return m_column;
 }
+
 double MathematicalTransmitterProduct::getAntennaDistance() {
-
+    return m_antennadistance;
 }
-int MathematicalTransmitterProduct::getModel() {
 
+int MathematicalTransmitterProduct::getModel() {
+    return m_model;
 }
 
 void MathematicalTransmitterProduct::setPosX(int posX){
     m_posx = posX;
+    setX(m_posx);
 }
 
 void MathematicalTransmitterProduct::setPosY(int posY){
     m_posy = posY;
+    setY(m_posy);
 }
 
 void MathematicalTransmitterProduct::setOrientation(double orientation){
@@ -101,17 +110,29 @@ void MathematicalTransmitterProduct::setFrequency(unsigned long frequency){
 }
 
 void MathematicalTransmitterProduct::setRow(int row){
-
+    m_row = row;
 }
 
 void MathematicalTransmitterProduct::setColumn(int column) {
-
+    m_column = column;
 }
 
 void MathematicalTransmitterProduct::setAntennaDistance(double distance) {
-
+    m_antennadistance = distance;
 }
 
 void  MathematicalTransmitterProduct::setModel(Model model) {
+            m_model = int(model);
+}
 
+void MathematicalTransmitterProduct::setTransmitterProduct(TransmitterProduct *transmitterproduct){
+    m_graphic = transmitterproduct;
+    setPosX(m_graphic->getPosX());
+    setPosY(m_graphic->getPosY());
+    setOrientation(m_graphic->getOrientation());
+    setPower(m_graphic->getPower());
+    setFrequency(m_graphic->getFrequency());
+    setRow(m_graphic->getRow());
+    setColumn(m_graphic->getColumn());
+    setAntennaDistance(m_graphic->getAntennaDistance());
 }

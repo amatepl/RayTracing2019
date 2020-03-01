@@ -19,6 +19,19 @@ void MathematicalFactory::receiveBuildingProduct(BuildingProduct *buildingproduc
     dynamic_cast<BuildingProduct*>(m_graphiccomponent)->setExtremities(buildingproduct->getExtremities());
 }
 
+void MathematicalFactory::receiveTransmitterProduct(TransmitterProduct* transmitterproduct, TransmitterProduct* graphic){
+    m_graphiccomponent = dynamic_cast<GraphicsComponent*>(graphic);
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPosX(transmitterproduct->getPosX());
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPosY(transmitterproduct->getPosY());
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setColumn(transmitterproduct->getColumn());
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setRow(transmitterproduct->getRow());
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setModel(TransmitterProduct::Model(transmitterproduct->getModel()));
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setFrequency(transmitterproduct->getFrequency());
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setOrientation(transmitterproduct->getOrientation());
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setAntennaDistance(transmitterproduct->getAntennaDistance());
+    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPower(transmitterproduct->getPower());
+}
+
 
 void MathematicalFactory::receiveReceiverProduct(ReceiverProduct *buildingproduct, ReceiverProduct *graphic){
     m_graphiccomponent = dynamic_cast<GraphicsComponent*>(graphic);
@@ -41,7 +54,10 @@ void MathematicalFactory::receiveCarProduct(CarProduct *carproduct, CarProduct *
 }
 
 TransmitterProduct* MathematicalFactory::createTransmitterProduct(){
-
+    TransmitterProduct* graphic = dynamic_cast<TransmitterProduct*>(m_graphiccomponent);
+    TransmitterProduct* transmitter  = new MathematicalTransmitterProduct(graphic,this);
+    m_mathtransmitters.push_back(dynamic_cast<MathematicalTransmitterProduct*>(transmitter));
+    return transmitter;
 }
 
 ReceiverProduct* MathematicalFactory::createReceiverProduct(){
@@ -91,6 +107,18 @@ void MathematicalFactory::updateChangeProperties(GraphicsComponent* graphicscomp
         }
         break;
     case int(GraphicsComponent::TransmitterProduct):
+        for (m_mathtransmittersiterator = m_mathtransmitters.begin(); m_mathtransmittersiterator != m_mathtransmitters.end(); ++m_mathtransmittersiterator){
+            if (m_mathtransmitters.at(i)->getTransmitterProduct() == dynamic_cast<TransmitterProduct*>(m_graphiccomponent)){
+                m_mathtransmitters.at(i)->setTransmitterProduct(dynamic_cast<TransmitterProduct*>(m_graphiccomponent));
+                exist = true;
+                break;
+            }
+            i++;
+        }
+        if (!exist){
+            createTransmitterProduct();
+        }
+        break;
         createTransmitterProduct();
         break;
     case int(GraphicsComponent::ReceiverProduct):

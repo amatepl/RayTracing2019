@@ -3,8 +3,10 @@
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
     createToolBox();
+    createActions();
+    createMenus();
     view = new QGraphicsView();
-    graphicsfactory = new GraphicsFactory(view,this);
+    graphicsfactory = new GraphicsFactory(view,this,m_productmenu);
     dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
     mathematicalfactory = new MathematicalFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
     dynamic_cast<GraphicsFactory*>(graphicsfactory)->attachObserver(dynamic_cast<SceneObserver*>(dialogfactory));
@@ -54,9 +56,14 @@ void ApplicationWindow::answer(){
     m_mode = MoveItem;
     notify(int(m_mode));
     QList<QAbstractButton*> antennabuttons = m_antennagroup->buttons();
-    for(int i = 0;i<antennabuttons.length();i++){
-        antennabuttons.at(i)->setChecked(false);
+    QList<QAbstractButton*> obstaclebuttons = m_obstaclegroup->buttons();
+    for(QAbstractButton *button: antennabuttons){
+        button->setChecked(false);
     }
+    for(QAbstractButton *button: obstaclebuttons){
+        button->setChecked(false);
+    }
+
 }
 
 QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
@@ -68,28 +75,56 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
     switch(mode){
         case int(InsertTransmitter):
             icon = QIcon(GraphicsTransmitterProduct::getImage());
+            button->setIcon(icon);
+            m_antennagroup->addButton(button,mode);
             break;
         case int(InsertReceiver):
             icon = QIcon(GraphicsReceiverProduct::getImage());
+            button->setIcon(icon);
+            m_antennagroup->addButton(button,mode);
             break;
         case int(InsertBuilding):
             icon = QIcon(GraphicsBuildingProduct::getImage());
+            button->setIcon(icon);
+            m_obstaclegroup->addButton(button,mode);
             break;
         case int(InsertTree):
             icon = QIcon(GraphicsTreeProduct::getImage());
+            button->setIcon(icon);
+            m_obstaclegroup->addButton(button,mode);
         break;
         case int(InsertCar):
             icon = QIcon(GraphicsCarProduct::getImage());
+            button->setIcon(icon);
+            m_obstaclegroup->addButton(button,mode);
         break;
     }
-    button->setIcon(icon);
-    m_antennagroup->addButton(button,mode);
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(button, 0, 0, Qt::AlignHCenter);
     layout->addWidget(new QLabel(text), 1, 0, Qt::AlignCenter);
 
     widget->setLayout(layout);
     return widget;
+}
+
+void ApplicationWindow::createActions(){
+    deleteaction = new QAction(QIcon(":/Images/Delete.png"), tr("&Delete"), this);
+    deleteaction->setShortcut(tr("Delete"));
+    deleteaction->setStatusTip(tr("Delete selected object"));
+
+    propertiesaction = new QAction(QIcon(":/Images/Properties.png"), tr("&Properties"), this);
+    propertiesaction->setShortcut(tr("Open"));
+
+    connect(deleteaction, SIGNAL(triggered()), this, SLOT(deleteProduct()));
+    connect(propertiesaction, SIGNAL(triggered()), this, SLOT(openProduct()));
+
+}
+
+void ApplicationWindow::createMenus(){
+    m_productmenu = menuBar()->addMenu(tr("&Object"));
+    m_productmenu->addAction(propertiesaction);
+    m_productmenu->addSeparator();
+    m_productmenu->addAction(deleteaction);
 }
 
 void ApplicationWindow::createToolBox(){
@@ -139,11 +174,35 @@ void ApplicationWindow::setMode(Mode mode){
 }
 
 void ApplicationWindow::antennaGroupClicked(int mode){
+    QList <QAbstractButton*> buttons = m_antennagroup->buttons();
+    for (int i = 0; i < buttons.size(); i++){
+        if (buttons.at(i) != m_antennagroup->checkedButton()){
+            buttons.at(i)->setChecked(false);
+        }
+    }
+    if (m_obstaclegroup->checkedButton() != 0)
+        m_obstaclegroup->checkedButton()->setChecked(false);
     setMode(Mode(mode));
     notify(mode);
 }
 
 void ApplicationWindow::obstacleGroupClicked(int mode){
+    QList <QAbstractButton*> buttons = m_obstaclegroup->buttons();
+    for (int i = 0; i < buttons.size(); i++){
+        if (buttons.at(i) != m_obstaclegroup->checkedButton()){
+            buttons.at(i)->setChecked(false);
+        }
+    }
+    if (m_antennagroup->checkedButton() != 0)
+        m_antennagroup->checkedButton()->setChecked(false);
     setMode(Mode(mode));
     notify(mode);
+}
+
+void ApplicationWindow::deleteProduct(){
+    notify(int(DeleteItem));
+}
+
+void ApplicationWindow::openProduct(){
+    notify((int(PropertiesItem)));
 }

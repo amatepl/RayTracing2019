@@ -7,6 +7,7 @@
 #include "scenefactory.h"
 #include "Product/TransmitterProduct/transmitterproduct.h"
 #include "Product/BuildingProduct/mathematicalbuildingproduct.h"
+#include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
 #include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include "Product/CarProduct/mathematicalcarproduct.h"
@@ -18,6 +19,7 @@ class MathematicalBuildingProduct;
 class MathematicalReceiverProduct;
 class MathematicalTreeProduct;
 class MathematicalCarProduct;
+class MathematicalTransmitterProduct;
 
 class MathematicalFactory : public SceneFactory, public SceneObserver
 {
@@ -26,6 +28,7 @@ public:
     ~MathematicalFactory() override;
 
     void receiveBuildingProduct(BuildingProduct*,BuildingProduct*);
+    void receiveTransmitterProduct(TransmitterProduct*, TransmitterProduct*);
     void receiveReceiverProduct(ReceiverProduct*,ReceiverProduct*);
     void receiveTreeProduct(TreeProduct*,TreeProduct*);
     void receiveCarProduct(CarProduct*, CarProduct*);
@@ -47,6 +50,8 @@ private:
     std::vector<MathematicalBuildingProduct*>::iterator m_mathbuildingsiterator;
     std::vector<MathematicalReceiverProduct*> m_mathreceivers;
     std::vector<MathematicalReceiverProduct*>::iterator m_mathreceiversiterator;
+    std::vector<MathematicalTransmitterProduct*> m_mathtransmitters;
+    std::vector<MathematicalTransmitterProduct*>::iterator m_mathtransmittersiterator;
     std::vector<MathematicalTreeProduct*> m_mathtrees;
     std::vector<MathematicalTreeProduct*>::iterator m_mathtreesiterator;
     std::vector<MathematicalCarProduct*> m_mathcars;

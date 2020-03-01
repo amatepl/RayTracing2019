@@ -7,6 +7,7 @@ DialogCarProduct::DialogCarProduct(CarProduct* graphic, DialogFactory* dialogfac
     setPosY(graphic->getPosY());
     setOrientation(graphic->getOrientation());
     setSpeed(graphic->getSpeed());
+    setAttribute(Qt::WA_DeleteOnClose,true);
     exec();
 }
 

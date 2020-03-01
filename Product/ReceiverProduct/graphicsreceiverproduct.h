@@ -3,6 +3,8 @@
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
+#include <QMenu>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include "receiverproduct.h"
 #include "Composite/graphicscomponent.h"
@@ -13,7 +15,7 @@ class GraphicsFactory;
 class GraphicsReceiverProduct :public QGraphicsPixmapItem, public ReceiverProduct,public GraphicsComponent
 {
 public:
-    GraphicsReceiverProduct(int posX, int posY, unsigned long frequency, bool enable
+    GraphicsReceiverProduct(int posX, int posY, unsigned long frequency, bool enable,QMenu *menuproduct
                                ,GraphicsFactory* graphicsfactory);
     ~GraphicsReceiverProduct() override;
 
@@ -34,12 +36,16 @@ public:
     void setPosY(int posY) override;
     void setFrequency(unsigned long frequency) override; 
 
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+
 private:
     GraphicsFactory *m_graphicsfactory;
     QRgb m_color;
     int m_posx,m_posy,m_sizex,m_sizey;
     double m_power, m_efield;
     unsigned long m_frequency;
+
+    QMenu *m_productmenu;
 };
 
 #endif // GRAPHICSRECEIVERPRODUCT_H
