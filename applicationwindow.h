@@ -52,6 +52,7 @@ private:
 
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;
+    QButtonGroup *m_raytracinggroup;
     QToolBox *m_toolbox;
 
     QAction *deleteaction;
@@ -65,6 +66,7 @@ signals:
 public slots:
     void antennaGroupClicked(int);
     void obstacleGroupClicked(int);
+    void rayTracingGroupClicked(int);
     void deleteProduct();
     void openProduct();
 };

@@ -98,6 +98,7 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
             button->setIcon(icon);
             m_obstaclegroup->addButton(button,mode);
         break;
+
     }
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(button, 0, 0, Qt::AlignHCenter);
@@ -128,15 +129,23 @@ void ApplicationWindow::createMenus(){
 }
 
 void ApplicationWindow::createToolBox(){
+    /*
+     * Creation of ths sidepannel butons
+    */
     m_antennagroup = new QButtonGroup(this);
     m_antennagroup->setExclusive(false);
     m_obstaclegroup = new QButtonGroup(this);
     m_obstaclegroup->setExclusive(false);
+    m_raytracinggroup = new QButtonGroup(this);
+    m_raytracinggroup->setExclusive(false);
     connect(m_antennagroup,SIGNAL(buttonClicked(int)),this,SLOT(antennaGroupClicked(int)));
     connect(m_obstaclegroup,SIGNAL(buttonClicked(int)),this,SLOT(obstacleGroupClicked(int)));
+    connect(m_raytracinggroup,SIGNAL(buttonClicked(int)),this,SLOT(rayTracingGroupClicked(int)));
     QGridLayout *antenna_layout = new QGridLayout;
     QGridLayout *obstacle_layout = new QGridLayout;
+    QGridLayout *rayTracing_layout = new QGridLayout;
 
+    // Creating the antennas pannel
     QWidget* widget = createToolButton("Transmitter",int(GraphicsFactory::InsertTransmitter));
     antenna_layout->addWidget(widget, 0, 0);
     QWidget* widget1 = createToolButton("Receiver", int(GraphicsFactory::InsertReceiver));
@@ -144,6 +153,8 @@ void ApplicationWindow::createToolBox(){
 
     antenna_layout->setRowStretch(1,10);
     antenna_layout->setColumnStretch(2, 10);
+
+    // Creating the obstacle pannel
     obstacle_layout->setHorizontalSpacing(10);
 
     QWidget* obstacle_widget = createToolButton("Building",int(GraphicsFactory::InsertBuilding));
@@ -162,16 +173,40 @@ void ApplicationWindow::createToolBox(){
     QWidget *obstacleWidget = new QWidget;
     obstacleWidget->setLayout(obstacle_layout);
 
+    // Creating the rayTraycing pannel
+
+    QWidget *rayTracingWidget = new QWidget;
+    QToolButton *launchRayTracingButton = new QToolButton;
+    launchRayTracingButton->setIconSize(QSize(50, 50));
+    launchRayTracingButton->setCheckable(false);
+    QPixmap iconPixmap(":/Images/playBsmall.png");
+    QSize iconNewSize(50,50);
+    iconPixmap.scaled(iconNewSize);
+    QIcon icon  = QIcon(iconPixmap);
+    launchRayTracingButton->setIcon(icon);
+
+    rayTracing_layout->setRowStretch(1,10);
+    rayTracing_layout->setColumnStretch(2, 10);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(launchRayTracingButton, 0, 0, Qt::AlignHCenter);
+    layout->addWidget(new QLabel("Launch Ray Tracing"), 1, 0, Qt::AlignCenter);
+
+    rayTracingWidget->setLayout(layout);
+
     m_toolbox = new QToolBox;
     m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     m_toolbox->setMinimumWidth(itemWidget->sizeHint().width());
     m_toolbox->addItem(itemWidget, tr("Insert antenna"));
     m_toolbox->addItem(obstacleWidget, tr("Insert obstacles"));
+    m_toolbox->addItem(rayTracingWidget, tr("Ray Tracing"));
 }
 
 void ApplicationWindow::setMode(Mode mode){
     m_mode = mode;
 }
+
+// SLOTS
 
 void ApplicationWindow::antennaGroupClicked(int mode){
     QList <QAbstractButton*> buttons = m_antennagroup->buttons();
@@ -195,6 +230,17 @@ void ApplicationWindow::obstacleGroupClicked(int mode){
     }
     if (m_antennagroup->checkedButton() != 0)
         m_antennagroup->checkedButton()->setChecked(false);
+    setMode(Mode(mode));
+    notify(mode);
+}
+
+void ApplicationWindow::rayTracingGroupClicked(int mode){
+    QList <QAbstractButton*> buttons = m_raytracinggroup->buttons();
+    for (int i = 0; i < buttons.size(); i++){
+        if (buttons.at(i) != m_raytracinggroup->checkedButton()){
+            buttons.at(i)->setChecked(false);
+        }
+    }
     setMode(Mode(mode));
     notify(mode);
 }

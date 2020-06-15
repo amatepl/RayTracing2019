@@ -1,5 +1,7 @@
-QT += widgets \
-      datavisualization
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4):QT += widgets \
+    datavisualization
 
 HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/graphicsfactory.h \

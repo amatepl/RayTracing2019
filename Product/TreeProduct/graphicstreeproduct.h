@@ -27,7 +27,7 @@ public:
     void setPosX(int) override;
     void setPosY(int) override;
 
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
     GraphicsFactory* m_graphicsfactory;
