@@ -175,24 +175,26 @@ void ApplicationWindow::createToolBox(){
 
     // Creating the rayTraycing pannel
 
-    QWidget *rayTracingWidget = new QWidget;
+    QWidget *launchRayTracingWidget = new QWidget;
     QToolButton *launchRayTracingButton = new QToolButton;
     launchRayTracingButton->setIconSize(QSize(50, 50));
     launchRayTracingButton->setCheckable(false);
-    QPixmap iconPixmap(":/Images/playBsmall.png");
-    QSize iconNewSize(50,50);
-    iconPixmap.scaled(iconNewSize);
-    QIcon icon  = QIcon(iconPixmap);
+    QIcon icon  = QIcon(QPixmap(":/Images/playButton.png"));
     launchRayTracingButton->setIcon(icon);
 
-    rayTracing_layout->setRowStretch(1,10);
+    QGridLayout *playButton_layout = new QGridLayout;
+    playButton_layout->addWidget(launchRayTracingButton, 0, 0, Qt::AlignHCenter);
+    playButton_layout->addWidget(new QLabel("Launch Ray"), 1, 0, Qt::AlignCenter);
+
+    launchRayTracingWidget->setLayout(playButton_layout);
+
+    rayTracing_layout->addWidget(launchRayTracingWidget, 0, 0);
+
+    rayTracing_layout->setRowStretch(1, 10);
     rayTracing_layout->setColumnStretch(2, 10);
 
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(launchRayTracingButton, 0, 0, Qt::AlignHCenter);
-    layout->addWidget(new QLabel("Launch Ray Tracing"), 1, 0, Qt::AlignCenter);
-
-    rayTracingWidget->setLayout(layout);
+    QWidget *rayTracingWidget = new QWidget;
+    rayTracingWidget->setLayout(rayTracing_layout);
 
     m_toolbox = new QToolBox;
     m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));

@@ -6,5 +6,8 @@
         <file>Images/Car.png</file>
         <file>Images/Delete.png</file>
         <file>Images/Properties.png</file>
+        <file>Images/playB.png</file>
+        <file>Images/playBsmall.png</file>
+        <file>Images/playButton.png</file>
     </qresource>
 </RCC>
