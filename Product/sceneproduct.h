@@ -5,6 +5,7 @@
 //#include "Composite/graphicscomponent.h"
 
 class MathematicalComponent;
+class GraphicsComponent;
 
 class SceneProduct{
 
