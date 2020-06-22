@@ -6,13 +6,14 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     createActions();
     createMenus();
     view = new QGraphicsView();
-    graphicsfactory = new GraphicsFactory(view,this,m_productmenu);
-    dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
-    mathematicalfactory = new MathematicalFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
-    dynamic_cast<GraphicsFactory*>(graphicsfactory)->attachObserver(dynamic_cast<SceneObserver*>(dialogfactory));
-    dynamic_cast<GraphicsFactory*>(graphicsfactory)->attachObserver(dynamic_cast<SceneObserver*>(mathematicalfactory));
+    m_scene = new GraphicScene(view,this,m_productmenu);
+    m_receiverFactory = new ReceiverFactory(m_productmenu);
+    m_transmitterFactory = new TransmitterFactory();
+    m_buildingFactory = new BuildingFactory();
+    m_treeFactory = new TreeFactory();
+    m_carFactory = new CarFactory();
 
-    attachObserver(dynamic_cast<WindowObserver*>(graphicsfactory));
+    //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
 
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(m_toolbox);
@@ -52,9 +53,10 @@ void ApplicationWindow::notify(int mode){
     }
 }
 
-void ApplicationWindow::answer(){
+void ApplicationWindow::answer(SceneProduct *sceneproduct){
+    m_sceneProducts.push_back(sceneproduct);
     m_mode = MoveItem;
-    notify(int(m_mode));
+//    notify(int(m_mode));
     QList<QAbstractButton*> antennabuttons = m_antennagroup->buttons();
     QList<QAbstractButton*> obstaclebuttons = m_obstaclegroup->buttons();
     for(QAbstractButton *button: antennabuttons){
@@ -63,6 +65,10 @@ void ApplicationWindow::answer(){
     for(QAbstractButton *button: obstaclebuttons){
         button->setChecked(false);
     }
+
+}
+
+void ApplicationWindow::modelAnswer(SceneProduct *sceneproduct){
 
 }
 
@@ -146,9 +152,9 @@ void ApplicationWindow::createToolBox(){
     QGridLayout *rayTracing_layout = new QGridLayout;
 
     // Creating the antennas pannel
-    QWidget* widget = createToolButton("Transmitter",int(GraphicsFactory::InsertTransmitter));
+    QWidget* widget = createToolButton("Transmitter",int(InsertTransmitter));
     antenna_layout->addWidget(widget, 0, 0);
-    QWidget* widget1 = createToolButton("Receiver", int(GraphicsFactory::InsertReceiver));
+    QWidget* widget1 = createToolButton("Receiver", int(InsertReceiver));
     antenna_layout->addWidget(widget1, 0, 1);
 
     antenna_layout->setRowStretch(1,10);
@@ -157,11 +163,11 @@ void ApplicationWindow::createToolBox(){
     // Creating the obstacle pannel
     obstacle_layout->setHorizontalSpacing(10);
 
-    QWidget* obstacle_widget = createToolButton("Building",int(GraphicsFactory::InsertBuilding));
+    QWidget* obstacle_widget = createToolButton("Building",int(InsertBuilding));
     obstacle_layout->addWidget(obstacle_widget, 0, 0);
-    QWidget* tree_widget = createToolButton("Tree", int(GraphicsFactory::InsertTree));
+    QWidget* tree_widget = createToolButton("Tree", int(InsertTree));
     obstacle_layout->addWidget(tree_widget,0,1);
-    QWidget* car_layout = createToolButton("Car", int(GraphicsFactory::InsertCar));
+    QWidget* car_layout = createToolButton("Car", int(InsertCar));
     obstacle_layout->addWidget(car_layout,1,0);
 
     obstacle_layout->setRowStretch(3, 10);
@@ -208,6 +214,28 @@ void ApplicationWindow::setMode(Mode mode){
     m_mode = mode;
 }
 
+void ApplicationWindow::notifyScene(){
+    SceneFactory * factory;
+    switch (m_mode) {
+        case int(InsertReceiver):
+            factory = m_receiverFactory;
+            break;
+        case int(InsertTransmitter):
+        factory = m_transmitterFactory;
+            break;
+        case int(InsertBuilding):
+        factory = m_buildingFactory;
+            break;
+        case int(InsertTree):
+        factory = m_treeFactory;
+            break;
+        case int(InsertCar):
+        factory = m_carFactory;
+            break;
+    }
+    m_scene->setSceneFactory(factory);
+}
+
 // SLOTS
 
 void ApplicationWindow::antennaGroupClicked(int mode){
@@ -221,6 +249,8 @@ void ApplicationWindow::antennaGroupClicked(int mode){
         m_obstaclegroup->checkedButton()->setChecked(false);
     setMode(Mode(mode));
     notify(mode);
+    notifyScene();
+    //m_scene->setSceneFactory(m_receiverFactory);
 }
 
 void ApplicationWindow::obstacleGroupClicked(int mode){
@@ -234,6 +264,7 @@ void ApplicationWindow::obstacleGroupClicked(int mode){
         m_antennagroup->checkedButton()->setChecked(false);
     setMode(Mode(mode));
     notify(mode);
+    notifyScene();
 }
 
 void ApplicationWindow::rayTracingGroupClicked(int mode){
@@ -245,6 +276,8 @@ void ApplicationWindow::rayTracingGroupClicked(int mode){
     }
     setMode(Mode(mode));
     notify(mode);
+    notifyScene();
+
 }
 
 void ApplicationWindow::deleteProduct(){

@@ -1,9 +1,6 @@
 #ifndef PATTERNWINDOW_H
 #define PATTERNWINDOW_H
 
-
-#include "surface3d.h"
-
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QHBoxLayout>
@@ -27,8 +24,10 @@
 #include <iostream>
 #include <fstream>
 
+#include "surface3d.h"
+
 #include "Observer/dialogobserver.h"
-#include "Product/TransmitterProduct/dialogtransmitterproduct.h"
+//#include "Product/TransmitterProduct/dialogtransmitterproduct.h"
 
 using namespace std;
 

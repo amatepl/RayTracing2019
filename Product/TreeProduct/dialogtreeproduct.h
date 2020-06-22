@@ -5,6 +5,7 @@
 
 #include "treeproduct.h"
 #include "Abstract_Factory/dialogfactory.h"
+#include "Product/TreeProduct/graphicstreeproduct.h"
 
 class DialogTreeProduct: public QDialog, public TreeProduct
 {

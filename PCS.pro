@@ -4,15 +4,24 @@ greaterThan(QT_MAJOR_VERSION, 4):QT += widgets \
     datavisualization
 
 HEADERS += Abstract_Factory/dialogfactory.h \
-    Abstract_Factory/graphicsfactory.h \
-    Abstract_Factory/mathematicalfactory.h \
+    Abstract_Factory/buildingfactory.h \
+    Abstract_Factory/carfactory.h \
+    Abstract_Factory/rayfactory.h \
+    Abstract_Factory/receiverfactory.h \
     Abstract_Factory/scenefactory.h \
+    Abstract_Factory/transmitterfactory.h \
+    Abstract_Factory/treefactory.h \
     Composite/graphicscomponent.h \
     Composite/graphicscomposite.h \
+    Composite/mathematicalcomponent.h \
     Graphics/patternwindow.h \
     Graphics/surface3d.h \
+    Model/algorithmInterface.h \
+    Model/model.h \
     Observer/dialogobservable.h \
     Observer/dialogobserver.h \
+    Observer/productobservable.h \
+    Observer/productobserver.h \
     Observer/sceneobservable.h \
     Observer/sceneobserver.h \
     Observer/windowobservable.h \
@@ -40,15 +49,22 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/TreeProduct/graphicstreeproduct.h \
     Product/TreeProduct/mathematicaltreeproduct.h \
     Product/TreeProduct/treeproduct.h \
+    Product/sceneproduct.h \
     Share/line.h \
-    applicationwindow.h
+    applicationwindow.h \
+    graphicscene.h
 
 SOURCES += Abstract_Factory/dialogfactory.cpp \
-    Abstract_Factory/graphicsfactory.cpp \
-    Abstract_Factory/mathematicalfactory.cpp \
+    Abstract_Factory/buildingfactory.cpp \
+    Abstract_Factory/carfactory.cpp \
+    Abstract_Factory/rayfactory.cpp \
+    Abstract_Factory/receiverfactory.cpp \
+    Abstract_Factory/transmitterfactory.cpp \
+    Abstract_Factory/treefactory.cpp \
     Composite/graphicscomposite.cpp \
     Graphics/patternwindow.cpp \
     Graphics/surface3d.cpp \
+    Model/model.cpp \
     Product/BuildingProduct/dialogbuildingproduct.cpp \
     Product/BuildingProduct/graphicsbuildingproduct.cpp \
     Product/BuildingProduct/mathematicalbuildingproduct.cpp \
@@ -68,6 +84,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
     Share/line.cpp \
     applicationwindow.cpp \
+    graphicscene.cpp \
     main.cpp
 
 RESOURCES += \

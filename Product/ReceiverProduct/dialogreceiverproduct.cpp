@@ -1,12 +1,12 @@
 #include "dialogreceiverproduct.h"
 
-DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *graphic,DialogFactory* dialogfactory)
+DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *graphic)
 {
-    m_dialogfactory = dialogfactory;
+    //m_dialogfactory = dialogfactory;
     createDialog();
-    setPosX(graphic->getPosX());
-    setPosY(graphic->getPosY());
-    setFrequency(graphic->getFrequency());
+    //setPosX(graphic->getPosX());
+    //setPosY(graphic->getPosY());
+    //setFrequency(graphic->getFrequency());
     setAttribute(Qt::WA_DeleteOnClose,true);
     exec();
 }
@@ -17,7 +17,7 @@ DialogReceiverProduct::~DialogReceiverProduct(){
 
 void DialogReceiverProduct::createDialog(){
     setWindowTitle("Receiver properties: ");
-    setWindowIcon(QIcon(GraphicsReceiverProduct::getImage()));
+    //setWindowIcon(QIcon(GraphicsReceiverProduct::getImage()));
     QPushButton *save = new QPushButton("Save",this);
     QPushButton *cancel = new QPushButton("Cancel",this);
 
@@ -125,6 +125,6 @@ void DialogReceiverProduct::setFrequency(unsigned long frequency){
 }
 
 void DialogReceiverProduct::newProperties(){
-    m_dialogfactory->receiveReceiverProduct(this);
+    //m_dialogfactory->receiveReceiverProduct(this);
     close();
 }

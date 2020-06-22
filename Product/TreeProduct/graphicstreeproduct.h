@@ -4,15 +4,15 @@
 #include <QGraphicsPixmapItem>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
-
+#include <QGraphicsScene>
 #include "treeproduct.h"
 #include "Composite/graphicscomponent.h"
-#include "Abstract_Factory/graphicsfactory.h"
+
 
 class GraphicsTreeProduct: public QGraphicsPixmapItem, public TreeProduct,public GraphicsComponent
 {
 public:
-    GraphicsTreeProduct(int posX, int posY, QMenu *productmenu, GraphicsFactory *graphicsfactory);
+    GraphicsTreeProduct(int posX, int posY, QMenu *productmenu, QGraphicsScene *scene);
     ~GraphicsTreeProduct() override;
 
     static QPixmap getImage();
@@ -29,9 +29,14 @@ public:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
+    void setMathematicalComponent(MathematicalComponent *mathematicalComponent) override;
+
+    MathematicalComponent* toMathematicalComponent() override;
+
 private:
-    GraphicsFactory* m_graphicsfactory;
+    QGraphicsScene *m_scene;
     int m_posx,m_posy;
+    MathematicalComponent *m_mathematicalComponent;
 
     QMenu *m_productmenu;
 };

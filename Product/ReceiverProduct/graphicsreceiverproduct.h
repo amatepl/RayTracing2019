@@ -5,18 +5,26 @@
 #include <QGraphicsScene>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QPainter>
 
-#include "receiverproduct.h"
+//#include "receiverproduct.h"
 #include "Composite/graphicscomponent.h"
-#include "Abstract_Factory/graphicsfactory.h"
+#include "Composite/MathematicalComponent.h"
 
-class GraphicsFactory;
+// TEST---
+//#include "Product/ReceiverProduct/dialogreceiverproduct.h"
+//--------
 
-class GraphicsReceiverProduct :public QGraphicsPixmapItem, public ReceiverProduct,public GraphicsComponent
+//class GraphicsFactory;
+//class MathematicalComponent;
+
+class GraphicsReceiverProduct :public QGraphicsPixmapItem/*, public ReceiverProduct*/,public GraphicsComponent
 {
 public:
-    GraphicsReceiverProduct(int posX, int posY, unsigned long frequency, bool enable,QMenu *menuproduct
-                               ,GraphicsFactory* graphicsfactory);
+//    GraphicsReceiverProduct(int posX, int posY, unsigned long frequency, bool enable,QMenu *menuproduct
+//                               ,GraphicsFactory* graphicsfactory);
+    GraphicsReceiverProduct(int posX, int posY, bool enable, QMenu *menuproduct
+                               , QGraphicsScene *scene);
     ~GraphicsReceiverProduct() override;
 
     void enableReceiver(bool enable);
@@ -29,21 +37,27 @@ public:
 
     int getPosX() override;
     int getPosY() override;
-    double getPower() override;
-    unsigned long getFrequency() override;
 
     void setPosX(int posX) override;
     void setPosY(int posY) override;
-    void setFrequency(unsigned long frequency) override; 
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
+    void setMathematicalComponent(MathematicalComponent *mathematicalComponent) override;
+
+    MathematicalComponent* toMathematicalComponent() override;
+
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+
 private:
-    GraphicsFactory *m_graphicsfactory;
     QRgb m_color;
     int m_posx,m_posy,m_sizex,m_sizey;
     double m_power, m_efield;
     unsigned long m_frequency;
+    QGraphicsScene *m_scene;
+    MathematicalComponent *m_mathematicalComponent;
 
     QMenu *m_productmenu;
 };

@@ -1,7 +1,7 @@
 #include "mathematicaltreeproduct.h"
 
-MathematicalTreeProduct::MathematicalTreeProduct(TreeProduct* graphic, MathematicalFactory* factory):
-    m_factory(factory)
+MathematicalTreeProduct::MathematicalTreeProduct(TreeProduct* graphic)
+//    m_factory(factory)
 {
     setTreeProduct(graphic);
 }
@@ -11,7 +11,7 @@ MathematicalTreeProduct::~MathematicalTreeProduct(){
 }
 
 void MathematicalTreeProduct::newProperties(){
-    m_factory->receiveTreeProduct(this,m_graphic);
+    //m_factory->receiveTreeProduct(this,m_graphic);
 }
 
 int MathematicalTreeProduct::getPosX(){
@@ -38,4 +38,8 @@ void MathematicalTreeProduct::setTreeProduct(TreeProduct* graphic){
     m_graphic = graphic;
     setPosX(graphic->getPosX());
     setPosY(graphic->getPosY());
+}
+
+MathematicalComponent* MathematicalTreeProduct::toMathematicalComponent(){
+    return this;
 }

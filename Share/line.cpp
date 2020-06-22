@@ -45,7 +45,6 @@ QPointF Line::symetricalPoint(const QPointF &point){
         virtual_slope = acos((point.x() - x2())/ray_vector_length);
     }
 
-//    float ray_slope = angle_wall + (angle_wall - virtual_slope);
     qreal ray_slope = 2*getAngleRad() - virtual_slope;
     qreal ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
     qreal x2 = ray_vector_length * ray_vector[0];
@@ -54,33 +53,6 @@ QPointF Line::symetricalPoint(const QPointF &point){
     qreal transmitterImagePosY = this->y2() + y2;
 
     return QPointF(transmitterImagePosX,transmitterImagePosY);
-
-
-
-
-//    QLineF pointToWall(p1(), point);
-//    pointToWall.setAngle(angle()-angleTo(pointToWall));
-//    return pointToWall.p2();
-
-
-
-//    double ray_vector_length = sqrt(pow(transmitterPosY - current_wall->y2(),2) + pow(transmitterPosX - current_wall->x2(),2));
-//    double virtual_slope;
-
-//    if (transmitterPosY - current_wall->y2() < 0 && transmitterPosX - current_wall->x2()){
-//        virtual_slope = -acos((transmitterPosX - current_wall->x2())/ray_vector_length);
-//    }
-
-//    else{
-//        virtual_slope = acos((transmitterPosX - current_wall->x2())/ray_vector_length);
-//    }
-
-//    double ray_slope = angle_wall + (angle_wall - virtual_slope);
-//    double ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
-//    double x2 = ray_vector_length * ray_vector[0];
-//    double y2 = ray_vector_length * ray_vector[1];
-//    double transmitterImagePosX = current_wall->x2() + x2;
-//    double transmitterImagePosY = current_wall->y2() + y2;
 
 }
 
@@ -96,7 +68,6 @@ QPointF Line::symetricalPoint(const double x, const double y){
         virtual_slope = acos((x - x2())/ray_vector_length);
     }
 
-//    float ray_slope = angle_wall + (angle_wall - virtual_slope);
     qreal ray_slope = 2*getAngleRad() - virtual_slope;
     qreal ray_vector[2] ={cos(ray_slope) , sin(ray_slope)};
     qreal x2 = ray_vector_length * ray_vector[0];
@@ -105,54 +76,6 @@ QPointF Line::symetricalPoint(const double x, const double y){
     qreal transmitterImagePosY = this->y2() + y2;
 
     return QPointF(transmitterImagePosX,transmitterImagePosY);
-
-
-
-//    double vec1x = (p2().x() - p1().x())/length();
-//    double vec1y = (p2().y() - p1().y())/length();
-//    double length = sqrt(pow(x-p1().x(),2) + pow(y-p1().y(),2));
-//    double vec2x = (x-p1().x())/length;
-//    double vec2y = (y-p1().y())/length;
-
-//    vec2x = vec1x*vec2x + vec1y*vec2y;              //  cos(theta) = vec1.vec2
-
-//    vec2x = sqrt(1 - pow(vec2x,2));                 //  sin(theta) = sqrt(1 - cos(theta)^2)
-
-//    vec2x = vec2x*2*length;   // Distance from the initial point to p1
-
-//    vec2y = -vec1x*vec2x;
-
-//    vec1x = vec1y*vec2x;
-
-//    if(x == vec1x && y == vec2y){
-//        vec2y = -vec2y;
-
-//        vec1x = -vec1x;
-//    }
-
-//    QPointF image(x+vec1x,y+vec2y);
-
-//    return image;
-
-
-
-//    QPointF point(x,y);
-//    QLineF pointToWall(p1(), point);
-//    pointToWall.setAngle(angle()-angleTo(pointToWall));
-//    return pointToWall.p2();
-
-
-//    QLineF normal = normalVector();
-//    normal.translate(point);
-
-//    QLineF finalVector(point,point);
-//    QPointF closestPoint;
-//    intersect(normal,&closestPoint);
-//    finalVector.setP2(closestPoint);
-//    finalVector.setLength(2*finalVector.length());
-//    std::cout<<finalVector.length()<<std::endl;
-//    return finalVector.p2();
-
 }
 
 bool Line::onLine(const QPointF &point){

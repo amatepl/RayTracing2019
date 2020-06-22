@@ -4,15 +4,16 @@
 #include <QGraphicsPolygonItem>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QPainter>
+#include <QGraphicsScene>
 
 #include "buildingproduct.h"
 #include "Composite/graphicscomponent.h"
-#include "Abstract_Factory/graphicsfactory.h"
 
 class GraphicsBuildingProduct : public QGraphicsPolygonItem, public BuildingProduct,public GraphicsComponent
 {
 public:
-    GraphicsBuildingProduct(int posX, int posY, double orientation, QMenu* productmenu, GraphicsFactory *graphicsfactory);
+    GraphicsBuildingProduct(int posX, int posY, double orientation, QMenu* productmenu, QGraphicsScene *graphicsfactory);
     ~GraphicsBuildingProduct() override;
 
     static QPixmap getImage();
@@ -39,13 +40,17 @@ public:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
+    void setMathematicalComponent(MathematicalComponent *mathematicalComponent) override;
+
+    MathematicalComponent* toMathematicalComponent() override;
+
 private:
-    GraphicsFactory *m_graphicsfactory;
+    QGraphicsScene *m_scene;
     QVector<QPointF> m_extremities;
     Model m_model;
     int m_posx,m_posy;
     double m_orientation,m_permittivity,m_conductivity;
-
+    MathematicalComponent *m_mathematicalComponent;
 
     QMenu* m_productmenu;
 };

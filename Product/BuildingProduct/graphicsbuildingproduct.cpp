@@ -1,7 +1,7 @@
 #include "graphicsbuildingproduct.h"
 
-GraphicsBuildingProduct::GraphicsBuildingProduct(int posX, int posY, double orientation, QMenu* productmenu, GraphicsFactory *graphicsfactory):
-    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_orientation(orientation),m_productmenu(productmenu)
+GraphicsBuildingProduct::GraphicsBuildingProduct(int posX, int posY, double orientation, QMenu* productmenu, QGraphicsScene *scene):
+    m_scene(scene),m_posx(posX),m_posy(posY),m_orientation(orientation),m_productmenu(productmenu)
 {
     QRectF rect(m_posx,m_posy,50,50);
     QPolygonF poly(rect);
@@ -43,7 +43,7 @@ bool GraphicsBuildingProduct::graphicsSelected(){
 }
 
 void GraphicsBuildingProduct::draw(){
-    m_graphicsfactory->addItem(this);
+    m_scene->addItem(this);
 }
 
 int GraphicsBuildingProduct::getPosX(){
@@ -120,7 +120,15 @@ void GraphicsBuildingProduct::setExtremities(QVector<QPointF> extremities){
 }
 
 void GraphicsBuildingProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
-    m_graphicsfactory->clearSelection();
+    //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
+}
+
+void GraphicsBuildingProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
+    m_mathematicalComponent = mathematicalComponent;
+}
+
+MathematicalComponent* GraphicsBuildingProduct::toMathematicalComponent(){
+    return m_mathematicalComponent;
 }

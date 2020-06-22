@@ -1,7 +1,7 @@
 #include "graphicstreeproduct.h"
 
-GraphicsTreeProduct::GraphicsTreeProduct(int posX, int posY, QMenu * productmenu, GraphicsFactory *graphicsfactory):
-    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_productmenu(productmenu)
+GraphicsTreeProduct::GraphicsTreeProduct(int posX, int posY, QMenu * productmenu, QGraphicsScene *scene):
+    m_scene(scene),m_posx(posX),m_posy(posY),m_productmenu(productmenu)
 {
     QPixmap icon(":/Images/Tree.png");
     setPos(m_posx,m_posy);
@@ -24,7 +24,7 @@ QPixmap GraphicsTreeProduct::getImage(){
 }
 
 void GraphicsTreeProduct::draw() {
-    m_graphicsfactory->addItem(this);
+    m_scene->addItem(this);
 }
 
 bool GraphicsTreeProduct::graphicsSelected() {
@@ -54,7 +54,18 @@ void GraphicsTreeProduct::setPosY(int posY) {
 }
 
 void GraphicsTreeProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
-    m_graphicsfactory->clearSelection();
+    //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
 }
+
+void GraphicsTreeProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
+    m_mathematicalComponent = mathematicalComponent;
+}
+
+MathematicalComponent* GraphicsTreeProduct::toMathematicalComponent(){
+    return m_mathematicalComponent;
+}
+
+
+

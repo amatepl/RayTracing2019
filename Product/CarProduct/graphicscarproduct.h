@@ -4,8 +4,7 @@
 #include <QGraphicsPixmapItem>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
-
-#include "Abstract_Factory/graphicsfactory.h"
+#include <QGraphicsScene>
 #include "Composite/graphicscomponent.h"
 #include "carproduct.h"
 
@@ -13,7 +12,7 @@ class GraphicsCarProduct: public QGraphicsPixmapItem, public GraphicsComponent, 
 {
 public:
     GraphicsCarProduct(int posX, int posY, double orientation, double speed, QMenu *productmenu,
-                       GraphicsFactory *graphicsfactory);
+                       QGraphicsScene *scene);
     ~GraphicsCarProduct() override;
 
     static QPixmap getImage();
@@ -34,10 +33,15 @@ public:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
+    void setMathematicalComponent(MathematicalComponent *mathematicalComponent) override;
+
+    MathematicalComponent* toMathematicalComponent() override;
+
 public:
-    GraphicsFactory* m_graphicsfactory;
+    QGraphicsScene* m_scene;
     int m_posx, m_posy;
     double m_orientation, m_speed;
+    MathematicalComponent *m_mathematicalComponent;
 
     QMenu *m_productmenu;
 };

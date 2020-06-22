@@ -1,16 +1,17 @@
 #include "graphicsreceiverproduct.h"
 
-GraphicsReceiverProduct::GraphicsReceiverProduct(int posX, int posY,unsigned long frequency, bool enable, QMenu *menuproduct
-                                                 ,GraphicsFactory *graphicsfactory)
+GraphicsReceiverProduct::GraphicsReceiverProduct(int posX, int posY, bool enable, QMenu *menuproduct, QGraphicsScene *scene
+                                                 )
 {
     m_productmenu = menuproduct;
     m_sizex = 10;
     m_sizey = 10;
-    m_graphicsfactory = graphicsfactory;
+//    m_graphicsfactory = graphicsfactory;
     m_posx = posX;
     m_posy = posY;
     enableReceiver(enable);
-    m_frequency = frequency;
+    m_scene = scene;
+//    m_frequency = frequency;
 
     draw();
 }
@@ -24,9 +25,9 @@ void GraphicsReceiverProduct::enableReceiver(bool enable){
         QPixmap icon(":/Images/Receiver1.png");
         setPixmap(icon);
         setOffset(-icon.width()/2,-icon.height()/2);
-        setFlag(QGraphicsItem::ItemIsMovable);
-        setFlag(QGraphicsItem::ItemIsSelectable);
-        setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+        this->setFlag(QGraphicsItem::ItemIsMovable);
+        this->setFlag(QGraphicsItem::ItemIsSelectable);
+        this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     }
     else {
         QPixmap pixmap(m_sizex,m_sizey);
@@ -56,6 +57,27 @@ QPixmap GraphicsReceiverProduct::getImage(){
     return icon;
 }
 
+QVariant GraphicsReceiverProduct::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == QGraphicsItem::ItemPositionHasChanged) {
+        m_mathematicalComponent->setPosX(pos().x());
+        m_mathematicalComponent->setPosY(pos().y());
+    }
+    return value;
+}
+
+void GraphicsReceiverProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
+}
+
+MathematicalComponent* GraphicsReceiverProduct::toMathematicalComponent(){
+    return m_mathematicalComponent;
+}
+
+void GraphicsReceiverProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
+    m_mathematicalComponent = mathematicalComponent;
+}
+
 int GraphicsReceiverProduct::getType(){
     return int(GraphicsComponent::ReceiverProduct);
 }
@@ -65,17 +87,13 @@ bool GraphicsReceiverProduct::graphicsSelected() {
 }
 
 void GraphicsReceiverProduct::draw(){
-    m_graphicsfactory->addItem(this);
+//    m_graphicsfactory->addItem(this);
+    m_scene->addItem(this);
 }
 
 int GraphicsReceiverProduct::getPosX(){return m_posx;}
 
 int GraphicsReceiverProduct::getPosY() {return m_posy;}
-
-
-double GraphicsReceiverProduct::getPower() {return m_power;}
-
-unsigned long GraphicsReceiverProduct::getFrequency() {return m_frequency;}
 
 void GraphicsReceiverProduct::setPosX(int posX)
 {
@@ -89,13 +107,8 @@ void GraphicsReceiverProduct::setPosY(int posY)
     setPos(m_posx,m_posy);
 }
 
-void GraphicsReceiverProduct::setFrequency(unsigned long frequency)
-{
-    m_frequency = frequency;
-}
-
 void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
-    m_graphicsfactory->clearSelection();
+    //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
 }

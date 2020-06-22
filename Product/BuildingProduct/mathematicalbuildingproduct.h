@@ -4,14 +4,15 @@
 #include <QPolygonF>
 
 #include "buildingproduct.h"
-#include "Abstract_Factory/mathematicalfactory.h"
+#include "Composite/MathematicalComponent.h"
 
-class MathematicalFactory;
 
-class MathematicalBuildingProduct : public QPolygonF, public BuildingProduct
+//class MathematicalFactory;
+
+class MathematicalBuildingProduct : public QPolygonF, public BuildingProduct, public MathematicalComponent
 {
 public:
-    MathematicalBuildingProduct(BuildingProduct* graphic, MathematicalFactory* mathematicalFactory);
+    MathematicalBuildingProduct(BuildingProduct* graphic);
     ~MathematicalBuildingProduct() override;
 
     void newProperties();
@@ -36,8 +37,9 @@ public:
 
     void setBuildingProduct(BuildingProduct *graphic);
 
+    MathematicalComponent * toMathematicalComponent() override;
 private:
-    MathematicalFactory *m_mathematicalfactory;
+    //MathematicalFactory *m_mathematicalfactory;
     QVector<QPointF> m_extremities;
     Model m_model;
     BuildingProduct* m_graphic;

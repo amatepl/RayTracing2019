@@ -5,6 +5,7 @@
 
 #include "carproduct.h"
 #include "Abstract_Factory/dialogfactory.h"
+#include "Product/CarProduct/graphicscarproduct.h"
 
 class DialogCarProduct: public QDialog, public CarProduct
 {

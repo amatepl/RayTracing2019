@@ -1,9 +1,9 @@
 #include "mathematicalreceiverproduct.h"
 
-MathematicalReceiverProduct::MathematicalReceiverProduct(ReceiverProduct* graphic, MathematicalFactory* factory)
+MathematicalReceiverProduct::MathematicalReceiverProduct(GraphicsReceiverProduct* graphics)
 {
-    setReceiverProduct(graphic);
-    m_mathematicalfactory = factory;
+    setReceiverProduct(graphics);
+//    m_mathematicalfactory = factory;
 }
 
 MathematicalReceiverProduct::~MathematicalReceiverProduct(){
@@ -11,7 +11,7 @@ MathematicalReceiverProduct::~MathematicalReceiverProduct(){
 }
 
 void MathematicalReceiverProduct::newProperties(){
-    m_mathematicalfactory->receiveReceiverProduct(this,m_graphic);
+    //m_mathematicalfactory->receiveReceiverProduct(this,m_graphic);
 }
 
 int MathematicalReceiverProduct::getPosX(){
@@ -29,9 +29,9 @@ unsigned long MathematicalReceiverProduct::getFrequency(){
     return m_frequency;
 }
 
-ReceiverProduct* MathematicalReceiverProduct::getReceiverProduct(){
-    return m_graphic;
-}
+//GraphicsReceiverProduct* MathematicalReceiverProduct::getReceiverProduct(){
+//    return m_graphic;
+//}
 
 void MathematicalReceiverProduct::setPosX(int posX){
     m_posx = posX;
@@ -47,9 +47,17 @@ void MathematicalReceiverProduct::setFrequency(unsigned long frequency){
     m_frequency = frequency;
 }
 
-void MathematicalReceiverProduct::setReceiverProduct(ReceiverProduct* graphic){
+void MathematicalReceiverProduct::setReceiverProduct(GraphicsReceiverProduct* graphic){
     m_graphic = graphic;
-    setPosX(graphic->getPosX());
-    setPosY(graphic->getPosY());
-    setFrequency(graphic->getFrequency());
+    //setPosX(graphic->getPosX());
+    //setPosY(graphic->getPosY());
+    //setFrequency(graphic->getFrequency());
+}
+
+MathematicalComponent* MathematicalReceiverProduct::toMathematicalComponent(){
+    return this;
+}
+
+void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserver){
+    m_observers.push_back(productObserver);
 }

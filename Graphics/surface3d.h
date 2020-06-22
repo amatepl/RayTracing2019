@@ -2,7 +2,7 @@
 #define SURFACE3D_H
 
 #include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
-#include "Product/TransmitterProduct/dialogtransmitterproduct.h"
+//#include "Product/TransmitterProduct/dialogtransmitterproduct.h"
 
 #include <QtDataVisualization/Q3DSurface>
 #include <QtDataVisualization/QSurfaceDataProxy>

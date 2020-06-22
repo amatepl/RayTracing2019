@@ -24,12 +24,6 @@ public:
     void receiveTreeProduct(TreeProduct* treeproduct);
     void receiveCarProduct(CarProduct* carproduct);
 
-    TransmitterProduct* createTransmitterProduct() override;
-    ReceiverProduct* createReceiverProduct() override;
-    BuildingProduct * createBuildingProduct() override;
-    TreeProduct * createTreeProduct() override;
-    CarProduct *createCarProduct() override;
-
     void updateNewProperties(GraphicsComponent*) override;
     void updateChangeProperties(GraphicsComponent*) override;
 

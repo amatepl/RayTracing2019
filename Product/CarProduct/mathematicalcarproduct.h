@@ -5,14 +5,14 @@
 #include <iostream>
 
 #include "carproduct.h"
-#include "Abstract_Factory/mathematicalfactory.h"
+#include "Composite/MathematicalComponent.h"
 
 using namespace std;
 
-class MathematicalCarProduct: public QRectF, public CarProduct
+class MathematicalCarProduct: public QRectF, public CarProduct, public MathematicalComponent
 {
 public:
-    MathematicalCarProduct(CarProduct* graphic, MathematicalFactory* factory);
+    MathematicalCarProduct(CarProduct* graphic);
     ~MathematicalCarProduct() override;
 
     void newProperties();
@@ -31,8 +31,10 @@ public:
 
     void setCarProduct(CarProduct*);
 
+    MathematicalComponent* toMathematicalComponent() override;
+
 private:
-    MathematicalFactory* m_mathematicalfactory;
+    //MathematicalFactory* m_mathematicalfactory;
     CarProduct* m_graphic;
     int m_posx, m_posy;
     double m_orientation, m_speed;

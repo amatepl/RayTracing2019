@@ -3,30 +3,41 @@
 
 #include <QDialog>
 #include <QLineEdit>
+#include <QSpinBox>
+#include <QComboBox>
+#include <QGridLayout>
+#include <QFormLayout>
+#include <QGroupBox>
+#include <QWidget>
+#include <QPushButton>
 
-#include "receiverproduct.h"
-#include "Abstract_Factory/dialogfactory.h"
+//#include "receiverproduct.h"
+//#include "Abstract_Factory/dialogfactory.h"
+//#include "Product/ReceiverProduct/graphicsreceiverproduct.h"
+#include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
 
 
-class DialogFactory;
+//class DialogFactory;
 
-class DialogReceiverProduct : public QDialog, public ReceiverProduct
+class ReceiverProduct;
+
+class DialogReceiverProduct : public QDialog/*, public ReceiverProduct*/
 {
     Q_OBJECT
 public:
-    DialogReceiverProduct(ReceiverProduct* graphic, DialogFactory* dialogfactory);
+    DialogReceiverProduct(ReceiverProduct* graphic);
     ~DialogReceiverProduct() override;
 
     void createDialog();
 
-    int getPosX() override;
-    int getPosY() override;
-    unsigned long getFrequency() override;
-    double getPower() override;
+    int getPosX();
+    int getPosY();
+    unsigned long getFrequency();
+    double getPower();
 
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    void setFrequency(unsigned long frequency) override;
+    void setPosX(int posX);
+    void setPosY(int posY);
+    void setFrequency(unsigned long frequency);
 
 private:
     QSpinBox *m_posx,*m_posy;
@@ -35,7 +46,7 @@ private:
     QLineEdit *m_efield;
     QComboBox *m_frequencyorder;
 
-    DialogFactory *m_dialogfactory;
+    //DialogFactory *m_dialogfactory;
 
 public slots:
     void newProperties();

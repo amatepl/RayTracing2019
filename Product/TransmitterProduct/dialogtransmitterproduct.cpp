@@ -6,8 +6,8 @@ DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *graphic,D
     createDialog();
     setPosX(graphic->getPosX());
     setPosY(graphic->getPosY());
-    setPower(graphic->getPower());
-    setFrequency(graphic->getFrequency());
+    //setPower(graphic->getPower());
+    //setFrequency(graphic->getFrequency());
     setOrientation(graphic->getOrientation());
     setModel(dipole);
     setAttribute(Qt::WA_DeleteOnClose,true);
@@ -241,7 +241,7 @@ void DialogTransmitterProduct::notify(){
 }
 
 void DialogTransmitterProduct::newProperties(){
-    m_dialogfactory->receiveTransmitterProduct(this);
+    //m_dialogfactory->receiveTransmitterProduct(this);
     close();
 }
 

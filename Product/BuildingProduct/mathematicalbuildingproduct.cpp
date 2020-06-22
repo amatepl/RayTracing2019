@@ -1,7 +1,7 @@
 #include "mathematicalbuildingproduct.h"
 
-MathematicalBuildingProduct::MathematicalBuildingProduct(BuildingProduct* graphic, MathematicalFactory* mathematicalFactory) : QPolygonF(){
-    m_mathematicalfactory = mathematicalFactory;
+MathematicalBuildingProduct::MathematicalBuildingProduct(BuildingProduct* graphic) : QPolygonF(){
+    //m_mathematicalfactory = mathematicalFactory;
     setBuildingProduct(graphic);
 }
 
@@ -10,7 +10,7 @@ MathematicalBuildingProduct::~MathematicalBuildingProduct(){
 }
 
 void MathematicalBuildingProduct::newProperties(){
-    m_mathematicalfactory->receiveBuildingProduct(this,m_graphic);
+    //m_mathematicalfactory->receiveBuildingProduct(this,m_graphic);
 }
 
 int MathematicalBuildingProduct::getPosX(){
@@ -79,4 +79,8 @@ void MathematicalBuildingProduct::setBuildingProduct(BuildingProduct* graphic){
     setOrientation(graphic->getOrientation());
     setModel(graphic->getModel());
     setExtremities(graphic->getExtremities());
+}
+
+MathematicalComponent* MathematicalBuildingProduct::toMathematicalComponent(){
+    return this;
 }

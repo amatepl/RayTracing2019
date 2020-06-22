@@ -43,3 +43,8 @@ void GraphicsComposite::setGraphicComponent(unsigned long long id,GraphicsCompon
 unsigned long long GraphicsComposite::getSize(){
     return m_graphicscomponent.size();
 }
+
+void GraphicsComposite::setPosX(int posX){}
+void GraphicsComposite::setPosY(int posY){}
+
+void GraphicsComposite::setMathematicalComponent(MathematicalComponent *mathematicalComponent){}

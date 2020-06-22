@@ -1,7 +1,6 @@
 #include "graphicstransmitterproduct.h"
 
-GraphicsTransmitterProduct::GraphicsTransmitterProduct(int posX, int posY, double orientation,double power
-                                                       ,unsigned long frequency, QMenu* productmenu, GraphicsFactory *graphicsfactory)
+GraphicsTransmitterProduct::GraphicsTransmitterProduct(int posX, int posY, double orientation, QMenu* productmenu, QGraphicsScene *scene)
 {
     QPixmap icon(":/Images/Transmitter1.png");
     setPixmap(icon);
@@ -10,19 +9,19 @@ GraphicsTransmitterProduct::GraphicsTransmitterProduct(int posX, int posY, doubl
     setOffset(-icon.width()/2,-icon.height()/2);
     setRotation(orientation);
 
-    m_graphicsfactory = graphicsfactory;
+
     m_productmenu = productmenu;
     m_posx = posX;
     m_posy = posY;
     m_orientation = orientation;
-    m_power = power;
-    m_frequency = frequency;
+    m_scene = scene;
 
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
     draw();
+
 }
 
 GraphicsTransmitterProduct::~GraphicsTransmitterProduct(){
@@ -43,7 +42,7 @@ bool GraphicsTransmitterProduct::graphicsSelected() {
 }
 
 void GraphicsTransmitterProduct::draw(){
-    m_graphicsfactory->addItem(this);
+    m_scene->addItem(this);
 }
 
 int GraphicsTransmitterProduct::getPosX(){return m_posx;}
@@ -52,17 +51,6 @@ int GraphicsTransmitterProduct::getPosY() {return m_posy;}
 
 double GraphicsTransmitterProduct::getOrientation() {return m_orientation;}
 
-double GraphicsTransmitterProduct::getPower() {return m_power;}
-
-unsigned long GraphicsTransmitterProduct::getFrequency() {return m_frequency;}
-
-int GraphicsTransmitterProduct::getRow(){
-
-}
-
-int GraphicsTransmitterProduct::getColumn() {
-
-}
 double GraphicsTransmitterProduct::getAntennaDistance() {
 
 }
@@ -88,24 +76,6 @@ void GraphicsTransmitterProduct::setOrientation(double orientation)
     setRotation(orientation);
 }
 
-void GraphicsTransmitterProduct::setPower(double power)
-{
-    m_power = power;
-}
-
-void GraphicsTransmitterProduct::setFrequency(unsigned long frequency)
-{
-    m_frequency = frequency;
-}
-
-void GraphicsTransmitterProduct::setRow(int row){
-
-}
-
-void GraphicsTransmitterProduct::setColumn(int column) {
-
-}
-
 void GraphicsTransmitterProduct::setAntennaDistance(double distance) {
 
 }
@@ -115,7 +85,15 @@ void  GraphicsTransmitterProduct::setModel(Model model) {
 }
 
 void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
-        m_graphicsfactory->clearSelection();
+        //m_graphicsfactory->clearSelection();
         setSelected(true);
         m_productmenu->exec(event->screenPos());
+}
+
+void GraphicsTransmitterProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
+    m_mathematicalComponent = mathematicalComponent;
+}
+
+MathematicalComponent* GraphicsTransmitterProduct::toMathematicalComponent(){
+    return m_mathematicalComponent;
 }

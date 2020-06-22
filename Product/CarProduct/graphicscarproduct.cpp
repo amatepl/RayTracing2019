@@ -1,8 +1,8 @@
 #include "graphicscarproduct.h"
 
 GraphicsCarProduct::GraphicsCarProduct(int posX, int posY, double orientation, double speed, QMenu *productmenu,
-                                       GraphicsFactory *graphicsfactory):
-    m_graphicsfactory(graphicsfactory),m_posx(posX),m_posy(posY),m_orientation(orientation),m_speed(speed),
+                                       QGraphicsScene *scene):
+    m_scene(scene),m_posx(posX),m_posy(posY),m_orientation(orientation),m_speed(speed),
     m_productmenu(productmenu)
 {
     QPixmap icon(":/Images/Car.png");
@@ -33,7 +33,7 @@ bool GraphicsCarProduct::graphicsSelected(){
 }
 
 void GraphicsCarProduct::draw(){
-    m_graphicsfactory->addItem(this);
+    m_scene->addItem(this);
 }
 
 int GraphicsCarProduct::getPosX(){
@@ -72,7 +72,15 @@ void GraphicsCarProduct::setSpeed(double speed){
 }
 
 void GraphicsCarProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
-    m_graphicsfactory->clearSelection();
+    //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
+}
+
+void GraphicsCarProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
+    m_mathematicalComponent = mathematicalComponent;
+}
+
+MathematicalComponent* GraphicsCarProduct::toMathematicalComponent(){
+    return m_mathematicalComponent;
 }

@@ -13,7 +13,7 @@
 
 #include "transmitterproduct.h"
 #include "graphicstransmitterproduct.h"
-#include "Abstract_Factory/dialogfactory.h"
+//#include "Abstract_Factory/dialogfactory.h"
 #include "Observer/dialogobservable.h"
 #include "Graphics/patternwindow.h"
 
@@ -31,20 +31,20 @@ public:
     int getPosX() override;
     int getPosY() override;
     double getOrientation() override;
-    unsigned long getFrequency() override;
-    double getPower() override;
-    int getRow() override;
-    int getColumn() override;
+    unsigned long getFrequency() ;
+    double getPower() ;
+    int getRow() ;
+    int getColumn() ;
     double getAntennaDistance() override;
     int getModel() override;
 
     void setPosX(int posX) override;
     void setPosY(int posY) override;
     void setOrientation(double orientation) override;
-    void setPower(double power) override;
-    void setFrequency(unsigned long frequency) override;
-    void setRow(int row) override;
-    void setColumn(int column) override;
+    void setPower(double power) ;
+    void setFrequency(unsigned long frequency) ;
+    void setRow(int row) ;
+    void setColumn(int column) ;
     void setAntennaDistance(double distance) override;
     virtual void setModel(Model model) override;
 

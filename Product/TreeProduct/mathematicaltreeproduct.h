@@ -4,13 +4,12 @@
 #include <QPolygonF>
 
 #include "treeproduct.h"
-#include "Abstract_Factory/mathematicalfactory.h"
+#include "Composite/MathematicalComponent.h"
 
-
-class MathematicalTreeProduct: public QPolygonF, public TreeProduct
+class MathematicalTreeProduct: public QPolygonF, public TreeProduct, public MathematicalComponent
 {
 public:
-    MathematicalTreeProduct(TreeProduct* graphic, MathematicalFactory* factory);
+    MathematicalTreeProduct(TreeProduct* graphic);
     ~MathematicalTreeProduct() override;
 
     void newProperties();
@@ -23,8 +22,10 @@ public:
     void setPosY(int) override;
     void setTreeProduct(TreeProduct*);
 
+    MathematicalComponent* toMathematicalComponent() override;
+
 private:
-    MathematicalFactory* m_factory;
+    //MathematicalFactory* m_factory;
     TreeProduct* m_graphic;
     int m_posx,m_posy;
 };

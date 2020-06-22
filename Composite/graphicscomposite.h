@@ -22,6 +22,11 @@ public:
     GraphicsComponent * getGraphicsComponent(unsigned long long id) override;
     void setGraphicComponent(unsigned long long,GraphicsComponent*) override;
 
+    void setPosX(int posX) override;
+    void setPosY(int posY) override;
+
+    void setMathematicalComponent(MathematicalComponent *mathematicalComponent) override;
+
 private:
     vector<GraphicsComponent*> m_graphicscomponent;
     vector<GraphicsComponent*>::iterator m_graphicscomponentiterator;

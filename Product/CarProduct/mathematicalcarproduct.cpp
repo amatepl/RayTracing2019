@@ -1,12 +1,12 @@
 #include "mathematicalcarproduct.h"
 
-MathematicalCarProduct::MathematicalCarProduct(CarProduct* graphic, MathematicalFactory* factory){
-    m_mathematicalfactory = factory;
+MathematicalCarProduct::MathematicalCarProduct(CarProduct* graphic){
+//    m_mathematicalfactory = factory;
     setCarProduct(graphic);
 }
 
 MathematicalCarProduct::~MathematicalCarProduct(){
-    m_mathematicalfactory->receiveCarProduct(this,m_graphic);
+    //m_mathematicalfactory->receiveCarProduct(this,m_graphic);
 }
 
 void MathematicalCarProduct::newProperties(){
@@ -57,4 +57,8 @@ void MathematicalCarProduct::setCarProduct(CarProduct* graphic){
     setPosY(graphic->getPosY());
     setOrientation(graphic->getOrientation());
     setSpeed(graphic->getSpeed());
+}
+
+MathematicalComponent* MathematicalCarProduct::toMathematicalComponent(){
+    return this;
 }

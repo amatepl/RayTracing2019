@@ -6,15 +6,14 @@
 #include "Product/BuildingProduct/buildingproduct.h"
 #include "Product/TreeProduct/treeproduct.h"
 #include "Product/CarProduct/carproduct.h"
+#include "Composite/graphicscomponent.h"
+#include <QMenu>
+#include <QGraphicsScene>
 
 class SceneFactory{
 public:
     virtual ~SceneFactory() {}
-    virtual TransmitterProduct* createTransmitterProduct() = 0;
-    virtual ReceiverProduct* createReceiverProduct() = 0;
-    virtual BuildingProduct* createBuildingProduct() = 0;
-    virtual TreeProduct* createTreeProduct() = 0;
-    virtual CarProduct* createCarProduct() = 0;
+    virtual GraphicsComponent* createGraphicsComponent(int posX, int posY, QMenu* productmenu, QGraphicsScene* scene) = 0;
 
 };
 

@@ -37,40 +37,40 @@ Surface3D::~Surface3D(){
 void Surface3D::fillPatternProxy()
 {
     float stepTheta = (sampleThetaMax - sampleThetaMin) / float(sampleCountTheta - 1);
-    float stepPhy = (samplePhyMax - samplePhyMin) / float(sampleCountPhy - 1);
-    float frequency = m_dialog->getFrequency();
-    int row = m_dialog->getRow();
-    int column = m_dialog->getColumn();
-    double antennaDistance = m_dialog->getAntennaDistance();
+//    float stepPhy = (samplePhyMax - samplePhyMin) / float(sampleCountPhy - 1);
+//    float frequency = m_dialog->getFrequency();
+//    int row = m_dialog->getRow();
+//    int column = m_dialog->getColumn();
+//    double antennaDistance = m_dialog->getAntennaDistance();
 
-    m_dataArray = new QSurfaceDataArray;
-    m_dataArray->reserve(sampleCountPhy);
-    for (int i = 0 ; i < sampleCountPhy ; i++) {
-        QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountTheta);
-        // Keep values within range bounds, since just adding step can cause minor drift due
-        // to the rounding errors.
-        float phy = qMin(samplePhyMax, (i * stepPhy + samplePhyMin));
-        int index = 0;
-        for (int j = 0; j < sampleCountTheta; j++) {
-            float theta = qMin(sampleThetaMax, (j * stepTheta + sampleThetaMin));
-            double gain = MathematicalTransmitterProduct::computeGain(double(theta),double(phy),frequency,row,column,antennaDistance);
-            float xtheta = theta*M_PI/180.0;
-            m_thetamax = qMax(xtheta,m_thetamax);
-            m_thetamin = qMin(xtheta,m_thetamin);
-            float y = gain*qCos(phy*M_PI/180.0);
-            m_ymin = qMin(y,m_ymin);
-            m_ymax = qMax(y,m_ymax);
-            float r = gain;
-            m_rmax = qMax(r,m_rmax);
-            m_rmin = qMin(r,m_rmin);
-            (*newRow)[index++].setPosition(QVector3D(xtheta, y, r));
-        }
-        *m_dataArray << newRow;
-    }
-    m_graph->axisX()->setRange(m_thetamin, m_thetamax);
-    m_graph->axisY()->setRange(m_ymin-1.0, m_ymax+1.0);
-    m_graph->axisZ()->setRange(m_rmin, m_rmax);
-    m_patternProxy->resetArray(m_dataArray);
+//    m_dataArray = new QSurfaceDataArray;
+//    m_dataArray->reserve(sampleCountPhy);
+//    for (int i = 0 ; i < sampleCountPhy ; i++) {
+//        QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountTheta);
+//        // Keep values within range bounds, since just adding step can cause minor drift due
+//        // to the rounding errors.
+//        float phy = qMin(samplePhyMax, (i * stepPhy + samplePhyMin));
+//        int index = 0;
+//        for (int j = 0; j < sampleCountTheta; j++) {
+//            float theta = qMin(sampleThetaMax, (j * stepTheta + sampleThetaMin));
+//            double gain = MathematicalTransmitterProduct::computeGain(double(theta),double(phy),frequency,row,column,antennaDistance);
+//            float xtheta = theta*M_PI/180.0;
+//            m_thetamax = qMax(xtheta,m_thetamax);
+//            m_thetamin = qMin(xtheta,m_thetamin);
+//            float y = gain*qCos(phy*M_PI/180.0);
+//            m_ymin = qMin(y,m_ymin);
+//            m_ymax = qMax(y,m_ymax);
+//            float r = gain;
+//            m_rmax = qMax(r,m_rmax);
+//            m_rmin = qMin(r,m_rmin);
+//            (*newRow)[index++].setPosition(QVector3D(xtheta, y, r));
+//        }
+//        *m_dataArray << newRow;
+//    }
+//    m_graph->axisX()->setRange(m_thetamin, m_thetamax);
+//    m_graph->axisY()->setRange(m_ymin-1.0, m_ymax+1.0);
+//    m_graph->axisZ()->setRange(m_rmin, m_rmax);
+//    m_patternProxy->resetArray(m_dataArray);
 }
 
 void Surface3D::enablePatternModel(bool enable)

@@ -16,11 +16,18 @@
 #include <QMenuBar>
 
 #include "Abstract_Factory/scenefactory.h"
-#include "Abstract_Factory/graphicsfactory.h"
 #include "Abstract_Factory/dialogfactory.h"
-#include "Abstract_Factory/mathematicalfactory.h"
-#include "Observer/windowobservable.h"
+#include "Abstract_Factory/receiverfactory.h"
+#include "Abstract_Factory/transmitterfactory.h"
+#include "Abstract_Factory/buildingfactory.h"
+#include "Abstract_Factory/treefactory.h"
+#include "Abstract_Factory/carfactory.h"
 
+#include "Observer/windowobservable.h"
+#include "graphicscene.h"
+
+#include "Product/CarProduct/graphicscarproduct.h"
+#include "Product/TreeProduct/graphicstreeproduct.h"
 using namespace std;
 
 class ApplicationWindow :public QMainWindow,public WindowObservable
@@ -33,7 +40,8 @@ public:
     void attachObserver(WindowObserver *windowobserver) override;
     void detachObserver(WindowObserver *windowobserver) override;
     void notify(int mode) override;
-    void answer() override;
+    void answer(SceneProduct *sceneproduct) override;
+    void modelAnswer(SceneProduct *sceneproduct) override;
 
     QWidget* createToolButton(const QString &text,int id);
     void createActions();
@@ -41,14 +49,23 @@ public:
     void createToolBox();
 
     void setMode(Mode mode);
+    void notifyScene();
 
 private:
     QGraphicsView *view;
     SceneFactory *graphicsfactory,*dialogfactory,*mathematicalfactory;
     vector<WindowObserver*> m_windowobserver;
     vector<WindowObserver*>::iterator m_windowobserveriterator;
+    GraphicScene *m_scene;
+
+    ReceiverFactory *m_receiverFactory;
+    TransmitterFactory *m_transmitterFactory;
+    BuildingFactory *m_buildingFactory;
+    TreeFactory *m_treeFactory;
+    CarFactory *m_carFactory;
 
     Mode m_mode;
+    vector<SceneProduct*> m_sceneProducts;
 
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;
