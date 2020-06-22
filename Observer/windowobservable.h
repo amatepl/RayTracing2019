@@ -2,7 +2,7 @@
 #define WINDOWOBSERVABLE_H
 
 #include "windowobserver.h"
-#include "Product/SceneProduct.h"
+#include "Product/sceneproduct.h"
 
 class WindowObservable{
 public:

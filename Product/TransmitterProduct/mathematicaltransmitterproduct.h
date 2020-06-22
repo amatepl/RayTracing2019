@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "transmitterproduct.h"
-#include "Composite/MathematicalComponent.h"
+#include "Composite/mathematicalcomponent.h"
 
 #include "Observer/productobserver.h"
 

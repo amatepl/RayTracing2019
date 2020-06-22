@@ -2,7 +2,7 @@
 #define GRAPHICSCOMPONENT_H
 
 //#include <QString>
-#include "Product/SceneProduct.h"
+#include "Product/sceneproduct.h"
 //#include "Composite/MathematicalComponent.h"
 
 class QPixmap;

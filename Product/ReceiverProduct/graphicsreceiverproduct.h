@@ -9,7 +9,7 @@
 
 //#include "receiverproduct.h"
 #include "Composite/graphicscomponent.h"
-#include "Composite/MathematicalComponent.h"
+#include "Composite/mathematicalcomponent.h"
 
 // TEST---
 //#include "Product/ReceiverProduct/dialogreceiverproduct.h"

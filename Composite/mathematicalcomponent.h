@@ -1,7 +1,7 @@
 #ifndef MATHEMATICALCOMPONENT_H
 #define MATHEMATICALCOMPONENT_H
 
-#include "Product/SceneProduct.h"
+#include "Product/sceneproduct.h"
 
 class MathematicalComponent: public SceneProduct
 {
