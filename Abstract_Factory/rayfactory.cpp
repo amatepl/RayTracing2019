@@ -12,11 +12,11 @@ GraphicsComponent* RayFactory::createGraphicsComponent(int posX, int posY, QMenu
 MathematicalComponent* RayFactory::createMathematicalComponent(){
     MathematicalRayProduct* mathematicalComponent;
     if(m_visibleRays){
-        MathematicalRayProduct* mathematicalComponent = new MathematicalRayProduct();
-        GraphicsRayProduct* graphicsComponent = new GraphicsRayProduct();
+        //MathematicalRayProduct* mathematicalComponent = new MathematicalRayProduct();
+        //GraphicsRayProduct* graphicsComponent = new GraphicsRayProduct();
     }
     else{
-        MathematicalRayProduct* mathematicalComponent = new MathematicalRayProduct();
+        //MathematicalRayProduct* mathematicalComponent = new MathematicalRayProduct();
     }
     return mathematicalComponent;
 }
