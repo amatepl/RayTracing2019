@@ -29,7 +29,7 @@ void DialogFactory::receiveBuildingProduct(BuildingProduct* buildingproduct){
 void DialogFactory::receiveReceiverProduct(ReceiverProduct* receiverproduct){
     //dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosX(receiverproduct->getPosX());
     //dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosY(receiverproduct->getPosY());
-    dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setFrequency(receiverproduct->getFrequency());
+    //dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setFrequency(receiverproduct->getFrequency());
 }
 
 void DialogFactory::receiveTreeProduct(TreeProduct *treeproduct){

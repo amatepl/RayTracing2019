@@ -5,18 +5,15 @@ RayFactory::RayFactory(bool visible)
     m_visibleRays = visible;
 }
 
-GraphicsComponent* RayFactory::createGraphicsComponent(int posX, int posY, QMenu *productmenu, QGraphicsScene *scene){
-
-}
-
-MathematicalComponent* RayFactory::createMathematicalComponent(){
+MathematicalRayProduct* RayFactory::createRay(const QPointF &p1, const QPointF &p2){
     MathematicalRayProduct* mathematicalComponent;
     if(m_visibleRays){
-        //MathematicalRayProduct* mathematicalComponent = new MathematicalRayProduct();
-        //GraphicsRayProduct* graphicsComponent = new GraphicsRayProduct();
+        mathematicalComponent = new MathematicalRayProduct(p1, p2);
+        GraphicsRayProduct* graphicsComponent = new GraphicsRayProduct(p1, p2);
+
     }
     else{
-        //MathematicalRayProduct* mathematicalComponent = new MathematicalRayProduct();
+        mathematicalComponent = new MathematicalRayProduct();
     }
     return mathematicalComponent;
 }
