@@ -1,7 +1,13 @@
 #include "mathematicaltransmitterproduct.h"
 MathematicalTransmitterProduct::MathematicalTransmitterProduct(TransmitterProduct* graphic)
 {
+    m_type = "Transmitter";
     setTransmitterProduct(graphic);
+}
+
+MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY):QPointF(posX,posY)
+{
+    m_type = "Transmitter";
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
@@ -54,17 +60,6 @@ TransmitterProduct* MathematicalTransmitterProduct::getTransmitterProduct(){
     return m_graphic;
 }
 
-int MathematicalTransmitterProduct::getPosX(){
-    return m_posx;
-}
-
-int MathematicalTransmitterProduct::getPosY(){
-    return m_posy;
-}
-
-double MathematicalTransmitterProduct::getOrientation(){
-    return m_orientation;
-}
 
 unsigned long MathematicalTransmitterProduct::getFrequency(){
     return m_frequency;
@@ -82,13 +77,6 @@ int MathematicalTransmitterProduct::getColumn() {
     return m_column;
 }
 
-double MathematicalTransmitterProduct::getAntennaDistance() {
-    return m_antennadistance;
-}
-
-int MathematicalTransmitterProduct::getModel() {
-    return m_model;
-}
 
 void MathematicalTransmitterProduct::setPosX(int posX){
     m_posx = posX;
@@ -98,10 +86,6 @@ void MathematicalTransmitterProduct::setPosX(int posX){
 void MathematicalTransmitterProduct::setPosY(int posY){
     m_posy = posY;
     setY(m_posy);
-}
-
-void MathematicalTransmitterProduct::setOrientation(double orientation){
-    m_orientation = orientation;
 }
 
 void MathematicalTransmitterProduct::setPower(double power){
@@ -120,20 +104,14 @@ void MathematicalTransmitterProduct::setColumn(int column) {
     m_column = column;
 }
 
-void MathematicalTransmitterProduct::setAntennaDistance(double distance) {
-    m_antennadistance = distance;
-}
 
-void  MathematicalTransmitterProduct::setModel(Model model) {
-            m_model = int(model);
-}
 
 void MathematicalTransmitterProduct::setTransmitterProduct(TransmitterProduct *transmitterproduct){
     m_graphic = transmitterproduct;
     setPosX(m_graphic->getPosX());
     setPosY(m_graphic->getPosY());
-    setOrientation(m_graphic->getOrientation());
-    setAntennaDistance(m_graphic->getAntennaDistance());
+//    setOrientation(m_graphic->getOrientation());
+//    setAntennaDistance(m_graphic->getAntennaDistance());
 }
 
 MathematicalComponent* MathematicalTransmitterProduct::toMathematicalComponent(){
@@ -143,11 +121,13 @@ MathematicalComponent* MathematicalTransmitterProduct::toMathematicalComponent()
 void MathematicalTransmitterProduct::notify(const QPointF &pos){
     //m_EMfield = 0;
     //m_power = 0;
+    cout<<"Transmitter position: "<<m_posx<<", "<< m_posy <<endl;
+
     m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
-    if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
+    //if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
         vector<MathematicalRayProduct> *wholeRay = new vector<MathematicalRayProduct>;
         QPointF m_pos(m_posx,m_posy);
-        MathematicalRayProduct newRay(m_pos,pos);
+        MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
         wholeRay->push_back(newRay);
         m_wholeRays.push_back(wholeRay);
         m_EMfield += computeEMfield(wholeRay);
@@ -156,7 +136,7 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
 //        switch(m_mode){
 //            case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);
 //        }
-    }
+    //}
 }
 
 double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR){
@@ -232,3 +212,18 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     }*/
     return Efield;
 }
+
+vector<vector<MathematicalRayProduct> *> MathematicalTransmitterProduct::getRays(){
+    return m_wholeRays;
+    }
+
+void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactory){
+    m_rayFactory = rayFactory;
+}
+
+void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable){
+    m_model = modelObservable;
+}
+
+int MathematicalTransmitterProduct::getPosX(){return x();}
+int MathematicalTransmitterProduct::getPosY(){return y();}

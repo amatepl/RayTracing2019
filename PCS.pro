@@ -4,9 +4,12 @@ greaterThan(QT_MAJOR_VERSION, 4):QT += widgets \
     datavisualization
 
 HEADERS += Abstract_Factory/dialogfactory.h \
+    Abstract_Factory/abstractalgorithmfactory.h \
+    Abstract_Factory/abstractrayfactory.h \
     Abstract_Factory/buildingfactory.h \
     Abstract_Factory/carfactory.h \
     Abstract_Factory/rayfactory.h \
+    Abstract_Factory/raytracingalgorithmfactory.h \
     Abstract_Factory/receiverfactory.h \
     Abstract_Factory/scenefactory.h \
     Abstract_Factory/transmitterfactory.h \
@@ -17,15 +20,20 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Graphics/patternwindow.h \
     Graphics/surface3d.h \
     Model/algorithmInterface.h \
+    Model/imagesmethod.h \
     Model/model.h \
+    Model/raytracing.h \
     Observer/dialogobservable.h \
     Observer/dialogobserver.h \
+    Observer/modelobservable.h \
+    Observer/modelobserver.h \
     Observer/productobservable.h \
     Observer/productobserver.h \
     Observer/sceneobservable.h \
     Observer/sceneobserver.h \
     Observer/windowobservable.h \
     Observer/windowobserver.h \
+    Observer/windowomodelbservable.h \
     Product/BuildingProduct/buildingproduct.h \
     Product/BuildingProduct/dialogbuildingproduct.h \
     Product/BuildingProduct/graphicsbuildingproduct.h \
@@ -58,13 +66,16 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Abstract_Factory/buildingfactory.cpp \
     Abstract_Factory/carfactory.cpp \
     Abstract_Factory/rayfactory.cpp \
+    Abstract_Factory/raytracingalgorithmfactory.cpp \
     Abstract_Factory/receiverfactory.cpp \
     Abstract_Factory/transmitterfactory.cpp \
     Abstract_Factory/treefactory.cpp \
     Composite/graphicscomposite.cpp \
     Graphics/patternwindow.cpp \
     Graphics/surface3d.cpp \
+    Model/imagesmethod.cpp \
     Model/model.cpp \
+    Model/raytracing.cpp \
     Product/BuildingProduct/dialogbuildingproduct.cpp \
     Product/BuildingProduct/graphicsbuildingproduct.cpp \
     Product/BuildingProduct/mathematicalbuildingproduct.cpp \

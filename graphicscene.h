@@ -1,6 +1,8 @@
 #ifndef GRAPHICSCENE_H
 #define GRAPHICSCENE_H
 
+#include <iostream>
+
 #include <vector>
 
 #include <QGraphicsItem>

@@ -5,7 +5,7 @@ GraphicsTransmitterProduct::GraphicsTransmitterProduct(int posX, int posY, doubl
     QPixmap icon(":/Images/Transmitter1.png");
     setPixmap(icon);
     setPos(posX,posY);
-    setOrientation(orientation);
+    //setOrientation(orientation);
     setOffset(-icon.width()/2,-icon.height()/2);
     setRotation(orientation);
 
@@ -49,14 +49,7 @@ int GraphicsTransmitterProduct::getPosX(){return m_posx;}
 
 int GraphicsTransmitterProduct::getPosY() {return m_posy;}
 
-double GraphicsTransmitterProduct::getOrientation() {return m_orientation;}
 
-double GraphicsTransmitterProduct::getAntennaDistance() {
-
-}
-int GraphicsTransmitterProduct::getModel() {
-
-}
 
 void GraphicsTransmitterProduct::setPosX(int posX)
 {
@@ -70,19 +63,7 @@ void GraphicsTransmitterProduct::setPosY(int posY)
     setPos(m_posx,m_posy);
 }
 
-void GraphicsTransmitterProduct::setOrientation(double orientation)
-{
-    m_orientation = orientation;
-    setRotation(orientation);
-}
 
-void GraphicsTransmitterProduct::setAntennaDistance(double distance) {
-
-}
-
-void  GraphicsTransmitterProduct::setModel(Model model) {
-
-}
 
 void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         //m_graphicsfactory->clearSelection();

@@ -22,15 +22,21 @@
 #include "Abstract_Factory/buildingfactory.h"
 #include "Abstract_Factory/treefactory.h"
 #include "Abstract_Factory/carfactory.h"
+#include "Abstract_Factory/raytracingalgorithmfactory.h"
+
+#include "Model/model.h"
+#include "Model/raytracing.h"
 
 #include "Observer/windowobservable.h"
+#include "Observer/windowomodelbservable.h"
 #include "graphicscene.h"
 
 #include "Product/CarProduct/graphicscarproduct.h"
 #include "Product/TreeProduct/graphicstreeproduct.h"
+
 using namespace std;
 
-class ApplicationWindow :public QMainWindow,public WindowObservable
+class ApplicationWindow :public QMainWindow,public WindowObservable, public WindowModelObservable
 {
     Q_OBJECT
 public:
@@ -41,7 +47,10 @@ public:
     void detachObserver(WindowObserver *windowobserver) override;
     void notify(int mode) override;
     void answer(SceneProduct *sceneproduct) override;
-    void modelAnswer(SceneProduct *sceneproduct) override;
+    void modelAnswer(vector<MathematicalRayProduct > *sceneproduct) override;
+    void modelAnswer(vector<MathematicalComponent*> sceneproduct) override;
+    void modelNotify(vector<SceneProduct *> sceneproducts) override;
+    void modelNotify(vector<MathematicalRayProduct *> sceneproducts) override;
 
     QWidget* createToolButton(const QString &text,int id);
     void createActions();
@@ -50,6 +59,7 @@ public:
 
     void setMode(Mode mode);
     void notifyScene();
+    void notifyModel();
 
 private:
     QGraphicsView *view;
@@ -57,12 +67,15 @@ private:
     vector<WindowObserver*> m_windowobserver;
     vector<WindowObserver*>::iterator m_windowobserveriterator;
     GraphicScene *m_scene;
+    Model* m_model;
 
     ReceiverFactory *m_receiverFactory;
     TransmitterFactory *m_transmitterFactory;
     BuildingFactory *m_buildingFactory;
     TreeFactory *m_treeFactory;
     CarFactory *m_carFactory;
+    RayTracingAlgorithmFactory* m_rayTracingAlgorithmFactory;
+
 
     Mode m_mode;
     vector<SceneProduct*> m_sceneProducts;

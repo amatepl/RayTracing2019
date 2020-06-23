@@ -27,12 +27,15 @@ void GraphicScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 return;
     else if(m_sceneFactory != 0 && m_mode == InsertItem){
         QPointF p(event->scenePos());
-        GraphicsComponent *graphicsComponent = m_sceneFactory->createGraphicsComponent(0,0,m_productmenu,this);
+        GraphicsComponent *graphicsComponent = m_sceneFactory->createGraphicsComponent(int(p.x()),int(p.y()),m_productmenu,this);
         graphicsComponent->setPosX(int(p.x()));
         graphicsComponent->setPosY(int(p.y()));
+        cout<<"Hello!"<<endl;
         m_windowobesrvable->answer(graphicsComponent);
         m_mode = MoveItem;
     }
+
+    cout<<"Outch!"<<endl;
     QGraphicsScene::mousePressEvent(event);
 }
 

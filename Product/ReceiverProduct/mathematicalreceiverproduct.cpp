@@ -2,6 +2,7 @@
 
 MathematicalReceiverProduct::MathematicalReceiverProduct(GraphicsReceiverProduct* graphics)
 {
+    m_type = "Receiver";
     setReceiverProduct(graphics);
 //    m_mathematicalfactory = factory;
 }
@@ -59,5 +60,14 @@ MathematicalComponent* MathematicalReceiverProduct::toMathematicalComponent(){
 }
 
 void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserver){
+    cout<<"Observevr attached"<<endl;
     m_observers.push_back(productObserver);
+}
+
+void MathematicalReceiverProduct::notifyObservers(){
+    cout<<m_observers.size()<<endl;
+    foreach(ProductObserver* observer, m_observers){
+        observer->notify(*this);
+        cout<<"Observer notified"<<endl;
+    }
 }

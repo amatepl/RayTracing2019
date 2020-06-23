@@ -16,7 +16,10 @@ public:
     virtual void setPosX(int posX) = 0 ;
     virtual void setPosY(int posY) = 0 ;
     virtual MathematicalComponent* toMathematicalComponent() = 0;
-    //virtual GraphicsComponent* toGraphicsComponent() = 0;
+    virtual GraphicsComponent* toGraphicsComponent(){return m_graphicsComponent;};
+
+protected:
+    GraphicsComponent* m_graphicsComponent;
 };
 
 #endif // SCENEPRODUCT_H

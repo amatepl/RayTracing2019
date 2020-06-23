@@ -7,19 +7,31 @@
 
 #include "Composite/MathematicalComponent.h"
 #include "Observer/productobservable.h"
+#include "Observer/windowomodelbservable.h"
+#include "Observer/modelobservable.h"
+#include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
+#include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
+#include "Model/algorithmInterface.h"
+#include "Abstract_Factory/abstractalgorithmfactory.h"
 
 using namespace std;
 
-class Model
+class Model: public ModelObservable
 {
 public:
-    Model();
+    Model(WindowModelObservable* windowModelObservable);
     ~Model();
-    void addMathematicalComponent(string type, MathematicalComponent* mathematicalComponent);
+    void addMathematicalComponent(/*string type,*/ MathematicalComponent* mathematicalComponent);
     void setObservableProducts();
+    void setModelObservers();
+    void launchAlgorithm(AbstractAlgorithmFactory* algorithmFactory);
+    MathematicalTransmitterProduct* selectTransmitter();
+    void notify(MathematicalTransmitterProduct* transmitter) override;
 
 private:
     map<string,vector<MathematicalComponent*>> m_mathematicalComponents;
+    WindowModelObservable* m_windowModelObservable;
+    AlgorithmInterface* m_algorithm;
 
 };
 

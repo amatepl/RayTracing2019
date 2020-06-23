@@ -41,6 +41,7 @@ public:
     void setReceiverProduct(GraphicsReceiverProduct* graphic);
 
     MathematicalComponent* toMathematicalComponent() override;
+    void notifyObservers();
 
     void attachObserver(ProductObserver *productObserver) override;
 

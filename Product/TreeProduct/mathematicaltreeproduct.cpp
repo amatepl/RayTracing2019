@@ -3,6 +3,7 @@
 MathematicalTreeProduct::MathematicalTreeProduct(TreeProduct* graphic)
 //    m_factory(factory)
 {
+    m_type = "Tree";
     setTreeProduct(graphic);
 }
 
@@ -43,3 +44,4 @@ void MathematicalTreeProduct::setTreeProduct(TreeProduct* graphic){
 MathematicalComponent* MathematicalTreeProduct::toMathematicalComponent(){
     return this;
 }
+

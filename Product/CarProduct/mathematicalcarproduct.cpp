@@ -2,6 +2,7 @@
 
 MathematicalCarProduct::MathematicalCarProduct(CarProduct* graphic){
 //    m_mathematicalfactory = factory;
+    m_type = "Car";
     setCarProduct(graphic);
 }
 

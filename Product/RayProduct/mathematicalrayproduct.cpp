@@ -3,6 +3,7 @@
 MathematicalRayProduct::MathematicalRayProduct(const QPointF &p1,const QPointF &p2, double Tetai, int indWall):
     Line(p1,p2),wallIBouncedOn(indWall)
 {
+    m_type = "Ray";
     setTetai(Tetai);
     updateMeterLength();
 }

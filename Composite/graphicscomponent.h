@@ -3,11 +3,12 @@
 
 //#include <QString>
 #include "Product/SceneProduct.h"
+//#include <QGraphicsItem>
 //#include "Composite/MathematicalComponent.h"
 
 class QPixmap;
 
-class GraphicsComponent: public SceneProduct
+class GraphicsComponent: public SceneProduct/*, public QGraphicsItem*/
 {
 public:
     enum Type{TransmitterProduct,ReceiverProduct,BuildingProduct,TreeProduct,CarProduct};

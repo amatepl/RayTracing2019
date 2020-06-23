@@ -45,7 +45,7 @@ public:
     void setPosY(int posY) override;
     int getPosX() override;
     int getPosY() override;
-    MathematicalComponent* toMathematicalComponent();
+    MathematicalComponent* toMathematicalComponent() override;
 
 };
 

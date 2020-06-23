@@ -15,7 +15,7 @@
 
 using namespace std;
 
-class GraphicsTransmitterProduct :public QGraphicsPixmapItem, public TransmitterProduct,public GraphicsComponent
+class GraphicsTransmitterProduct :public QGraphicsPixmapItem, /*public TransmitterProduct,*/public GraphicsComponent
 {
 public:
     GraphicsTransmitterProduct(int posX, int posY, double orientation,QMenu* productmenu,
@@ -31,15 +31,13 @@ public:
     static QPixmap getImage();
     int getPosX() override;
     int getPosY() override;
-    double getOrientation() override;
-    double getAntennaDistance() override;
-    int getModel() override;
+
+    //int getModel() override;
 
     void setPosX(int posX) override;
     void setPosY(int posY) override;
-    void setOrientation(double orientation) override;
-    void setAntennaDistance(double distance) override;
-    void setModel(Model model) override;
+
+    //void setModel(Model model) override;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 

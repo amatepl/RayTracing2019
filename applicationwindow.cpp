@@ -7,11 +7,13 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     createMenus();
     view = new QGraphicsView();
     m_scene = new GraphicScene(view,this,m_productmenu);
+    m_model = new Model(this);
     m_receiverFactory = new ReceiverFactory(m_productmenu);
     m_transmitterFactory = new TransmitterFactory();
     m_buildingFactory = new BuildingFactory();
     m_treeFactory = new TreeFactory();
     m_carFactory = new CarFactory();
+    m_rayTracingAlgorithmFactory = new RayTracingAlgorithmFactory();
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
 
@@ -54,8 +56,9 @@ void ApplicationWindow::notify(int mode){
 }
 
 void ApplicationWindow::answer(SceneProduct *sceneproduct){
+    cout<<"Answer"<<endl;
     m_sceneProducts.push_back(sceneproduct);
-    m_mode = MoveItem;
+
 //    notify(int(m_mode));
     QList<QAbstractButton*> antennabuttons = m_antennagroup->buttons();
     QList<QAbstractButton*> obstaclebuttons = m_obstaclegroup->buttons();
@@ -65,10 +68,34 @@ void ApplicationWindow::answer(SceneProduct *sceneproduct){
     for(QAbstractButton *button: obstaclebuttons){
         button->setChecked(false);
     }
+    m_model->addMathematicalComponent(sceneproduct->toMathematicalComponent());
+    m_mode = MoveItem;
+    cout<<"Item added to model"<<endl;
+}
+
+void ApplicationWindow::modelAnswer(vector<MathematicalComponent *> sceneproducts){
+    for(int i = 0; i< sceneproducts.size();i++){
+        m_scene->addItem((QGraphicsItem*)sceneproducts.at(i)->toGraphicsComponent());
+    }
+}
+
+void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts){
+    for(int i = 0; i< sceneproducts->size();i++){
+        //m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
+        GraphicsComponent* gComp = sceneproducts->at(i).toGraphicsComponent();
+        //QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
+        QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent());
+        //m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
+        m_scene->addItem(gItem);
+        cout<<"Item added to scene"<<endl;
+    }
+}
+
+void ApplicationWindow::modelNotify(vector<SceneProduct *> sceneproducts){
 
 }
 
-void ApplicationWindow::modelAnswer(SceneProduct *sceneproduct){
+void ApplicationWindow::modelNotify(vector<MathematicalRayProduct *> sceneproducts){
 
 }
 
@@ -187,12 +214,15 @@ void ApplicationWindow::createToolBox(){
     launchRayTracingButton->setCheckable(false);
     QIcon icon  = QIcon(QPixmap(":/Images/playButton.png"));
     launchRayTracingButton->setIcon(icon);
+    m_raytracinggroup->addButton(launchRayTracingButton,int(LaunchRayTracing));
 
     QGridLayout *playButton_layout = new QGridLayout;
     playButton_layout->addWidget(launchRayTracingButton, 0, 0, Qt::AlignHCenter);
     playButton_layout->addWidget(new QLabel("Launch Ray"), 1, 0, Qt::AlignCenter);
 
     launchRayTracingWidget->setLayout(playButton_layout);
+
+
 
     rayTracing_layout->addWidget(launchRayTracingWidget, 0, 0);
 
@@ -236,6 +266,11 @@ void ApplicationWindow::notifyScene(){
     m_scene->setSceneFactory(factory);
 }
 
+void ApplicationWindow::notifyModel(){
+    cout<<"Model notified"<<endl;
+    m_model->launchAlgorithm(m_rayTracingAlgorithmFactory);
+}
+
 // SLOTS
 
 void ApplicationWindow::antennaGroupClicked(int mode){
@@ -268,15 +303,17 @@ void ApplicationWindow::obstacleGroupClicked(int mode){
 }
 
 void ApplicationWindow::rayTracingGroupClicked(int mode){
+    cout<<"Button clicked"<<endl;
     QList <QAbstractButton*> buttons = m_raytracinggroup->buttons();
     for (int i = 0; i < buttons.size(); i++){
         if (buttons.at(i) != m_raytracinggroup->checkedButton()){
             buttons.at(i)->setChecked(false);
         }
     }
-    setMode(Mode(mode));
-    notify(mode);
-    notifyScene();
+    //setMode(Mode(mode));
+    //notify(mode);
+    notifyModel();
+    //notifyScene();
 
 }
 

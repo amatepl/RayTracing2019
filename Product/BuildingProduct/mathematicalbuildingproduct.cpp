@@ -1,7 +1,9 @@
 #include "mathematicalbuildingproduct.h"
 
-MathematicalBuildingProduct::MathematicalBuildingProduct(BuildingProduct* graphic) : QPolygonF(){
+MathematicalBuildingProduct::MathematicalBuildingProduct(BuildingProduct* graphic) : QPolygonF()
+{
     //m_mathematicalfactory = mathematicalFactory;
+    m_type = "Building";
     setBuildingProduct(graphic);
 }
 
