@@ -22,6 +22,11 @@ public:
     void attachObserver(MathematicalProduct* product){m_observer = product;};
     MathematicalProduct* toMathematicalProduct(){return m_observer;};
 
+    // Depends on the mathematical product
+    virtual void notifyToGraphic(QPointF*) {};
+    virtual void notifyToGraphic(QRectF*) {};
+    virtual void notifyToGraphic(QPolygonF*,int,int) {};
+
 protected:
     MathematicalProduct* m_observer;
     std::string m_type;

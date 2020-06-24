@@ -6,12 +6,12 @@
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QPainter>
+#include <iostream>
 
 #include "Product/graphicsproduct.h"
 
 class GraphicsBuildingProduct : public QGraphicsPolygonItem, public GraphicsProduct
 {
-    enum Model{brick,concrete,none};
 public:
     GraphicsBuildingProduct(QMenu *menuproduct, QGraphicsScene *scene);
     ~GraphicsBuildingProduct() override;
@@ -20,26 +20,15 @@ public:
 
     bool graphicsSelected() override;
     void draw() override;
-    /*
-    int getType() override;
-    int getPosX() override;
-    int getPosY() override;
-    double getOrientation() override;
-    double getConductivity() override;
-    double getPermittivity() override;
-    QVector<QPointF> getExtremities() override;
+    QVector<QPointF> getExtremities();
 
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    void setOrientation(double orientation) override;
-    void setConductivity(double sigma) override;
-    void setPermittivity(double eps) override;
-    */
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
     void setExtremities(QVector<QPointF> extremities);
-    void setModel(int model);
+    void setModel(std::string model);
     int getModel();
+
+    void notifyToGraphic(QPolygonF *,int,int) override;
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
@@ -48,11 +37,10 @@ protected:
 private:
     QGraphicsScene *m_scene;
     QVector<QPointF> m_extremities;
-    Model m_model;
     //int m_posx,m_posy;
     //double m_orientation,m_permittivity,m_conductivity;
     //MathematicalComponent *m_mathematicalComponent;
-
+    std::string m_model;
     QMenu* m_productmenu;
 };
 

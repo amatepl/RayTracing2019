@@ -58,6 +58,7 @@ public:
 
     //ModelObserver
     void attachObservable(ModelObservable* modelObserver) override;
+    void openDialog() override;
 private:
     int m_row, m_column;
     float m_orientation;

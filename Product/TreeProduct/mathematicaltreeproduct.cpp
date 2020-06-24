@@ -14,3 +14,6 @@ void MathematicalTreeProduct::update(QGraphicsItem *graphic){
 
 }
 
+void MathematicalTreeProduct::openDialog(){
+
+}

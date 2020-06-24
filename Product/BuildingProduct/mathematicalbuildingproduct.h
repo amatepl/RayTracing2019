@@ -3,47 +3,37 @@
 
 #include <QPolygonF>
 
-#include "buildingproduct.h"
 #include "Product/mathematicalproduct.h"
-
-
-//class MathematicalFactory;
+#include "dialogbuildingproduct.h"
 
 class MathematicalBuildingProduct : public QPolygonF, public MathematicalProduct
 {
-    enum Model{brick,concrete,none};
 public:
     MathematicalBuildingProduct(QVector<QPointF> points);
     ~MathematicalBuildingProduct() override;
 
-    /*
-    void newProperties();
+    std::string changeAppearance() override {return m_model;}
 
-    int getPosX() override;
-    int getPosY() override;
-    float getOrientation() override;
-
-    BuildingProduct* getBuildingProduct();
-
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    void setOrientation(float theta) override;
-    */
-    void setConductivity(double sigma);
-    void setPermittivity(double eps);
-    void setModel(int model);
+    int getPosX() {return m_posx;}
+    int getPosY() {return m_posy;}
+    void setPosX(int posx) {m_posx = posx;}
+    void setPosY(int posy) {m_posy = posy;}
+    double getConductivity() {return m_conductivity;}
+    double getPermittivity() {return m_permittivity;}
+    void setConductivity(double sigma) {m_conductivity = sigma;}
+    void setPermittivity(double eps) {m_permittivity = eps;}
+    void setModel(std::string model);
+    QVector<QPointF> getExtremities() {return m_extremities;}
     void setExtremities(QVector<QPointF> extremities);
-    double getConductivity();
-    double getPermittivity();
-    int getModel();
-    QVector<QPointF> getExtremities();
+
+    void newProperties();
     void update(QGraphicsItem* graphic) override;
+    void openDialog() override;
 
 private:
-    //MathematicalFactory *m_mathematicalfactory;
     QVector<QPointF> m_extremities;
-    Model m_model;
-    BuildingProduct* m_graphic;
+    int m_posx, m_posy; // Correspond to the up-left corner
+    std::string m_model;
     double m_orientation,m_permittivity,m_conductivity;
 };
 

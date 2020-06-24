@@ -32,3 +32,7 @@ void MathematicalCarProduct::setOrientation(double orientation){
 void MathematicalCarProduct::update(QGraphicsItem *graphic){
 
 }
+
+void MathematicalCarProduct::openDialog(){
+
+}

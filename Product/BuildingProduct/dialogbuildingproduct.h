@@ -13,46 +13,39 @@
 #include <QComboBox>
 #include <QTextEdit>
 
-#include "buildingproduct.h"
+#include "mathematicalbuildingproduct.h"
 #include "graphicsbuildingproduct.h"
-#include "Abstract_Factory/dialogfactory.h"
-#include "Graphics/patternwindow.h"
 
-class DialogFactory;
+class MathematicalBuildingProduct;
 
-class DialogBuildingProduct : public QDialog, public BuildingProduct
+class DialogBuildingProduct : public QDialog
 {
     Q_OBJECT
 public:
-    DialogBuildingProduct(BuildingProduct* graphic, DialogFactory* dialogfactory);
+    DialogBuildingProduct(MathematicalBuildingProduct* mathematicalproduct);
     ~DialogBuildingProduct() override;
 
     void createDialog();
-
-    int getPosX() override;
-    int getPosY() override;
-    double getOrientation() override;
-    double getConductivity() override;
-    double getPermittivity() override;
-    int getModel() override;
-    QVector<QPointF> getExtremities() override;
-
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    void setOrientation(double orientation) override;
-    void setConductivity(double sigma) override;
-    void setPermittivity(double eps) override;
-    void setModel(int model) override;
-    void setExtremities(QVector<QPointF> extremities) override;
-
+    int getPosX();
+    int getPosY();
+    double getConductivity();
+    double getPermittivity();
+    std::string getModel();
+    QVector<QPointF> getExtremities();
+    void setPosX(int posX);
+    void setPosY(int posY);
+    void setConductivity(double sigma);
+    void setPermittivity(double eps);
+    void setModel(std::string model);
+    void setExtremities(QVector<QPointF> extremities);
     void writeExtremities();
 
 private:
-    Model m_model;
+    MathematicalBuildingProduct *m_mathematicalproduct;
+    std::string m_model;
     QComboBox *m_modelBox;
     QSpinBox *m_posx,*m_posy;
     QDoubleSpinBox *m_orientation, *m_conductivity, *m_permittivity;
-    DialogFactory *m_dialogfactory;
     QSpinBox *m_pointX, *m_pointY;
     QVector <QPointF> m_points;
     QTextEdit *m_extremitiesViewer;

@@ -52,3 +52,7 @@ MathematicalProduct* MathematicalRayProduct::toMathematicalComponent(){
 void MathematicalRayProduct::update(QGraphicsItem *graphic){
 
 }
+
+void MathematicalRayProduct::openDialog(){
+
+}

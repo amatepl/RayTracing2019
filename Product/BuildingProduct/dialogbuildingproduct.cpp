@@ -1,14 +1,13 @@
 #include "dialogbuildingproduct.h"
 
-DialogBuildingProduct::DialogBuildingProduct(BuildingProduct *graphic,DialogFactory* dialogfactory)
+DialogBuildingProduct::DialogBuildingProduct(MathematicalBuildingProduct* mathematicalproduct):
+    m_mathematicalproduct(mathematicalproduct)
 {
-    m_dialogfactory = dialogfactory;
     createDialog();
-    setPosX(graphic->getPosX());
-    setPosY(graphic->getPosY());
-    setOrientation(graphic->getOrientation());
-    setModel(graphic->getModel());
-    setExtremities(graphic->getExtremities());
+    setPosX(mathematicalproduct->getPosX());
+    setPosY(mathematicalproduct->getPosY());
+    setModel(mathematicalproduct->changeAppearance());
+    setExtremities(mathematicalproduct->getExtremities());
     writeExtremities();
     setAttribute(Qt::WA_DeleteOnClose,true);
     exec();
@@ -43,8 +42,6 @@ void DialogBuildingProduct::createDialog(){
     m_posy = new QSpinBox(this);
     m_pointX = new QSpinBox(this);
     m_pointY = new QSpinBox(this);
-    m_orientation = new QDoubleSpinBox(this);
-    m_orientation->setRange(-360,360);
     m_posx->setRange(0,5000);
     m_posx->setAccelerated(true);
     m_posy->setRange(0,5000);
@@ -83,7 +80,6 @@ void DialogBuildingProduct::createDialog(){
     m_extremitiesViewer = new QTextEdit(this);
 
     QFormLayout *geoProperties = new QFormLayout(this);
-    geoProperties->addRow("Orientation: ",m_orientation);
     geoProperties->addRow("Position X: ",m_posx);
     geoProperties->addRow("Position Y: ",m_posy);
     geoProperties->addRow("New point: ",points);
@@ -118,9 +114,6 @@ int DialogBuildingProduct::getPosY(){
     return m_posy->value();
 }
 
-double DialogBuildingProduct::getOrientation(){
-    return m_orientation->value();
-}
 double DialogBuildingProduct::getConductivity(){
     return m_conductivity->value();
 }
@@ -129,8 +122,8 @@ double DialogBuildingProduct::getPermittivity(){
     return m_permittivity->value();
 }
 
-int DialogBuildingProduct::getModel() {
-    return int(m_model);
+std::string DialogBuildingProduct::getModel() {
+    return m_model;
 }
 
 QVector<QPointF> DialogBuildingProduct::getExtremities(){
@@ -145,10 +138,6 @@ void DialogBuildingProduct::setPosY(int posY){
     m_posy->setValue(posY);
 }
 
-void DialogBuildingProduct::setOrientation(double orientation){
-    m_orientation->setValue(orientation);
-}
-
 void DialogBuildingProduct::setConductivity(double sigma){
     m_conductivity->setValue(sigma);
 }
@@ -158,35 +147,30 @@ void DialogBuildingProduct::setPermittivity(double eps){
 }
 
 
-void  DialogBuildingProduct::setModel(int model) {
-    /*
-    switch (model){
-    case int(GraphicsBuildingProduct::brick) :
-        m_model = brick;
+void  DialogBuildingProduct::setModel(std::string model) {
+    m_model = model;
+    if (model == "brick"){
         m_modelBox->setCurrentText("Brick");
         m_conductivity->setValue(0.0014);
         m_permittivity->setValue(4.6);
         m_conductivity->setEnabled(false);
         m_permittivity->setEnabled(false);
-        break;
-    case int(GraphicsBuildingProduct::concrete) :
-        m_model = concrete;
+    }
+    else if(model == "concrete") {
         m_modelBox->setCurrentText("Concrete");
         m_conductivity->setValue(0.014);
         m_permittivity->setValue(5.0);
         m_conductivity->setEnabled(false);
         m_permittivity->setEnabled(false);
-        break;
-    case int (GraphicsBuildingProduct::none) :
-        m_model = none;
+    }
+    else{
         m_modelBox->setCurrentText("Custom");
-        m_conductivity->setValue(0.0);
-        m_permittivity->setValue(0.0);
+        m_conductivity->setValue(m_mathematicalproduct->getConductivity());
+        m_permittivity->setValue(m_mathematicalproduct->getPermittivity());
         m_conductivity->setEnabled(true);
         m_permittivity->setEnabled(true);
-        break;
     }
-    */
+
 }
 
 void DialogBuildingProduct::setExtremities(QVector<QPointF> extremities){
@@ -204,17 +188,22 @@ void DialogBuildingProduct::writeExtremities(){
     }
     m_extremitiesViewer->setPlainText(newExtremities);
 }
-
 void DialogBuildingProduct::newProperties(){
-    m_dialogfactory->receiveBuildingProduct(this);
+    m_mathematicalproduct->setPosX(m_posx->value());
+    m_mathematicalproduct->setPosY(m_posy->value());
+    m_mathematicalproduct->setExtremities(m_points);
+    m_mathematicalproduct->setModel(m_model);
+    m_mathematicalproduct->setConductivity(m_conductivity->value());
+    m_mathematicalproduct->setPermittivity(m_permittivity->value());
+    m_mathematicalproduct->newProperties();
     close();
 }
 
 void DialogBuildingProduct::changeModel(QString model)
 {
-    if (model == "Brick")setModel(int(BuildingProduct::brick));
-    else if (model == "Concrete")setModel(int(BuildingProduct::concrete));
-    else if (model == "Custom")setModel(int(BuildingProduct::none));
+    if (model == "Brick")setModel("brick");
+    else if (model == "Concrete")setModel("concrete");
+    else if (model == "Custom")setModel("custom");
 }
 
 void DialogBuildingProduct::addExtremities(){

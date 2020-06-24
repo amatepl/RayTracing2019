@@ -22,6 +22,7 @@ public:
     void notifyObservers();
 
     void attachObserver(ProductObserver *productObserver) override;
+    void openDialog() override;
 
 private:
     vector<ProductObserver*> m_observers;
