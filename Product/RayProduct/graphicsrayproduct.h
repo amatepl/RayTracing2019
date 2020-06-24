@@ -5,23 +5,23 @@
 #include <QGraphicsScene>
 #include <QGraphicsLineItem>
 
-#include "Composite/graphicscomponent.h"
+#include "Product/graphicsproduct.h"
 
-class GraphicsRayProduct: public GraphicsComponent, public QGraphicsLineItem
+class GraphicsRayProduct: public GraphicsProduct, public QGraphicsLineItem
 {
 public:
     GraphicsRayProduct(const QPointF &p1, const QPointF &p2/*, QGraphicsScene *scene*/);
 
     void draw() override;
-    void setMathematicalComponent(MathematicalComponent* mathematicalComponent) override;
-    MathematicalComponent* toMathematicalComponent() override;
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    int getPosX() override;
-    int getPosY() override;
+    void setMathematicalComponent(MathematicalProduct* mathematicalComponent);
+    MathematicalProduct* toMathematicalComponent();
+    void setPosX(int posX);
+    void setPosY(int posY);
+    int getPosX();
+    int getPosY();
 
 private:
-    MathematicalComponent* m_mathematicalComponent;
+    MathematicalProduct* m_mathematicalComponent;
 };
 
 #endif // GRAPHICSRAYPRODUCT_H

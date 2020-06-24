@@ -4,11 +4,11 @@
 #include <math.h>
 
 #include <Share/line.h>
-#include "Composite/MathematicalComponent.h"
+#include "Product/mathematicalproduct.h"
 
 using namespace std;
 
-class MathematicalRayProduct: public Line, public MathematicalComponent
+class MathematicalRayProduct: public Line, public MathematicalProduct
 {
 private:
     int state;       // 0 for direct ray, 1 for transmitted ray, 2 for reflected ray, 3 for refracted ray
@@ -41,11 +41,12 @@ public:
     int getIndWall()const;
     void setDiffracted(bool diffracted);
 
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    int getPosX() override;
-    int getPosY() override;
-    MathematicalComponent* toMathematicalComponent();
+    void setPosX(int posX);
+    void setPosY(int posY);
+    int getPosX();
+    int getPosY();
+    MathematicalProduct* toMathematicalComponent();
+    void update(QGraphicsItem *graphic) override;
 
 };
 

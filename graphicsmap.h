@@ -1,5 +1,5 @@
-#ifndef GRAPHICSCENE_H
-#define GRAPHICSCENE_H
+#ifndef GRAPHICSMAP_H
+#define GRAPHICSMAP_H
 
 #include <vector>
 
@@ -11,17 +11,17 @@
 
 #include "Abstract_Factory/scenefactory.h"
 #include "Observer/sceneobservable.h"
-#include "Observer/windowobservable.h"
-#include "Composite/graphicscomponent.h"
+#include "Observer/AppInterface.h"
+#include "Product/graphicsproduct.h"
 
 using namespace std;
 
-class GraphicScene: public QGraphicsScene
+class GraphicsMap: public QGraphicsScene
 {
 public:
     enum Mode{MoveItem,InsertItem};
-    GraphicScene(QGraphicsView *view, WindowObservable *windowobservable, QMenu* productmenu);
-    ~GraphicScene();
+    GraphicsMap(QGraphicsView *view, AppInterface *windowobservable, QMenu* productmenu);
+    ~GraphicsMap();
 
     void setSceneFactory(SceneFactory *sceneFactory);
 
@@ -34,13 +34,9 @@ private:
     Mode m_mode;
     QGraphicsView* m_view;
     QMenu *m_productmenu;
-    WindowObservable *m_windowobesrvable;
+    AppInterface *m_app;
 
     SceneFactory *m_sceneFactory = 0;
-
-    vector<SceneObserver*> m_sceneobserver;
-    vector<SceneObserver*>::iterator m_sceneobserveriterator;
-
 };
 
-#endif // GRAPHICSCENE_H
+#endif // GRAPHICSMAP_H

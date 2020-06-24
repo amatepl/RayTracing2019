@@ -7,13 +7,16 @@
 
 class ReceiverFactory: public SceneFactory
 {
-private:
-    QMenu *m_productmenu;
 public:
-    ReceiverFactory(QMenu *productmenu);
+    ReceiverFactory(QMenu *productmenu, QGraphicsScene* scene);
 
     // Overrides
-    GraphicsComponent * createGraphicsComponent(int posX, int posY, QMenu *productmenu, QGraphicsScene* scene) override;
+    GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
+    MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic) override;
+
+private:
+    QMenu *m_productmenu;
+    QGraphicsScene *m_scene;
 
 };
 

@@ -8,8 +8,13 @@
 class TreeFactory: public SceneFactory
 {
 public:
-    TreeFactory();
-    GraphicsComponent * createGraphicsComponent(int posX, int posY, QMenu *productmenu, QGraphicsScene* scene) override;
+    TreeFactory(QMenu *productmenu, QGraphicsScene* scene);
+    GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
+    MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic) override;
+
+private:
+    QMenu *m_productmenu;
+    QGraphicsScene *m_scene;
 };
 
 #endif // TREEFACTORY_H

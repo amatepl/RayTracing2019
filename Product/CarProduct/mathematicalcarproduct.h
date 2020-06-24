@@ -5,33 +5,25 @@
 #include <iostream>
 
 #include "carproduct.h"
-#include "Composite/MathematicalComponent.h"
+#include "Product/mathematicalproduct.h"
 
 using namespace std;
 
-class MathematicalCarProduct: public QRectF, public CarProduct, public MathematicalComponent
+class MathematicalCarProduct: public QRectF,  public MathematicalProduct
 {
 public:
-    MathematicalCarProduct(CarProduct* graphic);
+    MathematicalCarProduct(int posX, int posY);
     ~MathematicalCarProduct() override;
 
-    void newProperties();
-
-    int getPosX() override;
-    int getPosY() override;
-    double getSpeed() override;
-    double getOrientation() override;
+    double getSpeed();
+    double getOrientation();
 
     CarProduct* getCarProduct();
 
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    void setSpeed(double) override;
-    void setOrientation(double orientation) override;
+    void setSpeed(double);
+    void setOrientation(double orientation);
 
-    void setCarProduct(CarProduct*);
-
-    MathematicalComponent* toMathematicalComponent() override;
+    void update(QGraphicsItem *graphic) override;
 
 private:
     //MathematicalFactory* m_mathematicalfactory;

@@ -1,16 +1,14 @@
 #include "mathematicaltransmitterproduct.h"
-MathematicalTransmitterProduct::MathematicalTransmitterProduct(TransmitterProduct* graphic)
+MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY)
 {
-    setTransmitterProduct(graphic);
+    setX(posX);
+    setY(posY);
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
 
 }
 
-void MathematicalTransmitterProduct::newProperties(){
-    //m_mathematicalfactory->receiveTransmitterProduct(this,m_graphic);
-}
 
 double MathematicalTransmitterProduct::computeGain(double theta,double phi, double frequency, int row,int column,double antennaDistance){
     complex <double> dipolefactor(0.0,0.0);
@@ -50,19 +48,8 @@ void MathematicalTransmitterProduct::drawRays(){
 
 }
 
-TransmitterProduct* MathematicalTransmitterProduct::getTransmitterProduct(){
-    return m_graphic;
-}
 
-int MathematicalTransmitterProduct::getPosX(){
-    return m_posx;
-}
-
-int MathematicalTransmitterProduct::getPosY(){
-    return m_posy;
-}
-
-double MathematicalTransmitterProduct::getOrientation(){
+float MathematicalTransmitterProduct::getOrientation(){
     return m_orientation;
 }
 
@@ -82,25 +69,8 @@ int MathematicalTransmitterProduct::getColumn() {
     return m_column;
 }
 
-double MathematicalTransmitterProduct::getAntennaDistance() {
-    return m_antennadistance;
-}
 
-int MathematicalTransmitterProduct::getModel() {
-    return m_model;
-}
-
-void MathematicalTransmitterProduct::setPosX(int posX){
-    m_posx = posX;
-    setX(m_posx);
-}
-
-void MathematicalTransmitterProduct::setPosY(int posY){
-    m_posy = posY;
-    setY(m_posy);
-}
-
-void MathematicalTransmitterProduct::setOrientation(double orientation){
+void MathematicalTransmitterProduct::setOrientation(float orientation){
     m_orientation = orientation;
 }
 
@@ -120,24 +90,9 @@ void MathematicalTransmitterProduct::setColumn(int column) {
     m_column = column;
 }
 
-void MathematicalTransmitterProduct::setAntennaDistance(double distance) {
-    m_antennadistance = distance;
-}
-
-void  MathematicalTransmitterProduct::setModel(Model model) {
-            m_model = int(model);
-}
-
-void MathematicalTransmitterProduct::setTransmitterProduct(TransmitterProduct *transmitterproduct){
-    m_graphic = transmitterproduct;
-    setPosX(m_graphic->getPosX());
-    setPosY(m_graphic->getPosY());
-    setOrientation(m_graphic->getOrientation());
-    setAntennaDistance(m_graphic->getAntennaDistance());
-}
-
-MathematicalComponent* MathematicalTransmitterProduct::toMathematicalComponent(){
-    return this;
+void MathematicalTransmitterProduct::update(QGraphicsItem* graphic){
+    setX(graphic->scenePos().x());
+    setY(graphic->scenePos().y());
 }
 
 void MathematicalTransmitterProduct::notify(const QPointF &pos){
@@ -146,7 +101,7 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
     m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
     if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
         vector<MathematicalRayProduct> *wholeRay = new vector<MathematicalRayProduct>;
-        QPointF m_pos(m_posx,m_posy);
+        QPointF m_pos(int(this->x()),int(this->y()));
         MathematicalRayProduct newRay(m_pos,pos);
         wholeRay->push_back(newRay);
         m_wholeRays.push_back(wholeRay);

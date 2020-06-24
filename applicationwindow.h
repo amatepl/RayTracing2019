@@ -16,56 +16,44 @@
 #include <QMenuBar>
 
 #include "Abstract_Factory/scenefactory.h"
-#include "Abstract_Factory/dialogfactory.h"
 #include "Abstract_Factory/receiverfactory.h"
 #include "Abstract_Factory/transmitterfactory.h"
 #include "Abstract_Factory/buildingfactory.h"
 #include "Abstract_Factory/treefactory.h"
 #include "Abstract_Factory/carfactory.h"
 
-#include "Observer/windowobservable.h"
-#include "graphicscene.h"
+#include "Observer/AppInterface.h"
+#include "graphicsmap.h"
 
-#include "Product/CarProduct/graphicscarproduct.h"
-#include "Product/TreeProduct/graphicstreeproduct.h"
 using namespace std;
 
-class ApplicationWindow :public QMainWindow,public WindowObservable
+class ApplicationWindow :public QMainWindow,public AppInterface
 {
     Q_OBJECT
 public:
     ApplicationWindow(QWidget *parent = nullptr);
     ~ApplicationWindow() override;
 
-    void attachObserver(WindowObserver *windowobserver) override;
-    void detachObserver(WindowObserver *windowobserver) override;
-    void notify(int mode) override;
-    void answer(SceneProduct *sceneproduct) override;
-    void modelAnswer(SceneProduct *sceneproduct) override;
+    void answer() override;
 
     QWidget* createToolButton(const QString &text,int id);
     void createActions();
     void createMenus();
     void createToolBox();
 
-    void setMode(Mode mode);
-    void notifyScene();
+    void setGraphicsMode(GraphicsMode mode);
+    void setActionMode(ActionMode mode);
+    void notifyMap();
 
 private:
     QGraphicsView *view;
-    SceneFactory *graphicsfactory,*dialogfactory,*mathematicalfactory;
-    vector<WindowObserver*> m_windowobserver;
-    vector<WindowObserver*>::iterator m_windowobserveriterator;
-    GraphicScene *m_scene;
+    GraphicsMap *m_map;
 
-    ReceiverFactory *m_receiverFactory;
-    TransmitterFactory *m_transmitterFactory;
-    BuildingFactory *m_buildingFactory;
-    TreeFactory *m_treeFactory;
-    CarFactory *m_carFactory;
+    SceneFactory *m_receiverFactory, *m_transmitterFactory, *m_buildingFactory,
+                 *m_treeFactory, *m_carFactory;
 
-    Mode m_mode;
-    vector<SceneProduct*> m_sceneProducts;
+    GraphicsMode m_graphicsmode;
+    ActionMode m_actionmode;
 
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;

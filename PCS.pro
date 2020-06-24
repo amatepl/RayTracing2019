@@ -11,20 +11,17 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/scenefactory.h \
     Abstract_Factory/transmitterfactory.h \
     Abstract_Factory/treefactory.h \
-    Composite/graphicscomponent.h \
-    Composite/graphicscomposite.h \
-    Composite/mathematicalcomponent.h \
     Graphics/patternwindow.h \
     Graphics/surface3d.h \
     Model/algorithmInterface.h \
     Model/model.h \
+    Observer/AppInterface.h \
     Observer/dialogobservable.h \
     Observer/dialogobserver.h \
     Observer/productobservable.h \
     Observer/productobserver.h \
     Observer/sceneobservable.h \
     Observer/sceneobserver.h \
-    Observer/windowobservable.h \
     Observer/windowobserver.h \
     Product/BuildingProduct/buildingproduct.h \
     Product/BuildingProduct/dialogbuildingproduct.h \
@@ -49,10 +46,12 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/TreeProduct/graphicstreeproduct.h \
     Product/TreeProduct/mathematicaltreeproduct.h \
     Product/TreeProduct/treeproduct.h \
+    Product/graphicsproduct.h \
+    Product/mathematicalproduct.h \
     Product/sceneproduct.h \
     Share/line.h \
     applicationwindow.h \
-    graphicscene.h
+    graphicsmap.h
 
 SOURCES += Abstract_Factory/dialogfactory.cpp \
     Abstract_Factory/buildingfactory.cpp \
@@ -61,7 +60,6 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Abstract_Factory/receiverfactory.cpp \
     Abstract_Factory/transmitterfactory.cpp \
     Abstract_Factory/treefactory.cpp \
-    Composite/graphicscomposite.cpp \
     Graphics/patternwindow.cpp \
     Graphics/surface3d.cpp \
     Model/model.cpp \
@@ -84,7 +82,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
     Share/line.cpp \
     applicationwindow.cpp \
-    graphicscene.cpp \
+    graphicsmap.cpp \
     main.cpp
 
 RESOURCES += \

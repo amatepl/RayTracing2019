@@ -8,11 +8,11 @@ GraphicsRayProduct::GraphicsRayProduct(const QPointF &p1, const QPointF &p2):
 
 void GraphicsRayProduct::draw(){}
 
-void GraphicsRayProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
+void GraphicsRayProduct::setMathematicalComponent(MathematicalProduct *mathematicalComponent){
     m_mathematicalComponent = mathematicalComponent;
 }
 
-MathematicalComponent* GraphicsRayProduct::toMathematicalComponent(){
+MathematicalProduct* GraphicsRayProduct::toMathematicalComponent(){
     return m_mathematicalComponent;
 }
 

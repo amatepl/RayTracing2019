@@ -10,7 +10,7 @@
 #include "Product/BuildingProduct/dialogbuildingproduct.h"
 #include "Product/TreeProduct/dialogtreeproduct.h"
 #include "Product/CarProduct/dialogcarproduct.h"
-#include "Composite/graphicscomponent.h"
+#include "Product/graphicsproduct.h"
 
 class DialogFactory : public SceneFactory, public SceneObserver
 {
@@ -24,12 +24,12 @@ public:
     void receiveTreeProduct(TreeProduct* treeproduct);
     void receiveCarProduct(CarProduct* carproduct);
 
-    void updateNewProperties(GraphicsComponent*) override;
-    void updateChangeProperties(GraphicsComponent*) override;
+    void updateNewProperties(GraphicsProduct*) override;
+    void updateChangeProperties(GraphicsProduct*) override;
 
 private:
     SceneObservable *m_graphicsfactory;
-    GraphicsComponent *m_graphiccomponent;
+    GraphicsProduct *m_graphiccomponent;
 };
 
 #endif // DIALOGFACTORY_H

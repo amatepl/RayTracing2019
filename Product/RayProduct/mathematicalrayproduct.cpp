@@ -40,6 +40,11 @@ void MathematicalRayProduct::setPosX(int posX){}
 void MathematicalRayProduct::setPosY(int posY){}
 int MathematicalRayProduct::getPosX(){}
 int MathematicalRayProduct::getPosY(){}
-MathematicalComponent* MathematicalRayProduct::toMathematicalComponent(){
+
+MathematicalProduct* MathematicalRayProduct::toMathematicalComponent(){
     return this;
+}
+
+void MathematicalRayProduct::update(QGraphicsItem *graphic){
+
 }

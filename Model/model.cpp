@@ -9,8 +9,8 @@ Model::~Model(){
     delete [] this;
 }
 
-void Model::addMathematicalComponent(string type, MathematicalComponent* mathematicalComponent){
-    vector<MathematicalComponent*> tmp;
+void Model::addMathematicalComponent(string type, MathematicalProduct* mathematicalComponent){
+    vector<MathematicalProduct*> tmp;
     if(m_mathematicalComponents.count(type)>0){
         tmp = m_mathematicalComponents[type];
         tmp.push_back(mathematicalComponent);

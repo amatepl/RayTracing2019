@@ -6,38 +6,28 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsScene>
 #include "treeproduct.h"
-#include "Composite/graphicscomponent.h"
+#include "Product/graphicsproduct.h"
 
 
-class GraphicsTreeProduct: public QGraphicsPixmapItem, public TreeProduct,public GraphicsComponent
+class GraphicsTreeProduct: public QGraphicsPixmapItem, public GraphicsProduct
 {
 public:
-    GraphicsTreeProduct(int posX, int posY, QMenu *productmenu, QGraphicsScene *scene);
+    GraphicsTreeProduct(QMenu *productmenu, QGraphicsScene *scene);
     ~GraphicsTreeProduct() override;
 
     static QPixmap getImage();
 
     void draw() override;
     bool graphicsSelected() override;
-    int getType() override;
-
-    int getPosX() override;
-    int getPosY() override;
-
-    void setPosX(int) override;
-    void setPosY(int) override;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
-    void setMathematicalComponent(MathematicalComponent *mathematicalComponent) override;
-
-    MathematicalComponent* toMathematicalComponent() override;
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
     QGraphicsScene *m_scene;
-    int m_posx,m_posy;
-    MathematicalComponent *m_mathematicalComponent;
-
     QMenu *m_productmenu;
 };
 

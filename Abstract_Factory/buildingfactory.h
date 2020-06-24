@@ -8,8 +8,13 @@
 class BuildingFactory: public SceneFactory
 {
 public:
-    BuildingFactory();
-    GraphicsComponent * createGraphicsComponent(int posX, int posY, QMenu *productmenu, QGraphicsScene* scene) override;
+    BuildingFactory(QMenu *productmenu, QGraphicsScene* scene);
+    GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
+    MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic) override;
+
+private:
+    QMenu *m_productmenu;
+    QGraphicsScene *m_scene;
 };
 
 #endif // BUILDINGFACTORY_H
