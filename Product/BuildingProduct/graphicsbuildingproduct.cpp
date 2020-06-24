@@ -6,7 +6,7 @@ GraphicsBuildingProduct::GraphicsBuildingProduct(QMenu* productmenu, QGraphicsSc
     QRectF rect(0,0,50,50);
     QPolygonF poly(rect);
     setPolygon(poly);
-    setModel(concrete);
+    setModel("concrete");
     m_extremities = poly;
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -40,25 +40,21 @@ void GraphicsBuildingProduct::draw(){
     m_scene->addItem(this);
 }
 
-void GraphicsBuildingProduct::setModel(int model){
+void GraphicsBuildingProduct::setModel(std::string model){
     QPen pen(Qt::black, 2);
-    switch (model){
-    case int(GraphicsBuildingProduct::brick) :
+    if (model == "brick") {
         pen.setColor(Qt::darkRed);
         setPen(pen);
-        m_model = brick;
-        break;
-    case int(GraphicsBuildingProduct::concrete) :
+    }
+    else if (model == "concrete"){
         pen.setColor(Qt::gray);
         setPen(pen);
-        m_model = concrete;
-        break;
-    case int (GraphicsBuildingProduct::none) :
+    }
+    else {
         pen.setColor(Qt::black);
         setPen(pen);
-        m_model = none;
-        break;
     }
+    m_model = model;
 }
 
 void GraphicsBuildingProduct::setExtremities(QVector<QPointF> extremities){
@@ -81,5 +77,12 @@ QVariant GraphicsBuildingProduct::itemChange(GraphicsItemChange change, const QV
 }
 
 void GraphicsBuildingProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
-    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
+    m_observer->openDialog();
+}
+
+void GraphicsBuildingProduct::notifyToGraphic(QPolygonF *poly, int posX, int posY){
+    setPolygon(*poly);
+    setX(posX);
+    setY(posY);
+    setModel(m_observer->changeAppearance());
 }

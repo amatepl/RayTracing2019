@@ -5,6 +5,7 @@
 #include "Observer/sceneobserver.h"
 #include "Observer/sceneobservable.h"
 #include "Product/TransmitterProduct/transmitterproduct.h"
+#include "Product/BuildingProduct/buildingproduct.h"
 #include "Product/TransmitterProduct/dialogtransmitterproduct.h"
 #include "Product/ReceiverProduct/dialogreceiverproduct.h"
 #include "Product/BuildingProduct/dialogbuildingproduct.h"

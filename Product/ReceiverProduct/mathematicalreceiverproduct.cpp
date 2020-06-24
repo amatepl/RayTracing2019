@@ -28,3 +28,7 @@ void MathematicalReceiverProduct::notifyObservers(){
         cout<<"Observer notified"<<endl;
     }
 }
+
+void MathematicalReceiverProduct::openDialog(){
+
+}

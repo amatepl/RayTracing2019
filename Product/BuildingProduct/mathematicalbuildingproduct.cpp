@@ -3,37 +3,11 @@
 MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points) : QPolygonF(points){
     //m_mathematicalfactory = mathematicalFactory;
     m_extremities = points;
+    setModel("concrete");
     m_type = "Building";
 }
 
 MathematicalBuildingProduct::~MathematicalBuildingProduct(){
-
-}
-
-double MathematicalBuildingProduct::getConductivity(){
-    return m_conductivity;
-}
-
-double MathematicalBuildingProduct::getPermittivity(){
-    return m_permittivity;
-}
-
-int MathematicalBuildingProduct::getModel(){
-    return int(m_model);
-}
-
-QVector<QPointF> MathematicalBuildingProduct::getExtremities(){
-    return m_extremities;
-}
-
-void MathematicalBuildingProduct::setConductivity(double sigma){
-    m_conductivity = sigma;
-}
-void MathematicalBuildingProduct::setPermittivity(double eps){
-    m_permittivity = eps;
-}
-
-void MathematicalBuildingProduct::setModel(int model){
 
 }
 
@@ -43,6 +17,27 @@ void MathematicalBuildingProduct::setExtremities(QVector<QPointF> extremities){
     swap(poly);
 }
 
-void MathematicalBuildingProduct::update(QGraphicsItem *graphic){
+void MathematicalBuildingProduct::setModel(std::string model){
+    m_model = model;
+    if (model == "brick"){
+        m_conductivity = 0.0014;
+        m_permittivity = 4.6;
+    }
+    else if (model == "concrete"){
+        m_conductivity = 0.014;
+        m_permittivity = 5.0;
+    }
+}
 
+void MathematicalBuildingProduct::update(QGraphicsItem *graphic){
+    setPosX(graphic->x());
+    setPosY(graphic->y());
+}
+
+void MathematicalBuildingProduct::openDialog(){
+    new DialogBuildingProduct(this);
+}
+
+void MathematicalBuildingProduct::newProperties(){
+    m_graphic->notifyToGraphic(this,m_posx,m_posy);
 }

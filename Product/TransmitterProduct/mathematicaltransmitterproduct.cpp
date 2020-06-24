@@ -201,3 +201,7 @@ void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactor
 void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable){
     m_model = modelObservable;
 }
+
+void MathematicalTransmitterProduct::openDialog(){
+
+}

@@ -46,7 +46,7 @@ public:
     int getPosY();
     MathematicalProduct* toMathematicalComponent();
     void update(QGraphicsItem *graphic) override;
-
+    void openDialog() override;
 };
 
 #endif // MATHEMATICALRAYPRODUCT_H

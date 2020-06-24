@@ -16,6 +16,7 @@ public:
     void setExtremities(QVector<QPointF> points) {m_extremities = points;}
 
     void update(QGraphicsItem *graphic) override;
+    void openDialog() override;
 
 private:
     //MathematicalFactory* m_factory;
