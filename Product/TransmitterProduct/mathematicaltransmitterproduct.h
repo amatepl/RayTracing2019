@@ -13,6 +13,7 @@
 #include "Abstract_Factory/abstractrayfactory.h"
 
 #include "Observer/productobserver.h"
+#include "Observer/productobservable.h"
 #include "Observer/modelobserver.h"
 #include "Observer/modelobservable.h"
 
@@ -52,13 +53,16 @@ public:
     void setRayFactory(AbstractRayFactory* rayFactory);
 
     vector<vector<MathematicalRayProduct>*> getRays();
+    void notifyObservables();
 
     // ProductObserver
     void notify(const QPointF &pos) override;
 
     //ModelObserver
     void attachObservable(ModelObservable* modelObserver) override;
+    void attachObservable(ProductObservable *productObservable) override;
     void openDialog() override;
+
 private:
     int m_row, m_column;
     float m_orientation;
@@ -67,6 +71,7 @@ private:
     double m_powerAtReceiver;
     AbstractRayFactory* m_rayFactory;
     ModelObservable* m_model;
+    vector<ProductObservable*> m_productObservable;
 
 
     QPolygonF m_zone;

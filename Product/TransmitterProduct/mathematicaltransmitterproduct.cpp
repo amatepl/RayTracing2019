@@ -93,9 +93,17 @@ void MathematicalTransmitterProduct::setColumn(int column) {
 void MathematicalTransmitterProduct::update(QGraphicsItem* graphic){
     setX(graphic->scenePos().x());
     setY(graphic->scenePos().y());
+    notifyObservables();
+    //notify(*this);
 //    setX(graphic->x());
 //    setY(graphic->y());
 
+}
+
+void MathematicalTransmitterProduct::notifyObservables(){
+    for(int i=0; i<m_productObservable.size();i++){
+        m_productObservable.at(i)->notify();
+    }
 }
 
 void MathematicalTransmitterProduct::notify(const QPointF &pos){
@@ -109,7 +117,6 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
             delete &m_wholeRays.at(i)->at(j);
         }
     }
-
     m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
     //m_wholeRays.shrink_to_fit();
     //if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
@@ -127,6 +134,7 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
     //}
 
         //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
+
 
         m_model->notify(this);
 }
@@ -222,6 +230,10 @@ void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactor
 
 void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable){
     m_model = modelObservable;
+}
+
+void MathematicalTransmitterProduct::attachObservable(ProductObservable* productObservable){
+    m_productObservable.push_back(productObservable);
 }
 
 void MathematicalTransmitterProduct::openDialog(){

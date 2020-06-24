@@ -28,6 +28,7 @@ void Model::setObservableProducts(){
         for(int j = 0; j < m_mathematicalComponents.count("Transmitter"); j++){
             //((ProductObservable*)m_mathematicalComponents["Receiver"].at(i))->attachObserver((ProductObserver*)m_mathematicalComponents["Transmitter"].at(j));
             dynamic_cast<ProductObservable*>(m_mathematicalComponents["Receiver"].at(i))->attachObserver(dynamic_cast<ProductObserver*>(m_mathematicalComponents["Transmitter"].at(j)));
+            dynamic_cast<ProductObserver*>(m_mathematicalComponents["Transmitter"].at(i))->attachObservable(dynamic_cast<ProductObservable*>(m_mathematicalComponents["Receiver"].at(j)));
         }
     }
 }
@@ -36,6 +37,7 @@ void Model::setModelObservers(){
     for(int i = 0; i < m_mathematicalComponents.count("Transmitter"); i++){
         //((ModelObserver*)m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
         dynamic_cast<ModelObserver*>(m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
+
 
     }
 }
