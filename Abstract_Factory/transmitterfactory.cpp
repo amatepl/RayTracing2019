@@ -6,6 +6,7 @@ TransmitterFactory::TransmitterFactory(QMenu* productmenu, QGraphicsScene* scene
     m_scene = scene;
 }
 
+
 GraphicsProduct* TransmitterFactory::createGraphicsProduct(int posX, int posY){
     GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(m_productmenu, m_scene);
     MathematicalTransmitterProduct* mathematicalProduct = new MathematicalTransmitterProduct(posX, posY);

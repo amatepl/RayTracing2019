@@ -1,6 +1,8 @@
 #ifndef GRAPHICSMAP_H
 #define GRAPHICSMAP_H
 
+#include <iostream>
+
 #include <vector>
 
 #include <QGraphicsItem>

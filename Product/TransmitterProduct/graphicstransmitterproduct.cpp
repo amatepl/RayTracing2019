@@ -37,7 +37,6 @@ void GraphicsTransmitterProduct::draw(){
     m_scene->addItem(this);
 }
 
-
 void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         //m_graphicsfactory->clearSelection();
         setSelected(true);

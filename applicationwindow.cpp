@@ -12,6 +12,9 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_buildingFactory = new BuildingFactory(m_productmenu,m_map);
     m_treeFactory = new TreeFactory(m_productmenu,m_map);
     m_carFactory = new CarFactory(m_productmenu,m_map);
+    m_model = new Model(this);
+    m_rayTracingAlgorithmFactory = new RayTracingAlgorithmFactory();
+
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
 
@@ -31,7 +34,7 @@ ApplicationWindow::~ApplicationWindow(){
 
 }
 
-void ApplicationWindow::answer(){
+void ApplicationWindow::answer(GraphicsProduct* graphic){
     m_graphicsmode = MoveItem;
     QList<QAbstractButton*> antennabuttons = m_antennagroup->buttons();
     QList<QAbstractButton*> obstaclebuttons = m_obstaclegroup->buttons();
@@ -41,9 +44,60 @@ void ApplicationWindow::answer(){
     for(QAbstractButton *button: obstaclebuttons){
         button->setChecked(false);
     }
+    m_model->addMathematicalComponent(graphic->toMathematicalProduct());
+    cout<<"Item added to model"<<endl;
+}
+/*
+void ApplicationWindow::attachObserver(WindowObserver *windowobserver){
+    m_windowobserver.push_back(windowobserver);
+}
+
+void ApplicationWindow::detachObserver(WindowObserver *windowobserver){
+    unsigned long long i = 0;
+    for (m_windowobserveriterator = m_windowobserver.begin();
+         m_windowobserveriterator != m_windowobserver.end();
+         ++m_windowobserveriterator){
+        if (m_windowobserver.at(i) == windowobserver){
+            m_windowobserver.erase(m_windowobserveriterator);
+        }
+        i++;
+    }
+}
+
+void ApplicationWindow::notify(int mode){
+    for (unsigned long long i=0;i<m_windowobserver.size();i++){
+        m_windowobserver.at(i)->update(mode);
+    }
+}
+*/
+
+//    notify(int(m_mode));
+
+void ApplicationWindow::modelAnswer(vector<MathematicalProduct *> sceneproducts){
+    for(int i = 0; i< sceneproducts.size();i++){
+        m_map->addItem((QGraphicsItem*)sceneproducts.at(i)->toGraphicsProduct());
+    }
+}
+
+void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts){
+    for(int i = 0; i< sceneproducts->size();i++){
+        //m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
+        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
+        //QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
+        QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
+        //m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
+        m_map->addItem(gItem);
+        cout<<"Item added to scene"<<endl;
+    }
+}
+
+void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts){
 
 }
 
+void ApplicationWindow::modelNotify(vector<MathematicalRayProduct *> sceneproducts){
+
+}
 
 QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
     QWidget *widget = new QWidget;
@@ -160,12 +214,15 @@ void ApplicationWindow::createToolBox(){
     launchRayTracingButton->setCheckable(false);
     QIcon icon  = QIcon(QPixmap(":/Images/playButton.png"));
     launchRayTracingButton->setIcon(icon);
+    m_raytracinggroup->addButton(launchRayTracingButton,int(LaunchRayTracing));
 
     QGridLayout *playButton_layout = new QGridLayout;
     playButton_layout->addWidget(launchRayTracingButton, 0, 0, Qt::AlignHCenter);
     playButton_layout->addWidget(new QLabel("Launch Ray"), 1, 0, Qt::AlignCenter);
 
     launchRayTracingWidget->setLayout(playButton_layout);
+
+
 
     rayTracing_layout->addWidget(launchRayTracingWidget, 0, 0);
 
@@ -221,6 +278,11 @@ void ApplicationWindow::notifyMap(){
     }
 }
 
+void ApplicationWindow::notifyModel(){
+    cout<<"Model notified"<<endl;
+    m_model->launchAlgorithm(m_rayTracingAlgorithmFactory);
+}
+
 // SLOTS
 
 void ApplicationWindow::antennaGroupClicked(int mode){
@@ -250,12 +312,17 @@ void ApplicationWindow::obstacleGroupClicked(int mode){
 }
 
 void ApplicationWindow::rayTracingGroupClicked(int mode){
+    cout<<"Button clicked"<<endl;
     QList <QAbstractButton*> buttons = m_raytracinggroup->buttons();
     for (int i = 0; i < buttons.size(); i++){
         if (buttons.at(i) != m_raytracinggroup->checkedButton()){
             buttons.at(i)->setChecked(false);
         }
     }
+    //setMode(Mode(mode));
+    //notify(mode);
+    notifyModel();
+    //notifyScene();
 }
 
 void ApplicationWindow::deleteProduct(){

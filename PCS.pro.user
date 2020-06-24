@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< HEAD
 <!-- Written by QtCreator 4.11.1, 2020-06-24T00:20:29. -->
+=======
+<!-- Written by QtCreator 4.12.0, 2020-06-24T01:12:11. -->
+>>>>>>> 5c2e43a7a6f6d31f65de9b9c5343fe6f222a51df
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -55,10 +59,25 @@
  <data>
   <variable>ProjectExplorer.Project.PluginSettings</variable>
   <valuemap type="QVariantMap">
+<<<<<<< HEAD
    <valuelist type="QVariantList" key="ClangCodeModel.CustomCommandLineKey">
     <value type="QString">-fno-delayed-template-parsing</value>
    </valuelist>
    <value type="bool" key="ClangCodeModel.UseGlobalConfig">true</value>
+=======
+   <valuelist type="QVariantList" key="ClangCodeModel.CustomCommandLineKey"/>
+   <value type="bool" key="ClangCodeModel.UseGlobalConfig">false</value>
+   <value type="QString" key="ClangCodeModel.WarningConfigId">{c7d1aa48-3f61-49ed-b234-9a06a79582ef}</value>
+   <valuemap type="QVariantMap" key="ClangTools">
+    <value type="bool" key="ClangTools.BuildBeforeAnalysis">true</value>
+    <value type="QString" key="ClangTools.DiagnosticConfig">Builtin.DefaultTidyAndClazy</value>
+    <value type="int" key="ClangTools.ParallelJobs">6</value>
+    <valuelist type="QVariantList" key="ClangTools.SelectedDirs"/>
+    <valuelist type="QVariantList" key="ClangTools.SelectedFiles"/>
+    <valuelist type="QVariantList" key="ClangTools.SuppressedDiagnostics"/>
+    <value type="bool" key="ClangTools.UseGlobalSettings">true</value>
+   </valuemap>
+>>>>>>> 5c2e43a7a6f6d31f65de9b9c5343fe6f222a51df
   </valuemap>
  </data>
  <data>

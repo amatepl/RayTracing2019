@@ -28,7 +28,7 @@ void GraphicsMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
     else if(m_sceneFactory != 0 && m_mode == InsertItem){
         QPointF p(event->scenePos());
         GraphicsProduct *graphicsproduct = m_sceneFactory->createGraphicsProduct(int(p.x()),int(p.y()));
-        m_app->answer();
+        m_app->answer(graphicsproduct);
         m_mode = MoveItem;
     }
     QGraphicsScene::mousePressEvent(event);
@@ -41,3 +41,4 @@ void GraphicsMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 void GraphicsMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsScene::mouseDoubleClickEvent(event);
 }
+

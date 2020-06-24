@@ -17,7 +17,9 @@ public:
     MathematicalReceiverProduct(int posX, int posY);
     ~MathematicalReceiverProduct() override;
 
+
     void update(QGraphicsItem *graphic) override;
+    void notifyObservers();
 
     void attachObserver(ProductObserver *productObserver) override;
 

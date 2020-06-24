@@ -2,7 +2,7 @@
 
 MathematicalCarProduct::MathematicalCarProduct(int posX, int posY): QRectF(0,0,posX,posY)
 {
-
+    m_type = "Car";
 }
 
 MathematicalCarProduct::~MathematicalCarProduct(){

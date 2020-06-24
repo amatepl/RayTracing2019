@@ -40,7 +40,6 @@ public:
     double getMeterLength()const;
     int getIndWall()const;
     void setDiffracted(bool diffracted);
-
     void setPosX(int posX);
     void setPosY(int posY);
     int getPosX();

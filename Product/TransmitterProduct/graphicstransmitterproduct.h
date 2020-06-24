@@ -27,6 +27,10 @@ public:
 
     static QPixmap getImage();
 
+    //int getModel() override;
+
+    //void setModel(Model model) override;
+
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 protected:

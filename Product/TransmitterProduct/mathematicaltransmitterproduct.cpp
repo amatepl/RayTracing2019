@@ -3,6 +3,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
 {
     setX(posX);
     setY(posY);
+    m_type = "Transmitter";
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
@@ -48,10 +49,10 @@ void MathematicalTransmitterProduct::drawRays(){
 
 }
 
-
 float MathematicalTransmitterProduct::getOrientation(){
     return m_orientation;
 }
+
 
 unsigned long MathematicalTransmitterProduct::getFrequency(){
     return m_frequency;
@@ -68,7 +69,6 @@ int MathematicalTransmitterProduct::getRow(){
 int MathematicalTransmitterProduct::getColumn() {
     return m_column;
 }
-
 
 void MathematicalTransmitterProduct::setOrientation(float orientation){
     m_orientation = orientation;
@@ -98,11 +98,13 @@ void MathematicalTransmitterProduct::update(QGraphicsItem* graphic){
 void MathematicalTransmitterProduct::notify(const QPointF &pos){
     //m_EMfield = 0;
     //m_power = 0;
+    cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
+
     m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
-    if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
+    //if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
         vector<MathematicalRayProduct> *wholeRay = new vector<MathematicalRayProduct>;
         QPointF m_pos(int(this->x()),int(this->y()));
-        MathematicalRayProduct newRay(m_pos,pos);
+        MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
         wholeRay->push_back(newRay);
         m_wholeRays.push_back(wholeRay);
         m_EMfield += computeEMfield(wholeRay);
@@ -111,7 +113,7 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
 //        switch(m_mode){
 //            case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);
 //        }
-    }
+    //}
 }
 
 double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR){
@@ -186,4 +188,16 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         rayNumber += 1;
     }*/
     return Efield;
+}
+
+vector<vector<MathematicalRayProduct> *> MathematicalTransmitterProduct::getRays(){
+    return m_wholeRays;
+    }
+
+void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactory){
+    m_rayFactory = rayFactory;
+}
+
+void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable){
+    m_model = modelObservable;
 }

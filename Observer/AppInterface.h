@@ -2,16 +2,17 @@
 #define APPINTERFACE_H
 
 #include "windowobserver.h"
-#include "Product/sceneproduct.h"
+
+class GraphicsProduct;
 
 class AppInterface{
 public:
     enum GraphicsMode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding,InsertTree,InsertCar};
-    enum ActionMode{DeleteItem,PropertiesItem};
+    enum ActionMode{DeleteItem,PropertiesItem,LaunchRayTracing};
 
     virtual ~AppInterface(){}
 
-    virtual void answer() = 0;
+    virtual void answer(GraphicsProduct* graphic) = 0;
 };
 
 #endif //  APPINTERFACE_H

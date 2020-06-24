@@ -21,29 +21,39 @@
 #include "Abstract_Factory/buildingfactory.h"
 #include "Abstract_Factory/treefactory.h"
 #include "Abstract_Factory/carfactory.h"
+#include "Abstract_Factory/raytracingalgorithmfactory.h"
 
+#include "Model/model.h"
+#include "Model/raytracing.h"
 #include "Observer/AppInterface.h"
 #include "graphicsmap.h"
+#include "Observer/windowomodelbservable.h"
 
 using namespace std;
 
-class ApplicationWindow :public QMainWindow,public AppInterface
+class ApplicationWindow :public QMainWindow,public AppInterface, public WindowModelObservable
 {
     Q_OBJECT
 public:
     ApplicationWindow(QWidget *parent = nullptr);
     ~ApplicationWindow() override;
-
-    void answer() override;
+    void answer(GraphicsProduct* graphic) override;
+    //void attachObserver(WindowObserver *windowobserver) override;
+    //void detachObserver(WindowObserver *windowobserver) override;
+    //void notify(int mode) override;
+    void modelAnswer(vector<MathematicalRayProduct > *sceneproduct) override;
+    void modelAnswer(vector<MathematicalProduct*> sceneproduct) override;
+    void modelNotify(vector<MathematicalProduct *> sceneproducts) override;
+    void modelNotify(vector<MathematicalRayProduct *> sceneproducts) override;
 
     QWidget* createToolButton(const QString &text,int id);
     void createActions();
     void createMenus();
     void createToolBox();
-
     void setGraphicsMode(GraphicsMode mode);
     void setActionMode(ActionMode mode);
     void notifyMap();
+    void notifyModel();
 
 private:
     QGraphicsView *view;
@@ -51,10 +61,13 @@ private:
 
     SceneFactory *m_receiverFactory, *m_transmitterFactory, *m_buildingFactory,
                  *m_treeFactory, *m_carFactory;
+    RayTracingAlgorithmFactory*  m_rayTracingAlgorithmFactory;
 
     GraphicsMode m_graphicsmode;
     ActionMode m_actionmode;
-
+    //vector<WindowObserver*> m_windowobserver;
+    //vector<WindowObserver*>::iterator m_windowobserveriterator;
+    Model* m_model;
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;
     QButtonGroup *m_raytracinggroup;

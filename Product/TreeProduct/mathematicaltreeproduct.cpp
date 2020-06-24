@@ -3,6 +3,7 @@
 MathematicalTreeProduct::MathematicalTreeProduct(QVector<QPointF> points) : QPolygonF(points)
 {
     m_extremities = points;
+    m_type = "Tree";
 }
 
 MathematicalTreeProduct::~MathematicalTreeProduct(){
@@ -12,3 +13,4 @@ MathematicalTreeProduct::~MathematicalTreeProduct(){
 void MathematicalTreeProduct::update(QGraphicsItem *graphic){
 
 }
+

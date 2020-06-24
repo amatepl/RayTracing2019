@@ -10,15 +10,18 @@
 
 #include "transmitterproduct.h"
 #include "Product/mathematicalproduct.h"
+#include "Abstract_Factory/abstractrayfactory.h"
 
 #include "Observer/productobserver.h"
+#include "Observer/modelobserver.h"
+#include "Observer/modelobservable.h"
 
 #include <Product/RayProduct/mathematicalrayproduct.h>
 
 
 using namespace std;
 
-class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct, public ProductObserver
+class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct, public ProductObserver, public ModelObserver
 {
 public:
     MathematicalTransmitterProduct(int posX, int posY);
@@ -34,27 +37,36 @@ public:
     int getColumn();
     float getOrientation();
     //int getModel();
-
     void setPower(double power);
     void setFrequency(unsigned long frequency);
     void setRow(int row);
     void setColumn(int column);
     void setOrientation(float orientation);
+
     //virtual void setModel(Model model) override;
 
-    void setTransmitterProduct(TransmitterProduct*);
     complex<double> computeEMfield(vector<MathematicalRayProduct> *rayLine);
     double computeReflexionPer(double thetaI, double epsilonR);
 
     void update(QGraphicsItem *graphic) override;
+    void setRayFactory(AbstractRayFactory* rayFactory);
+
+    vector<vector<MathematicalRayProduct>*> getRays();
+
+    // ProductObserver
     void notify(const QPointF &pos) override;
 
+    //ModelObserver
+    void attachObservable(ModelObservable* modelObserver) override;
 private:
     int m_row, m_column;
     float m_orientation;
     double m_power;
     unsigned long m_frequency;
     double m_powerAtReceiver;
+    AbstractRayFactory* m_rayFactory;
+    ModelObservable* m_model;
+
 
     QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;

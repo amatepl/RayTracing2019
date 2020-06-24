@@ -5,11 +5,13 @@
 #include "Product/RayProduct/graphicsrayproduct.h"
 #include "Product/RayProduct/mathematicalrayproduct.h"
 
-class RayFactory
+#include "Abstract_Factory/abstractrayfactory.h"
+
+class RayFactory: public AbstractRayFactory
 {
 public:
     RayFactory(bool visible);
-    MathematicalRayProduct* createRay(const QPointF &p1, const QPointF &p2);
+    MathematicalRayProduct* createRay(const QPointF &p1, const QPointF &p2) override;
 
 private:
     bool m_visibleRays;

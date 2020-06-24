@@ -10,7 +10,7 @@ MathematicalRayProduct* RayFactory::createRay(const QPointF &p1, const QPointF &
     if(m_visibleRays){
         mathematicalComponent = new MathematicalRayProduct(p1, p2);
         GraphicsRayProduct* graphicsComponent = new GraphicsRayProduct(p1, p2);
-
+        mathematicalComponent->attachObservable(graphicsComponent);
     }
     else{
         mathematicalComponent = new MathematicalRayProduct();

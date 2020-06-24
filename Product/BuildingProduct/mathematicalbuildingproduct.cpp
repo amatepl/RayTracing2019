@@ -3,6 +3,7 @@
 MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points) : QPolygonF(points){
     //m_mathematicalfactory = mathematicalFactory;
     m_extremities = points;
+    m_type = "Building";
 }
 
 MathematicalBuildingProduct::~MathematicalBuildingProduct(){
