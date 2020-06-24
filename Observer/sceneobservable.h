@@ -2,7 +2,7 @@
 #define SCENEOBSERVABLE_H
 
 #include "sceneobserver.h"
-#include "Composite/graphicscomponent.h"
+#include "Product/graphicsproduct.h"
 
 class SceneObservable{
 
@@ -11,8 +11,8 @@ public:
 
     virtual void attachObserver(SceneObserver*) = 0;
     virtual void detachObserver(SceneObserver*) = 0;
-    virtual void notifyNewProperties(GraphicsComponent*) = 0;
-    virtual void notifyChangeProperties(GraphicsComponent*) = 0;
+    virtual void notifyNewProperties(GraphicsProduct*) = 0;
+    virtual void notifyChangeProperties(GraphicsProduct*) = 0;
 };
 
 

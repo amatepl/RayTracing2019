@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-#include "Composite/MathematicalComponent.h"
+#include "Product/mathematicalproduct.h"
 #include "Observer/productobservable.h"
 #include "Observer/windowomodelbservable.h"
 #include "Observer/modelobservable.h"
@@ -21,7 +21,7 @@ class Model: public ModelObservable
 public:
     Model(WindowModelObservable* windowModelObservable);
     ~Model();
-    void addMathematicalComponent(/*string type,*/ MathematicalComponent* mathematicalComponent);
+    void addMathematicalComponent(MathematicalProduct* mathematicalProduct);
     void setObservableProducts();
     void setModelObservers();
     void launchAlgorithm(AbstractAlgorithmFactory* algorithmFactory);
@@ -29,10 +29,9 @@ public:
     void notify(MathematicalTransmitterProduct* transmitter) override;
 
 private:
-    map<string,vector<MathematicalComponent*>> m_mathematicalComponents;
+    map<string,vector<MathematicalProduct*>> m_mathematicalComponents;
     WindowModelObservable* m_windowModelObservable;
     AlgorithmInterface* m_algorithm;
-
 };
 
 #endif // MODEL_H

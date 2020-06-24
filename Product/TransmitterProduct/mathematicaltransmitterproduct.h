@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "transmitterproduct.h"
-#include "Composite/MathematicalComponent.h"
+#include "Product/mathematicalproduct.h"
 #include "Abstract_Factory/abstractrayfactory.h"
 
 #include "Observer/productobserver.h"
@@ -18,19 +18,14 @@
 
 #include <Product/RayProduct/mathematicalrayproduct.h>
 
-//class MathematicalFactory;
 
 using namespace std;
 
-class MathematicalTransmitterProduct : /*public TransmitterProduct,*/ public QPointF, public MathematicalComponent,
-        public ProductObserver, public ModelObserver
+class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct, public ProductObserver, public ModelObserver
 {
 public:
-    MathematicalTransmitterProduct(TransmitterProduct* graphic);
     MathematicalTransmitterProduct(int posX, int posY);
     ~MathematicalTransmitterProduct() override;
-
-    void newProperties();
 
     static double computeGain(double theta,double phi, double frequency,int row,int column,double antennaDistance);
 
@@ -40,29 +35,23 @@ public:
     double getPower() ;
     int getRow();
     int getColumn();
-
-    TransmitterProduct* getTransmitterProduct();
-
-    int getPosX() override;
-    int getPosY() override;
-
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
+    float getOrientation();
+    //int getModel();
     void setPower(double power);
     void setFrequency(unsigned long frequency);
     void setRow(int row);
     void setColumn(int column);
+    void setOrientation(float orientation);
+
     //virtual void setModel(Model model) override;
 
-    void setTransmitterProduct(TransmitterProduct*);
     complex<double> computeEMfield(vector<MathematicalRayProduct> *rayLine);
     double computeReflexionPer(double thetaI, double epsilonR);
 
+    void update(QGraphicsItem *graphic) override;
     void setRayFactory(AbstractRayFactory* rayFactory);
 
     vector<vector<MathematicalRayProduct>*> getRays();
-
-    MathematicalComponent* toMathematicalComponent() override;
 
     // ProductObserver
     void notify(const QPointF &pos) override;
@@ -70,10 +59,9 @@ public:
     //ModelObserver
     void attachObservable(ModelObservable* modelObserver) override;
 private:
-    TransmitterProduct* m_graphic;
-    int m_posx,m_posy;
-    int m_row, m_column, m_antenaType;
-    double m_orientation, m_power, m_antennadistance;
+    int m_row, m_column;
+    float m_orientation;
+    double m_power;
     unsigned long m_frequency;
     double m_powerAtReceiver;
     AbstractRayFactory* m_rayFactory;

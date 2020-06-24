@@ -159,6 +159,7 @@ void DialogBuildingProduct::setPermittivity(double eps){
 
 
 void  DialogBuildingProduct::setModel(int model) {
+    /*
     switch (model){
     case int(GraphicsBuildingProduct::brick) :
         m_model = brick;
@@ -185,6 +186,7 @@ void  DialogBuildingProduct::setModel(int model) {
         m_permittivity->setEnabled(true);
         break;
     }
+    */
 }
 
 void DialogBuildingProduct::setExtremities(QVector<QPointF> extremities){

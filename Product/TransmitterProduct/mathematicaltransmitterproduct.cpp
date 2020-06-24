@@ -1,12 +1,8 @@
 #include "mathematicaltransmitterproduct.h"
-MathematicalTransmitterProduct::MathematicalTransmitterProduct(TransmitterProduct* graphic)
+MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY)
 {
-    m_type = "Transmitter";
-    setTransmitterProduct(graphic);
-}
-
-MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY):QPointF(posX,posY)
-{
+    setX(posX);
+    setY(posY);
     m_type = "Transmitter";
 }
 
@@ -14,9 +10,6 @@ MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
 
 }
 
-void MathematicalTransmitterProduct::newProperties(){
-    //m_mathematicalfactory->receiveTransmitterProduct(this,m_graphic);
-}
 
 double MathematicalTransmitterProduct::computeGain(double theta,double phi, double frequency, int row,int column,double antennaDistance){
     complex <double> dipolefactor(0.0,0.0);
@@ -56,8 +49,8 @@ void MathematicalTransmitterProduct::drawRays(){
 
 }
 
-TransmitterProduct* MathematicalTransmitterProduct::getTransmitterProduct(){
-    return m_graphic;
+float MathematicalTransmitterProduct::getOrientation(){
+    return m_orientation;
 }
 
 
@@ -77,15 +70,8 @@ int MathematicalTransmitterProduct::getColumn() {
     return m_column;
 }
 
-
-void MathematicalTransmitterProduct::setPosX(int posX){
-    m_posx = posX;
-    setX(m_posx);
-}
-
-void MathematicalTransmitterProduct::setPosY(int posY){
-    m_posy = posY;
-    setY(m_posy);
+void MathematicalTransmitterProduct::setOrientation(float orientation){
+    m_orientation = orientation;
 }
 
 void MathematicalTransmitterProduct::setPower(double power){
@@ -104,31 +90,33 @@ void MathematicalTransmitterProduct::setColumn(int column) {
     m_column = column;
 }
 
+void MathematicalTransmitterProduct::update(QGraphicsItem* graphic){
+    setX(graphic->scenePos().x());
+    setY(graphic->scenePos().y());
+//    setX(graphic->x());
+//    setY(graphic->y());
 
-
-void MathematicalTransmitterProduct::setTransmitterProduct(TransmitterProduct *transmitterproduct){
-    m_graphic = transmitterproduct;
-    setPosX(m_graphic->getPosX());
-    setPosY(m_graphic->getPosY());
-//    setOrientation(m_graphic->getOrientation());
-//    setAntennaDistance(m_graphic->getAntennaDistance());
-}
-
-MathematicalComponent* MathematicalTransmitterProduct::toMathematicalComponent(){
-    return this;
 }
 
 void MathematicalTransmitterProduct::notify(const QPointF &pos){
     //m_EMfield = 0;
     //m_power = 0;
-    cout<<"Transmitter position: "<<m_posx<<", "<< m_posy <<endl;
+    cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
+    cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
+
+    for(int i =0; i<m_wholeRays.size();i++){
+        for(int j=0;j<m_wholeRays.at(i)->size();j++){
+            delete &m_wholeRays.at(i)->at(j);
+        }
+    }
 
     m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
+    //m_wholeRays.shrink_to_fit();
     //if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
         vector<MathematicalRayProduct> *wholeRay = new vector<MathematicalRayProduct>;
-        QPointF m_pos(m_posx,m_posy);
-        MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
-        wholeRay->push_back(newRay);
+        QPointF m_pos(int(this->x()),int(this->y()));
+        //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
+        wholeRay->push_back(*m_rayFactory->createRay(*this,pos));
         m_wholeRays.push_back(wholeRay);
         m_EMfield += computeEMfield(wholeRay);
         //m_power = m_scene->computePrx(m_EMfield,this);
@@ -137,6 +125,10 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
 //            case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);
 //        }
     //}
+
+        //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
+
+        m_model->notify(this);
 }
 
 double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR){
@@ -165,15 +157,22 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     double theta = 0.0;
     double R = 1;
     complex <double> Efield = 0.0;
-    MathematicalRayProduct currentRay;
+//    MathematicalRayProduct* currentRay;
     for (int i=0; i<amountSegment; i++){
-        currentRay = rayLine->at(i);
-        theta = currentRay.getTheta();
+//        currentRay = &rayLine->at(i);
+//        theta = currentRay->getTheta();
+
+        theta = rayLine->at(i).getTheta();
+
         if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
-            double thetaI = abs(currentRay.getTetai());
+            //double thetaI = abs(currentRay->getTetai());
+            double thetaI = abs(rayLine->at(i).getTetai());
+
             R *= computeReflexionPer(thetaI,epsilonWallRel);
         }
-        completeLength += currentRay.getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
+        completeLength += rayLine->at(i).getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
+        //completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
+
     }
     double Ia = sqrt(2.0*m_power/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
@@ -224,6 +223,3 @@ void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactor
 void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable){
     m_model = modelObservable;
 }
-
-int MathematicalTransmitterProduct::getPosX(){return x();}
-int MathematicalTransmitterProduct::getPosY(){return y();}

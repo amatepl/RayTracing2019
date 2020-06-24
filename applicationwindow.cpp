@@ -6,14 +6,15 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     createActions();
     createMenus();
     view = new QGraphicsView();
-    m_scene = new GraphicScene(view,this,m_productmenu);
+    m_map = new GraphicsMap(view,this,m_productmenu);
+    m_receiverFactory = new ReceiverFactory(m_productmenu,m_map);
+    m_transmitterFactory = new TransmitterFactory(m_productmenu,m_map);
+    m_buildingFactory = new BuildingFactory(m_productmenu,m_map);
+    m_treeFactory = new TreeFactory(m_productmenu,m_map);
+    m_carFactory = new CarFactory(m_productmenu,m_map);
     m_model = new Model(this);
-    m_receiverFactory = new ReceiverFactory(m_productmenu);
-    m_transmitterFactory = new TransmitterFactory();
-    m_buildingFactory = new BuildingFactory();
-    m_treeFactory = new TreeFactory();
-    m_carFactory = new CarFactory();
     m_rayTracingAlgorithmFactory = new RayTracingAlgorithmFactory();
+
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
 
@@ -26,13 +27,27 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
     setCentralWidget(widget);
 
-    m_mode = MoveItem;
+    m_graphicsmode = MoveItem;
 }
 
 ApplicationWindow::~ApplicationWindow(){
 
 }
 
+void ApplicationWindow::answer(GraphicsProduct* graphic){
+    m_graphicsmode = MoveItem;
+    QList<QAbstractButton*> antennabuttons = m_antennagroup->buttons();
+    QList<QAbstractButton*> obstaclebuttons = m_obstaclegroup->buttons();
+    for(QAbstractButton *button: antennabuttons){
+        button->setChecked(false);
+    }
+    for(QAbstractButton *button: obstaclebuttons){
+        button->setChecked(false);
+    }
+    m_model->addMathematicalComponent(graphic->toMathematicalProduct());
+    cout<<"Item added to model"<<endl;
+}
+/*
 void ApplicationWindow::attachObserver(WindowObserver *windowobserver){
     m_windowobserver.push_back(windowobserver);
 }
@@ -54,49 +69,42 @@ void ApplicationWindow::notify(int mode){
         m_windowobserver.at(i)->update(mode);
     }
 }
-
-void ApplicationWindow::answer(SceneProduct *sceneproduct){
-    cout<<"Answer"<<endl;
-    m_sceneProducts.push_back(sceneproduct);
+*/
 
 //    notify(int(m_mode));
-    QList<QAbstractButton*> antennabuttons = m_antennagroup->buttons();
-    QList<QAbstractButton*> obstaclebuttons = m_obstaclegroup->buttons();
-    for(QAbstractButton *button: antennabuttons){
-        button->setChecked(false);
-    }
-    for(QAbstractButton *button: obstaclebuttons){
-        button->setChecked(false);
-    }
-    m_model->addMathematicalComponent(sceneproduct->toMathematicalComponent());
-    m_mode = MoveItem;
-    cout<<"Item added to model"<<endl;
-}
 
-void ApplicationWindow::modelAnswer(vector<MathematicalComponent *> sceneproducts){
+void ApplicationWindow::modelAnswer(vector<MathematicalProduct *> sceneproducts){
     for(int i = 0; i< sceneproducts.size();i++){
-        m_scene->addItem((QGraphicsItem*)sceneproducts.at(i)->toGraphicsComponent());
+        m_map->addItem((QGraphicsItem*)sceneproducts.at(i)->toGraphicsProduct());
     }
 }
 
 void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts){
     for(int i = 0; i< sceneproducts->size();i++){
         //m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
-        GraphicsComponent* gComp = sceneproducts->at(i).toGraphicsComponent();
+        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
         //QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
-        QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent());
+        QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
         //m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
-        m_scene->addItem(gItem);
+        m_map->addItem(gItem);
         cout<<"Item added to scene"<<endl;
     }
 }
 
-void ApplicationWindow::modelNotify(vector<SceneProduct *> sceneproducts){
+void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts){
 
 }
 
-void ApplicationWindow::modelNotify(vector<MathematicalRayProduct *> sceneproducts){
-
+void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproducts){
+    for(int i = 0; i< sceneproducts->size();i++){
+        //m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
+        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
+        //QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
+        QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
+        //m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
+        m_map->addItem(gItem);
+        cout<<"Item added to scene"<<endl;
+    }
 }
 
 QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
@@ -240,30 +248,42 @@ void ApplicationWindow::createToolBox(){
     m_toolbox->addItem(rayTracingWidget, tr("Ray Tracing"));
 }
 
-void ApplicationWindow::setMode(Mode mode){
-    m_mode = mode;
+void ApplicationWindow::setGraphicsMode(GraphicsMode mode){
+    m_graphicsmode = mode;
 }
 
-void ApplicationWindow::notifyScene(){
+void ApplicationWindow::setActionMode(ActionMode mode){
+    m_actionmode = mode;
+}
+
+void ApplicationWindow::notifyMap(){
     SceneFactory * factory;
-    switch (m_mode) {
-        case int(InsertReceiver):
-            factory = m_receiverFactory;
-            break;
-        case int(InsertTransmitter):
-        factory = m_transmitterFactory;
-            break;
-        case int(InsertBuilding):
-        factory = m_buildingFactory;
-            break;
-        case int(InsertTree):
-        factory = m_treeFactory;
-            break;
-        case int(InsertCar):
-        factory = m_carFactory;
-            break;
+    if (m_graphicsmode != MoveItem) {
+        switch (m_graphicsmode) {
+            case int(InsertReceiver):
+                factory = m_receiverFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertTransmitter):
+                factory = m_transmitterFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertBuilding):
+                factory = m_buildingFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertTree):
+                factory = m_treeFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertCar):
+                factory = m_carFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            default:
+                break;
+        }
     }
-    m_scene->setSceneFactory(factory);
 }
 
 void ApplicationWindow::notifyModel(){
@@ -282,10 +302,8 @@ void ApplicationWindow::antennaGroupClicked(int mode){
     }
     if (m_obstaclegroup->checkedButton() != 0)
         m_obstaclegroup->checkedButton()->setChecked(false);
-    setMode(Mode(mode));
-    notify(mode);
-    notifyScene();
-    //m_scene->setSceneFactory(m_receiverFactory);
+    setGraphicsMode(GraphicsMode(mode));
+    notifyMap();
 }
 
 void ApplicationWindow::obstacleGroupClicked(int mode){
@@ -297,9 +315,8 @@ void ApplicationWindow::obstacleGroupClicked(int mode){
     }
     if (m_antennagroup->checkedButton() != 0)
         m_antennagroup->checkedButton()->setChecked(false);
-    setMode(Mode(mode));
-    notify(mode);
-    notifyScene();
+    setGraphicsMode(GraphicsMode(mode));
+    notifyMap();
 }
 
 void ApplicationWindow::rayTracingGroupClicked(int mode){
@@ -314,13 +331,12 @@ void ApplicationWindow::rayTracingGroupClicked(int mode){
     //notify(mode);
     notifyModel();
     //notifyScene();
-
 }
 
 void ApplicationWindow::deleteProduct(){
-    notify(int(DeleteItem));
+
 }
 
 void ApplicationWindow::openProduct(){
-    notify((int(PropertiesItem)));
+
 }

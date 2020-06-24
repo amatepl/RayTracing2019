@@ -1,16 +1,28 @@
 #include "receiverfactory.h"
 
-ReceiverFactory::ReceiverFactory(QMenu* productmenu)
+ReceiverFactory::ReceiverFactory(QMenu* productmenu, QGraphicsScene* scene)
 {
     m_productmenu = productmenu;
+    m_scene = scene;
 }
 
 
 // Overrides
 
-GraphicsComponent* ReceiverFactory::createGraphicsComponent(int posX, int posY, QMenu* productmenu,QGraphicsScene* scene){
-    GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(posX,posY,true,productmenu, scene);
-    MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(graphicsReceiverProduct);
-    graphicsReceiverProduct->setMathematicalComponent(mathematicalReceiverProduct);
+GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
+    GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(true,m_productmenu, m_scene);
+    MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(posX, posY);
+    graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
+    graphicsReceiverProduct->setX(posX);
+    graphicsReceiverProduct->setY(posY);
     return graphicsReceiverProduct;
+}
+
+MathematicalProduct* ReceiverFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
+    MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(posX,posY);
+    if (linkgraphic){
+        GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(true,m_productmenu, m_scene);
+        graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
+    }
+    return mathematicalReceiverProduct;
 }

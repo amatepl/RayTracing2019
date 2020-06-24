@@ -1,20 +1,17 @@
 #include "graphicsbuildingproduct.h"
 
-GraphicsBuildingProduct::GraphicsBuildingProduct(int posX, int posY, double orientation, QMenu* productmenu, QGraphicsScene *scene):
-    m_scene(scene),m_posx(posX),m_posy(posY),m_orientation(orientation),m_productmenu(productmenu)
+GraphicsBuildingProduct::GraphicsBuildingProduct(QMenu* productmenu, QGraphicsScene *scene):
+    m_scene(scene),m_productmenu(productmenu)
 {
-    QRectF rect(m_posx,m_posy,50,50);
+    QRectF rect(0,0,50,50);
     QPolygonF poly(rect);
     setPolygon(poly);
     setModel(concrete);
-    setOrientation(m_orientation);
-    setPos(m_posx,m_posy);
-    m_conductivity = 0.0;
-    m_permittivity = 0.0;
     m_extremities = poly;
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    m_type = "building";
 
     draw();
 }
@@ -34,9 +31,6 @@ QPixmap GraphicsBuildingProduct::getImage(){
     return pixmap;
 }
 
-int GraphicsBuildingProduct::getType(){
-    return int(GraphicsComponent::BuildingProduct);
-}
 
 bool GraphicsBuildingProduct::graphicsSelected(){
     return isSelected();
@@ -44,53 +38,6 @@ bool GraphicsBuildingProduct::graphicsSelected(){
 
 void GraphicsBuildingProduct::draw(){
     m_scene->addItem(this);
-}
-
-int GraphicsBuildingProduct::getPosX(){
-    return m_posx;
-}
-
-int GraphicsBuildingProduct::getPosY(){
-    return m_posy;
-}
-
-double GraphicsBuildingProduct::getOrientation(){
-    return m_orientation;
-    setOrientation(m_orientation);
-}
-
-double GraphicsBuildingProduct::getConductivity(){
-    return m_conductivity;
-}
-
-double GraphicsBuildingProduct::getPermittivity(){
-    return m_permittivity;
-}
-
-int GraphicsBuildingProduct::getModel(){
-    return int(m_model);
-}
-
-QVector<QPointF> GraphicsBuildingProduct::getExtremities(){
-    return m_extremities;
-}
-
-void GraphicsBuildingProduct::setPosX(int posX){
-    m_posx = posX;
-    setPos(m_posx,m_posy);
-}
-void GraphicsBuildingProduct::setPosY(int posY){
-    m_posy = posY;
-    setPos(m_posx,m_posy);
-}
-void GraphicsBuildingProduct::setOrientation(double orientation){
-    m_orientation = orientation;
-}
-void GraphicsBuildingProduct::setConductivity(double sigma){
-    m_conductivity = sigma;
-}
-void GraphicsBuildingProduct::setPermittivity(double eps){
-    m_permittivity = eps;
 }
 
 void GraphicsBuildingProduct::setModel(int model){
@@ -125,10 +72,14 @@ void GraphicsBuildingProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *e
     m_productmenu->exec(event->screenPos());
 }
 
-void GraphicsBuildingProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
-    m_mathematicalComponent = mathematicalComponent;
+QVariant GraphicsBuildingProduct::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == QGraphicsItem::ItemPositionHasChanged) {
+        m_observer->update(this);
+    }
+    return value;
 }
 
-MathematicalComponent* GraphicsBuildingProduct::toMathematicalComponent(){
-    return m_mathematicalComponent;
+void GraphicsBuildingProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
 }

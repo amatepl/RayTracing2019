@@ -4,30 +4,22 @@
 #include <QPolygonF>
 
 #include "treeproduct.h"
-#include "Composite/MathematicalComponent.h"
+#include "Product/mathematicalproduct.h"
 
-class MathematicalTreeProduct: public QPolygonF, public TreeProduct, public MathematicalComponent
+class MathematicalTreeProduct: public QPolygonF, public MathematicalProduct
 {
 public:
-    MathematicalTreeProduct(TreeProduct* graphic);
+    MathematicalTreeProduct(QVector<QPointF> points);
     ~MathematicalTreeProduct() override;
 
-    void newProperties();
+    QVector<QPointF> getExtremities() {return m_extremities;}
+    void setExtremities(QVector<QPointF> points) {m_extremities = points;}
 
-    int getPosX() override;
-    int getPosY() override;
-    TreeProduct *getTreeProduct();
-
-    void setPosX(int) override;
-    void setPosY(int) override;
-    void setTreeProduct(TreeProduct*);
-
-    MathematicalComponent* toMathematicalComponent() override;
+    void update(QGraphicsItem *graphic) override;
 
 private:
     //MathematicalFactory* m_factory;
-    TreeProduct* m_graphic;
-    int m_posx,m_posy;
+    QVector<QPointF> m_extremities;
 };
 
 #endif // MATHEMATICALTREEPRODUCT_H

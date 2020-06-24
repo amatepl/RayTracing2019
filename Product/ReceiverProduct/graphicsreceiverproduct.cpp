@@ -1,19 +1,14 @@
 #include "graphicsreceiverproduct.h"
 
-GraphicsReceiverProduct::GraphicsReceiverProduct(int posX, int posY, bool enable, QMenu *menuproduct, QGraphicsScene *scene
-                                                 )
+GraphicsReceiverProduct::GraphicsReceiverProduct(bool enable, QMenu *menuproduct, QGraphicsScene *scene)
 {
     m_productmenu = menuproduct;
     m_sizex = 10;
     m_sizey = 10;
-//    m_graphicsfactory = graphicsfactory;
-    m_posx = posX;
-    m_posy = posY;
     enableReceiver(enable);
     m_scene = scene;
-//    m_frequency = frequency;
-
     draw();
+    m_type = "receiver";
 }
 
 GraphicsReceiverProduct::~GraphicsReceiverProduct(){
@@ -36,7 +31,6 @@ void GraphicsReceiverProduct::enableReceiver(bool enable){
         painter.setPen(QPen(Qt::black, 0));
         setPixmap(pixmap);
         setOffset(-m_sizex/2,-m_sizey/2);
-        setPos(m_posx,m_posy);
     }
 }
 
@@ -60,8 +54,9 @@ QPixmap GraphicsReceiverProduct::getImage(){
 QVariant GraphicsReceiverProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
-        m_mathematicalComponent->setPosX(pos().x());
-        m_mathematicalComponent->setPosY(pos().y());
+        //m_mathematicalProduct->setPosX(pos().x());
+        //m_mathematicalProduct->setPosY(pos().y());
+        m_observer->update(this);
     }
     return value;
 }
@@ -70,42 +65,14 @@ void GraphicsReceiverProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev
     //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
 }
 
-MathematicalComponent* GraphicsReceiverProduct::toMathematicalComponent(){
-    return m_mathematicalComponent;
-}
-
-void GraphicsReceiverProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
-    m_mathematicalComponent = mathematicalComponent;
-}
-
-int GraphicsReceiverProduct::getType(){
-    return int(GraphicsComponent::ReceiverProduct);
-}
-
 bool GraphicsReceiverProduct::graphicsSelected() {
     return isSelected();
 }
 
 void GraphicsReceiverProduct::draw(){
-//    m_graphicsfactory->addItem(this);
     m_scene->addItem(this);
 }
 
-int GraphicsReceiverProduct::getPosX(){return m_posx;}
-
-int GraphicsReceiverProduct::getPosY() {return m_posy;}
-
-void GraphicsReceiverProduct::setPosX(int posX)
-{
-    m_posx = posX;
-    setPos(m_posx,m_posy);
-}
-
-void GraphicsReceiverProduct::setPosY(int posY)
-{
-    m_posy = posY;
-    setPos(m_posx,m_posy);
-}
 
 void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     //m_graphicsfactory->clearSelection();

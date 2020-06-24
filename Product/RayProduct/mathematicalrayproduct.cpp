@@ -8,6 +8,13 @@ MathematicalRayProduct::MathematicalRayProduct(const QPointF &p1,const QPointF &
     updateMeterLength();
 }
 
+
+MathematicalRayProduct::~MathematicalRayProduct(){
+    cout<<"Math ray nearly deleted"<<endl;
+    delete m_graphic;
+    cout<<"Math ray deleted"<<endl;
+}
+
 /*
  * The scale chosen for the meter-pixels conversion is 1px = 1dm
  */
@@ -37,10 +44,11 @@ void MathematicalRayProduct::setDiffracted(bool diffracted){
     m_diffracted = diffracted;
 }
 
-void MathematicalRayProduct::setPosX(int posX){}
-void MathematicalRayProduct::setPosY(int posY){}
-int MathematicalRayProduct::getPosX(){}
-int MathematicalRayProduct::getPosY(){}
-MathematicalComponent* MathematicalRayProduct::toMathematicalComponent(){
+
+MathematicalProduct* MathematicalRayProduct::toMathematicalComponent(){
     return this;
+}
+
+void MathematicalRayProduct::update(QGraphicsItem *graphic){
+
 }

@@ -1,13 +1,25 @@
 #include "carfactory.h"
 
-CarFactory::CarFactory()
+CarFactory::CarFactory(QMenu* productmenu, QGraphicsScene* scene)
 {
-
+    m_productmenu = productmenu;
+    m_scene = scene;
 }
 
-GraphicsComponent* CarFactory::createGraphicsComponent(int posX, int posY, QMenu* productmenu,QGraphicsScene* scene){
-    GraphicsCarProduct* graphicsProduct = new GraphicsCarProduct(0,0,0,true,productmenu, scene);
-    MathematicalCarProduct* mathematicalProduct = new MathematicalCarProduct(graphicsProduct);
-    graphicsProduct->setMathematicalComponent(mathematicalProduct);
+GraphicsProduct* CarFactory::createGraphicsProduct(int posX, int posY){
+    GraphicsCarProduct* graphicsProduct = new GraphicsCarProduct(m_productmenu, m_scene);
+    MathematicalCarProduct* mathematicalProduct = new MathematicalCarProduct(posX, posY);
+    graphicsProduct->attachObserver(mathematicalProduct);
+    graphicsProduct->setX(posX);
+    graphicsProduct->setY(posY);
     return graphicsProduct;
+}
+
+MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
+    MathematicalCarProduct* mathematicalProduct = new MathematicalCarProduct(posX,posY);
+    if (linkgraphic){
+        GraphicsCarProduct* graphicsProduct = new GraphicsCarProduct(m_productmenu, m_scene);
+        graphicsProduct->attachObserver(mathematicalProduct);
+    }
+    return mathematicalProduct;
 }

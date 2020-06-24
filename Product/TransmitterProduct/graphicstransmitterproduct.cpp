@@ -1,25 +1,20 @@
 #include "graphicstransmitterproduct.h"
 
-GraphicsTransmitterProduct::GraphicsTransmitterProduct(int posX, int posY, double orientation, QMenu* productmenu, QGraphicsScene *scene)
+GraphicsTransmitterProduct::GraphicsTransmitterProduct(QMenu* productmenu, QGraphicsScene *scene)
 {
     QPixmap icon(":/Images/Transmitter1.png");
     setPixmap(icon);
-    setPos(posX,posY);
-    //setOrientation(orientation);
     setOffset(-icon.width()/2,-icon.height()/2);
-    setRotation(orientation);
 
 
     m_productmenu = productmenu;
-    m_posx = posX;
-    m_posy = posY;
-    m_orientation = orientation;
     m_scene = scene;
 
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
+    m_type = "transmitter";
     draw();
 
 }
@@ -33,9 +28,6 @@ QPixmap GraphicsTransmitterProduct::getImage(){
     return icon;
 }
 
-int GraphicsTransmitterProduct::getType(){
-    return int(GraphicsComponent::TransmitterProduct);
-}
 
 bool GraphicsTransmitterProduct::graphicsSelected() {
     return isSelected();
@@ -45,36 +37,22 @@ void GraphicsTransmitterProduct::draw(){
     m_scene->addItem(this);
 }
 
-int GraphicsTransmitterProduct::getPosX(){return m_posx;}
-
-int GraphicsTransmitterProduct::getPosY() {return m_posy;}
-
-
-
-void GraphicsTransmitterProduct::setPosX(int posX)
-{
-    m_posx = posX;
-    setPos(m_posx,m_posy);
-}
-
-void GraphicsTransmitterProduct::setPosY(int posY)
-{
-    m_posy = posY;
-    setPos(m_posx,m_posy);
-}
-
-
-
 void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         //m_graphicsfactory->clearSelection();
         setSelected(true);
         m_productmenu->exec(event->screenPos());
 }
 
-void GraphicsTransmitterProduct::setMathematicalComponent(MathematicalComponent *mathematicalComponent){
-    m_mathematicalComponent = mathematicalComponent;
+QVariant GraphicsTransmitterProduct::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == QGraphicsItem::ItemPositionHasChanged) {
+        //m_mathematicalProduct->setPosX(pos().x());
+        //m_mathematicalProduct->setPosY(pos().y());
+        m_observer->update(this);
+    }
+    return value;
 }
 
-MathematicalComponent* GraphicsTransmitterProduct::toMathematicalComponent(){
-    return m_mathematicalComponent;
+void GraphicsTransmitterProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
 }

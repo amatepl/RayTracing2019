@@ -1,14 +1,26 @@
 #include "transmitterfactory.h"
 
-TransmitterFactory::TransmitterFactory()
+TransmitterFactory::TransmitterFactory(QMenu* productmenu, QGraphicsScene* scene)
 {
-
+    m_productmenu = productmenu;
+    m_scene = scene;
 }
 
-GraphicsComponent* TransmitterFactory::createGraphicsComponent(int posX, int posY, QMenu* productmenu,QGraphicsScene* scene){
-    GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(posX,posY,true,productmenu, scene);
-    MathematicalTransmitterProduct* mathematicalProduct = new MathematicalTransmitterProduct(posX,posY);
-    graphicsProduct->setMathematicalComponent(mathematicalProduct);
-    cout<<posX<<", "<<posY<<endl;
+
+GraphicsProduct* TransmitterFactory::createGraphicsProduct(int posX, int posY){
+    GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(m_productmenu, m_scene);
+    MathematicalTransmitterProduct* mathematicalProduct = new MathematicalTransmitterProduct(posX, posY);
+    graphicsProduct->attachObserver(mathematicalProduct);
+    graphicsProduct->setX(posX);
+    graphicsProduct->setY(posY);
     return graphicsProduct;
+}
+
+MathematicalProduct* TransmitterFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
+    MathematicalTransmitterProduct* mathematicalProduct = new MathematicalTransmitterProduct(posX,posY);
+    if (linkgraphic){
+        GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(m_productmenu, m_scene);
+        graphicsProduct->attachObserver(mathematicalProduct);
+    }
+    return mathematicalProduct;
 }
