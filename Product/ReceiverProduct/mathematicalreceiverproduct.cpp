@@ -34,3 +34,7 @@ void MathematicalReceiverProduct::notifyObservers(){
 void MathematicalReceiverProduct::openDialog(){
 
 }
+
+void MathematicalReceiverProduct::notify(){
+    notifyObservers();
+}

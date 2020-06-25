@@ -6,6 +6,7 @@
 class ProductObservable{
 public:
     virtual void attachObserver(ProductObserver* productObserver) = 0;
+    virtual void notify() =0;
 };
 
 #endif // PRODUCTOBSERVABLE_H
