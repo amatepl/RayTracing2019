@@ -2,9 +2,13 @@
 #define MATHEMATICALBUILDINGPRODUCT_H
 
 #include <QPolygonF>
+#include <array>
 
 #include "Product/mathematicalproduct.h"
 #include "dialogbuildingproduct.h"
+#include "Share/wall.h"
+
+using namespace std;
 
 class MathematicalBuildingProduct : public QPolygonF, public MathematicalProduct
 {
@@ -26,6 +30,16 @@ public:
     QVector<QPointF> getExtremities() {return m_extremities;}
     void setExtremities(QVector<QPointF> extremities);
 
+    void moveToPosition(const QPointF &pos);
+    void moveWalls(QPointF &moveDirection);
+    Wall *getWalls() ;
+    QPointF closestPoint(const QPointF &point);
+    vector<Wall *> nearestWalls(const QPointF &point);
+    QPolygonF shadow(const QPointF &light);
+    vector <QPointF> extremities(const QPointF &light);
+    Wall* cornerSecondWall(Wall *wall, const QPointF &corner)const;
+    QPointF forDiffraction(Wall *wall, const QPointF &corner)const;
+
     void newProperties();
     void update(QGraphicsItem* graphic) override;
     void openDialog() override;
@@ -35,6 +49,9 @@ private:
     int m_posx, m_posy; // Correspond to the up-left corner
     std::string m_model;
     double m_orientation,m_permittivity,m_conductivity;
+
+    vector<Wall*> m_walls; // Array of pointers.
 };
+
 
 #endif // MATHEMATICALBUILDINGPRODUCT_H

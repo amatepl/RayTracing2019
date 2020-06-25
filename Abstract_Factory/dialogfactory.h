@@ -5,7 +5,7 @@
 #include "Observer/sceneobserver.h"
 #include "Observer/sceneobservable.h"
 #include "Product/TransmitterProduct/transmitterproduct.h"
-#include "Product/BuildingProduct/buildingproduct.h"
+//#include "Product/BuildingProduct/buildingproduct.h"
 #include "Product/TransmitterProduct/dialogtransmitterproduct.h"
 #include "Product/ReceiverProduct/dialogreceiverproduct.h"
 #include "Product/BuildingProduct/dialogbuildingproduct.h"
@@ -20,7 +20,7 @@ public:
     ~DialogFactory() override;
 
     void receiveTransmitterProduct(TransmitterProduct* transmitterproduct);
-    void receiveBuildingProduct(BuildingProduct* buildingproduct);
+    //void receiveBuildingProduct(BuildingProduct* buildingproduct);
     void receiveReceiverProduct(ReceiverProduct* receiverproduct);
     void receiveTreeProduct(TreeProduct* treeproduct);
     void receiveCarProduct(CarProduct* carproduct);

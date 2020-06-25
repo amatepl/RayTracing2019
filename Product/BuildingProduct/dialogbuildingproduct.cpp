@@ -181,9 +181,9 @@ void DialogBuildingProduct::writeExtremities(){
     QString newExtremities;
     for (int i = 0; i<m_points.size();i++){
         newExtremities.append("(");
-        newExtremities.append(QString::number(m_points.at(i).x()));
+        newExtremities.append(QString::number(m_points.at(i).x()-getPosX()));
         newExtremities.append(",");
-        newExtremities.append(QString::number(m_points.at(i).y()));
+        newExtremities.append(QString::number(m_points.at(i).y()-getPosY()));
         newExtremities.append(") \n");
     }
     m_extremitiesViewer->setPlainText(newExtremities);

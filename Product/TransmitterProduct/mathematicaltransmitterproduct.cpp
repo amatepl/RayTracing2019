@@ -239,3 +239,87 @@ void MathematicalTransmitterProduct::attachObservable(ProductObservable* product
 void MathematicalTransmitterProduct::openDialog(){
 
 }
+
+
+//--------------------------
+
+QPolygonF MathematicalTransmitterProduct::getIlluminationZone(const QRectF &rect)const{
+    return QPolygonF(rect);
+}
+
+QPolygonF MathematicalTransmitterProduct::getIlluminationZone()const{
+
+    /*
+     * This method is used right now in the code BUT we've got to make sure that the user don't add
+     * any element to the scene once the antena is set.
+     */
+
+    return QPolygonF(m_sceneBoundary);
+}
+
+QPolygonF MathematicalTransmitterProduct::getIlluminatedZone()const{
+    return m_zone;
+}
+
+
+void MathematicalTransmitterProduct::setSceneBoundary(const QRectF &rect){
+    m_sceneBoundary = rect;
+}
+
+QPointF MathematicalTransmitterProduct::sceneRectIntersection(const QRectF &rect, const QLineF  &line)const{
+    /*
+     * This function takes a bounding ray (line) of the illumination zone and gives its intersection
+     * with the scene boundaries.
+     */
+
+    QLineF boundary1(rect.topLeft(),rect.bottomLeft()),
+            boundary2(rect.bottomLeft(),rect.bottomRight()),
+            boundary3(rect.bottomRight(),rect.topRight()),
+            boundary4(rect.topRight(),rect.topLeft());
+
+    QPointF intersectionPoint;
+
+    if(line.intersect(boundary1,&intersectionPoint) == 1){}
+    else if(line.intersect(boundary2,&intersectionPoint) == 1){}
+    else if(line.intersect(boundary3,&intersectionPoint) == 1){}
+    else if(line.intersect(boundary4,&intersectionPoint) == 1){}
+    return intersectionPoint;
+}
+
+vector <QPointF> MathematicalTransmitterProduct::boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const{
+    /*
+     * Gives the corners of the scene bounding rectangle that lie in the ubounded illumination zone.
+     * It is used to complete the bounded illumination zone polygone.
+     */
+
+    vector <QPointF> points;
+    if(unboundedZone.containsPoint(rect.topLeft(),Qt::OddEvenFill)){
+        points.push_back(rect.topLeft());
+    }
+    if(unboundedZone.containsPoint(rect.bottomLeft(),Qt::OddEvenFill)){
+        points.push_back(rect.bottomLeft());
+    }
+    if(unboundedZone.containsPoint(rect.bottomRight(),Qt::OddEvenFill)){
+        points.push_back(rect.bottomRight());
+    }
+    if(unboundedZone.containsPoint(rect.topRight(),Qt::OddEvenFill)){
+        points.push_back(rect.topRight());
+    }
+    return points;
+}
+
+void MathematicalTransmitterProduct::notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) {
+    MathematicalRayProduct newRay = *m_rayFactory->createRay(*this,point);
+    wholeRay->push_back(newRay);
+    m_wholeRays.push_back(wholeRay);
+    //m_receiver->addWholeRay(wholeRay);
+    m_EMfield += computeEMfield(wholeRay);
+    //m_power = computePrx(m_EMfield,this);
+
+}
+
+
+
+void MathematicalTransmitterProduct::setIlluminatedZone(const QPolygonF &zone){
+    m_zone = zone;
+}

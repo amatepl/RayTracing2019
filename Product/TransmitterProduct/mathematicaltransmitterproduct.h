@@ -18,11 +18,13 @@
 #include "Observer/modelobservable.h"
 
 #include <Product/RayProduct/mathematicalrayproduct.h>
+#include <Product/abstractantena.h>
 
 
 using namespace std;
 
-class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct, public ProductObserver, public ModelObserver
+class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct, public ProductObserver, public ModelObserver,
+        public AbstractAntena
 {
 public:
     MathematicalTransmitterProduct(int posX, int posY);
@@ -63,6 +65,19 @@ public:
     void attachObservable(ProductObservable *productObservable) override;
     void openDialog() override;
 
+    QPolygonF getIlluminationZone(const QRectF &rect)const override;
+
+    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
+    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
+    void notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) override;
+    //QPointF getPosition()const override;
+    QPolygonF getIlluminationZone()const override;
+    void setSceneBoundary(const QRectF &rect);
+    void setIlluminatedZone(const QPolygonF &zone) override;
+    QPolygonF getIlluminatedZone()const override;
+
+
+
 private:
     int m_row, m_column;
     float m_orientation;
@@ -73,6 +88,7 @@ private:
     ModelObservable* m_model;
     vector<ProductObservable*> m_productObservable;
 
+    QRectF m_sceneBoundary;
 
     QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;

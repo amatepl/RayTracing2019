@@ -53,10 +53,12 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/TreeProduct/graphicstreeproduct.h \
     Product/TreeProduct/mathematicaltreeproduct.h \
     Product/TreeProduct/treeproduct.h \
+    Product/abstractantena.h \
     Product/graphicsproduct.h \
     Product/mathematicalproduct.h \
     Product/sceneproduct.h \
     Share/line.h \
+    Share/wall.h \
     applicationwindow.h \
     graphicsmap.h
 
@@ -91,6 +93,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/graphicstreeproduct.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
     Share/line.cpp \
+    Share/wall.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \
     main.cpp
