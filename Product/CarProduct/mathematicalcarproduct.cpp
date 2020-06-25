@@ -1,12 +1,13 @@
 #include "mathematicalcarproduct.h"
 
-MathematicalCarProduct::MathematicalCarProduct(int posX, int posY): QRectF(0,0,posX,posY)
+MathematicalCarProduct::MathematicalCarProduct(QRectF rect)
 {
+    setRect(rect.topLeft().x(),rect.topLeft().y(),rect.width(),rect.height());
     m_type = "Car";
 }
 
 MathematicalCarProduct::~MathematicalCarProduct(){
-    //m_mathematicalfactory->receiveCarProduct(this,m_graphic);
+
 }
 
 double MathematicalCarProduct::getSpeed(){
@@ -30,7 +31,8 @@ void MathematicalCarProduct::setOrientation(double orientation){
 }
 
 void MathematicalCarProduct::update(QGraphicsItem *graphic){
-
+    setX(graphic->x());
+    setY(graphic->y());
 }
 
 void MathematicalCarProduct::openDialog(){

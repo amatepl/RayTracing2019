@@ -50,5 +50,10 @@ QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVarian
 }
 
 void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
-    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
+    m_observer->openDialog();
+}
+
+void GraphicsCarProduct::notifyToGraphic(QRectF *rect){
+    setX(rect->x());
+    setY(rect->y());
 }

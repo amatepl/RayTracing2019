@@ -12,7 +12,7 @@ using namespace std;
 class MathematicalCarProduct: public QRectF,  public MathematicalProduct
 {
 public:
-    MathematicalCarProduct(int posX, int posY);
+    MathematicalCarProduct(QRectF rect);
     ~MathematicalCarProduct() override;
 
     double getSpeed();
