@@ -15,43 +15,44 @@
 
 #include "mathematicalbuildingproduct.h"
 #include "graphicsbuildingproduct.h"
+#include "buildingproduct.h"
 
-class MathematicalBuildingProduct;
-
-class DialogBuildingProduct : public QDialog
+class DialogBuildingProduct : public QDialog, public BuildingProduct
 {
     Q_OBJECT
 public:
-    DialogBuildingProduct(MathematicalBuildingProduct* mathematicalproduct);
+    DialogBuildingProduct(BuildingProduct* mathematicalproduct);
     ~DialogBuildingProduct() override;
 
     void createDialog();
-    int getPosX();
-    int getPosY();
-    double getConductivity();
-    double getPermittivity();
-    std::string getModel();
-    QVector<QPointF> getExtremities();
-    void setPosX(int posX);
-    void setPosY(int posY);
-    void setConductivity(double sigma);
-    void setPermittivity(double eps);
-    void setModel(std::string model);
-    void setExtremities(QVector<QPointF> extremities);
+    int getPosX() override;
+    int getPosY() override;
+    double getConductivity() override;
+    double getPermittivity() override;
+    QVector<QPointF> getExtremities() override;
+    void setPosX(int posX) override;
+    void setPosY(int posY) override;
+    void setConductivity(double sigma) override;
+    void setPermittivity(double eps) override;
+    void setModel(std::string model) override;
+    std::string getModel() override {return m_model;}
+    void setExtremities(QVector<QPointF> extremities) override;
+    void newProperties() override;
     void writeExtremities();
 
 private:
-    MathematicalBuildingProduct *m_mathematicalproduct;
+    BuildingProduct *m_mathematicalproduct;
     std::string m_model;
     QComboBox *m_modelBox;
     QSpinBox *m_posx,*m_posy;
     QDoubleSpinBox *m_orientation, *m_conductivity, *m_permittivity;
     QSpinBox *m_pointX, *m_pointY;
-    QVector <QPointF> m_points;
+    QVector <QPointF> m_extremities;
     QTextEdit *m_extremitiesViewer;
+    QPointF initialpos;
 
 public slots:
-    void newProperties();
+    void saveProperties();
     void changeModel(QString model);
     void addExtremities();
     void removeExtremities();

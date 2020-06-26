@@ -39,26 +39,12 @@ void MathematicalBuildingProduct::setModel(std::string model){
 }
 
 void MathematicalBuildingProduct::update(QGraphicsItem *graphic){
-    QPointF moveDirection = QPointF(graphic->x(),graphic->y()) - QPointF(m_posx,m_posy);
-
-    cout<<"Move direction: "<<moveDirection.x()<<", "<<moveDirection.y()<<endl;
-    cout<<"Graphic building: "<<graphic->x()<<", "<<graphic->y()<<endl;
-
-    this->translate(moveDirection);
-    cout<<"Math building: "<<m_posx<<", "<<m_posy<<endl;
-
-    cout<<"Building position: "<<endl;
-    for(int i=0;i<size();i++){
-        cout<<this->at(i).x()<<", "<<this->at(i).y()<<endl;
-    }
-    cout<<"---------------------"<<endl;
-
+    QPointF offset = QPointF(graphic->x(),graphic->y()) - QPointF(m_posx,m_posy);
+    this->translate(offset);
     setPosX(graphic->scenePos().x());
     setPosY(graphic->scenePos().y());
-
-    moveWalls(moveDirection);
-    //m_extremities.swap(*this);
-
+    moveWalls(offset);
+    setExtremities(*this);
 }
 
 void MathematicalBuildingProduct::openDialog(){
@@ -66,7 +52,11 @@ void MathematicalBuildingProduct::openDialog(){
 }
 
 void MathematicalBuildingProduct::newProperties(){
-    m_graphic->notifyToGraphic(this,m_posx,m_posy);
+    QPolygonF poly = *this;
+    poly.translate(-m_posx, -m_posy);
+    std::cout << "Building: " << this->at(0).x() << " and " << this->at(0).y() << std::endl;
+    std::cout << "Poly: " << poly.at(0).x() << " and " << poly.at(0).y() << std::endl;
+    m_graphic->notifyToGraphic(&poly,m_posx,m_posy);
 }
 
 

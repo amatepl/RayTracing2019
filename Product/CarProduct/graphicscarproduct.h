@@ -19,6 +19,7 @@ public:
     void draw() override;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+    void notifyToGraphic(QRectF *) override;
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;

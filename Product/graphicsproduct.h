@@ -19,6 +19,8 @@ public:
     virtual void draw() = 0;
     virtual bool graphicsSelected() {return false;}
     std::string getType() {return m_type;}
+
+    // GraphicsProduct act has an observable with MathematicalProduct
     void attachObserver(MathematicalProduct* product){m_observer = product;};
     MathematicalProduct* toMathematicalProduct(){return m_observer;};
 
