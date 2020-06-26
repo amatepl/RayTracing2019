@@ -1,12 +1,15 @@
 #include "mathematicalbuildingproduct.h"
 
-MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points) : QPolygonF(points){
+MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points) : QPolygonF(points),
+    m_posx(0),m_posy(0)
+{
     //m_mathematicalfactory = mathematicalFactory;
     m_extremities = points;
     setModel("concrete");
     m_type = "Building";
-    for(int i =0; i<size();i++){
-        Wall *wall = new Wall(this->at(i),this->at((i+1)%size()),0.0,m_conductivity,m_permittivity,i);
+    for(int i =0; i<size()-1;i++){
+        Wall *wall = new Wall(this->at(i),this->at((i+1)%(size())),0.0,m_conductivity,m_permittivity,i);
+        wall->setBuilding(this);
         m_walls.push_back(wall);
     }
 }
@@ -36,11 +39,26 @@ void MathematicalBuildingProduct::setModel(std::string model){
 }
 
 void MathematicalBuildingProduct::update(QGraphicsItem *graphic){
-    setPosX(graphic->x());
-    setPosY(graphic->y());
-
     QPointF moveDirection = QPointF(graphic->x(),graphic->y()) - QPointF(m_posx,m_posy);
+
+    cout<<"Move direction: "<<moveDirection.x()<<", "<<moveDirection.y()<<endl;
+    cout<<"Graphic building: "<<graphic->x()<<", "<<graphic->y()<<endl;
+
     this->translate(moveDirection);
+    cout<<"Math building: "<<m_posx<<", "<<m_posy<<endl;
+
+    cout<<"Building position: "<<endl;
+    for(int i=0;i<size();i++){
+        cout<<this->at(i).x()<<", "<<this->at(i).y()<<endl;
+    }
+    cout<<"---------------------"<<endl;
+
+    setPosX(graphic->scenePos().x());
+    setPosY(graphic->scenePos().y());
+
+    moveWalls(moveDirection);
+    //m_extremities.swap(*this);
+
 }
 
 void MathematicalBuildingProduct::openDialog(){
@@ -71,7 +89,7 @@ QPointF MathematicalBuildingProduct::closestPoint(const QPointF &point)
 {
     vector<QLineF> distances;
 
-    for(int i=0;i<size();i++){
+    for(int i=0;i<size()-1;i++){
         distances.push_back(QLineF(point,this->at(i)));
     }
 
@@ -85,8 +103,8 @@ vector <Wall*>MathematicalBuildingProduct::nearestWalls(const QPointF &point)
 {
     vector<Wall*> walls;
 
-    for(int i=0; i<size();i++){
-        if(point == m_walls.at(1)->p1() || point == m_walls.at(1)->p2()){
+    for(int i=0; i<size()-1;i++){
+        if(point == m_walls.at(i)->p1() || point == m_walls.at(i)->p2()){
             walls.push_back(m_walls.at(i));
         }
     }
@@ -124,20 +142,62 @@ vector <QPointF> MathematicalBuildingProduct::extremities(const QPointF &light){
 
     vector <Wall*> walls = nearestWalls(closestPoint(light));
     vector <QPointF> extremities;
+    vector <QPointF> nonCommonPoints;
     QPointF intersectionPoint;
+
+    if(walls.at(1)->p2() != walls.at(0)->p2() && walls.at(1)->p2() != walls.at(0)->p1()){
+        nonCommonPoints.push_back(walls.at(1)->p2());
+    }
+    else{
+        nonCommonPoints.push_back(walls.at(1)->p1());
+    }
+
+    if(walls.at(0)->p1() != walls.at(1)->p2() && walls.at(0)->p1() != walls.at(1)->p1()){
+        nonCommonPoints.push_back(walls.at(0)->p1());
+    }
+    else{
+        nonCommonPoints.push_back(walls.at(0)->p2());
+    }
+
+
+    if (walls.at(1)->intersect(QLineF(light,nonCommonPoints.at(1)),&intersectionPoint) == 1){
+        extremities.push_back(walls.at(1)->p2());
+        extremities.push_back(walls.at(1)->p1());
+    }
+    else if (walls.at(0)->intersect(QLineF(light,nonCommonPoints.at(0)),&intersectionPoint) == 1){
+        extremities.push_back(walls.at(0)->p2());
+        extremities.push_back(walls.at(0)->p1());
+    }
+    else {
+         extremities = nonCommonPoints;
+    }
+
     //cout<<"Number of walls: "<<walls.size()<<endl;
-   if (walls.at(1)->intersect(QLineF(light,walls.at(0)->p1()),&intersectionPoint) == 1){
-       extremities.push_back(walls.at(1)->p2());
-       extremities.push_back(walls.at(1)->p1());
-   }
-   else if (walls.at(0)->intersect(QLineF(light,walls.at(1)->p2()),&intersectionPoint) == 1){
-       extremities.push_back(walls.at(0)->p2());
-       extremities.push_back(walls.at(0)->p1());
-   }
-   else {
-       extremities.push_back(walls.at(1)->p2());
-       extremities.push_back(walls.at(0)->p1());
-   }
+//   if (walls.at(1)->intersect(QLineF(light,walls.at(0)->p1()),&intersectionPoint) == 1){
+//       extremities.push_back(walls.at(1)->p2());
+//       extremities.push_back(walls.at(1)->p1());
+//   }
+//   else if (walls.at(0)->intersect(QLineF(light,walls.at(1)->p2()),&intersectionPoint) == 1){
+//       extremities.push_back(walls.at(0)->p2());
+//       extremities.push_back(walls.at(0)->p1());
+//   }
+//   else {
+//        if(walls.at(1)->p2() != walls.at(0)->p2() && walls.at(1)->p2() != walls.at(0)->p1()){
+//            extremities.push_back(walls.at(1)->p2());
+//        }
+//        else{
+//            extremities.push_back(walls.at(1)->p1());
+//        }
+
+//        if(walls.at(0)->p1() != walls.at(1)->p2() && walls.at(0)->p1() != walls.at(1)->p1()){
+//            extremities.push_back(walls.at(0)->p1());
+//        }
+//        else{
+//            extremities.push_back(walls.at(0)->p2());
+//        }
+
+
+//   }
    return extremities;
 }
 

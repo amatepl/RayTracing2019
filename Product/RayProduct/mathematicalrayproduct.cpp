@@ -10,9 +10,9 @@ MathematicalRayProduct::MathematicalRayProduct(const QPointF &p1,const QPointF &
 
 
 MathematicalRayProduct::~MathematicalRayProduct(){
-    cout<<"Math ray nearly deleted"<<endl;
+    //cout<<"Math ray nearly deleted"<<endl;
     delete m_graphic;
-    cout<<"Math ray deleted"<<endl;
+    //cout<<"Math ray deleted"<<endl;
 }
 
 /*

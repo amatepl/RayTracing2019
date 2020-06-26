@@ -30,7 +30,7 @@ QPointF Wall::symetricalPoint(const QPointF &point){
     return finalVector.p2();
 }
 
-void Wall::setBuilding(Building *building){
+void Wall::setBuilding(MathematicalBuildingProduct *building){
     m_building = building;
 }
 
@@ -50,6 +50,6 @@ double Wall::getEpsilon() const{return thick;}
 double Wall::getSigma() const{return epsilon;}
 double Wall::getThick() const{return sigma;}
 int Wall::getIndWall() const{return indWall;}
-Building* Wall::getBuilding()const{
+MathematicalBuildingProduct* Wall::getBuilding()const{
     return m_building;
 }

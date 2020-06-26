@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include "Share/line.h"
-class Building;
+class MathematicalBuildingProduct;
 
 class Wall: public Line
 {
@@ -16,8 +16,8 @@ public:
     double getEpsilon()const;
     int getIndWall()const;
     QPointF symetricalPoint(const QPointF &point);
-    void setBuilding(Building *building);
-    Building* getBuilding()const;
+    void setBuilding(MathematicalBuildingProduct *building);
+    MathematicalBuildingProduct* getBuilding()const;
     QPointF otherPoint(const QPointF &point)const;
 
 private:
@@ -25,7 +25,7 @@ private:
     double epsilon;
     double sigma;
     int indWall;
-    Building *m_building;
+    MathematicalBuildingProduct *m_building;
 };
 
 #endif // WALL_H

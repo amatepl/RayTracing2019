@@ -45,6 +45,7 @@ public:
     void setRow(int row);
     void setColumn(int column);
     void setOrientation(float orientation);
+    QPolygonF buildCoverage();
 
     //virtual void setModel(Model model) override;
 
@@ -52,7 +53,7 @@ public:
     double computeReflexionPer(double thetaI, double epsilonR);
 
     void update(QGraphicsItem *graphic) override;
-    void setRayFactory(AbstractRayFactory* rayFactory);
+//    void setRayFactory(AbstractRayFactory* rayFactory) override;
 
     vector<vector<MathematicalRayProduct>*> getRays();
     void notifyObservables();
@@ -65,12 +66,15 @@ public:
     void attachObservable(ProductObservable *productObservable) override;
     void openDialog() override;
 
-    QPolygonF getIlluminationZone(const QRectF &rect)const override;
+
 
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
+
+    //AbstractAntenna
     void notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) override;
-    //QPointF getPosition()const override;
+    QPointF getPosition()const override;
+    QPolygonF getIlluminationZone(const QRectF &rect)const override;
     QPolygonF getIlluminationZone()const override;
     void setSceneBoundary(const QRectF &rect);
     void setIlluminatedZone(const QPolygonF &zone) override;
@@ -84,13 +88,15 @@ private:
     double m_power;
     unsigned long m_frequency;
     double m_powerAtReceiver;
-    AbstractRayFactory* m_rayFactory;
+    //AbstractRayFactory* m_rayFactory;
     ModelObservable* m_model;
     vector<ProductObservable*> m_productObservable;
+    int m_radius;
 
     QRectF m_sceneBoundary;
 
-    QPolygonF m_zone;
+
+    //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;
     vector<vector<MathematicalRayProduct>*> m_wholeRays;
 

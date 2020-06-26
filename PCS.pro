@@ -48,6 +48,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/TransmitterProduct/dialogtransmitterproduct.h \
     Product/TransmitterProduct/graphicstransmitterproduct.h \
     Product/TransmitterProduct/mathematicaltransmitterproduct.h \
+    Product/TransmitterProduct/transmitterimage.h \
     Product/TransmitterProduct/transmitterproduct.h \
     Product/TreeProduct/dialogtreeproduct.h \
     Product/TreeProduct/graphicstreeproduct.h \
@@ -89,6 +90,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TransmitterProduct/dialogtransmitterproduct.cpp \
     Product/TransmitterProduct/graphicstransmitterproduct.cpp \
     Product/TransmitterProduct/mathematicaltransmitterproduct.cpp \
+    Product/TransmitterProduct/transmitterimage.cpp \
     Product/TreeProduct/dialogtreeproduct.cpp \
     Product/TreeProduct/graphicstreeproduct.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \

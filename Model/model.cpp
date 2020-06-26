@@ -42,14 +42,16 @@ void Model::setModelObservers(){
     }
 }
 
-void Model::launchAlgorithm(AbstractAlgorithmFactory* algorithmFactory){
+void Model::launchAlgorithm(AlgorithmInterface *algorithm){
 
-    m_algorithm = algorithmFactory->createAlgorithm((MathematicalTransmitterProduct*)m_mathematicalComponents["Transmitter"].at(0), (MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(0));
-    //m_algorithm->compute();
-    setObservableProducts();
+    m_algorithm = algorithm;
+    //m_algorithm = algorithmFactory->createAlgorithm((MathematicalTransmitterProduct*)m_mathematicalComponents["Transmitter"].at(0), (MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(0));
+
+    //m_algorithm->compute(m_mathematicalComponents["Transmitter"],m_mathematicalComponents["Receiver"].at(0),m_mathematicalComponents["Builiding"]);
+    //setObservableProducts();
+    m_algorithm->compute(m_mathematicalComponents);
     setModelObservers();
     for(int i = 0; i < m_mathematicalComponents.count("Receiver"); i++){
-        cout<<"Observer Notified"<<endl;
         //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
         dynamic_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
     }
@@ -59,11 +61,7 @@ void Model::launchAlgorithm(AbstractAlgorithmFactory* algorithmFactory){
 
     MathematicalReceiverProduct* receiver = (MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(0);
 
-    cout<<"Transmitter selected"<<endl;
-
-
     //m_windowModelObservable->modelAnswer(transmitter->getRays().at(0));
-    cout<<"Algortihm Launched"<<endl;
 
 }
 
@@ -73,6 +71,8 @@ MathematicalTransmitterProduct* Model::selectTransmitter(){
 }
 
 void Model::notify(MathematicalTransmitterProduct* transmitter){
-    m_windowModelObservable->modelNotify(transmitter->getRays().at(0));
+    //cout<<"Notifies"<<endl;
+    cout<<"Number of whole rays: "<< (transmitter->getRays()).size()<<endl;
+    m_windowModelObservable->modelNotify(transmitter->getRays());
 }
 

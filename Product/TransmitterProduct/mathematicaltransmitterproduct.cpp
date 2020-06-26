@@ -1,14 +1,18 @@
 #include "mathematicaltransmitterproduct.h"
-MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY)
+MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY):QPointF(posX,posY)
 {
-    setX(posX);
-    setY(posY);
+    //setX(posX);
+    //setY(posY);
     m_type = "Transmitter";
+    m_radius = 500;
+    m_zone = buildCoverage();
+
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
 
 }
+
 
 
 double MathematicalTransmitterProduct::computeGain(double theta,double phi, double frequency, int row,int column,double antennaDistance){
@@ -90,13 +94,24 @@ void MathematicalTransmitterProduct::setColumn(int column) {
     m_column = column;
 }
 
+QPolygonF MathematicalTransmitterProduct::buildCoverage(){
+    QPolygonF coverage;
+    for(int i=0;i<16;i++){
+        coverage<<QPointF(x()+m_radius*cos(M_PI*i/8),y()+m_radius*sin(M_PI*i/8));
+    }
+    return coverage;
+}
+
 void MathematicalTransmitterProduct::update(QGraphicsItem* graphic){
+    QPointF direction(graphic->scenePos().x() - x(),graphic->scenePos().y() - y());
+    m_zone.translate(direction);
     setX(graphic->scenePos().x());
     setY(graphic->scenePos().y());
     notifyObservables();
-    //notify(*this);
-//    setX(graphic->x());
-//    setY(graphic->y());
+
+//    for(int i =0;i<m_zone.size();i++){
+//        cout<<m_zone.at(i).x()<<", "<<m_zone.at(i).y()<<endl;
+//    }
 
 }
 
@@ -109,17 +124,19 @@ void MathematicalTransmitterProduct::notifyObservables(){
 void MathematicalTransmitterProduct::notify(const QPointF &pos){
     //m_EMfield = 0;
     //m_power = 0;
-    cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
-    cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
+    //cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
+    //cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
+    cout<<"Transmitter notified !"<<endl;
 
-    for(int i =0; i<m_wholeRays.size();i++){
-        for(int j=0;j<m_wholeRays.at(i)->size();j++){
-            delete &m_wholeRays.at(i)->at(j);
-        }
-    }
-    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
+//    for(int i =0; i<m_wholeRays.size();i++){
+//        for(int j=0;j<m_wholeRays.at(i)->size();j++){
+//            delete &m_wholeRays.at(i)->at(j);
+//        }
+//    }
+//    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
     //m_wholeRays.shrink_to_fit();
-    //if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
+
+    if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
         vector<MathematicalRayProduct> *wholeRay = new vector<MathematicalRayProduct>;
         QPointF m_pos(int(this->x()),int(this->y()));
         //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
@@ -128,16 +145,27 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
         m_EMfield += computeEMfield(wholeRay);
         //m_power = m_scene->computePrx(m_EMfield,this);
         //m_receiver->addWholeRay(wholeRay);
-//        switch(m_mode){
-//            case RayTracing:m_scene->drawChosenRays(&m_wholeRays,this);
-//        }
+
+        cout<<"My number of whoeRays: "<<m_wholeRays.size()<<endl;
+
+        //m_model->notify(this);
+    }
     //}
 
         //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
-
-
-        m_model->notify(this);
 }
+
+void MathematicalTransmitterProduct::notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) {
+    MathematicalRayProduct newRay = *m_rayFactory->createRay(*this,point);
+    wholeRay->push_back(newRay);
+    m_wholeRays.push_back(wholeRay);
+    //m_receiver->addWholeRay(wholeRay);
+    m_EMfield += computeEMfield(wholeRay);
+    //m_power = computePrx(m_EMfield,this);
+    m_model->notify(this);
+
+}
+
 
 double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR){
     //double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
@@ -224,9 +252,9 @@ vector<vector<MathematicalRayProduct> *> MathematicalTransmitterProduct::getRays
     return m_wholeRays;
     }
 
-void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactory){
-    m_rayFactory = rayFactory;
-}
+//void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactory){
+//    m_rayFactory = rayFactory;
+//}
 
 void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable){
     m_model = modelObservable;
@@ -243,6 +271,10 @@ void MathematicalTransmitterProduct::openDialog(){
 
 //--------------------------
 
+QPointF MathematicalTransmitterProduct::getPosition()const{
+    return *this;
+}
+
 QPolygonF MathematicalTransmitterProduct::getIlluminationZone(const QRectF &rect)const{
     return QPolygonF(rect);
 }
@@ -254,7 +286,8 @@ QPolygonF MathematicalTransmitterProduct::getIlluminationZone()const{
      * any element to the scene once the antena is set.
      */
 
-    return QPolygonF(m_sceneBoundary);
+//    return QPolygonF(m_sceneBoundary);
+    return m_zone;
 }
 
 QPolygonF MathematicalTransmitterProduct::getIlluminatedZone()const{
@@ -308,15 +341,6 @@ vector <QPointF> MathematicalTransmitterProduct::boundaryCorners(const QRectF &r
     return points;
 }
 
-void MathematicalTransmitterProduct::notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) {
-    MathematicalRayProduct newRay = *m_rayFactory->createRay(*this,point);
-    wholeRay->push_back(newRay);
-    m_wholeRays.push_back(wholeRay);
-    //m_receiver->addWholeRay(wholeRay);
-    m_EMfield += computeEMfield(wholeRay);
-    //m_power = computePrx(m_EMfield,this);
-
-}
 
 
 
