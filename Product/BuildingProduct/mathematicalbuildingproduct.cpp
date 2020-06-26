@@ -5,6 +5,8 @@ MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points
     m_extremities = points;
     setModel("concrete");
     m_type = "Building";
+    m_posx = 0;
+    m_posy = 0;
     for(int i =0; i<size();i++){
         Wall *wall = new Wall(this->at(i),this->at((i+1)%size()),0.0,m_conductivity,m_permittivity,i);
         m_walls.push_back(wall);
@@ -36,11 +38,16 @@ void MathematicalBuildingProduct::setModel(std::string model){
 }
 
 void MathematicalBuildingProduct::update(QGraphicsItem *graphic){
+    int savex = m_posx;
+    int savey = m_posy;
     setPosX(graphic->x());
     setPosY(graphic->y());
-
-    QPointF moveDirection = QPointF(graphic->x(),graphic->y()) - QPointF(m_posx,m_posy);
-    this->translate(moveDirection);
+    QPointF offset = QPointF(getPosX() - savex,getPosY() - savey);
+    QPolygonF *poly = this;
+    poly->translate(offset);
+    setExtremities(*poly);
+    //QPointF moveDirection = QPointF(graphic->x(),graphic->y()) - QPointF(m_posx,m_posy);
+    //this->translate(moveDirection);
 }
 
 void MathematicalBuildingProduct::openDialog(){

@@ -31,6 +31,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Observer/sceneobserver.h \
     Observer/windowobserver.h \
     Observer/windowomodelbservable.h \
+    Product/BuildingProduct/buildingproduct.h \
     Product/BuildingProduct/dialogbuildingproduct.h \
     Product/BuildingProduct/graphicsbuildingproduct.h \
     Product/BuildingProduct/mathematicalbuildingproduct.h \

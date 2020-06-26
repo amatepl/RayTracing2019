@@ -30,10 +30,6 @@ QPointF Wall::symetricalPoint(const QPointF &point){
     return finalVector.p2();
 }
 
-void Wall::setBuilding(Building *building){
-    m_building = building;
-}
-
 QPointF Wall::otherPoint(const QPointF &point) const{
     QPointF res;
     if(point == p1()){
@@ -43,13 +39,4 @@ QPointF Wall::otherPoint(const QPointF &point) const{
         res = p1();
     }
     return res;
-}
-
-// --> Getters && Setters
-double Wall::getEpsilon() const{return thick;}
-double Wall::getSigma() const{return epsilon;}
-double Wall::getThick() const{return sigma;}
-int Wall::getIndWall() const{return indWall;}
-Building* Wall::getBuilding()const{
-    return m_building;
 }

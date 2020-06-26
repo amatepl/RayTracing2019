@@ -4,31 +4,32 @@
 #include <QPolygonF>
 #include <array>
 
+#include "buildingproduct.h"
 #include "Product/mathematicalproduct.h"
 #include "dialogbuildingproduct.h"
 #include "Share/wall.h"
 
 using namespace std;
 
-class MathematicalBuildingProduct : public QPolygonF, public MathematicalProduct
+class MathematicalBuildingProduct : public QPolygonF, public MathematicalProduct, public BuildingProduct
 {
 public:
     MathematicalBuildingProduct(QVector<QPointF> points);
     ~MathematicalBuildingProduct() override;
 
-    std::string changeAppearance() override {return m_model;}
-
-    int getPosX() {return m_posx;}
-    int getPosY() {return m_posy;}
-    void setPosX(int posx) {m_posx = posx;}
-    void setPosY(int posy) {m_posy = posy;}
-    double getConductivity() {return m_conductivity;}
-    double getPermittivity() {return m_permittivity;}
-    void setConductivity(double sigma) {m_conductivity = sigma;}
-    void setPermittivity(double eps) {m_permittivity = eps;}
-    void setModel(std::string model);
-    QVector<QPointF> getExtremities() {return m_extremities;}
-    void setExtremities(QVector<QPointF> extremities);
+    // From BuildingProduct
+    int getPosX() override {return m_posx;}
+    int getPosY() override {return m_posy;}
+    void setPosX(int posx) override {m_posx = posx;}
+    void setPosY(int posy) override {m_posy = posy;}
+    double getConductivity() override {return m_conductivity;}
+    double getPermittivity() override {return m_permittivity;}
+    void setConductivity(double sigma) override {m_conductivity = sigma;}
+    void setPermittivity(double eps) override {m_permittivity = eps;}
+    QVector<QPointF> getExtremities() override {return m_extremities;}
+    std::string getModel() override {return m_model;}
+    void setModel(std::string model) override;
+    void setExtremities(QVector<QPointF> extremities) override;
 
     void moveToPosition(const QPointF &pos);
     void moveWalls(QPointF &moveDirection);
@@ -40,7 +41,10 @@ public:
     Wall* cornerSecondWall(Wall *wall, const QPointF &corner)const;
     QPointF forDiffraction(Wall *wall, const QPointF &corner)const;
 
-    void newProperties();
+    void newProperties() override;
+
+    // From MathematicalProduct
+    std::string changeAppearance() override {return m_model;}
     void update(QGraphicsItem* graphic) override;
     void openDialog() override;
 
@@ -48,8 +52,7 @@ private:
     QVector<QPointF> m_extremities;
     int m_posx, m_posy; // Correspond to the up-left corner
     std::string m_model;
-    double m_orientation,m_permittivity,m_conductivity;
-
+    double m_permittivity,m_conductivity;
     vector<Wall*> m_walls; // Array of pointers.
 };
 

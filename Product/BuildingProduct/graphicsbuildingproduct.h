@@ -17,17 +17,17 @@ public:
     ~GraphicsBuildingProduct() override;
 
     static QPixmap getImage();
-
-    bool graphicsSelected() override;
-    void draw() override;
-    QVector<QPointF> getExtremities();
-
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
-
+    QVector<QPointF> getExtremities() {return m_extremities;}
     void setExtremities(QVector<QPointF> extremities);
     void setModel(std::string model);
-    int getModel();
+    std::string getModel() {return m_model;}
 
+    // From GraphicsItem
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
+
+    // From GraphicsProduct
+    bool graphicsSelected() override;
+    void draw() override;
     void notifyToGraphic(QPolygonF *,int,int) override;
 
 protected:
@@ -37,9 +37,6 @@ protected:
 private:
     QGraphicsScene *m_scene;
     QVector<QPointF> m_extremities;
-    //int m_posx,m_posy;
-    //double m_orientation,m_permittivity,m_conductivity;
-    //MathematicalComponent *m_mathematicalComponent;
     std::string m_model;
     QMenu* m_productmenu;
 };

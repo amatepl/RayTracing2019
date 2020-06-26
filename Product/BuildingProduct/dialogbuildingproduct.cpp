@@ -1,12 +1,12 @@
 #include "dialogbuildingproduct.h"
 
-DialogBuildingProduct::DialogBuildingProduct(MathematicalBuildingProduct* mathematicalproduct):
+DialogBuildingProduct::DialogBuildingProduct(BuildingProduct* mathematicalproduct):
     m_mathematicalproduct(mathematicalproduct)
 {
     createDialog();
     setPosX(mathematicalproduct->getPosX());
     setPosY(mathematicalproduct->getPosY());
-    setModel(mathematicalproduct->changeAppearance());
+    setModel(mathematicalproduct->getModel());
     setExtremities(mathematicalproduct->getExtremities());
     writeExtremities();
     setAttribute(Qt::WA_DeleteOnClose,true);
@@ -99,7 +99,7 @@ void DialogBuildingProduct::createDialog(){
     setLayout(firstLayout);
 
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
-    connect(save,SIGNAL(clicked()),this,SLOT(newProperties()));
+    connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
     connect(m_modelBox,SIGNAL(activated(QString)),this,SLOT(changeModel(QString)));
     connect(add,SIGNAL(clicked()),this,SLOT(addExtremities()));
     connect(del,SIGNAL(clicked()),this,SLOT(removeExtremities()));
@@ -122,12 +122,8 @@ double DialogBuildingProduct::getPermittivity(){
     return m_permittivity->value();
 }
 
-std::string DialogBuildingProduct::getModel() {
-    return m_model;
-}
-
 QVector<QPointF> DialogBuildingProduct::getExtremities(){
-    return m_points;
+    return m_extremities;
 }
 
 void DialogBuildingProduct::setPosX(int posX){
@@ -174,16 +170,16 @@ void  DialogBuildingProduct::setModel(std::string model) {
 }
 
 void DialogBuildingProduct::setExtremities(QVector<QPointF> extremities){
-    m_points = extremities;
+    m_extremities = extremities;
 }
 
 void DialogBuildingProduct::writeExtremities(){
     QString newExtremities;
-    for (int i = 0; i<m_points.size();i++){
+    for (int i = 0; i<m_extremities.size();i++){
         newExtremities.append("(");
-        newExtremities.append(QString::number(m_points.at(i).x()-getPosX()));
+        newExtremities.append(QString::number(m_extremities.at(i).x()-getPosX()));
         newExtremities.append(",");
-        newExtremities.append(QString::number(m_points.at(i).y()-getPosY()));
+        newExtremities.append(QString::number(m_extremities.at(i).y()-getPosY()));
         newExtremities.append(") \n");
     }
     m_extremitiesViewer->setPlainText(newExtremities);
@@ -191,7 +187,7 @@ void DialogBuildingProduct::writeExtremities(){
 void DialogBuildingProduct::newProperties(){
     m_mathematicalproduct->setPosX(m_posx->value());
     m_mathematicalproduct->setPosY(m_posy->value());
-    m_mathematicalproduct->setExtremities(m_points);
+    m_mathematicalproduct->setExtremities(m_extremities);
     m_mathematicalproduct->setModel(m_model);
     m_mathematicalproduct->setConductivity(m_conductivity->value());
     m_mathematicalproduct->setPermittivity(m_permittivity->value());
@@ -199,6 +195,9 @@ void DialogBuildingProduct::newProperties(){
     close();
 }
 
+void DialogBuildingProduct::saveProperties(){
+    newProperties();
+}
 void DialogBuildingProduct::changeModel(QString model)
 {
     if (model == "Brick")setModel("brick");
@@ -207,11 +206,11 @@ void DialogBuildingProduct::changeModel(QString model)
 }
 
 void DialogBuildingProduct::addExtremities(){
-    m_points.append(QPointF(m_pointX->value(),m_pointY->value()));
+    m_extremities.append(QPointF(m_pointX->value() + getPosX(),m_pointY->value() + getPosY()));
     writeExtremities();
 }
 
 void DialogBuildingProduct::removeExtremities(){
-    m_points.removeLast();
+    m_extremities.removeLast();
     writeExtremities();
 }

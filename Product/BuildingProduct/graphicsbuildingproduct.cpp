@@ -85,4 +85,5 @@ void GraphicsBuildingProduct::notifyToGraphic(QPolygonF *poly, int posX, int pos
     setX(posX);
     setY(posY);
     setModel(m_observer->changeAppearance());
+    std::cout << posX << " and " << posY << std::endl;
 }

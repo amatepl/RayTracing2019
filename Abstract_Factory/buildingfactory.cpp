@@ -9,12 +9,7 @@ BuildingFactory::BuildingFactory(QMenu *productmenu, QGraphicsScene* scene)
 GraphicsProduct* BuildingFactory::createGraphicsProduct(int posX, int posY){
     GraphicsBuildingProduct* graphicsProduct = new GraphicsBuildingProduct(m_productmenu,m_scene);
     QVector<QPointF> points = graphicsProduct->polygon();
-    QVector<QPointF> p;
-    for(int i =0;i< points.size();i++){
-        p.push_back(points.at(i)+QPointF(posX,posY));
-    }
-
-    MathematicalBuildingProduct* mathematicalProduct = new MathematicalBuildingProduct(p);
+    MathematicalBuildingProduct* mathematicalProduct = new MathematicalBuildingProduct(points);
     graphicsProduct->attachObserver(mathematicalProduct);
     graphicsProduct->setX(posX);
     graphicsProduct->setY(posY);
