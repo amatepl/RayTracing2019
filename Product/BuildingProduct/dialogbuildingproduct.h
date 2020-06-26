@@ -49,6 +49,7 @@ private:
     QSpinBox *m_pointX, *m_pointY;
     QVector <QPointF> m_extremities;
     QTextEdit *m_extremitiesViewer;
+    QPointF initialpos;
 
 public slots:
     void saveProperties();

@@ -6,6 +6,7 @@ DialogBuildingProduct::DialogBuildingProduct(BuildingProduct* mathematicalproduc
     createDialog();
     setPosX(mathematicalproduct->getPosX());
     setPosY(mathematicalproduct->getPosY());
+    initialpos = QPointF(getPosX(),getPosY());
     setModel(mathematicalproduct->getModel());
     setExtremities(mathematicalproduct->getExtremities());
     writeExtremities();
@@ -177,9 +178,9 @@ void DialogBuildingProduct::writeExtremities(){
     QString newExtremities;
     for (int i = 0; i<m_extremities.size();i++){
         newExtremities.append("(");
-        newExtremities.append(QString::number(m_extremities.at(i).x()-getPosX()));
+        newExtremities.append(QString::number(m_extremities.at(i).x()));
         newExtremities.append(",");
-        newExtremities.append(QString::number(m_extremities.at(i).y()-getPosY()));
+        newExtremities.append(QString::number(m_extremities.at(i).y()));
         newExtremities.append(") \n");
     }
     m_extremitiesViewer->setPlainText(newExtremities);
@@ -187,6 +188,14 @@ void DialogBuildingProduct::writeExtremities(){
 void DialogBuildingProduct::newProperties(){
     m_mathematicalproduct->setPosX(m_posx->value());
     m_mathematicalproduct->setPosY(m_posy->value());
+    QPointF offset = QPointF(m_posx->value(),m_posy->value()) - initialpos;
+    for (int i = 0; i<m_extremities.size();i++){
+        QPointF p = m_extremities.at(i);
+        p = p + offset;
+        std::cout << "p: " << p.x() << "Extremities: " << m_extremities.at(i).x()<< std::endl;
+        m_extremities.replace(i,p);
+                std::cout << "p: " << p.x() << "Extremities: " << m_extremities.at(i).x()<< std::endl;
+    }
     m_mathematicalproduct->setExtremities(m_extremities);
     m_mathematicalproduct->setModel(m_model);
     m_mathematicalproduct->setConductivity(m_conductivity->value());
@@ -206,11 +215,13 @@ void DialogBuildingProduct::changeModel(QString model)
 }
 
 void DialogBuildingProduct::addExtremities(){
-    m_extremities.append(QPointF(m_pointX->value() + getPosX(),m_pointY->value() + getPosY()));
+    m_extremities.append(QPointF(m_pointX->value(),m_pointY->value()));
     writeExtremities();
 }
 
 void DialogBuildingProduct::removeExtremities(){
-    m_extremities.removeLast();
-    writeExtremities();
+    if (m_extremities.size()>1){
+        m_extremities.removeLast();
+        writeExtremities();
+    }
 }
