@@ -55,7 +55,7 @@ public:
     void update(QGraphicsItem *graphic) override;
 //    void setRayFactory(AbstractRayFactory* rayFactory) override;
 
-    vector<vector<MathematicalRayProduct>*> getRays();
+    vector<vector<MathematicalRayProduct *> *> getRays();
     void notifyObservables();
 
     // ProductObserver
@@ -72,7 +72,7 @@ public:
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
 
     //AbstractAntenna
-    void notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) override;
+    void notifyParent(const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
     QPointF getPosition()const override;
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
     QPolygonF getIlluminationZone()const override;
@@ -98,7 +98,7 @@ private:
 
     //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;
-    vector<vector<MathematicalRayProduct>*> m_wholeRays;
+    vector<vector<MathematicalRayProduct*>*> m_wholeRays;
 
     complex<double> m_EMfield;
 

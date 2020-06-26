@@ -8,7 +8,7 @@ struct forImage{
 void ImagesMethod::createImages(){
     int recursionDepth = reflectionsNumber;
 
-    cout<<"In createImages"<<endl;
+    //cout<<"In createImages"<<endl;
 
     foreach(MathematicalTransmitterProduct* transmitter,m_transmitters){
         m_receiver->attachObserver(transmitter);
@@ -86,7 +86,7 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
 
             illuminationZone = illuminationZone.subtracted(building->shadow(ant->getPosition()));
 
-            m_scene->addPolygon(building->shadow(ant->getPosition()),QPen(),illumination2);
+            //m_scene->addPolygon(building->shadow(ant->getPosition()),QPen(),illumination2);
 
             QPointF corner = building->closestPoint(ant->getPosition()); // Closest point of the building to the transmitter
             nearestWalls.push_back(building->nearestWalls(corner).at(0));   // Add the 2 walls that are at the corner.
@@ -94,7 +94,7 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
         }
     }
     ant->setIlluminatedZone(illuminationZone);
-    m_scene->addPolygon(illuminationZone,QPen(),illumination2);
+    //m_scene->addPolygon(illuminationZone,QPen(),illumination2);
 
     if(recursionDepth > 0){
         illuminatedWalls(nearestWalls,illuminationZone, recursionDepth -1,ant);
@@ -106,7 +106,7 @@ vector <Line> ImagesMethod::illuminatedWalls(vector <Wall*> walls, const QPolygo
     vector <Line> illuminatedWalls;
     vector <Wall*> usedWalls;
 
-    cout<<"Number of illuminated walls: "<< walls.size()<<endl;
+    //cout<<"Number of illuminated walls: "<< walls.size()<<endl;
 
     QColor illumination2;
     illumination2.setRed(255);
@@ -114,7 +114,7 @@ vector <Line> ImagesMethod::illuminatedWalls(vector <Wall*> walls, const QPolygo
 
     vector <TransmitterImage *> images; // vector for tests
 
-    m_scene->addPolygon(zone,QPen(),illumination2);
+    //m_scene->addPolygon(zone,QPen(),illumination2);
     for(int i=1; i <  zone.length()-1 ;i++){
 
         /*
@@ -136,7 +136,7 @@ vector <Line> ImagesMethod::illuminatedWalls(vector <Wall*> walls, const QPolygo
                 TransmitterImage *image = new TransmitterImage(Line(zone.at(i),zone.at(i+1)),parent);
                 image->setBuilding(walls.at(j)->getBuilding());
                 image->setRayFactory(m_rayFactory);
-                m_scene->addEllipse(image->x(),image->y(),5,5);
+                //m_scene->addEllipse(image->x(),image->y(),5,5);
 
                 //image->setSceneBoundary(itemsBoundingRect());
 

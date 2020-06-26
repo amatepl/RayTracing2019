@@ -23,18 +23,20 @@ void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserve
 }
 
 void MathematicalReceiverProduct::notifyObservers(){
-    //cout<<m_observers.size()<<endl;
-//    foreach(ProductObserver* observer, m_observers){
-//        //cout<<"Observer not yet notified"<<endl;
-//        observer->notify(*this);
-//        //cout<<"Observer notified"<<endl;
-//    }
 
-    for(int i = m_observers.size()-1;i>=0;i--){
-        cout<<"Observer notified 1"<<endl;
-        m_observers.at(i)->notify(*this);
-        cout<<"Observer notified 2"<<endl;
+    foreach(ProductObserver* observer, m_observers){
+        observer->notify(*this);
     }
+
+    for(int i = 0;i<m_observers.size();i++){
+        m_observers.at(i)->notify(*this);
+    }
+
+//    for(int i = m_observers.size()-1;i>=0;i--){
+//        cout<<"Observer notified 1"<<endl;
+//        m_observers.at(i)->notify(*this);
+//        cout<<"Observer notified 2"<<endl;
+//    }
 }
 
 void MathematicalReceiverProduct::openDialog(){

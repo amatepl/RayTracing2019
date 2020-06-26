@@ -126,41 +126,41 @@ void MathematicalTransmitterProduct::notify(const QPointF &pos){
     //m_power = 0;
     //cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
     //cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
-    cout<<"Transmitter notified !"<<endl;
+    //cout<<"Transmitter notified !"<<endl;
 
-//    for(int i =0; i<m_wholeRays.size();i++){
-//        for(int j=0;j<m_wholeRays.at(i)->size();j++){
-//            delete &m_wholeRays.at(i)->at(j);
-//        }
-//    }
-//    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
+    for(int i =0; i<m_wholeRays.size();i++){
+        for(int j=0;j<m_wholeRays.at(i)->size();j++){
+            delete m_wholeRays.at(i)->at(j);
+        }
+    }
+    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
     //m_wholeRays.shrink_to_fit();
 
     if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
-        vector<MathematicalRayProduct> *wholeRay = new vector<MathematicalRayProduct>;
+        vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
         QPointF m_pos(int(this->x()),int(this->y()));
         //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
-        wholeRay->push_back(*m_rayFactory->createRay(*this,pos));
+        wholeRay->push_back(m_rayFactory->createRay(*this,pos));
         m_wholeRays.push_back(wholeRay);
-        m_EMfield += computeEMfield(wholeRay);
+        //m_EMfield += computeEMfield(*wholeRay);
         //m_power = m_scene->computePrx(m_EMfield,this);
         //m_receiver->addWholeRay(wholeRay);
 
-        cout<<"My number of whoeRays: "<<m_wholeRays.size()<<endl;
+        //cout<<"My number of whoeRays: "<<m_wholeRays.size()<<endl;
 
-        //m_model->notify(this);
+        m_model->notify(this);
     }
     //}
 
         //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
 }
 
-void MathematicalTransmitterProduct::notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) {
-    MathematicalRayProduct newRay = *m_rayFactory->createRay(*this,point);
+void MathematicalTransmitterProduct::notifyParent(const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) {
+    MathematicalRayProduct *newRay = m_rayFactory->createRay(*this,point);
     wholeRay->push_back(newRay);
     m_wholeRays.push_back(wholeRay);
     //m_receiver->addWholeRay(wholeRay);
-    m_EMfield += computeEMfield(wholeRay);
+    //m_EMfield += computeEMfield(wholeRay);
     //m_power = computePrx(m_EMfield,this);
     m_model->notify(this);
 
@@ -248,7 +248,7 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     return Efield;
 }
 
-vector<vector<MathematicalRayProduct> *> MathematicalTransmitterProduct::getRays(){
+vector<vector<MathematicalRayProduct*> *> MathematicalTransmitterProduct::getRays(){
     return m_wholeRays;
     }
 

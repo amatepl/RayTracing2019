@@ -26,7 +26,7 @@ public:
     QPolygonF buildCoverage();
 
     //AbstractAntena
-    void notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) override;
+    void notifyParent(const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) override;
     QPolygonF getIlluminationZone()const override;
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
     QPointF getPosition()const override;

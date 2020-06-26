@@ -10,8 +10,10 @@ Model::~Model(){
 }
 
 void Model::addMathematicalComponent(MathematicalProduct* mathematicalProduct){
+
     vector<MathematicalProduct*> tmp;
     string type = mathematicalProduct->getType();
+    cout<<type<<"---------------"<<m_mathematicalComponents.count(type)<<endl;
     if(m_mathematicalComponents.count(type)>0){
         tmp = m_mathematicalComponents[type];
         tmp.push_back(mathematicalProduct);
@@ -73,6 +75,13 @@ MathematicalTransmitterProduct* Model::selectTransmitter(){
 void Model::notify(MathematicalTransmitterProduct* transmitter){
     //cout<<"Notifies"<<endl;
     cout<<"Number of whole rays: "<< (transmitter->getRays()).size()<<endl;
+//    for(int i=0;i<transmitter->getRays().size();i++){
+//        for(int j=0;j<transmitter->getRays().at(i)->size();j++){
+//            cout<<"whole rays nr: "<<i <<" "<<(transmitter->getRays()).at(i)->at(j).p1().x()<<endl;
+//        }
+//    }
+//    vector<vector<MathematicalRayProduct>*> raysTest = transmitter->getRays();
+
     m_windowModelObservable->modelNotify(transmitter->getRays());
 }
 

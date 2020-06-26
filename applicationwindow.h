@@ -41,11 +41,13 @@ public:
     //void attachObserver(WindowObserver *windowobserver) override;
     //void detachObserver(WindowObserver *windowobserver) override;
     //void notify(int mode) override;
+
+    //ModelObservable
     void modelAnswer(vector<MathematicalRayProduct > *sceneproduct) override;
     void modelAnswer(vector<MathematicalProduct*> sceneproduct) override;
     void modelNotify(vector<MathematicalProduct *> sceneproducts) override;
     void modelNotify(vector<MathematicalRayProduct> *sceneproducts) override;
-    void modelNotify(vector<vector<MathematicalRayProduct> *> sceneproducts) override;
+    void modelNotify(vector<vector<MathematicalRayProduct *> *> sceneproducts) override;
 
     QWidget* createToolButton(const QString &text,int id);
     void createActions();

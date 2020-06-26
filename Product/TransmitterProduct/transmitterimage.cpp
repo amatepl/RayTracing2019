@@ -109,8 +109,10 @@ QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect)const {
 }
 
 void TransmitterImage::notify(const QPointF &pos){
+
+
     if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
-        vector<MathematicalRayProduct> *wholeRay = new vector<MathematicalRayProduct>;
+        vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
         QLineF line(*this,pos);
         QPointF reflectionPoint;
         m_wall.intersect(line,&reflectionPoint);
@@ -118,7 +120,7 @@ void TransmitterImage::notify(const QPointF &pos){
         MathematicalRayProduct ray(*m_rayFactory->createRay(reflectionPoint,pos,line.angleTo(m_wall)));
 
         cout<<"Reflected ray: "<<ray.p1().x()<<", "<<ray.p1().y()<<" and p2 = "<<ray.p2().x()<<", "<<ray.p2().y()<<endl;
-        wholeRay->push_back(*m_rayFactory->createRay(reflectionPoint,pos,line.angleTo(m_wall)));
+        wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,pos,line.angleTo(m_wall)));
         m_parent->notifyParent(reflectionPoint,wholeRay);
     }
 }
@@ -127,13 +129,13 @@ void TransmitterImage::attachObservable(ProductObservable* productObservable){
     m_observable.push_back(productObservable);
 }
 
-void TransmitterImage::notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay){
+void TransmitterImage::notifyParent(const QPointF &point, vector<MathematicalRayProduct*> *wholeRay){
     QLineF line(*this,point);
     QPointF reflectionPoint;
     m_wall.intersect(line,&reflectionPoint);
 //    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
 //    wholeRay->push_back(newRay);
-    wholeRay->push_back(*m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
+    wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
     m_parent->notifyParent(reflectionPoint,wholeRay);
 }
 
