@@ -18,16 +18,22 @@ void MathematicalReceiverProduct::update(QGraphicsItem* graphic){
 }
 
 void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserver){
-    cout<<"Observevr attached"<<endl;
+    //cout<<"Observevr attached"<<endl;
     m_observers.push_back(productObserver);
 }
 
 void MathematicalReceiverProduct::notifyObservers(){
-    cout<<m_observers.size()<<endl;
-    foreach(ProductObserver* observer, m_observers){
-        cout<<"Observer not yet notified"<<endl;
-        observer->notify(*this);
-        cout<<"Observer notified"<<endl;
+    //cout<<m_observers.size()<<endl;
+//    foreach(ProductObserver* observer, m_observers){
+//        //cout<<"Observer not yet notified"<<endl;
+//        observer->notify(*this);
+//        //cout<<"Observer notified"<<endl;
+//    }
+
+    for(int i = m_observers.size()-1;i>=0;i--){
+        cout<<"Observer notified 1"<<endl;
+        m_observers.at(i)->notify(*this);
+        cout<<"Observer notified 2"<<endl;
     }
 }
 

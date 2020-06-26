@@ -13,7 +13,9 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_treeFactory = new TreeFactory(m_productmenu,m_map);
     m_carFactory = new CarFactory(m_productmenu,m_map);
     m_model = new Model(this);
-    m_rayTracingAlgorithmFactory = new RayTracingAlgorithmFactory();
+    m_rayTracingAlgorithm = new RayTracing();
+    m_rayTracingAlgorithm->setScene(m_map);
+
 
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
@@ -103,7 +105,22 @@ void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproduc
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
         //m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
         m_map->addItem(gItem);
-        cout<<"Item added to scene"<<endl;
+        //cout<<"Item added to scene"<<endl;
+    }
+}
+
+void ApplicationWindow::modelNotify(vector<vector<MathematicalRayProduct> *> sceneproducts){
+    cout<<"Number of WholeRays: "<<sceneproducts.size()<<endl;
+    for(int i = 0; i< sceneproducts.size();i++){
+        cout<<"Number of Rays in WholeRays: "<<sceneproducts.at(i)->size()<<endl;
+        for(int j=0;j<sceneproducts.at(i)->size();j++){
+            QGraphicsLineItem* gComp =(QGraphicsLineItem*) sceneproducts.at(i)->at(j).toGraphicsProduct();
+            cout<<"before cast "<<sceneproducts.at(i)->size()<<endl;
+            QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->at(j).toGraphicsProduct());
+            cout<<"After cast "<<sceneproducts.at(i)->size()<<endl;
+            m_map->addItem(gItem);
+            //cout<<"Item added to scene"<<endl;
+        }
     }
 }
 
@@ -288,7 +305,7 @@ void ApplicationWindow::notifyMap(){
 
 void ApplicationWindow::notifyModel(){
     cout<<"Model notified"<<endl;
-    m_model->launchAlgorithm(m_rayTracingAlgorithmFactory);
+    m_model->launchAlgorithm(m_rayTracingAlgorithm);
 }
 
 // SLOTS

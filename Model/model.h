@@ -24,7 +24,7 @@ public:
     void addMathematicalComponent(MathematicalProduct* mathematicalProduct);
     void setObservableProducts();
     void setModelObservers();
-    void launchAlgorithm(AbstractAlgorithmFactory* algorithmFactory);
+    void launchAlgorithm(AlgorithmInterface* algorithm);
     MathematicalTransmitterProduct* selectTransmitter();
     void notify(MathematicalTransmitterProduct* transmitter) override;
 

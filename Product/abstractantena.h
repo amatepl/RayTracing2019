@@ -8,23 +8,29 @@ using namespace std;
 
 class QPointF;
 class QPolygonF;
-class  Building;
+class  MathematicalBuildingProduct;
 class MathematicalRayProduct;
+class AbstractRayFactory;
 
 class AbstractAntena
 {
 public:
     virtual void notifyParent(const QPointF &point, vector<MathematicalRayProduct> *wholeRay) = 0;
-    //virtual QPointF getPosition()const = 0;
+    virtual QPointF getPosition()const = 0;
     virtual QPolygonF getIlluminationZone()const = 0;
     virtual QPolygonF getIlluminationZone(const QRectF &rect)const = 0;
-    virtual QPolygonF getIlluminatedZone()const = 0;
-    virtual void setIlluminatedZone(const QPolygonF &zone) = 0;
-    //virtual Building* getBuilding()const;
+    virtual QPolygonF getIlluminatedZone()const{return m_zone;};
+    virtual void setIlluminatedZone(const QPolygonF &zone){m_zone = zone;};
+    virtual void setRayFactory(AbstractRayFactory* rayFactory){m_rayFactory = rayFactory;};
+    virtual MathematicalBuildingProduct* getBuilding()const{return m_building;};
+    virtual void setBuilding(MathematicalBuildingProduct* building){m_building = building;}
     //virtual QPolygonF getIluminationZone(const QRectF &rect)const = 0;
 
 protected:
-    Building *m_building;
+    MathematicalBuildingProduct *m_building;
+    QPolygonF m_zone;
+    AbstractRayFactory *m_rayFactory;
+
 
 };
 

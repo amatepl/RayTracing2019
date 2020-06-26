@@ -9,6 +9,13 @@
 #include "Model/algorithmInterface.h"
 #include "Product/abstractantena.h"
 #include "Product/BuildingProduct/mathematicalbuildingproduct.h"
+#include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
+#include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
+#include "Product/TransmitterProduct/transmitterimage.h"
+
+#include <QGraphicsScene>
+
+class AbstractRayFactory;
 
 using namespace std;
 
@@ -16,15 +23,25 @@ struct forImage;
 
 class ImagesMethod
 {
-//public:
-//    void createImages();
-//    forImage transmitterIllumination(antena *transmitter);
-//    QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
-//    vector <Line> illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+public:
+    void createImages();
+    forImage transmitterIllumination(MathematicalTransmitterProduct *transmitter);
+    QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
+    vector <Line> illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+    void setRayFactory(AbstractRayFactory* rayFactory){m_rayFactory = rayFactory;};
 
-//private:
-//    m_transmitters;
-//    MathematicalBuildingProduct* m_buildings;
+    void setScene(QGraphicsScene* scene){m_scene=scene;};
+
+protected:
+    vector<MathematicalTransmitterProduct*> m_transmitters;
+    vector<MathematicalBuildingProduct*> m_buildings;
+    MathematicalReceiverProduct* m_receiver;
+    int reflectionsNumber;
+    AbstractRayFactory* m_rayFactory;
+
+
+    QGraphicsScene* m_scene;
+
 
 };
 

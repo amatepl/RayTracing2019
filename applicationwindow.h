@@ -21,7 +21,7 @@
 #include "Abstract_Factory/buildingfactory.h"
 #include "Abstract_Factory/treefactory.h"
 #include "Abstract_Factory/carfactory.h"
-#include "Abstract_Factory/raytracingalgorithmfactory.h"
+//#include "Abstract_Factory/raytracingalgorithmfactory.h"
 
 #include "Model/model.h"
 #include "Model/raytracing.h"
@@ -45,6 +45,7 @@ public:
     void modelAnswer(vector<MathematicalProduct*> sceneproduct) override;
     void modelNotify(vector<MathematicalProduct *> sceneproducts) override;
     void modelNotify(vector<MathematicalRayProduct> *sceneproducts) override;
+    void modelNotify(vector<vector<MathematicalRayProduct> *> sceneproducts) override;
 
     QWidget* createToolButton(const QString &text,int id);
     void createActions();
@@ -61,7 +62,7 @@ private:
 
     SceneFactory *m_receiverFactory, *m_transmitterFactory, *m_buildingFactory,
                  *m_treeFactory, *m_carFactory;
-    RayTracingAlgorithmFactory*  m_rayTracingAlgorithmFactory;
+    RayTracing*  m_rayTracingAlgorithm;
 
     GraphicsMode m_graphicsmode;
     ActionMode m_actionmode;
