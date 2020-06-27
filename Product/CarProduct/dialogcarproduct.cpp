@@ -1,12 +1,12 @@
 #include "dialogcarproduct.h"
 
-DialogCarProduct::DialogCarProduct(CarProduct* graphic, DialogFactory* dialogfactory){
-    m_dialogfactory = dialogfactory;
+DialogCarProduct::DialogCarProduct(CarProduct* mathematicalproduct){
+    m_mathematicalproduct = mathematicalproduct;
     createDialog();
-    setPosX(graphic->getPosX());
-    setPosY(graphic->getPosY());
-    setOrientation(graphic->getOrientation());
-    setSpeed(graphic->getSpeed());
+    setPosX(m_mathematicalproduct->getPosX());
+    setPosY(m_mathematicalproduct->getPosY());
+    setOrientation(m_mathematicalproduct->getOrientation());
+    setSpeed(m_mathematicalproduct->getSpeed());
     setAttribute(Qt::WA_DeleteOnClose,true);
     exec();
 }
@@ -59,7 +59,7 @@ void DialogCarProduct::createDialog(){
     setLayout(firstLayout);
 
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
-    connect(save,SIGNAL(clicked()),this,SLOT(newProperties()));
+    connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
 }
 
 int DialogCarProduct::getPosX(){
@@ -94,8 +94,15 @@ void DialogCarProduct::setSpeed(double speed){
     m_speed->setValue(speed);
 }
 
+void DialogCarProduct::saveProperties(){
+    newProperties();
+}
 void DialogCarProduct::newProperties(){
-    m_dialogfactory->receiveCarProduct(this);
+    m_mathematicalproduct->setPosX(m_posx->value());
+    m_mathematicalproduct->setPosY(m_posy->value());
+    m_mathematicalproduct->setOrientation(m_orientation->value());
+    m_mathematicalproduct->setSpeed(m_speed->value());
+    m_mathematicalproduct->newProperties();
     close();
 }
 

@@ -1,11 +1,10 @@
 #include "dialogtreeproduct.h"
 
-DialogTreeProduct::DialogTreeProduct(TreeProduct *graphic, DialogFactory* factory):
-    m_dialogfactory(factory)
+DialogTreeProduct::DialogTreeProduct(TreeProduct *mathematicalproduct):m_mathematicalproduct(mathematicalproduct)
 {
     createDialog();
-    setPosX(graphic->getPosX());
-    setPosY(graphic->getPosY());
+    setPosX(m_mathematicalproduct->getPosX());
+    setPosY(m_mathematicalproduct->getPosY());
     setAttribute(Qt::WA_DeleteOnClose,true);
     exec();
 }
@@ -46,7 +45,7 @@ void DialogTreeProduct::createDialog(){
     setLayout(firstLayout);
 
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
-    connect(save,SIGNAL(clicked()),this,SLOT(newProperties()));
+    connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
 }
 
 int DialogTreeProduct::getPosX(){
@@ -66,6 +65,12 @@ void DialogTreeProduct::setPosY(int posY){
 }
 
 void DialogTreeProduct::newProperties(){
-    m_dialogfactory->receiveTreeProduct(this);
+    m_mathematicalproduct->setPosX(getPosX());
+    m_mathematicalproduct->setPosY(getPosY());
+    m_mathematicalproduct->newProperties();
     close();
+}
+
+void DialogTreeProduct::saveProperties(){
+    newProperties();
 }

@@ -5,22 +5,25 @@
 
 #include "treeproduct.h"
 #include "Product/mathematicalproduct.h"
+#include "dialogtreeproduct.h"
 
-class MathematicalTreeProduct: public QPolygonF, public MathematicalProduct
+class MathematicalTreeProduct: public QPolygonF, public MathematicalProduct, public TreeProduct
 {
 public:
-    MathematicalTreeProduct(QVector<QPointF> points);
+    MathematicalTreeProduct(QPolygonF poly, QPointF center);
     ~MathematicalTreeProduct() override;
 
-    QVector<QPointF> getExtremities() {return m_extremities;}
-    void setExtremities(QVector<QPointF> points) {m_extremities = points;}
+    int getPosX() override;
+    int getPosY() override;
+    void setPosX(int) override;
+    void setPosY(int) override;
+    void newProperties() override;
 
     void update(QGraphicsItem *graphic) override;
     void openDialog() override;
 
 private:
-    //MathematicalFactory* m_factory;
-    QVector<QPointF> m_extremities;
+    QPointF m_center;
 };
 
 #endif // MATHEMATICALTREEPRODUCT_H

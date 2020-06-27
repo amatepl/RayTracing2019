@@ -11,7 +11,7 @@ class DialogTreeProduct: public QDialog, public TreeProduct
 {
     Q_OBJECT
 public:
-    DialogTreeProduct(TreeProduct* graphic, DialogFactory* factory);
+    DialogTreeProduct(TreeProduct* mathematicalproduct);
     ~DialogTreeProduct() override;
 
     void createDialog();
@@ -21,14 +21,15 @@ public:
 
     void setPosX(int) override;
     void setPosY(int) override;
+    void newProperties() override;
 
 private:
-    DialogFactory* m_dialogfactory;
+    TreeProduct* m_mathematicalproduct;
     QSpinBox* m_posx;
     QSpinBox* m_posy;
 
 public slots:
-    void newProperties();
+    void saveProperties();
 };
 
 #endif // DIALOGTREEPRODUCT_H

@@ -41,9 +41,9 @@ void GraphicsCarProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == QGraphicsItem::ItemPositionHasChanged) {
-        //m_mathematicalProduct->setPosX(pos().x());
-        //m_mathematicalProduct->setPosY(pos().y());
+    if (change == QGraphicsItem::ItemPositionHasChanged ||
+        change == QGraphicsItem::ItemTransformHasChanged ||
+        change == QGraphicsItem::ItemRotationHasChanged) {
         m_observer->update(this);
     }
     return value;
@@ -53,7 +53,7 @@ void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     m_observer->openDialog();
 }
 
-void GraphicsCarProduct::notifyToGraphic(QRectF *rect){
-    setX(rect->x());
-    setY(rect->y());
+void GraphicsCarProduct::notifyToGraphic(QPolygonF *rect, int centerx, int centery, double orientation){
+    setPos(centerx,centery);
+    setRotation(orientation);
 }

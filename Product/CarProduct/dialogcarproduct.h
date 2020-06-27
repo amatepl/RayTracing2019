@@ -4,14 +4,14 @@
 #include <QDialog>
 
 #include "carproduct.h"
+#include "graphicscarproduct.h"
 #include "Abstract_Factory/dialogfactory.h"
-#include "Product/CarProduct/graphicscarproduct.h"
 
 class DialogCarProduct: public QDialog, public CarProduct
 {
     Q_OBJECT
 public:
-    DialogCarProduct(CarProduct* graphic, DialogFactory* dialogfactory);
+    DialogCarProduct(CarProduct* mathematicalproduct);
     ~DialogCarProduct() override;
 
     void createDialog();
@@ -25,16 +25,17 @@ public:
     void setPosY(int posY) override;
     void setOrientation(double orientation) override;
     void setSpeed(double) override;
+    void newProperties() override;
 
 private:
-    DialogFactory* m_dialogfactory;
+    CarProduct *m_mathematicalproduct;
     QSpinBox* m_posx;
     QSpinBox* m_posy;
     QDoubleSpinBox* m_orientation;
     QDoubleSpinBox* m_speed;
 
 public slots:
-    void newProperties();
+    void saveProperties();
 };
 
 #endif // DIALOGCARPRODUCT_H
