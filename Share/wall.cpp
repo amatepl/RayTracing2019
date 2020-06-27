@@ -40,3 +40,14 @@ QPointF Wall::otherPoint(const QPointF &point) const{
     }
     return res;
 }
+
+QPointF Wall::farestExtrem(const QPointF &point) const{
+    QLineF line1(point,this->p1()),line2(point,this->p2());
+    QPointF res;
+    if(line1.length()>line2.length()){
+        res = p1();
+    }else {
+        res = p2();
+    }
+    return res;
+}

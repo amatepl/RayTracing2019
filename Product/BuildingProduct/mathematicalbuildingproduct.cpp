@@ -221,3 +221,17 @@ Wall* MathematicalBuildingProduct::cornerSecondWall(Wall *wall,const QPointF &co
     }
     return m_walls[i-1];
 }
+
+bool MathematicalBuildingProduct::adjacentWall(const QLineF &line, Wall *&wall){
+    bool res = false;
+    int i=0;
+    while( i<m_walls.size() && !res){
+        QLineF line2(line.p1(),m_walls[i]->p1());
+        QPointF p;
+        //res = !line.intersect(line2,&p);
+        res = !(line.intersect(*m_walls[i],&p) || line.intersect(line2,&p));
+        wall = m_walls[i];
+        i++;
+    }
+    return res;
+}

@@ -39,6 +39,7 @@ public:
     QPolygonF shadow(const QPointF &light);
     vector <QPointF> extremities(const QPointF &light);
     Wall* cornerSecondWall(Wall *wall, const QPointF &corner)const;
+    bool adjacentWall(const QLineF &line, Wall *&wall);
     QPointF forDiffraction(Wall *wall, const QPointF &corner)const;
 
     void newProperties() override;
