@@ -192,9 +192,7 @@ void DialogBuildingProduct::newProperties(){
     for (int i = 0; i<m_extremities.size();i++){
         QPointF p = m_extremities.at(i);
         p = p + offset;
-        std::cout << "p: " << p.x() << "Extremities: " << m_extremities.at(i).x()<< std::endl;
         m_extremities.replace(i,p);
-                std::cout << "p: " << p.x() << "Extremities: " << m_extremities.at(i).x()<< std::endl;
     }
     m_mathematicalproduct->setExtremities(m_extremities);
     m_mathematicalproduct->setModel(m_model);

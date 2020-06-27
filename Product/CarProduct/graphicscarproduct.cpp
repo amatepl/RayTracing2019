@@ -41,9 +41,7 @@ void GraphicsCarProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == QGraphicsItem::ItemPositionHasChanged) {
-        //m_mathematicalProduct->setPosX(pos().x());
-        //m_mathematicalProduct->setPosY(pos().y());
+    if (change == QGraphicsItem::ItemPositionHasChanged || change == QGraphicsItem::ItemTransformHasChanged) {
         m_observer->update(this);
     }
     return value;
@@ -54,6 +52,5 @@ void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void GraphicsCarProduct::notifyToGraphic(QRectF *rect){
-    setX(rect->x());
-    setY(rect->y());
+    mapToParent(*rect);
 }

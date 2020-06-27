@@ -12,6 +12,7 @@ GraphicsProduct* CarFactory::createGraphicsProduct(int posX, int posY){
     graphicsProduct->attachObserver(mathematicalProduct);
     graphicsProduct->setX(posX);
     graphicsProduct->setY(posY);
+    mathematicalProduct->attachObservable(graphicsProduct);
     return graphicsProduct;
 }
 

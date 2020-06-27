@@ -15,5 +15,6 @@ public:
     virtual void setPosY(int posY) = 0;
     virtual void setOrientation(double orientation) = 0;
     virtual void setSpeed(double) = 0;
+    virtual void newProperties() = 0;
 };
 #endif // CARPRODUCT_H

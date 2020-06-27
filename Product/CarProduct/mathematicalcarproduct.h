@@ -6,29 +6,31 @@
 
 #include "carproduct.h"
 #include "Product/mathematicalproduct.h"
+#include "dialogcarproduct.h"
 
 using namespace std;
 
-class MathematicalCarProduct: public QRectF,  public MathematicalProduct
+class MathematicalCarProduct: public QRectF,  public MathematicalProduct, public CarProduct
 {
 public:
     MathematicalCarProduct(QRectF rect);
     ~MathematicalCarProduct() override;
 
-    double getSpeed();
-    double getOrientation();
+    double getSpeed() override;
+    double getOrientation() override;
+    int getPosX() override;
+    int getPosY() override;
 
-    CarProduct* getCarProduct();
-
-    void setSpeed(double);
-    void setOrientation(double orientation);
-
+    void setSpeed(double) override;
+    void setOrientation(double orientation) override;
+    void setPosX(int posX) override;
+    void setPosY(int posY) override;
     void update(QGraphicsItem *graphic) override;
     void openDialog() override;
+    void newProperties() override;
 
 private:
     //MathematicalFactory* m_mathematicalfactory;
-    CarProduct* m_graphic;
     int m_posx, m_posy;
     double m_orientation, m_speed;
 };
