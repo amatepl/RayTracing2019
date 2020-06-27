@@ -1,8 +1,9 @@
 #include "mathematicalcarproduct.h"
 
-MathematicalCarProduct::MathematicalCarProduct(QRectF rect)
+MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center): QPolygonF(rect),
+    m_center(center)
 {
-    setRect(rect.topLeft().x(),rect.topLeft().y(),rect.width(),rect.height());
+    //setRect(round(rect.topLeft().x()),round(rect.topLeft().y()),rect.width(),rect.height());
     m_type = "Car";
 }
 
@@ -23,17 +24,33 @@ void MathematicalCarProduct::setSpeed(double speed){
     m_speed = speed;
 }
 
-int MathematicalCarProduct::getPosX(){return x();}
-int MathematicalCarProduct::getPosY(){return y();}
+int MathematicalCarProduct::getPosX(){
+    return m_center.x();
+}
+int MathematicalCarProduct::getPosY(){
+    return m_center.y();
+}
 
-void MathematicalCarProduct::setOrientation(double orientation){m_orientation = orientation;}
-void MathematicalCarProduct::setPosX(int posX){moveCenter(QPointF(posX,center().y()));}
-void MathematicalCarProduct::setPosY(int posY){moveCenter(QPointF(center().x(),posY));}
+void MathematicalCarProduct::setOrientation(double orientation){
+    m_orientation = orientation;
+}
+void MathematicalCarProduct::setPosX(int posX){
+    QPointF offset = QPointF(posX,getPosY()) - m_center;
+    m_center.setX(posX);
+    translate(offset);
+}
+
+void MathematicalCarProduct::setPosY(int posY){
+    QPointF offset = QPointF(getPosX(),posY) - m_center;
+    m_center.setY(posY);
+    translate(offset);
+}
 
 void MathematicalCarProduct::update(QGraphicsItem *graphic){
-    moveCenter(QPointF(graphic->scenePos().x(),graphic->scenePos().y()));
-    //QRectF rect = graphic->sceneBoundingRect();
-    //setRect(rect.topLeft().x(),rect.topLeft().y(),rect.width(),rect.height());
+    QRectF rect = graphic->sceneBoundingRect();
+    QPolygonF polyRect = QPolygonF(rect);
+    swap(polyRect);
+    m_center = graphic->pos();
 }
 
 void MathematicalCarProduct::openDialog(){
@@ -41,5 +58,5 @@ void MathematicalCarProduct::openDialog(){
 }
 
 void MathematicalCarProduct::newProperties(){
-    m_graphic->notifyToGraphic(this);
+    m_graphic->notifyToGraphic(this, getPosX(), getPosY(),getOrientation());
 }

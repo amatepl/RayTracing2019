@@ -10,10 +10,10 @@
 
 using namespace std;
 
-class MathematicalCarProduct: public QRectF,  public MathematicalProduct, public CarProduct
+class MathematicalCarProduct: public QPolygonF,  public MathematicalProduct, public CarProduct
 {
 public:
-    MathematicalCarProduct(QRectF rect);
+    MathematicalCarProduct(QPolygonF rect, QPointF center);
     ~MathematicalCarProduct() override;
 
     double getSpeed() override;
@@ -31,7 +31,7 @@ public:
 
 private:
     //MathematicalFactory* m_mathematicalfactory;
-    int m_posx, m_posy;
+    QPointF m_center;
     double m_orientation, m_speed;
 };
 
