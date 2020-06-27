@@ -15,6 +15,7 @@ GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
     graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
     graphicsReceiverProduct->setX(posX);
     graphicsReceiverProduct->setY(posY);
+    mathematicalReceiverProduct->attachObservable(graphicsReceiverProduct);
     return graphicsReceiverProduct;
 }
 

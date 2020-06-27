@@ -62,7 +62,7 @@ QVariant GraphicsReceiverProduct::itemChange(GraphicsItemChange change, const QV
 }
 
 void GraphicsReceiverProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
-    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
+    m_observer->openDialog();
 }
 
 bool GraphicsReceiverProduct::graphicsSelected() {
@@ -78,4 +78,8 @@ void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *e
     //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
+}
+
+void GraphicsReceiverProduct::notifyToGraphic(QPointF *point){
+    setPos(*point);
 }
