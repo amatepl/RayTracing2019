@@ -12,6 +12,8 @@ public:
 
     virtual void setPosX(int) = 0;
     virtual void setPosY(int) = 0;
+
+    virtual void newProperties() = 0;
 };
 
 #endif // TREEPRODUCT_H

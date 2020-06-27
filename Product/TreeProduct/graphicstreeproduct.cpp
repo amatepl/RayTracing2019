@@ -40,16 +40,17 @@ void GraphicsTreeProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event
 QVariant GraphicsTreeProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
-        //m_mathematicalProduct->setPosX(pos().x());
-        //m_mathematicalProduct->setPosY(pos().y());
         m_observer->update(this);
     }
     return value;
 }
 
 void GraphicsTreeProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
-    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
+    m_observer->openDialog();
 }
 
+void GraphicsTreeProduct::notifyToGraphic(QPolygonF *poly, int centerx, int centery){
+    setPos(centerx,centery);
+}
 
 
