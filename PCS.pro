@@ -46,6 +46,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/ReceiverProduct/graphicsreceiverproduct.h \
     Product/ReceiverProduct/mathematicalreceiverproduct.h \
     Product/ReceiverProduct/receiverproduct.h \
+    Product/TransmitterProduct/antenadiffraction.h \
     Product/TransmitterProduct/dialogtransmitterproduct.h \
     Product/TransmitterProduct/graphicstransmitterproduct.h \
     Product/TransmitterProduct/mathematicaltransmitterproduct.h \
@@ -88,6 +89,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/ReceiverProduct/dialogreceiverproduct.cpp \
     Product/ReceiverProduct/graphicsreceiverproduct.cpp \
     Product/ReceiverProduct/mathematicalreceiverproduct.cpp \
+    Product/TransmitterProduct/antenadiffraction.cpp \
     Product/TransmitterProduct/dialogtransmitterproduct.cpp \
     Product/TransmitterProduct/graphicstransmitterproduct.cpp \
     Product/TransmitterProduct/mathematicaltransmitterproduct.cpp \
