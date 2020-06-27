@@ -21,6 +21,7 @@ public:
 
     QPointF symetricalPoint(const QPointF &point);
     QPointF otherPoint(const QPointF &point)const;
+    QPointF farestExtrem(const QPointF &point) const;
 
 private:
     double thick;

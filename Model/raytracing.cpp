@@ -26,7 +26,8 @@ MathematicalComponent* RayTracing::compute(vector<MathematicalTransmitterProduct
         transmitters.at(i)->setRayFactory(rayFactory);
     }
 
-    createImages();
+    //createImages();
+    illuminationZones();
 
 }
 
@@ -44,7 +45,8 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
         m_transmitters.at(i)->setRayFactory(rayFactory);
     }
 
-    createImages();
+    //createImages();
+    illuminationZones();
 
 }
 

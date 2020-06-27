@@ -26,11 +26,18 @@ class ImagesMethod
 {
 public:
     void createImages();
+    void setDiffraction(vector<Wall *> walls,const QPolygonF &zone, AbstractAntena *parent);
     forImage transmitterIllumination(MathematicalTransmitterProduct *transmitter);
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
     vector <Line> illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
     void setRayFactory(AbstractRayFactory* rayFactory){m_rayFactory = rayFactory;};
     void buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent);
+
+
+    void illuminationZones();
+    QPolygonF buildIlluminationZone(AbstractAntena *ant);
+    vector <Line> createImages(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+
 
     void setScene(QGraphicsScene* scene){m_scene=scene;};
 
