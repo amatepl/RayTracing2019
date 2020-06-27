@@ -35,7 +35,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
     setAttributs(mathematicalComponents);
     reflectionsNumber = 5;
-    cout<<"I am computing"<<endl;
+    //cout<<"I am computing"<<endl;
 
     RayFactory* rayFactory = new RayFactory(true);
     m_rayFactory = rayFactory;

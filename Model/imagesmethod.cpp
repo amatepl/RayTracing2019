@@ -162,7 +162,48 @@ vector <Line> ImagesMethod::illuminatedWalls(vector <Wall*> walls, const QPolygo
 
     }
 
-        //buildDiffractionPoints(zone,usedWalls,nbReflections,parent);
+        buildDiffractionPoints(zone,usedWalls,nbReflections,parent);
 
     return  illuminatedWalls;
+}
+
+void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent){
+
+    QColor illumination1;
+    illumination1.setGreen(255);
+    illumination1.setAlpha(100);
+
+    for(int i = 0;i<zone.length()-1;i++){
+        const QPointF *corner = nullptr;
+        QPointF p2;
+        QPointF p1;
+        int j = 0;
+        bool cond = true;
+        while(j<illuminatedWalls.size() && cond){
+            if(zone.at(i) == illuminatedWalls.at(j)->p1()||zone.at(i) == illuminatedWalls.at(j)->p2()){
+                if(corner == nullptr){
+                    corner = &zone.at(i);
+                    if(illuminatedWalls.at(j)->onLine(zone.at(i+1))){
+                        p1 = zone.at(i-1);
+                    }else{p1 = zone.at(i+1);}
+
+                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i));
+                }
+                else{
+                    cond = false;
+                }
+            }
+
+            j++;
+        }
+
+        if(cond){
+
+            AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), p1,p2, parent,QRectF(0,0,5000,5000));
+            corner->setRayFactory(m_rayFactory);
+            m_receiver->attachObserver(corner);
+            QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
+            //addPolygon(cornerZone,QPen(),illumination1);
+        }
+    }
 }

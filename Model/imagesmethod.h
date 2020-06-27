@@ -12,6 +12,7 @@
 #include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
 #include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
 #include "Product/TransmitterProduct/transmitterimage.h"
+#include "Product/TransmitterProduct/antenadiffraction.h"
 
 #include <QGraphicsScene>
 
@@ -29,6 +30,7 @@ public:
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
     vector <Line> illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
     void setRayFactory(AbstractRayFactory* rayFactory){m_rayFactory = rayFactory;};
+    void buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent);
 
     void setScene(QGraphicsScene* scene){m_scene=scene;};
 
