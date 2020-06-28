@@ -24,6 +24,8 @@ public:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
+    void notifyToGraphic(QPointF *) override;
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

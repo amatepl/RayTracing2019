@@ -11,45 +11,40 @@
 #include <QWidget>
 #include <QPushButton>
 
-//#include "receiverproduct.h"
-//#include "Abstract_Factory/dialogfactory.h"
-//#include "Product/ReceiverProduct/graphicsreceiverproduct.h"
-#include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
+#include "receiverproduct.h"
+#include "Product/ReceiverProduct/graphicsreceiverproduct.h"
 
-
-//class DialogFactory;
-
-class ReceiverProduct;
-
-class DialogReceiverProduct : public QDialog/*, public ReceiverProduct*/
+class DialogReceiverProduct : public QDialog, public ReceiverProduct
 {
     Q_OBJECT
 public:
-    DialogReceiverProduct(ReceiverProduct* graphic);
+    DialogReceiverProduct(ReceiverProduct* mathematicalproduct);
     ~DialogReceiverProduct() override;
 
     void createDialog();
 
-    int getPosX();
-    int getPosY();
-    unsigned long getFrequency();
-    double getPower();
+    int getPosX() override {return m_posx->value();}
+    int getPosY() override {return m_posy->value();}
+    double getPower() override {return m_power->text().toDouble();}
+    double getEField() override {return m_e_field->text().toDouble();}
+    bool getEnable() override {return enable;}
 
-    void setPosX(int posX);
-    void setPosY(int posY);
-    void setFrequency(unsigned long frequency);
+    void setPosX(int posX) override {m_posx->setValue(posX);}
+    void setPosY(int posY) override {m_posy->setValue(posY);}
+    void setPower(double p) override {m_power->insert(QString::number(p));}
+    void setEField(double e) override {m_e_field->insert(QString::number(e));}
+    void setEnable(bool enable) override;
 
+    void newProperties() override;
 private:
+    ReceiverProduct *m_mathematicalproduct;
     QSpinBox *m_posx,*m_posy;
-    QDoubleSpinBox *m_frequency;
     QLineEdit *m_power;
-    QLineEdit *m_efield;
-    QComboBox *m_frequencyorder;
-
-    //DialogFactory *m_dialogfactory;
+    QLineEdit *m_e_field;
+    bool enable;
 
 public slots:
-    void newProperties();
+    void saveProperties();
 };
 
 #endif // DIALOGRECEIVERPRODUCT_H
