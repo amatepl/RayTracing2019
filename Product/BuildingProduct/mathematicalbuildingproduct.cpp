@@ -221,6 +221,9 @@ Wall* MathematicalBuildingProduct::cornerSecondWall(Wall *wall,const QPointF &co
 }
 
 bool MathematicalBuildingProduct::adjacentWall(const QLineF &line, Wall *&wall){
+    /*
+     * Check is the line is adjacent to any wall. Returns the wall in wall.
+    */
     bool res = false;
     int i=0;
     while( i<m_walls.size() && !res){

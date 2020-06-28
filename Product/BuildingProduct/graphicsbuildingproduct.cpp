@@ -16,6 +16,23 @@ GraphicsBuildingProduct::GraphicsBuildingProduct(QMenu* productmenu, QGraphicsSc
     draw();
 }
 
+
+GraphicsBuildingProduct::GraphicsBuildingProduct(QPolygonF poly,QMenu* productmenu, QGraphicsScene *scene):QGraphicsPolygonItem(poly),
+    m_scene(scene),m_productmenu(productmenu)
+{
+    //QRectF rect(0,0,50,50);
+    //QPolygonF poly(rect);
+    //setPolygon(poly);
+    setModel("concrete");
+    m_extremities = poly;
+    setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    m_type = "building";
+
+    draw();
+}
+
 GraphicsBuildingProduct::~GraphicsBuildingProduct(){
 
 }

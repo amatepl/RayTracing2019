@@ -18,6 +18,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Graphics/surface3d.h \
     Model/algorithmInterface.h \
     Model/imagesmethod.h \
+    Model/mapgenerator.h \
     Model/model.h \
     Observer/AppInterface.h \
     Model/raytracing.h \
@@ -76,6 +77,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Graphics/patternwindow.cpp \
     Graphics/surface3d.cpp \
     Model/imagesmethod.cpp \
+    Model/mapgenerator.cpp \
     Model/model.cpp \
     Model/raytracing.cpp \
     Product/BuildingProduct/dialogbuildingproduct.cpp \

@@ -13,8 +13,13 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_treeFactory = new TreeFactory(m_productmenu,m_map);
     m_carFactory = new CarFactory(m_productmenu,m_map);
     m_model = new Model(this);
+    m_model->setScene(m_map,(BuildingFactory*) m_buildingFactory);
+
     m_rayTracingAlgorithm = new RayTracing();
     m_rayTracingAlgorithm->setScene(m_map);
+//    MapGenerator* map = new MapGenerator(m_map->sceneRect());
+//    map->setScene(m_map);
+//    map->generateMap();
 
 
 
@@ -94,7 +99,11 @@ void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproduct
 }
 
 void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts){
-
+    for(int i = 0; i< sceneproducts.size();i++){
+        //GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
+        QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->toGraphicsProduct());
+        m_map->addItem(gItem);
+    }
 }
 
 void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproducts){

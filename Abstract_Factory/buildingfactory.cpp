@@ -27,3 +27,14 @@ MathematicalProduct* BuildingFactory::createMathematicalProduct(int posX, int po
     }
     return mathematicalBuildingProduct;
 }
+
+MathematicalProduct* BuildingFactory::createMathematicalProduct(QPolygonF poly, bool linkgraphic){
+
+    MathematicalBuildingProduct* mathematicalBuildingProduct = new MathematicalBuildingProduct(poly);
+    if (linkgraphic){
+        GraphicsBuildingProduct* graphicsBuildingProduct = new GraphicsBuildingProduct(poly,m_productmenu, m_scene);
+        graphicsBuildingProduct->attachObserver(mathematicalBuildingProduct);
+        mathematicalBuildingProduct->attachObservable(graphicsBuildingProduct);
+    }
+    return mathematicalBuildingProduct;
+}

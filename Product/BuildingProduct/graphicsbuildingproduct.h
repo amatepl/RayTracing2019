@@ -14,6 +14,7 @@ class GraphicsBuildingProduct : public QGraphicsPolygonItem, public GraphicsProd
 {
 public:
     GraphicsBuildingProduct(QMenu *menuproduct, QGraphicsScene *scene);
+    GraphicsBuildingProduct(QPolygonF poly, QMenu *menuproduct, QGraphicsScene *scene);
     ~GraphicsBuildingProduct() override;
 
     static QPixmap getImage();

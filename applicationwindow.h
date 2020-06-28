@@ -25,6 +25,8 @@
 
 #include "Model/model.h"
 #include "Model/raytracing.h"
+
+
 #include "Observer/AppInterface.h"
 #include "graphicsmap.h"
 #include "Observer/windowomodelbservable.h"
