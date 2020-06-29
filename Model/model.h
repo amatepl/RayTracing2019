@@ -13,6 +13,7 @@
 #include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
 #include "Model/algorithmInterface.h"
 #include "Abstract_Factory/abstractalgorithmfactory.h"
+#include "Model/mapgenerator.h"
 
 using namespace std;
 
@@ -28,10 +29,14 @@ public:
     MathematicalTransmitterProduct* selectTransmitter();
     void notify(MathematicalTransmitterProduct* transmitter) override;
 
+    void setScene(QGraphicsScene*scene, BuildingFactory *buildingFactory);           // For tests only
+
 private:
     map<string,vector<MathematicalProduct*>> m_mathematicalComponents;
     WindowModelObservable* m_windowModelObservable;
     AlgorithmInterface* m_algorithm;
+
+    QGraphicsScene* m_scene;            //For tests only
 };
 
 #endif // MODEL_H

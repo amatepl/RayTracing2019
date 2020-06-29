@@ -3,10 +3,26 @@
 Model::Model(WindowModelObservable* windowModelObservale)
 {
     m_windowModelObservable = windowModelObservale;
+
+
 }
 
 Model::~Model(){
     delete [] this;
+}
+
+void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory){
+
+    /* This will have to change
+     */
+
+    m_scene = scene;
+    MapGenerator* map = new MapGenerator(m_scene->sceneRect());
+    map->setScene(m_scene);
+    map->setBuildingFactory(buildingFactory);
+    map->generateMap();
+    m_mathematicalComponents["Building"] = map->getProducts();
+    m_windowModelObservable->modelNotify(map->getProducts());
 }
 
 void Model::addMathematicalComponent(MathematicalProduct* mathematicalProduct){

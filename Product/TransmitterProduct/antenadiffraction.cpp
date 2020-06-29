@@ -20,8 +20,12 @@ void AntenaDiffraction::buildIlluminationZone(const QPointF &p1,const QPointF &p
     QLineF line2(*this,p1);
     line2.setLength(50000);
     illuminationZone<<*this << line1.p2()<<line2.p2();
-//    m_zone = illuminationZone.intersected(m_sceneBoundary);
+//    m_zone = illuminationZon.e.intersected(m_sceneBoundary);
     m_zone = illuminationZone.intersected(buildCoverage());
+//    cout<<"Number of corners of the illumination zone of a diffracted ray: "<<m_zone.size()<<endl;
+//    if(m_zone.size()>0){
+//        cout<<"The first point of the illumination zone is the position of the corner: "<<(m_zone.at(0)==*this)<<endl;
+//    }
     //m_zone = illuminationZone;
 
 }
