@@ -1,15 +1,14 @@
 #include "dialogtransmitterproduct.h"
 
-DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *graphic,DialogFactory* dialogfactory)
+DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *mathematicalproduct):m_mathematicalproduct(mathematicalproduct)
 {
-    m_dialogfactory = dialogfactory;
     createDialog();
-    setPosX(graphic->getPosX());
-    setPosY(graphic->getPosY());
-    //setPower(graphic->getPower());
-    //setFrequency(graphic->getFrequency());
-    setOrientation(graphic->getOrientation());
-    setModel(dipole);
+    setPosX(m_mathematicalproduct->getPosX());
+    setPosY(m_mathematicalproduct->getPosY());
+    setPower(m_mathematicalproduct->getPower());
+    setFrequency(m_mathematicalproduct->getFrequency());
+    setOrientation(m_mathematicalproduct->getOrientation());
+    setKind(m_mathematicalproduct->getKind());
     setAttribute(Qt::WA_DeleteOnClose,true);
     exec();
 }
@@ -35,15 +34,12 @@ void DialogTransmitterProduct::createDialog(){
     m_modelBox->addItem("Half-wave dipole antenna");
     m_modelBox->addItem("Array dipole antenna");
 
-    m_row = new QSpinBox(this);
-    m_column = new QSpinBox(this);
-    m_row->setRange(1,8);
-    m_column->setRange(1,8);
-    m_row->setAccelerated(true);
-    m_column->setAccelerated(true);
-    m_antennaDistance = new QDoubleSpinBox(this);
-    m_antennaDistance->setRange(0.05,20.0);
-    m_antennaDistance->setAccelerated(true);
+    m_rowBox = new QSpinBox(this);
+    m_columnBox = new QSpinBox(this);
+    m_rowBox->setRange(1,8);
+    m_columnBox->setRange(1,8);
+    m_rowBox->setAccelerated(true);
+    m_columnBox->setAccelerated(true);
 
     m_posx = new QSpinBox(this);
     m_posy = new QSpinBox(this);
@@ -54,9 +50,9 @@ void DialogTransmitterProduct::createDialog(){
     m_posy->setRange(0,5000);
     m_posy->setAccelerated(true);
 
-    m_frequency = new QDoubleSpinBox(this);
-    m_frequency->setRange(0.00,999.00);
-    m_frequency->setAccelerated(true);
+    m_frequencyValue = new QDoubleSpinBox(this);
+    m_frequencyValue->setRange(0.00,999.00);
+    m_frequencyValue->setAccelerated(true);
 
     m_frequencyorder = new QComboBox(this);
     m_frequencyorder->addItem("kHz");
@@ -64,7 +60,7 @@ void DialogTransmitterProduct::createDialog(){
     m_frequencyorder->addItem("GHz");
 
     QHBoxLayout *frequency = new QHBoxLayout();
-    frequency->addWidget(m_frequency);
+    frequency->addWidget(m_frequencyValue);
 
     frequency->addWidget(m_frequencyorder);
 
@@ -74,11 +70,10 @@ void DialogTransmitterProduct::createDialog(){
 
     QFormLayout *modelProperties = new QFormLayout(this);
     modelProperties->addRow("Antenna model: ",m_modelBox);
-    modelProperties->addRow("number of row antenna: ",m_row);
-    modelProperties->addRow("number of column antenna: ",m_column);
+    modelProperties->addRow("number of row antenna: ",m_rowBox);
+    modelProperties->addRow("number of column antenna: ",m_columnBox);
     QString distance = "Distance relative to ";
     distance.append(QChar(0x03BB));
-    modelProperties->addRow(distance.append(" :"),m_antennaDistance);
 
     QGroupBox *model = new QGroupBox("Model antenna");
     model->setLayout(modelProperties);
@@ -107,152 +102,84 @@ void DialogTransmitterProduct::createDialog(){
     setLayout(firstLayout);
 
     connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
-    connect(save,SIGNAL(clicked()),this,SLOT(newProperties()));
+    connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
     connect(plot,SIGNAL(clicked()),this,SLOT(openPlot()));
     connect(m_modelBox,SIGNAL(activated(QString)),this,SLOT(changeModel(QString)));
 
 }
 
-int DialogTransmitterProduct::getPosX(){
-    return m_posx->value();
-}
-
-int DialogTransmitterProduct::getPosY(){
-    return m_posy->value();
-}
-
-double DialogTransmitterProduct::getOrientation(){
-    return m_orientation->value();
-}
-
 unsigned long DialogTransmitterProduct::getFrequency(){
     QString text = m_frequencyorder->currentText();
     if (text == "kHz"){
-        return unsigned(long(m_frequency->value()*1e3));
+        m_frequency = long(m_frequencyValue->value()*1e3);
     }
     else if (text == "MHz"){
-        return unsigned(long(m_frequency->value()*1e6));
+        m_frequency = long(m_frequencyValue->value()*1e6);
     }
     else {
-        return unsigned(long(m_frequency->value()*1e9));
+        m_frequency = long(m_frequencyValue->value()*1e9);
     }
-}
-
-double DialogTransmitterProduct::getPower(){
-    return m_power->value();
-}
-
-int DialogTransmitterProduct::getRow(){
-    return m_row->value();
-}
-
-int DialogTransmitterProduct::getColumn() {
-    return m_column->value();
-}
-double DialogTransmitterProduct::getAntennaDistance() {
-    return m_antennaDistance->value();
-}
-int DialogTransmitterProduct::getModel() {
-
-}
-
-void DialogTransmitterProduct::setPosX(int posX){
-    m_posx->setValue(posX);
-}
-
-void DialogTransmitterProduct::setPosY(int posY){
-    m_posy->setValue(posY);
-}
-
-void DialogTransmitterProduct::setOrientation(double orientation){
-    m_orientation->setValue(orientation);
-}
-
-void DialogTransmitterProduct::setPower(double power){
-    m_power->setValue(power);
+    return m_frequency;
 }
 
 void DialogTransmitterProduct::setFrequency(unsigned long frequency){
     if (frequency/1e3 <= 999){
-        m_frequency->setValue(int(frequency/1e3));
+        m_frequencyValue->setValue(int(frequency/1e3));
         m_frequencyorder->setCurrentText("kHz");
     }
     else if (frequency/1e6 <= 999){
-        m_frequency->setValue(int(frequency/1e6));
+        m_frequencyValue->setValue(int(frequency/1e6));
         m_frequencyorder->setCurrentText("MHz");
     }
     else{
-        m_frequency->setValue(int(frequency/1e9));
+        m_frequencyValue->setValue(int(frequency/1e9));
         m_frequencyorder->setCurrentText("GHz");
     }
+    m_frequency = frequency;
 }
 
-void DialogTransmitterProduct::setRow(int row){
-
-}
-
-void DialogTransmitterProduct::setColumn(int column) {
-
-}
-
-void DialogTransmitterProduct::setAntennaDistance(double distance) {
-
-}
-
-void  DialogTransmitterProduct::setModel(Model model) {
-    m_model = model;
-    if (model == dipole){
+void  DialogTransmitterProduct::setKind(Kind kind) {
+    m_kind = kind;
+    if (kind == dipole){
         m_modelBox->setCurrentText("Half-wave dipole antenna");
         setRow(1);
         setColumn(1);
-        setAntennaDistance(0.05);
-        m_row->setEnabled(false);
-        m_column->setEnabled(false);
-        m_antennaDistance->setEnabled(false);
+        m_rowBox->setEnabled(false);
+        m_columnBox->setEnabled(false);
     }
-    else if (model == array) {
+    else if (kind == array) {
         m_modelBox->setCurrentText("Array dipole antenna");
-        m_row->setEnabled(true);
-        m_column->setEnabled(true);
-        m_antennaDistance->setEnabled(true);
-    }
-}
-
-void DialogTransmitterProduct::attachObserver(DialogObserver *dialogobserver){
-    m_dialogobserver.push_back(dialogobserver);
-}
-
-void DialogTransmitterProduct::detachObserver(DialogObserver *dialogobserver){
-    unsigned long long i = 0;
-    for (m_dialogobserveriterator = m_dialogobserver.begin();
-         m_dialogobserveriterator != m_dialogobserver.end();
-         ++m_dialogobserveriterator){
-        if (m_dialogobserver.at(i) == dialogobserver){
-            m_dialogobserver.erase(m_dialogobserveriterator);
-        }
-        i++;
-    }
-}
-
-void DialogTransmitterProduct::notify(){
-    for (unsigned long long i=0;i<m_dialogobserver.size();i++){
-        m_dialogobserver.at(i)->update();
+        m_rowBox->setEnabled(true);
+        m_columnBox->setEnabled(true);
     }
 }
 
 void DialogTransmitterProduct::newProperties(){
-    //m_dialogfactory->receiveTransmitterProduct(this);
+    m_mathematicalproduct->setRow(getRow());
+    m_mathematicalproduct->setColumn(getColumn());
+    m_mathematicalproduct->setKind(getKind());
+    m_mathematicalproduct->setPosX(getPosX());
+    m_mathematicalproduct->setPosY(getPosY());
+    m_mathematicalproduct->setFrequency(getFrequency());
+    m_mathematicalproduct->setPower(getPower());
+    m_mathematicalproduct->setOrientation(getOrientation());
+    m_mathematicalproduct->newProperties();
+}
+
+void DialogTransmitterProduct::saveProperties(){
+    newProperties();
     close();
 }
 
 void DialogTransmitterProduct::openPlot(){
-    DialogObserver *pattern = new PatternWindow(this);
-    attachObserver(pattern);
-    notify();
+    getFrequency();
+    m_row = getRow();
+    m_column = getColumn();
+    new PatternWindow(this);
 }
 
 void DialogTransmitterProduct::changeModel(QString model)
 {
-    if (model == "Half-wave dipole antenna")setModel(dipole);
-    else if (model == "Array dipole antenna")setModel(array);
+    if (model == "Half-wave dipole antenna")setKind(dipole);
+    else if (model == "Array dipole antenna")setKind(array);
 }

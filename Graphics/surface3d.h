@@ -1,8 +1,7 @@
 #ifndef SURFACE3D_H
 #define SURFACE3D_H
 
-#include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
-//#include "Product/TransmitterProduct/dialogtransmitterproduct.h"
+#include "Product/TransmitterProduct/transmitterproduct.h"
 
 #include <QtDataVisualization/Q3DSurface>
 #include <QtDataVisualization/QSurfaceDataProxy>
@@ -11,8 +10,6 @@
 #include <QtWidgets/QSlider>
 #include <iostream>
 
-class DialogTransmitterProduct;
-
 using namespace QtDataVisualization;
 using namespace std;
 
@@ -20,7 +17,7 @@ class Surface3D : public QObject
 {
     Q_OBJECT
 public:
-    explicit Surface3D(Q3DSurface *surface, DialogTransmitterProduct *dialog);
+    explicit Surface3D(Q3DSurface *surface, TransmitterProduct *dialog);
     ~Surface3D();
 
     void enablePatternModel(bool enable);
@@ -42,7 +39,7 @@ private:
     Q3DSurface *m_graph;
     QSurfaceDataProxy *m_patternProxy;
     QSurface3DSeries *m_patternSeries;
-    DialogTransmitterProduct *m_dialog;
+    TransmitterProduct *m_dialog;
     QSurfaceDataArray *m_dataArray;
 
     float m_stepTheta;

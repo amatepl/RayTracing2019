@@ -13,6 +13,7 @@ GraphicsProduct* TransmitterFactory::createGraphicsProduct(int posX, int posY){
     graphicsProduct->attachObserver(mathematicalProduct);
     graphicsProduct->setX(posX);
     graphicsProduct->setY(posY);
+    mathematicalProduct->MathematicalProduct::attachObservable(graphicsProduct);
     return graphicsProduct;
 }
 

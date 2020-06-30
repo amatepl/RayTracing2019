@@ -46,13 +46,16 @@ void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent
 QVariant GraphicsTransmitterProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
-        //m_mathematicalProduct->setPosX(pos().x());
-        //m_mathematicalProduct->setPosY(pos().y());
         m_observer->update(this);
     }
     return value;
 }
 
 void GraphicsTransmitterProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
-    //DialogReceiverProduct *dialogProduct = new DialogReceiverProduct(this);
+    m_observer->openDialog();
+}
+
+void GraphicsTransmitterProduct::notifyToGraphic(QPointF *point, double orientation){
+    setPos(*point);
+    setRotation(orientation);
 }

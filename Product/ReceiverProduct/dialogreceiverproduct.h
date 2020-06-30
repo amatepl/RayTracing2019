@@ -10,9 +10,12 @@
 #include <QGroupBox>
 #include <QWidget>
 #include <QPushButton>
+#include <QTabWidget>
+#include <QDialogButtonBox>
 
 #include "receiverproduct.h"
 #include "Product/ReceiverProduct/graphicsreceiverproduct.h"
+#include "qcustomplot.h"
 
 class DialogReceiverProduct : public QDialog, public ReceiverProduct
 {
@@ -21,7 +24,13 @@ public:
     DialogReceiverProduct(ReceiverProduct* mathematicalproduct);
     ~DialogReceiverProduct() override;
 
-    void createDialog();
+    QWidget* PhysicalImpulseResponse();
+    QWidget* TDLImpulseResponse();
+    QWidget* GeneralTabDialog();
+    QWidget* RealPathLossDialog();
+    QWidget* ModelPathLossDialog();
+    QWidget* CellRange();
+    QWidget* DopplerSpectrum();
 
     int getPosX() override {return m_posx->value();}
     int getPosY() override {return m_posy->value();}
@@ -41,6 +50,8 @@ private:
     QSpinBox *m_posx,*m_posy;
     QLineEdit *m_power;
     QLineEdit *m_e_field;
+    QTabWidget* m_tabwidget;
+    QDialogButtonBox *m_buttonbox;
     bool enable;
 
 public slots:

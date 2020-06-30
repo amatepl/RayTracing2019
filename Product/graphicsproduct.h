@@ -26,6 +26,7 @@ public:
 
     // Depends on the mathematical product
     virtual void notifyToGraphic(QPointF*) {};
+    virtual void notifyToGraphic(QPointF*, double) {};
     virtual void notifyToGraphic(QRect*, double) {};
     virtual void notifyToGraphic(QPolygonF*,int,int) {};
     virtual void notifyToGraphic(QPolygonF*,int,int,double) {};

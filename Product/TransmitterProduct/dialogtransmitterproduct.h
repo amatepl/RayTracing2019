@@ -13,61 +13,49 @@
 
 #include "transmitterproduct.h"
 #include "graphicstransmitterproduct.h"
-//#include "Abstract_Factory/dialogfactory.h"
-#include "Observer/dialogobservable.h"
-#include "Graphics/patternwindow.h"
+#include"Graphics/patternwindow.h"
 
-class DialogFactory;
-
-class DialogTransmitterProduct : public QDialog, public TransmitterProduct,public DialogObservable
+class DialogTransmitterProduct : public QDialog, public TransmitterProduct
 {
     Q_OBJECT
 public:
-    DialogTransmitterProduct(TransmitterProduct* graphic, DialogFactory* dialogfactory);
+    DialogTransmitterProduct(TransmitterProduct* mathematicalproduct);
     ~DialogTransmitterProduct() override;
 
     void createDialog();
 
-    int getPosX() override;
-    int getPosY() override;
-    double getOrientation() override;
-    unsigned long getFrequency() ;
-    double getPower() ;
-    int getRow() ;
-    int getColumn() ;
-    double getAntennaDistance() override;
-    int getModel() override;
+    int getPosX() override {return m_posx->value();}
+    int getPosY() override {return m_posy->value();}
+    double getOrientation() override {return m_orientation->value();}
+    unsigned long getFrequency() override;
+    double getPower() override {return m_power->value();}
+    int getRow() override {return m_rowBox->value();}
+    int getColumn() override {return m_columnBox->value();}
+    Kind getKind() override {return m_kind;}
 
-    void setPosX(int posX) override;
-    void setPosY(int posY) override;
-    void setOrientation(double orientation) override;
-    void setPower(double power) ;
-    void setFrequency(unsigned long frequency) ;
-    void setRow(int row) ;
-    void setColumn(int column) ;
-    void setAntennaDistance(double distance) override;
-    virtual void setModel(Model model) override;
-
-    void attachObserver(DialogObserver*) override;
-    void detachObserver(DialogObserver*) override;
-    void notify() override;
+    void setPosX(int posX) override {m_posx->setValue(posX);}
+    void setPosY(int posY) override {m_posy->setValue(posY);}
+    void setOrientation(double orientation) override {m_orientation->setValue(orientation);}
+    void setPower(double power) override {m_power->setValue(power);}
+    void setFrequency(unsigned long frequency) override;
+    void setRow(int row) override {m_rowBox->setValue(row); m_row = row;}
+    void setColumn(int column) override {m_columnBox->setValue(column); m_column = column;}
+    virtual void setKind(Kind kind) override;
+    void newProperties() override;
 
 private:
-    Model m_model;
+    Kind m_kind;
     QComboBox *m_modelBox;
-    QSpinBox *m_posx,*m_posy,*m_row,*m_column;
-    QDoubleSpinBox *m_orientation,*m_antennaDistance;
-    QDoubleSpinBox *m_frequency;
+    QSpinBox *m_posx,*m_posy,*m_rowBox,*m_columnBox;
+    QDoubleSpinBox *m_orientation;
+    QDoubleSpinBox *m_frequencyValue;
     QDoubleSpinBox *m_power;
     QComboBox *m_frequencyorder;
 
-    DialogFactory *m_dialogfactory;
-
-    vector<DialogObserver*> m_dialogobserver;
-    vector<DialogObserver*>::iterator m_dialogobserveriterator;
+    TransmitterProduct* m_mathematicalproduct;
 
 public slots:
-    void newProperties();
+    void saveProperties();
     void openPlot();
     void changeModel(QString model);
 };

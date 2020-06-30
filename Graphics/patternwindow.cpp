@@ -1,6 +1,6 @@
 #include "patternwindow.h"
 
-PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
+PatternWindow::PatternWindow(TransmitterProduct *dialog)
 {
     m_dialog = dialog;
     Q3DSurface *graph = new Q3DSurface();
@@ -111,9 +111,5 @@ PatternWindow::PatternWindow(DialogTransmitterProduct *dialog)
 }
 
 PatternWindow::~PatternWindow(){
-
-}
-
-void PatternWindow::update(){
 
 }
