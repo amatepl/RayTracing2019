@@ -24,15 +24,8 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
-
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(m_toolbox);
-    layout->addWidget(view);
-
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
-
-    setCentralWidget(widget);
+    addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
+    setCentralWidget(view);
 
     m_graphicsmode = MoveItem;
 }
@@ -176,6 +169,8 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
 }
 
 void ApplicationWindow::createActions(){
+    objectminimize = m_toolbarobject->toggleViewAction();
+    objectminimize->setText(tr("Object toolbar"));
     deleteaction = new QAction(QIcon(":/Images/Delete.png"), tr("&Delete"), this);
     deleteaction->setShortcut(tr("Delete"));
     deleteaction->setStatusTip(tr("Delete selected object"));
@@ -189,6 +184,9 @@ void ApplicationWindow::createActions(){
 }
 
 void ApplicationWindow::createMenus(){
+    m_windowmenu = menuBar()->addMenu(tr("&Window"));
+    m_windowmenu->addAction(objectminimize);
+
     m_productmenu = menuBar()->addMenu(tr("&Object"));
     m_productmenu->addAction(propertiesaction);
     m_productmenu->addSeparator();
@@ -272,6 +270,10 @@ void ApplicationWindow::createToolBox(){
     m_toolbox->addItem(itemWidget, tr("Insert antenna"));
     m_toolbox->addItem(obstacleWidget, tr("Insert obstacles"));
     m_toolbox->addItem(rayTracingWidget, tr("Ray Tracing"));
+    m_toolbarobject = new QToolBar;
+    m_toolbarobject->addWidget(m_toolbox);
+    m_toolbarobject->setFloatable(false);
+    m_toolbarobject->setMovable(false);
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode){

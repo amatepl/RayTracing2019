@@ -77,12 +77,14 @@ private:
     QButtonGroup *m_obstaclegroup;
     QButtonGroup *m_raytracinggroup;
     QToolBox *m_toolbox;
+    QToolBar *m_toolbarobject;
 
     QAction *deleteaction;
     QAction *propertiesaction;
+    QAction *objectminimize;
 
     QMenu *m_productmenu;
-
+    QMenu *m_windowmenu;
 
 signals:
 
