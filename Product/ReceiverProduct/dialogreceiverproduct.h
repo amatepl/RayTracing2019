@@ -26,13 +26,13 @@ public:
     int getPosX() override {return m_posx->value();}
     int getPosY() override {return m_posy->value();}
     double getPower() override {return m_power->text().toDouble();}
-    double getEField() override {return m_e_field->text().toDouble();}
+    complex <double> getEField() override {return m_e_field->text().toDouble();}
     bool getEnable() override {return enable;}
 
     void setPosX(int posX) override {m_posx->setValue(posX);}
     void setPosY(int posY) override {m_posy->setValue(posY);}
     void setPower(double p) override {m_power->insert(QString::number(p));}
-    void setEField(double e) override {m_e_field->insert(QString::number(e));}
+    void setEField(complex<double> e) override {m_e_field->insert(QString::number(norm(e)));}
     void setEnable(bool enable) override;
 
     void newProperties() override;

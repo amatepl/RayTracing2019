@@ -3,6 +3,7 @@
 
 #include <QRectF>
 #include <iostream>
+#include <thread>
 
 #include "carproduct.h"
 #include "Product/mathematicalproduct.h"
@@ -10,12 +11,18 @@
 
 using namespace std;
 
-class MathematicalCarProduct: public QPolygonF,  public MathematicalProduct, public CarProduct
+class MathematicalCarProduct:public QObject, public QPolygonF,  public MathematicalProduct, public CarProduct
 {
+//    Q_OBJECT
+
 public:
     MathematicalCarProduct(QPolygonF rect, QPointF center);
     ~MathematicalCarProduct() override;
 
+    void moveCar();
+    void setRoad(QLineF &road);
+
+    void attachObservable(GraphicsProduct* graphic)override;
     double getSpeed() override;
     double getOrientation() override;
     int getPosX() override;
@@ -33,6 +40,11 @@ private:
     //MathematicalFactory* m_mathematicalfactory;
     QPointF m_center;
     double m_orientation, m_speed;
+    QLineF m_street;
+
+signals:
+    void positionChanged(QPolygonF* poly,int x, int y, double orientation);
+    void signal();
 };
 
 #endif // MATHEMATICALCARPRODUCT_H

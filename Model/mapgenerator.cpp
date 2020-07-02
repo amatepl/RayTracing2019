@@ -40,7 +40,7 @@ void MapGenerator::generateMap(){
     int streetWidth = 30;
 
     for(int i =0;i<round(m_mapBoundary.height()/streetsDistance)-1;i++){
-        for(int j =0;j<round(m_mapBoundary.height()/streetsDistance)-1;j++){
+        for(int j =0;j<round(m_mapBoundary.width()/streetsDistance)-1;j++){
             QPointF intersectionPoint1;
             m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i),&intersectionPoint1);
 
@@ -87,14 +87,72 @@ void MapGenerator::generateMap(){
 
             m_products.push_back(building);
 
+
+
             //m_scene->addPolygon(buildingForm);
 
         }
+        //addCars();
     }
+}
+
+void MapGenerator::addCars(){
+    QPointF carPosition;
+    for(int i=0;i<m_horizontalStreets.size();i++){
+        int random = rand()%(int)m_horizontalStreets.at(i)->length();
+        QLineF line = *m_horizontalStreets.at(i);
+        line.setLength(random);
+        carPosition = line.p2();
+        MathematicalProduct* car = m_carFactory->createMathematicalProduct(carPosition.x(),carPosition.y());
+        m_products.push_back(car);
+        m_cars.push_back((MathematicalCarProduct*)car);
+        ((MathematicalCarProduct*)car)->setRoad(line);
+
+    }
+
+    for(int j=0;j<m_verticalStreets.size();j++){
+        int random = rand()%(int)m_verticalStreets.at(j)->length();
+        QLineF line = *m_verticalStreets.at(j);
+        line.setLength(random);
+        carPosition = line.p2();
+        MathematicalProduct* car = m_carFactory->createMathematicalProduct(carPosition.x(),carPosition.y());
+        m_products.push_back(car);
+        m_cars.push_back((MathematicalCarProduct*)car);
+        ((MathematicalCarProduct*)car)->setRoad(line);
+
+        //thread *thread_obj = new thread (&MapGenerator::moveCar,ref(*(MathematicalCarProduct*)car),ref(*m_verticalStreets.at(j)));
+        //thread_obj->join();
+        //thread_obj.detach();
+
+    }
+}
+
+void MapGenerator::moveCar(MathematicalCarProduct& car, QLineF& street){
+    while(true){
+        car.setPosX(car.getPosX() + street.dx()/street.length());
+        car.setPosY(car.getPosY() + street.dy()/street.length());
+        this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+}
+
+void MapGenerator::moveCars(MapGenerator &mapGenerator){
+
+    vector<MathematicalCarProduct*> cars = mapGenerator.getCars();
+    while(true){
+        for(int i=0;i< cars.size();i++){
+            cars.at(i)->moveCar();
+        }
+        this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
 }
 
 vector<MathematicalBuildingProduct*> MapGenerator::getBuildings() const{
     return m_buildings;
+}
+
+vector<MathematicalCarProduct*> MapGenerator::getCars() const{
+    return m_cars;
 }
 
 vector<MathematicalProduct*> MapGenerator::getProducts() const{
@@ -103,4 +161,8 @@ vector<MathematicalProduct*> MapGenerator::getProducts() const{
 
 void MapGenerator::setBuildingFactory(BuildingFactory *buildingFactory){
     m_buildingFactory = buildingFactory;
+}
+
+void MapGenerator::setCarFactory(CarFactory *carFactory){
+    m_carFactory = carFactory;
 }

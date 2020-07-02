@@ -2,7 +2,7 @@
 
 RayTracing::RayTracing(MathematicalTransmitterProduct *transmitter, MathematicalReceiverProduct *receiver)
 {
-    RayFactory* rayFactory = new RayFactory(true);
+    RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
     transmitter->setRayFactory(rayFactory);
 
@@ -20,7 +20,7 @@ MathematicalComponent* RayTracing::compute(vector<MathematicalTransmitterProduct
     m_buildings = buildings;
     reflectionsNumber = 0;
 
-    RayFactory* rayFactory = new RayFactory(true);
+    RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
     for(int i =0;i<transmitters.size();i++){
         transmitters.at(i)->setRayFactory(rayFactory);
@@ -38,7 +38,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     reflectionsNumber = 5;
     //cout<<"I am computing"<<endl;
 
-    RayFactory* rayFactory = new RayFactory(true);
+    RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
 
     for(int i =0;i<m_transmitters.size();i++){
@@ -58,10 +58,13 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_math
         }
 
     }
-    for(int i=0;i<m_mathematicalComponents.count("Receiver");i++){
-        //m_receiver.push_back((MathematicalTransmitterProduct*) m_mathematicalComponents["Transmitter"].at(i));
-        //m_receiver = (MathematicalReceiverProduct*) m_mathematicalComponents["Transmitter"].at(0);
-        m_receiver = static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(0)) ;
+    if(m_mathematicalComponents.count("Transmitter")){
+        for(int i=0;i<m_mathematicalComponents["Receiver"].size();i++){
+            //m_receiver.push_back((MathematicalTransmitterProduct*) m_mathematicalComponents["Transmitter"].at(i));
+            //m_receiver = (MathematicalReceiverProduct*) m_mathematicalComponents["Transmitter"].at(0);
+            m_receiver = static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(0)) ;
+            m_receivers.push_back(static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(i)));
+    }
     }
     if(m_mathematicalComponents.count("Building")){
         //m_buildings.push_back((MathematicalBuildingProduct*) m_mathematicalComponents["Building"].at(i));

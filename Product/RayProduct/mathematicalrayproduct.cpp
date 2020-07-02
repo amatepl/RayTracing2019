@@ -44,6 +44,13 @@ void MathematicalRayProduct::setDiffracted(bool diffracted){
     m_diffracted = diffracted;
 }
 
+void MathematicalRayProduct::draw(){
+    m_graphic->draw();
+}
+
+void MathematicalRayProduct::erase(){
+    m_graphic->erase();
+}
 
 MathematicalProduct* MathematicalRayProduct::toMathematicalComponent(){
     return this;

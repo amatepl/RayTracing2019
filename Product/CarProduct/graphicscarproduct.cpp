@@ -53,7 +53,10 @@ void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     m_observer->openDialog();
 }
 
-void GraphicsCarProduct::notifyToGraphic(QPolygonF *rect, int centerx, int centery, double orientation){
+void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int centery, double orientation){
+    cout<<"Center position: "<<centerx<<", "<<centery<<endl;
     setPos(centerx,centery);
-    setRotation(orientation);
+    setX(centerx);
+    setY(centery);
+    //setRotation(orientation);
 }

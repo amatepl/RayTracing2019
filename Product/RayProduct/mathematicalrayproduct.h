@@ -42,6 +42,8 @@ public:
     double getMeterLength()const;
     int getIndWall()const;
     void setDiffracted(bool diffracted);
+    void draw();
+    void erase();
 
     MathematicalProduct* toMathematicalComponent();
     void update(QGraphicsItem *graphic) override;

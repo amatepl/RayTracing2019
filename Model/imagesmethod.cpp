@@ -10,6 +10,10 @@ void ImagesMethod::illuminationZones(){
     int recursionDepth = reflectionsNumber;
 
     foreach(MathematicalTransmitterProduct* transmitter,m_transmitters){
+        for(int i=0;i<m_receivers.size();i++){
+            m_receivers.at(i)->attachObserver(transmitter);
+            transmitter->attachObservable(m_receivers.at(i));
+        }
         m_receiver->attachObserver(transmitter);
         transmitter->attachObservable(m_receiver);
         forImage data = transmitterIllumination(transmitter);
@@ -72,9 +76,12 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
     QPen redPen(Qt::red);
     redPen.setWidth(3);
     QPen bluePen(Qt::blue);
-    redPen.setWidth(3);
+    bluePen.setWidth(3);
     QPen greenPen(Qt::green);
-    redPen.setWidth(3);
+    greenPen.setWidth(3);
+
+//    m_scene->addEllipse(zone.at(0).x(),zone.at(0).y(),5,5,redPen);
+//    m_scene->addPolygon(zone,illumination2);
 
     for(int i = 0;i<zone.length()-1;i++){
         const QPointF *cornerP = nullptr;
@@ -88,17 +95,24 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
                  * The illumination zone corner is an extremity of one illuminated wall.
                  */
                 if(cornerP == nullptr){
+                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i)); //Perpendicular wall to the one illuminated
+                    m_scene->addEllipse(p2.x(),p2.y(),10,10,greenPen);
+
+                    cond = false;
                     cornerP = &zone.at(i);
-                    if(illuminatedWalls.at(j)->onLine(zone.at(i+1))){
+                    if(illuminatedWalls.at(j)->onLine(zone.at(i+1)) && zone.at(i-1) != p2){
                         /*
                          * Looking for the neighouring illuminatioin zone corner which doesn't lie on the same illuminated wall.
                          * It will be used to build the illumination zone of the diffraction point.
                          */
                         p1 = zone.at(i-1);
-                    }else{p1 = zone.at(i+1);}
+                        m_scene->addEllipse(p1.x(),p1.y(),5,5,bluePen);
+                    }else{
+                        p1 = zone.at(i+1);
+                        m_scene->addEllipse(p1.x(),p1.y(),5,5,redPen);
+                    }
 
-                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i)); //Perpendicular wall to the one illuminated
-                    cond = false;
+
                 }
                 else{
                     cond = false;
@@ -112,6 +126,9 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
             AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), p1,p2, parent);
             corner->setRayFactory(m_rayFactory);
             //m_scene->addPolygon(corner->getIlluminationZone(),QPen(),illumination1);
+            if(p1==p2){
+//                cout<< "Illumintion zone is a line!"<<endl;
+            }
 
             QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
 
@@ -126,8 +143,12 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
                 continue;
             }
             else{
-                m_receiver->attachObserver(corner);
-//                m_scene->addPolygon(cornerZone,QPen(),illumination1);         // Illumination zone for first diffraction
+                for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
+                    m_receivers.at(numberReceivers)->attachObserver(corner);
+                }
+                //m_receiver->attachObserver(corner);
+                m_scene->addPolygon(cornerZone,QPen(),illumination1);         // Illumination zone for first diffraction
+                //m_scene->addEllipse(cornerZone.at(0).x(),cornerZone.at(0).y(),10,10,redPen);
 
                 //QLineF line(cornerZone.at(0),cornerZone.at(1));
                 //m_scene->addLine(line,redPen);
@@ -137,7 +158,21 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
                 QPolygonF build(*m_buildings.at(i));
                 if(build.intersects(cornerZone)){
 
-                    QLineF line(cornerZone.at(0),cornerZone.at(1));         // There si an error here
+
+                    QLineF line;
+                    int k =0;
+                    bool foundCorner = false;
+                    while(k<cornerZone.size() && !foundCorner){
+                        foundCorner = (cornerZone.at(k)==*corner);
+                        if(foundCorner){
+                            QLineF lineDraw(cornerZone.at(k),cornerZone.at((k+1)%(cornerZone.size())));
+                            line = lineDraw;
+                            //m_scene->addLine(lineDraw, redPen);
+                        }
+                        k++;
+                    }
+
+//                    QLineF line(cornerZone.at(0),cornerZone.at(1));         // There si an error here
 
 //                    cout<<"Illumination zone at(0) = pos: "<< (cornerZone.at(0) == corner->getPosition()) <<endl;
 
@@ -152,24 +187,30 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 
                     //QLineF lineDraw(cornerZone.at(0),cornerZone.at(1));         // for drawing
 
+                    //m_scene->addLine(line,redPen);
+
 
                     Wall* wall = nullptr;
                     if(m_buildings.at(i)->adjacentWall(line, wall)){
 
                         //cout<<"Adjacent!"<<endl;
+//                        m_scene->addLine(*wall,redPen);
 
                         /*
                          * A building has an adjacent wall to the illumination zone of the diffraction point.
                          */
-                        QPointF pos(wall->farestExtrem(cornerZone.at(0)));
+                        QPointF pos(wall->farestExtrem(cornerZone.at(k-1)));
 
                         QPointF p2 = m_buildings.at(i)->forDiffraction(wall,pos);
-                        m_scene->addEllipse(p2.x(),p2.y(),5,5,redPen);                                  // RED for diffraction
-                        m_scene->addEllipse(pos.x(),pos.y(),5,5,bluePen);                               // BLUE farest extremity
-                        m_scene->addEllipse(cornerZone.at(1).x(),cornerZone.at(1).y(),5,5,greenPen);    // GREEN corner zone
+//                        m_scene->addEllipse(p2.x(),p2.y(),10,10,redPen);                                  // RED for diffraction
+//                        m_scene->addEllipse(pos.x(),pos.y(),10,10,bluePen);                               // BLUE farest extremity
+//                        m_scene->addEllipse(cornerZone.at(1).x(),cornerZone.at(1).y(),10,10,greenPen);    // GREEN corner zone
                         AntenaDiffraction *corner2 = new AntenaDiffraction(pos, cornerZone.at(1),p2, corner);
                         corner2->setRayFactory(m_rayFactory);
-                        m_receiver->attachObserver(corner2);
+                        //m_receiver->attachObserver(corner2);
+                        for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
+                            m_receivers.at(numberReceivers)->attachObserver(corner2);
+                        }
 
                         //m_scene->addPolygon(corner2->getIlluminationZone(),QPen(),illumination2);
 
@@ -338,7 +379,10 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                 image->setBuilding(walls.at(j)->getBuilding());
                 //image->setSceneBoundary(itemsBoundingRect());
                 image->setRayFactory(m_rayFactory);
-                m_receiver->attachObserver(image);
+                //m_receiver->attachObserver(image);
+                for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
+                    m_receivers.at(numberReceivers)->attachObserver(image);
+                }
                 images.push_back(image);
 
                 //QPolygonF imagesZone = zone.intersected(image->getIlluminationZone());

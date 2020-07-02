@@ -7,6 +7,7 @@
 
 #include "Share/line.h"
 #include "Observer/productobserver.h"
+#include "Observer/productobservable.h"
 #include "Product/abstractantena.h"
 #include "Product/RayProduct/mathematicalrayproduct.h"  // Should probably be deleted
 #include "Abstract_Factory/abstractrayfactory.h"
@@ -26,14 +27,14 @@ public:
     QPolygonF buildCoverage();
 
     //AbstractAntena
-    void notifyParent(const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) override;
+    void notifyParent(ProductObservable* productObservable,const float speed, const float direction,const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) override;
     QPolygonF getIlluminationZone()const override;
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
     QPointF getPosition()const override;
 
 
     //ProductObserver
-    void notify(const QPointF &pos) override;
+    void update(ProductObservable* productObservable,const float speed, const float direction) override;
     void attachObservable(ProductObservable* productObservable) override;
 
 private:

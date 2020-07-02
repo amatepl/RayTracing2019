@@ -3,6 +3,7 @@
 
 #include "Product/abstractantena.h"
 #include "Observer/productobserver.h"
+#include "Observer/productobservable.h"
 #include "Product/RayProduct/mathematicalrayproduct.h"
 #include "Abstract_Factory/abstractrayfactory.h"
 
@@ -17,7 +18,7 @@ public:
     QPolygonF buildCoverage();
 
     // Overrides from AbstractAntena
-    virtual void notifyParent(const QPointF &point, vector<MathematicalRayProduct*>* wholeRay) override;
+    virtual void notifyParent(ProductObservable* productObservable,const float speed, const float direction,const QPointF &point, vector<MathematicalRayProduct*>* wholeRay) override;
     virtual QPointF getPosition()const override;
     virtual QPolygonF getIlluminationZone()const override;
     virtual QPolygonF getIlluminationZone(const QRectF &rect)const override;
@@ -25,7 +26,7 @@ public:
     virtual void setIlluminatedZone(const QPolygonF &zone) override;
 
     // Overrides from ProductObserver
-    virtual void notify(const QPointF &pos) override;
+    virtual void update(ProductObservable* productObservable,const float speed, const float direction) override;
     void attachObservable(ProductObservable* productObservable) override;
 
 private:

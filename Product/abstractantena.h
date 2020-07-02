@@ -11,11 +11,12 @@ class QPolygonF;
 class  MathematicalBuildingProduct;
 class MathematicalRayProduct;
 class AbstractRayFactory;
+class ProductObservable;
 
 class AbstractAntena
 {
 public:
-    virtual void notifyParent(const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) = 0;
+    virtual void notifyParent(ProductObservable *receiver,const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) = 0;
     virtual QPointF getPosition()const = 0;
     virtual QPolygonF getIlluminationZone()const = 0;
     virtual QPolygonF getIlluminationZone(const QRectF &rect)const = 0;
