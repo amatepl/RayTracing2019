@@ -31,7 +31,7 @@ public:
     virtual void setKind(Kind kind) = 0;
     virtual void newProperties() = 0;
 
-    virtual complex <double> arrayFactor(double theta, double phi) {
+    virtual complex <double> arrayFactor(double theta, double phi, double principal) {
         complex <double> xarray(0.0,0.0);
         complex <double> yarray(0.0,0.0);
         complex <double> arrayfactor(0.0,0.0);
@@ -42,25 +42,27 @@ public:
 
         double d = lambda*0.5;
         double k = 2.0*M_PI/lambda;
-
-        psy = i*k*d*sin(phi*M_PI/180)*sin(theta*M_PI/180);
-        qsy = i*k*d*sin(phi*M_PI/180)*cos(theta*M_PI/180);
-
-        if ((theta == 0.0 || theta == 180.0) && (phi != 0.0)){
+        double alpha  = phi*M_PI/180;
+        double beta = theta*M_PI/180;
+        double alphaprime = M_PI/2;
+        double betaprime = principal;
+        double A = sin(alpha)*sin(beta);
+        double Aprime = sin(alphaprime)*sin(betaprime);
+        double B = sin(alpha)*cos(beta);
+        double Bprime = sin(alphaprime)*cos(betaprime);
+        psy = i*k*d*(A-Aprime);
+        qsy = i*k*d*(B-Bprime);
+        if ((A == Aprime) & (B != Bprime)){
             yarray = double(m_column) + 0.0*i;
             xarray = (exp(qsy*double(m_row))-1.0)/(exp(qsy)-1.0);
-
         }
-        else if ((theta == 90.0 || theta == 270.0) && (phi != 0.0)){
+        else if ((A != Aprime) && (B==Bprime)){
             yarray = (exp(psy*double(m_column))-1.0)/(exp(psy)-1.0);
             xarray = double(m_row)+0.0*i;
-            std::cout << "Condition 2: " << lambda << " and " << exp(psy) << std::endl;
-
         }
-        else if (phi == 0.0){
+        else if ((A == Aprime) && (B==Bprime)){
             yarray = double(m_column) + 0.0*i;
             xarray = double(m_row)+0.0*i;
-
         }
         else {
             yarray = (exp(psy*double(m_column))-1.0)/(exp(psy)-1.0);
@@ -70,29 +72,64 @@ public:
         return arrayfactor;
     }
 
-    virtual complex <double> dipoleFactor(double phi) {
+    virtual complex <double> dipoleFactor(double theta, double phi) {
         complex <double> dipolefactor(0.0,0.0);
         if (phi == 0.0 || phi == 180.0) dipolefactor = 0.0;
         else dipolefactor = cos(0.5*M_PI*cos(phi*M_PI/180))/sin(phi*M_PI/180);
         return dipolefactor;
     }
 
-    virtual complex <double> totaleArrayFactor(double theta, double phi){
-        complex <double> arrayfactor = arrayFactor(theta, phi);
-        complex <double> dipolefactor = dipoleFactor(phi);
-        return arrayfactor;//*dipolefactor;
+    virtual complex <double> reflectorFactor(double theta, double phi){
+        complex <double> reflectorfactor(0.0,0.0);
+        lambda = c/m_frequency;
+
+        double d = lambda/4.0;
+        double k = 2.0*M_PI/lambda;
+        complex <double> i(0.0,1.0);
+
+        complex <double> psy = k*d*sin(phi*M_PI/180)*cos(theta*M_PI/180);
+        if ((theta >= 270 && theta < 360.0) || (theta >=0 && theta < 90.0)){reflectorfactor = 2.0*i*exp(-i*psy)*sin(psy);}
+        return reflectorfactor;
     }
 
-    virtual double electricalGain(double theta, double phi){
-        return abs(totaleArrayFactor(theta,phi));
+    virtual complex <double> totaleArrayFactor(double theta, double phi, double principal){
+        complex <double> arrayfactor = arrayFactor(theta, phi, principal);
+        complex <double> dipolefactor = dipoleFactor(theta,phi);
+        complex <double> reflectorfactor = reflectorFactor(theta,phi);
+        if (getKind() == dipole){
+            return dipolefactor;
+        }
+        else if (getKind() == array){
+            return dipolefactor*arrayfactor;
+        }
+        else if (getKind() == dipolereflector){
+            return dipolefactor*reflectorfactor;
+        }
+        else if (getKind() == arrayreflector){
+            return dipolefactor*arrayfactor*reflectorfactor;
+        }
     }
 
-    virtual double powerGain(double theta, double phi){
-        double gain;
-        complex <double> arrayfactor = arrayFactor(theta, phi);
-        complex <double> dipolefactor = dipoleFactor(phi);
-        gain = 16.0/(3.0*M_PI)*pow(abs(dipolefactor),2)*pow(abs(arrayfactor),2);
-        return gain;
+    virtual double electricalGain(double theta, double phi, double principal){
+        return abs(totaleArrayFactor(theta,phi,principal));
+    }
+
+    virtual double powerGain(double theta, double phi, double principal){
+        complex <double> arrayfactor = arrayFactor(theta, phi, principal);
+        complex <double> dipolefactor = dipoleFactor(theta,phi);
+        complex <double> reflectorfactor = reflectorFactor(theta,phi);
+        if (getKind() == dipole){
+            return 16.0/(3.0*M_PI)*pow(abs(dipolefactor),2);
+        }
+        else if (getKind() == array){
+            return 16.0/(3.0*M_PI)*pow(abs(dipolefactor),2)*pow(abs(arrayfactor),2);
+        }
+        else if (getKind() == dipolereflector){
+            return 16.0/(3.0*M_PI)*pow(abs(dipolefactor),2)*pow(abs(reflectorfactor),2);
+        }
+        else if (getKind() == arrayreflector){
+            return 16.0/(3.0*M_PI)*pow(abs(dipolefactor),2)*pow(abs(arrayfactor),2)*pow(abs(reflectorfactor),2);
+        }
     }
 
 protected:

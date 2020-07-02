@@ -81,14 +81,13 @@ private:
 
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;
-    QButtonGroup *m_raytracinggroup;
-    QPushButton *launch_raytracing;
 
     QToolBox *m_toolbox;
     QToolBar *m_toolbarobject;
 
     QToolBar *m_toolbarlaunch;
     QTabWidget* m_tabwidget;
+    QPushButton *launch_raytracing;
     QLineEdit *sceneposx,*sceneposy;
 
     QAction *deleteaction;

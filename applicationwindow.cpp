@@ -202,45 +202,6 @@ QWidget* ApplicationWindow::rayTracingWidget(){
 
     widget->setLayout(raytracinglayout);
 
-    /*
-    m_posx = new QSpinBox(this);
-    m_posy = new QSpinBox(this);
-    m_posx->setRange(0,5000);
-    m_posx->setAccelerated(true);
-    m_posy->setRange(0,5000);
-    m_posy->setAccelerated(true);
-
-    m_power = new QLineEdit("Received power [dB]: ", this);
-    m_power->setEnabled(false);
-    m_e_field = new QLineEdit("Electric fiedl [V/m]: ", this);
-    m_e_field->setEnabled(false);
-
-    QFormLayout *geoProperties = new QFormLayout(this);
-    geoProperties->addRow("X center: ",m_posx);
-    geoProperties->addRow("Y center: ",m_posy);
-
-    QGroupBox *geo = new QGroupBox("Geometry properties");
-    geo->setLayout(geoProperties);
-
-    QFormLayout *phyProperties = new QFormLayout(this);
-    phyProperties->addRow(m_power);
-    phyProperties->addRow(m_e_field);
-
-    QGroupBox *phy = new QGroupBox("Physical properties");
-    phy->setLayout(phyProperties);
-
-    QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(geo,0,0);
-    firstLayout->addWidget(phy,1,0);
-
-    widget->setLayout(firstLayout);
-
-    setPosX(m_mathematicalproduct->getPosX());
-    setPosY(m_mathematicalproduct->getPosY());
-    setPower(m_mathematicalproduct->getPower());
-    setEField(m_mathematicalproduct->getEField());
-    setEnable(m_mathematicalproduct->getEnable());
-    */
     return widget;
 }
 
@@ -277,11 +238,8 @@ void ApplicationWindow::createToolBox(){
     m_antennagroup->setExclusive(false);
     m_obstaclegroup = new QButtonGroup(this);
     m_obstaclegroup->setExclusive(false);
-    //m_raytracinggroup = new QButtonGroup(this);
-    //m_raytracinggroup->setExclusive(false);
     connect(m_antennagroup,SIGNAL(buttonClicked(int)),this,SLOT(antennaGroupClicked(int)));
     connect(m_obstaclegroup,SIGNAL(buttonClicked(int)),this,SLOT(obstacleGroupClicked(int)));
-    //connect(m_raytracinggroup,SIGNAL(buttonClicked(int)),this,SLOT(rayTracingGroupClicked(int)));
     QGridLayout *antenna_layout = new QGridLayout;
     QGridLayout *obstacle_layout = new QGridLayout;
     //QGridLayout *rayTracing_layout = new QGridLayout;
@@ -314,39 +272,11 @@ void ApplicationWindow::createToolBox(){
     QWidget *obstacleWidget = new QWidget;
     obstacleWidget->setLayout(obstacle_layout);
 
-    // Creating the rayTraycing pannel
-    /*
-    QWidget *launchRayTracingWidget = new QWidget;
-    QToolButton *launchRayTracingButton = new QToolButton;
-    launchRayTracingButton->setIconSize(QSize(50, 50));
-    launchRayTracingButton->setCheckable(false);
-    QIcon icon  = QIcon(QPixmap(":/Images/playButton.png"));
-    launchRayTracingButton->setIcon(icon);
-    m_raytracinggroup->addButton(launchRayTracingButton,int(LaunchRayTracing));
-
-
-    QGridLayout *playButton_layout = new QGridLayout;
-    playButton_layout->addWidget(launchRayTracingButton, 0, 0, Qt::AlignHCenter);
-    playButton_layout->addWidget(new QLabel("Launch Ray"), 1, 0, Qt::AlignCenter);
-
-    launchRayTracingWidget->setLayout(playButton_layout);
-
-
-
-    rayTracing_layout->addWidget(launchRayTracingWidget, 0, 0);
-
-    rayTracing_layout->setRowStretch(1, 10);
-    rayTracing_layout->setColumnStretch(2, 10);
-
-    QWidget *rayTracingWidget = new QWidget;
-    rayTracingWidget->setLayout(rayTracing_layout);
-*/
     m_toolbox = new QToolBox;
     m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     m_toolbox->setMinimumWidth(itemWidget->sizeHint().width());
     m_toolbox->addItem(itemWidget, tr("Insert antenna"));
     m_toolbox->addItem(obstacleWidget, tr("Insert obstacles"));
-    //m_toolbox->addItem(rayTracingWidget, tr("Ray Tracing"));
     m_toolbarobject = new QToolBar;
     m_toolbarobject->addWidget(m_toolbox);
     m_toolbarobject->setFloatable(false);
