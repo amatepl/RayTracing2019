@@ -33,7 +33,12 @@ public:
 
     void drawRays();
     QPolygonF buildCoverage();
-    complex<double> computeEMfield(vector<MathematicalRayProduct> *rayLine);
+
+    //virtual void setModel(Model model) override;
+
+    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine);
+    double computePrx(complex <double> totalEfield);
+
     double computeReflexionPer(double thetaI, double epsilonR);
     vector<vector<MathematicalRayProduct *> *> getRays();
     void notifyObservables();
@@ -41,6 +46,16 @@ public:
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
     void setSceneBoundary(const QRectF &rect);
 
+
+    // ProductObserver
+    //void update(const QPointF *productObservable, const float speed, const float direction) override{};
+    void update(ProductObservable *receiver, const float speed, const float direction) override;
+    void drawRays(ProductObservable* productObservable, bool draw) override;
+
+    //ModelObserver
+    void attachObservable(ModelObservable* modelObserver) override;
+    void attachObservable(ProductObservable *productObservable) override;
+//==============
     // From TransmitterProduct
     int getPosX() override {return x();}
     int getPosY() override {return y();}
@@ -63,17 +78,23 @@ public:
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
+//>>>>>>> d1ec8e004ad1b2afa2d74871dff3deaf7bbc3b77
     void openDialog() override;
 
-    // From ProductObserver
-    void notify(const QPointF &pos) override;
-    void attachObservable(ProductObservable *productObservable) override;
+//    // From ProductObserver
+//    void notify(const QPointF &pos) override;
+//    void attachObservable(ProductObservable *productObservable) override;
 
-    // From ModelObserver
-    void attachObservable(ModelObservable* modelObserver) override;
+//    // From ModelObserver
+//    void attachObservable(ModelObservable* modelObserver) override;
 
-    // From AbstractAntenna
-    void notifyParent(const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
+
+//    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
+//    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
+
+    //AbstractAntenna
+    void notifyParent(ProductObservable *productObservable,const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
+
     QPointF getPosition()const override;
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
     QPolygonF getIlluminationZone()const override;
@@ -90,6 +111,11 @@ private:
     double m_powerAtReceiver;
     ModelObservable* m_model;
     vector<ProductObservable*> m_productObservable;
+    //map<const QPointF*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
+    map<ProductObservable*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
+    map<ProductObservable*,complex<double>> m_receiversField;
+    map<ProductObservable*,vector<double>> m_receiversPowers;
+
     int m_radius;
 
     QRectF m_sceneBoundary;

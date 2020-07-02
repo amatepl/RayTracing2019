@@ -5,7 +5,7 @@
 
 class GraphicsProduct;
 
-class MathematicalProduct
+class MathematicalProduct//: public QObject
 {
 public:
     virtual ~MathematicalProduct(){}
@@ -14,7 +14,7 @@ public:
     virtual std::string changeAppearance() {return "no appearance";}
 
     //MathematicalProduct act as an observer of GraphicsProduct
-    void attachObservable(GraphicsProduct* graphic) {m_graphic = graphic;}
+    virtual void attachObservable(GraphicsProduct* graphic) {m_graphic = graphic;}
     virtual void update(QGraphicsItem* graphic) = 0;
     GraphicsProduct* toGraphicsProduct() {return m_graphic;}
 

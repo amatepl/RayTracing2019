@@ -17,12 +17,15 @@ GraphicsProduct* CarFactory::createGraphicsProduct(int posX, int posY){
     return graphicsProduct;
 }
 
-MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
+MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic ){
     QRectF rect(posX,posY,50,50);
     MathematicalCarProduct* mathematicalProduct = new MathematicalCarProduct(rect, QPointF(posX,posY));
     if (linkgraphic){
         GraphicsCarProduct* graphicsProduct = new GraphicsCarProduct(m_productmenu, m_scene);
         graphicsProduct->attachObserver(mathematicalProduct);
+        graphicsProduct->setX(posX);
+        graphicsProduct->setY(posY);
+        mathematicalProduct->attachObservable(graphicsProduct);
     }
     return mathematicalProduct;
 }

@@ -29,7 +29,103 @@ QPolygonF MathematicalTransmitterProduct::buildCoverage(){
     return coverage;
 }
 
-complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct> *rayLine){
+void MathematicalTransmitterProduct::update(ProductObservable* receiver, const float speed, const float direction){
+    //m_EMfield = 0;
+    //m_power = 0;
+    //cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
+    //cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
+    //cout<<"Transmitter notified !"<<endl;
+
+    m_receiversField[receiver] = 0;
+    m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(),m_receiversPowers[receiver].end());
+
+    QPointF* pos = receiver->getPos();
+    //vector<vector<MathematicalRayProduct*>*> *wholeRays;
+    if(m_receiversRays.count(receiver)){
+        for(int i =0; i<m_receiversRays[receiver].size();i++){
+            for(int j=0;j<m_receiversRays[receiver].at(i)->size();j++){
+                delete m_receiversRays[receiver].at(i)->at(j);
+            }
+        }
+        m_receiversRays[receiver].erase(m_receiversRays[receiver].begin(),m_receiversRays[receiver].end());
+    }
+
+//    for(int i =0; i<m_wholeRays.size();i++){
+//        for(int j=0;j<m_wholeRays.at(i)->size();j++){
+//            delete m_wholeRays.at(i)->at(j);
+//        }
+//    }
+    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
+//    cout<<"Are you ok Annie?"<<endl;
+    //m_wholeRays.shrink_to_fit();
+
+    if(m_zone.containsPoint(*pos,Qt::OddEvenFill)){
+        vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
+        QPointF m_pos(int(this->x()),int(this->y()));
+        //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
+        wholeRay->push_back(m_rayFactory->createRay(*this,*pos));
+        m_wholeRays.push_back(wholeRay);
+
+//        cout<<"Annie are you ok?"<<m_receiversRays[receiver].size()<<endl;
+        m_receiversRays[receiver].push_back(wholeRay);
+
+        complex<double> EMfield = computeEMfield(wholeRay);
+        m_receiversField[receiver] += EMfield;
+        double power = computePrx(EMfield);
+        m_receiversPowers[receiver].push_back(power);
+        double totalPower = computePrx(m_receiversField[receiver]);
+
+        //m_model->notify(this);
+
+        receiver->answer(this,totalPower,&m_receiversPowers[receiver],m_receiversField[receiver]);
+    }
+
+
+    //}
+
+        //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
+}
+
+void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservable, bool draw){
+    if(draw){
+        for(int i=0;i<m_receiversRays[productObservable].size();i++){
+            for(int j=0;j<m_receiversRays[productObservable].at(i)->size();j++){
+                m_receiversRays[productObservable].at(i)->at(j)->draw();
+            }
+        }
+    }
+    else{
+        for(int i=0;i<m_receiversRays[productObservable].size();i++){
+            for(int j=0;j<m_receiversRays[productObservable].at(i)->size();j++){
+                m_receiversRays[productObservable].at(i)->at(j)->erase();
+            }
+        }
+    }
+}
+
+void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) {
+    MathematicalRayProduct *newRay = m_rayFactory->createRay(*this,point);
+    wholeRay->push_back(newRay);
+    m_wholeRays.push_back(wholeRay);
+
+    m_receiversRays[receiver].push_back(wholeRay);
+
+    complex<double>EMfield = computeEMfield(wholeRay);
+    m_receiversField[receiver] += EMfield;
+    double power = computePrx(EMfield);
+    m_receiversPowers[receiver].push_back(power);
+    double totalPower = computePrx(m_receiversField[receiver]);
+    //m_receiver->addWholeRay(wholeRay);
+    //m_EMfield += computeEMfield(wholeRay);
+    //m_power = computePrx(m_EMfield,this);
+    //m_model->notify(this);
+
+    receiver->answer(this,totalPower,&m_receiversPowers[receiver],m_receiversField[receiver]);
+
+}
+
+
+complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct*> *rayLine){
     /* One vector<ray*> is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
      * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
      *
@@ -48,15 +144,15 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
 //        currentRay = &rayLine->at(i);
 //        theta = currentRay->getTheta();
 
-        theta = rayLine->at(i).getTheta();
+        theta = rayLine->at(i)->getTheta();
 
         if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
             //double thetaI = abs(currentRay->getTetai());
-            double thetaI = abs(rayLine->at(i).getTetai());
+            double thetaI = abs(rayLine->at(i)->getTetai());
 
             R *= computeReflexionPer(thetaI,epsilonWallRel);
         }
-        completeLength += rayLine->at(i).getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
+        completeLength += rayLine->at(i)->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
         //completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
 
     }
@@ -98,6 +194,26 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     return Efield;
 }
 
+//<<<<<<< HEAD
+double MathematicalTransmitterProduct::computePrx(complex <double> totalEfield){
+    // Compute the power at the receive antenna with the total electric field induced by all MPC
+
+    complex <double> Voc = (lambda/M_PI)*(totalEfield);
+    double Prx = 1/(8*Ra)*norm(Voc);
+    return Prx;
+}
+
+
+//void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactory){
+//    m_rayFactory = rayFactory;
+//}
+
+
+//--------------------------
+
+
+//=======
+//>>>>>>> d1ec8e004ad1b2afa2d74871dff3deaf7bbc3b77
 
 double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR){
     //double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
@@ -194,39 +310,6 @@ void MathematicalTransmitterProduct::openDialog(){
 
 // ---------------------------------------------------- ProductObserver -------------------------------------------------------------------
 
-void MathematicalTransmitterProduct::notify(const QPointF &pos){
-    //m_EMfield = 0;
-    //m_power = 0;
-    //cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
-    //cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
-    //cout<<"Transmitter notified !"<<endl;
-
-    for(int i =0; i<m_wholeRays.size();i++){
-        for(int j=0;j<m_wholeRays.at(i)->size();j++){
-            delete m_wholeRays.at(i)->at(j);
-        }
-    }
-    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
-    //m_wholeRays.shrink_to_fit();
-
-    if(m_zone.containsPoint(pos,Qt::OddEvenFill)){
-        vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
-        QPointF m_pos(int(this->x()),int(this->y()));
-        //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
-        wholeRay->push_back(m_rayFactory->createRay(*this,pos));
-        m_wholeRays.push_back(wholeRay);
-        //m_EMfield += computeEMfield(*wholeRay);
-        //m_power = m_scene->computePrx(m_EMfield,this);
-        //m_receiver->addWholeRay(wholeRay);
-
-        //cout<<"My number of whoeRays: "<<m_wholeRays.size()<<endl;
-
-        m_model->notify(this);
-    }
-    //}
-
-        //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
-}
 
 void MathematicalTransmitterProduct::attachObservable(ProductObservable* productObservable){
     m_productObservable.push_back(productObservable);
@@ -241,16 +324,6 @@ void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObse
 
 // ---------------------------------------------------- AbstractAntenna -------------------------------------------------------------------
 
-void MathematicalTransmitterProduct::notifyParent(const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) {
-    MathematicalRayProduct *newRay = m_rayFactory->createRay(*this,point);
-    wholeRay->push_back(newRay);
-    m_wholeRays.push_back(wholeRay);
-    //m_receiver->addWholeRay(wholeRay);
-    //m_EMfield += computeEMfield(wholeRay);
-    //m_power = computePrx(m_EMfield,this);
-    m_model->notify(this);
-
-}
 
 QPointF MathematicalTransmitterProduct::getPosition()const{
     return *this;

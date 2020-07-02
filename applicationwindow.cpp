@@ -16,7 +16,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_carFactory = new CarFactory(m_productmenu,m_map);
 
     m_model = new Model(this);
-    m_model->setScene(m_map,(BuildingFactory*) m_buildingFactory);
+    m_model->setScene(m_map,(BuildingFactory*) m_buildingFactory,(CarFactory*) m_carFactory);
 
     m_rayTracingAlgorithm = new RayTracing();
     m_rayTracingAlgorithm->setScene(m_map);

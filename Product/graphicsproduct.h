@@ -11,12 +11,15 @@ using namespace std;
 
 class QPixmap;
 
-class GraphicsProduct
+class GraphicsProduct: public QObject
 {
+//    Q_OBJECT
+
 public:
-    virtual ~GraphicsProduct(){cout<<"Gaphics product deleted!"<<endl;}
+    virtual ~GraphicsProduct(){/*cout<<"Gaphics product deleted!"<<endl;*/}
 
     virtual void draw() = 0;
+    virtual void erase(){};
     virtual bool graphicsSelected() {return false;}
     std::string getType() {return m_type;}
 
@@ -29,12 +32,14 @@ public:
     virtual void notifyToGraphic(QPointF*, double) {};
     virtual void notifyToGraphic(QRect*, double) {};
     virtual void notifyToGraphic(QPolygonF*,int,int) {};
-    virtual void notifyToGraphic(QPolygonF*,int,int,double) {};
+
 
 protected:
     MathematicalProduct* m_observer;
     std::string m_type;
 
+public slots:
+    virtual void notifyToGraphicSig(QPolygonF*,int,int,double) {};
 };
 
 #endif // GRAPHICSPRODUCT_H

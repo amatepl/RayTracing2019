@@ -11,6 +11,28 @@ MathematicalCarProduct::~MathematicalCarProduct(){
 
 }
 
+void MathematicalCarProduct::moveCar(){
+    //while(true){
+//    cout<<m_street.dx()/m_street.length()<<endl;
+        setPosX(getPosX() + 1);//m_street.dx()/m_street.length());
+        setPosY(getPosY() + m_street.dy()/m_street.length());
+//        this_thread::sleep_for(std::chrono::milliseconds(1000));
+        cout<<getPosX()<<", "<<getPosY()<<endl;
+        //m_graphic->notifyToGraphic(this,getPosX(),getPosY(),m_orientation);
+        //emit positionChanged(this,getPosX(),getPosY(),m_orientation);
+        //emit signal();
+    //}
+}
+
+void MathematicalCarProduct::setRoad(QLineF &road){
+    m_street = road;
+}
+
+void MathematicalCarProduct::attachObservable(GraphicsProduct *graphic){
+    m_graphic = graphic;
+    QObject::connect((QObject*)this,SIGNAL(&MathematicalCarProduct::positionChanged),(QObject*)m_graphic,SLOT(&GraphicsProduct::notifyToGraphicSig),Qt::QueuedConnection);
+}
+
 double MathematicalCarProduct::getSpeed(){
     return m_speed;
 }
@@ -58,5 +80,5 @@ void MathematicalCarProduct::openDialog(){
 }
 
 void MathematicalCarProduct::newProperties(){
-    m_graphic->notifyToGraphic(this, getPosX(), getPosY(),getOrientation());
+    m_graphic->notifyToGraphicSig(this, getPosX(), getPosY(),getOrientation());
 }

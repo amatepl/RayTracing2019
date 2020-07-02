@@ -45,6 +45,7 @@ protected:
     vector<MathematicalTransmitterProduct*> m_transmitters;
     vector<MathematicalBuildingProduct*> m_buildings;
     MathematicalReceiverProduct* m_receiver;
+    vector<MathematicalReceiverProduct*> m_receivers;
     int reflectionsNumber;
     AbstractRayFactory* m_rayFactory;
 

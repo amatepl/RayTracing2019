@@ -7,7 +7,7 @@
 #include <QGraphicsScene>
 #include "Product/graphicsproduct.h"
 
-class GraphicsCarProduct: public QGraphicsPixmapItem, public GraphicsProduct
+class GraphicsCarProduct:public GraphicsProduct, public QGraphicsPixmapItem
 {
 public:
     GraphicsCarProduct(QMenu *productmenu, QGraphicsScene *scene);
@@ -19,7 +19,7 @@ public:
     void draw() override;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
-    void notifyToGraphic(QPolygonF *, int, int, double) override;
+
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
@@ -28,6 +28,13 @@ protected:
 public:
     QGraphicsScene* m_scene;
     QMenu *m_productmenu;
+
+public slots:
+    void notifyToGraphicSig(QPolygonF *, int, int, double) override;
+
+
+
+
 };
 
 #endif // GRAPHICSCARPRODUCT_H

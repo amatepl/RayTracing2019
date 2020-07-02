@@ -10,7 +10,7 @@ class CarFactory: public SceneFactory
 public:
     CarFactory(QMenu *productmenu, QGraphicsScene* scene);
     GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
-    MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic) override;
+    MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic =true) override;
 
 private:
     QMenu *m_productmenu;

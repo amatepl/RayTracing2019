@@ -11,7 +11,7 @@ Model::~Model(){
     delete [] this;
 }
 
-void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory){
+void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory, CarFactory* carFactory){
 
     /* This will have to change
      */
@@ -20,16 +20,19 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory){
     MapGenerator* map = new MapGenerator(m_scene->sceneRect());
     map->setScene(m_scene);
     map->setBuildingFactory(buildingFactory);
+    map->setCarFactory(carFactory);
     map->generateMap();
+    //m_thread = thread((map->moveCars),ref(*map));
+    //m_thread.join();
     m_mathematicalComponents["Building"] = map->getProducts();
-    m_windowModelObservable->modelNotify(map->getProducts());
+    //m_windowModelObservable->modelNotify(map->getProducts());
 }
 
 void Model::addMathematicalComponent(MathematicalProduct* mathematicalProduct){
 
     vector<MathematicalProduct*> tmp;
     string type = mathematicalProduct->getType();
-    cout<<type<<"---------------"<<m_mathematicalComponents.count(type)<<endl;
+//    cout<<type<<"---------------"<<m_mathematicalComponents.count(type)<<endl;
     if(m_mathematicalComponents.count(type)>0){
         tmp = m_mathematicalComponents[type];
         tmp.push_back(mathematicalProduct);
@@ -90,7 +93,7 @@ MathematicalTransmitterProduct* Model::selectTransmitter(){
 
 void Model::notify(MathematicalTransmitterProduct* transmitter){
     //cout<<"Notifies"<<endl;
-    cout<<"Number of whole rays: "<< (transmitter->getRays()).size()<<endl;
+//    cout<<"Number of whole rays: "<< (transmitter->getRays()).size()<<endl;
 //    for(int i=0;i<transmitter->getRays().size();i++){
 //        for(int j=0;j<transmitter->getRays().at(i)->size();j++){
 //            cout<<"whole rays nr: "<<i <<" "<<(transmitter->getRays()).at(i)->at(j).p1().x()<<endl;

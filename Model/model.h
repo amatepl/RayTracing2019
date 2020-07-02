@@ -29,12 +29,14 @@ public:
     MathematicalTransmitterProduct* selectTransmitter();
     void notify(MathematicalTransmitterProduct* transmitter) override;
 
-    void setScene(QGraphicsScene*scene, BuildingFactory *buildingFactory);           // For tests only
+    void setScene(QGraphicsScene*scene, BuildingFactory *buildingFactory, CarFactory *carFactory);           // For tests only
 
 private:
     map<string,vector<MathematicalProduct*>> m_mathematicalComponents;
     WindowModelObservable* m_windowModelObservable;
     AlgorithmInterface* m_algorithm;
+
+    thread m_thread;
 
     QGraphicsScene* m_scene;            //For tests only
 };
