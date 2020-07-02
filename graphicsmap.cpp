@@ -35,6 +35,8 @@ void GraphicsMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 
 void GraphicsMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+    QPointF pos = event->scenePos();
+    m_app->moveMouse(pos);
     QGraphicsScene::mouseMoveEvent(event);
 }
 

@@ -3,15 +3,18 @@
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
     createToolBox();
+    createTabWidget();
     createActions();
     createMenus();
     view = new QGraphicsView();
     m_map = new GraphicsMap(view,this,m_productmenu);
+    view->setMouseTracking(true);
     m_receiverFactory = new ReceiverFactory(m_productmenu,m_map);
     m_transmitterFactory = new TransmitterFactory(m_productmenu,m_map);
     m_buildingFactory = new BuildingFactory(m_productmenu,m_map);
     m_treeFactory = new TreeFactory(m_productmenu,m_map);
     m_carFactory = new CarFactory(m_productmenu,m_map);
+
     m_model = new Model(this);
     m_model->setScene(m_map,(BuildingFactory*) m_buildingFactory,(CarFactory*) m_carFactory);
 
@@ -24,15 +27,9 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
-
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget(m_toolbox);
-    layout->addWidget(view);
-
-    QWidget *widget = new QWidget;
-    widget->setLayout(layout);
-
-    setCentralWidget(widget);
+    addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
+    addToolBar(Qt::TopToolBarArea,m_toolbarlaunch);
+    setCentralWidget(view);
 
     m_graphicsmode = MoveItem;
 }
@@ -53,6 +50,11 @@ void ApplicationWindow::answer(GraphicsProduct* graphic){
     }
     m_model->addMathematicalComponent(graphic->toMathematicalProduct());
     //cout<<"Item added to model"<<endl;
+}
+
+void ApplicationWindow::moveMouse(QPointF mouse){
+    sceneposx->setText(QString::number(mouse.x()));
+    sceneposy->setText(QString::number(mouse.y()));
 }
 /*
 void ApplicationWindow::attachObserver(WindowObserver *windowobserver){
@@ -175,7 +177,76 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
     return widget;
 }
 
+QWidget* ApplicationWindow::rayTracingWidget(){
+    QWidget *widget = new QWidget;
+
+    launch_raytracing = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch Ray-Tracing");
+    connect(launch_raytracing, SIGNAL(clicked()), this, SLOT(LaunchRayTracing()));
+    sceneposx = new QLineEdit;
+    QLabel *posX = new QLabel("x position: ");
+    sceneposy = new QLineEdit;
+    QLabel *posY = new QLabel("y position: ");
+    sceneposx->setText(QString::number(0));
+    sceneposy->setText(QString::number(0));
+    QHBoxLayout *positionx = new QHBoxLayout;
+    positionx->addWidget(posX);
+    positionx->addWidget(sceneposx);
+    QHBoxLayout *positiony = new QHBoxLayout;
+    positiony->addWidget(posY);
+    positiony->addWidget(sceneposy);
+
+    QHBoxLayout *raytracinglayout = new QHBoxLayout;
+    raytracinglayout->addWidget(launch_raytracing);
+    raytracinglayout->addLayout(positionx);
+    raytracinglayout->addLayout(positiony);
+
+    widget->setLayout(raytracinglayout);
+
+    /*
+    m_posx = new QSpinBox(this);
+    m_posy = new QSpinBox(this);
+    m_posx->setRange(0,5000);
+    m_posx->setAccelerated(true);
+    m_posy->setRange(0,5000);
+    m_posy->setAccelerated(true);
+
+    m_power = new QLineEdit("Received power [dB]: ", this);
+    m_power->setEnabled(false);
+    m_e_field = new QLineEdit("Electric fiedl [V/m]: ", this);
+    m_e_field->setEnabled(false);
+
+    QFormLayout *geoProperties = new QFormLayout(this);
+    geoProperties->addRow("X center: ",m_posx);
+    geoProperties->addRow("Y center: ",m_posy);
+
+    QGroupBox *geo = new QGroupBox("Geometry properties");
+    geo->setLayout(geoProperties);
+
+    QFormLayout *phyProperties = new QFormLayout(this);
+    phyProperties->addRow(m_power);
+    phyProperties->addRow(m_e_field);
+
+    QGroupBox *phy = new QGroupBox("Physical properties");
+    phy->setLayout(phyProperties);
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(geo,0,0);
+    firstLayout->addWidget(phy,1,0);
+
+    widget->setLayout(firstLayout);
+
+    setPosX(m_mathematicalproduct->getPosX());
+    setPosY(m_mathematicalproduct->getPosY());
+    setPower(m_mathematicalproduct->getPower());
+    setEField(m_mathematicalproduct->getEField());
+    setEnable(m_mathematicalproduct->getEnable());
+    */
+    return widget;
+}
+
 void ApplicationWindow::createActions(){
+    objectminimize = m_toolbarobject->toggleViewAction();
+    objectminimize->setText(tr("Object toolbar"));
     deleteaction = new QAction(QIcon(":/Images/Delete.png"), tr("&Delete"), this);
     deleteaction->setShortcut(tr("Delete"));
     deleteaction->setStatusTip(tr("Delete selected object"));
@@ -189,6 +260,9 @@ void ApplicationWindow::createActions(){
 }
 
 void ApplicationWindow::createMenus(){
+    m_windowmenu = menuBar()->addMenu(tr("&Window"));
+    m_windowmenu->addAction(objectminimize);
+
     m_productmenu = menuBar()->addMenu(tr("&Object"));
     m_productmenu->addAction(propertiesaction);
     m_productmenu->addSeparator();
@@ -203,14 +277,14 @@ void ApplicationWindow::createToolBox(){
     m_antennagroup->setExclusive(false);
     m_obstaclegroup = new QButtonGroup(this);
     m_obstaclegroup->setExclusive(false);
-    m_raytracinggroup = new QButtonGroup(this);
-    m_raytracinggroup->setExclusive(false);
+    //m_raytracinggroup = new QButtonGroup(this);
+    //m_raytracinggroup->setExclusive(false);
     connect(m_antennagroup,SIGNAL(buttonClicked(int)),this,SLOT(antennaGroupClicked(int)));
     connect(m_obstaclegroup,SIGNAL(buttonClicked(int)),this,SLOT(obstacleGroupClicked(int)));
-    connect(m_raytracinggroup,SIGNAL(buttonClicked(int)),this,SLOT(rayTracingGroupClicked(int)));
+    //connect(m_raytracinggroup,SIGNAL(buttonClicked(int)),this,SLOT(rayTracingGroupClicked(int)));
     QGridLayout *antenna_layout = new QGridLayout;
     QGridLayout *obstacle_layout = new QGridLayout;
-    QGridLayout *rayTracing_layout = new QGridLayout;
+    //QGridLayout *rayTracing_layout = new QGridLayout;
 
     // Creating the antennas pannel
     QWidget* widget = createToolButton("Transmitter",int(InsertTransmitter));
@@ -241,7 +315,7 @@ void ApplicationWindow::createToolBox(){
     obstacleWidget->setLayout(obstacle_layout);
 
     // Creating the rayTraycing pannel
-
+    /*
     QWidget *launchRayTracingWidget = new QWidget;
     QToolButton *launchRayTracingButton = new QToolButton;
     launchRayTracingButton->setIconSize(QSize(50, 50));
@@ -249,6 +323,7 @@ void ApplicationWindow::createToolBox(){
     QIcon icon  = QIcon(QPixmap(":/Images/playButton.png"));
     launchRayTracingButton->setIcon(icon);
     m_raytracinggroup->addButton(launchRayTracingButton,int(LaunchRayTracing));
+
 
     QGridLayout *playButton_layout = new QGridLayout;
     playButton_layout->addWidget(launchRayTracingButton, 0, 0, Qt::AlignHCenter);
@@ -265,13 +340,25 @@ void ApplicationWindow::createToolBox(){
 
     QWidget *rayTracingWidget = new QWidget;
     rayTracingWidget->setLayout(rayTracing_layout);
-
+*/
     m_toolbox = new QToolBox;
     m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     m_toolbox->setMinimumWidth(itemWidget->sizeHint().width());
     m_toolbox->addItem(itemWidget, tr("Insert antenna"));
     m_toolbox->addItem(obstacleWidget, tr("Insert obstacles"));
-    m_toolbox->addItem(rayTracingWidget, tr("Ray Tracing"));
+    //m_toolbox->addItem(rayTracingWidget, tr("Ray Tracing"));
+    m_toolbarobject = new QToolBar;
+    m_toolbarobject->addWidget(m_toolbox);
+    m_toolbarobject->setFloatable(false);
+    m_toolbarobject->setMovable(false);
+}
+
+void ApplicationWindow::createTabWidget(){
+    m_tabwidget = new QTabWidget;
+    m_tabwidget->addTab(rayTracingWidget(),"Ray-Tracing");
+
+    m_toolbarlaunch = new QToolBar;
+    m_toolbarlaunch->addWidget(m_tabwidget);
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode){
@@ -345,18 +432,8 @@ void ApplicationWindow::obstacleGroupClicked(int mode){
     notifyMap();
 }
 
-void ApplicationWindow::rayTracingGroupClicked(int mode){
-    //cout<<"Button clicked"<<endl;
-    QList <QAbstractButton*> buttons = m_raytracinggroup->buttons();
-    for (int i = 0; i < buttons.size(); i++){
-        if (buttons.at(i) != m_raytracinggroup->checkedButton()){
-            buttons.at(i)->setChecked(false);
-        }
-    }
-    //setMode(Mode(mode));
-    //notify(mode);
+void ApplicationWindow::LaunchRayTracing(){
     notifyModel();
-    //notifyScene();
 }
 
 void ApplicationWindow::deleteProduct(){

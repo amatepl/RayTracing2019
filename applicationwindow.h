@@ -40,6 +40,7 @@ public:
     ApplicationWindow(QWidget *parent = nullptr);
     ~ApplicationWindow() override;
     void answer(GraphicsProduct* graphic) override;
+    void moveMouse(QPointF mouse) override;
     //void attachObserver(WindowObserver *windowobserver) override;
     //void detachObserver(WindowObserver *windowobserver) override;
     //void notify(int mode) override;
@@ -52,9 +53,13 @@ public:
     void modelNotify(vector<vector<MathematicalRayProduct *> *> sceneproducts) override;
 
     QWidget* createToolButton(const QString &text,int id);
+    QWidget* rayTracingWidget();
+
     void createActions();
     void createMenus();
     void createToolBox();
+    void createTabWidget();
+
     void setGraphicsMode(GraphicsMode mode);
     void setActionMode(ActionMode mode);
     void notifyMap();
@@ -73,23 +78,32 @@ private:
     //vector<WindowObserver*> m_windowobserver;
     //vector<WindowObserver*>::iterator m_windowobserveriterator;
     Model* m_model;
+
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;
     QButtonGroup *m_raytracinggroup;
+    QPushButton *launch_raytracing;
+
     QToolBox *m_toolbox;
+    QToolBar *m_toolbarobject;
+
+    QToolBar *m_toolbarlaunch;
+    QTabWidget* m_tabwidget;
+    QLineEdit *sceneposx,*sceneposy;
 
     QAction *deleteaction;
     QAction *propertiesaction;
+    QAction *objectminimize;
 
     QMenu *m_productmenu;
-
+    QMenu *m_windowmenu;
 
 signals:
 
 public slots:
     void antennaGroupClicked(int);
     void obstacleGroupClicked(int);
-    void rayTracingGroupClicked(int);
+    void LaunchRayTracing();
     void deleteProduct();
     void openProduct();
 };

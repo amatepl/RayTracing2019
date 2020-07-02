@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4):QT += widgets \
+greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
     datavisualization
 
 HEADERS += Abstract_Factory/dialogfactory.h \
@@ -14,6 +14,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/scenefactory.h \
     Abstract_Factory/transmitterfactory.h \
     Abstract_Factory/treefactory.h \
+    Graphics/abstractpattern.h \
     Graphics/patternwindow.h \
     Graphics/surface3d.h \
     Model/algorithmInterface.h \
@@ -22,8 +23,6 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Model/model.h \
     Observer/AppInterface.h \
     Model/raytracing.h \
-    Observer/dialogobservable.h \
-    Observer/dialogobserver.h \
     Observer/modelobservable.h \
     Observer/modelobserver.h \
     Observer/productobservable.h \
@@ -64,7 +63,8 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Share/line.h \
     Share/wall.h \
     applicationwindow.h \
-    graphicsmap.h
+    graphicsmap.h \
+    qcustomplot.h
 
 SOURCES += Abstract_Factory/dialogfactory.cpp \
     Abstract_Factory/buildingfactory.cpp \
@@ -103,7 +103,8 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Share/wall.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \
-    main.cpp
+    main.cpp \
+    qcustomplot.cpp
 
 RESOURCES += \
     Ressources.qrc

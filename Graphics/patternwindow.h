@@ -26,24 +26,18 @@
 
 #include "surface3d.h"
 
-#include "Observer/dialogobserver.h"
-//#include "Product/TransmitterProduct/dialogtransmitterproduct.h"
+#include "Product/TransmitterProduct/transmitterproduct.h"
 
 using namespace std;
 
-
-class DialogTransmitterProduct;
-
-class PatternWindow : public DialogObserver
+class PatternWindow
 {
 public:
-    PatternWindow(DialogTransmitterProduct *dialog);
-    ~PatternWindow() override;
-
-    void update() override;
+    PatternWindow(TransmitterProduct *dialog);
+    ~PatternWindow();
 
 private:
-    DialogTransmitterProduct *m_dialog;
+    TransmitterProduct *m_dialog;
 };
 
 #endif // PATTERNWINDOW_H
