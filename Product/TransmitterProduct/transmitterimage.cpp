@@ -60,8 +60,14 @@ void TransmitterImage::setSceneBoundary(const QRectF &rect){
 
 QPolygonF TransmitterImage::buildCoverage(){
     QPolygonF coverage;
+    QLineF line = m_wall;
+    line.setLength(line.length()/2);
+//    for(int i=0;i<16;i++){
+//        coverage<<QPointF(x()+m_radius*cos(M_PI*i/8),y()+m_radius*sin(M_PI*i/8));
+//    }
+
     for(int i=0;i<16;i++){
-        coverage<<QPointF(x()+m_radius*cos(M_PI*i/8),y()+m_radius*sin(M_PI*i/8));
+        coverage<<QPointF(line.p2().x()+m_radius*cos(M_PI*i/8),line.p2().y()+m_radius*sin(M_PI*i/8));
     }
     return coverage;
 }

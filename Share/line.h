@@ -15,6 +15,7 @@ public:
     QPointF symetricalPoint(const QPointF &point);
     QPointF symetricalPoint(const double x, const double y);
     bool onLine(const QPointF &point);
+    double getMeterLength()const;
 
 };
 

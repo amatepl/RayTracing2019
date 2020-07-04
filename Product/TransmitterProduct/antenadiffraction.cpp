@@ -80,6 +80,7 @@ void AntenaDiffraction::notifyParent(ProductObservable *productObservable, const
     QLineF line(*this,point);
     //ray newRay(*this,point);
     MathematicalRayProduct* newRay = m_rayFactory->createRay(*this,point);
+    newRay->setDiffracted(true);
     wholeRay->push_back(newRay);
     m_parent->notifyParent(productObservable,speed,direction,*this,wholeRay);
 }

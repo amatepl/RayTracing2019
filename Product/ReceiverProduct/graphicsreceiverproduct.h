@@ -25,6 +25,7 @@ public:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
     void notifyToGraphic(QPointF *) override;
+    void notifyToGraphic(QPointF *, double) override;
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;

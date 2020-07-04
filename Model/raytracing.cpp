@@ -48,6 +48,11 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     //createImages();
     illuminationZones();
 
+    for(int i = 0; i < m_receivers.size(); i++){
+        //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
+        m_receivers.at(i)->notifyObservers();
+    }
+
 }
 
 void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){
@@ -58,7 +63,7 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_math
         }
 
     }
-    if(m_mathematicalComponents.count("Transmitter")){
+    if(m_mathematicalComponents.count("Receiver")){
         for(int i=0;i<m_mathematicalComponents["Receiver"].size();i++){
             //m_receiver.push_back((MathematicalTransmitterProduct*) m_mathematicalComponents["Transmitter"].at(i));
             //m_receiver = (MathematicalReceiverProduct*) m_mathematicalComponents["Transmitter"].at(0);

@@ -20,6 +20,10 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
     m_rayTracingAlgorithm = new RayTracing();
     m_rayTracingAlgorithm->setScene(m_map);
+
+    m_coverageAlgorithm = new Coverage(m_receiverFactory);
+    m_coverageAlgorithm->setScene(m_map);
+
 //    MapGenerator* map = new MapGenerator(m_map->sceneRect());
 //    map->setScene(m_map);
 //    map->generateMap();
@@ -205,6 +209,33 @@ QWidget* ApplicationWindow::rayTracingWidget(){
     return widget;
 }
 
+QWidget* ApplicationWindow::coverageWidget(){
+    QWidget *widget = new QWidget;
+
+    launch_coverage = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch coverage");
+    connect(launch_coverage, SIGNAL(clicked()), this, SLOT(launchCoverage()));
+    sceneposx = new QLineEdit;
+    QLabel *posX = new QLabel("x position: ");
+    sceneposy = new QLineEdit;
+    QLabel *posY = new QLabel("y position: ");
+    sceneposx->setText(QString::number(0));
+    sceneposy->setText(QString::number(0));
+    QHBoxLayout *positionx = new QHBoxLayout;
+    positionx->addWidget(posX);
+    positionx->addWidget(sceneposx);
+    QHBoxLayout *positiony = new QHBoxLayout;
+    positiony->addWidget(posY);
+    positiony->addWidget(sceneposy);
+
+    QHBoxLayout *coveragelayout = new QHBoxLayout;
+    coveragelayout->addWidget(launch_coverage);
+    coveragelayout->addLayout(positionx);
+    coveragelayout->addLayout(positiony);
+
+    widget->setLayout(coveragelayout);
+    return widget;
+}
+
 void ApplicationWindow::createActions(){
     objectminimize = m_toolbarobject->toggleViewAction();
     objectminimize->setText(tr("Object toolbar"));
@@ -286,6 +317,7 @@ void ApplicationWindow::createToolBox(){
 void ApplicationWindow::createTabWidget(){
     m_tabwidget = new QTabWidget;
     m_tabwidget->addTab(rayTracingWidget(),"Ray-Tracing");
+    m_tabwidget->addTab(coverageWidget(),"Coverage");
 
     m_toolbarlaunch = new QToolBar;
     m_toolbarlaunch->addWidget(m_tabwidget);
@@ -331,7 +363,8 @@ void ApplicationWindow::notifyMap(){
 
 void ApplicationWindow::notifyModel(){
     //cout<<"Model notified"<<endl;
-    m_model->launchAlgorithm(m_rayTracingAlgorithm);
+    //m_model->launchAlgorithm(m_rayTracingAlgorithm);
+    m_model->launchAlgorithm(m_coverageAlgorithm);
 }
 
 // SLOTS
@@ -363,7 +396,13 @@ void ApplicationWindow::obstacleGroupClicked(int mode){
 }
 
 void ApplicationWindow::LaunchRayTracing(){
-    notifyModel();
+    m_model->launchAlgorithm(m_rayTracingAlgorithm);
+//    notifyModel();
+}
+
+void ApplicationWindow::launchCoverage(){
+    m_model->launchAlgorithm(m_coverageAlgorithm);
+//    notifyModel();
 }
 
 void ApplicationWindow::deleteProduct(){

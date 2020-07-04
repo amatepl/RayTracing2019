@@ -18,6 +18,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Graphics/patternwindow.h \
     Graphics/surface3d.h \
     Model/algorithmInterface.h \
+    Model/coverage.h \
     Model/imagesmethod.h \
     Model/mapgenerator.h \
     Model/model.h \
@@ -76,6 +77,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Abstract_Factory/treefactory.cpp \
     Graphics/patternwindow.cpp \
     Graphics/surface3d.cpp \
+    Model/coverage.cpp \
     Model/imagesmethod.cpp \
     Model/mapgenerator.cpp \
     Model/model.cpp \
@@ -99,6 +101,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/dialogtreeproduct.cpp \
     Product/TreeProduct/graphicstreeproduct.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
+    Product/TreeProduct/treeparams.cpp \
     Share/line.cpp \
     Share/wall.cpp \
     applicationwindow.cpp \

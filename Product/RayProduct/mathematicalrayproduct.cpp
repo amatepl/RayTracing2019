@@ -30,7 +30,7 @@ int MathematicalRayProduct::getWallInd() const{return wallInd;}
 double MathematicalRayProduct::getTetai()const{return m_tetai;}
 double MathematicalRayProduct::getTheta()const{return theta;}
 int MathematicalRayProduct::getIndWall()const{return wallIBouncedOn;}
-double MathematicalRayProduct::getMeterLength()const{return meterLength;}
+//double MathematicalRayProduct::getMeterLength()const{return meterLength;}
 
 void MathematicalRayProduct::setTetai(double tetai){
     if(tetai > 180){
@@ -44,12 +44,20 @@ void MathematicalRayProduct::setDiffracted(bool diffracted){
     m_diffracted = diffracted;
 }
 
+bool MathematicalRayProduct::getDiffracted() const{
+    return m_diffracted;
+}
+
 void MathematicalRayProduct::draw(){
-    m_graphic->draw();
+    if(m_graphic != nullptr){
+        m_graphic->draw();
+    }
 }
 
 void MathematicalRayProduct::erase(){
-    m_graphic->erase();
+    if(m_graphic != nullptr){
+        m_graphic->erase();
+    }
 }
 
 MathematicalProduct* MathematicalRayProduct::toMathematicalComponent(){
