@@ -36,10 +36,15 @@ public:
 
     //virtual void setModel(Model model) override;
 
-    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine);
+    complex <double> computeEfieldGround(ProductObservable *receiver);
+    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver);
+    double distance(ProductObservable *receiver);
+    complex<double> computeDiffractedEfield(vector<MathematicalRayProduct*> *rayLine);
     double computePrx(complex <double> totalEfield);
+    double dBm(double power);
 
     double computeReflexionPer(double thetaI, double epsilonR);
+    double computeReflexionPar(double thetaI, double epsilonR);
     vector<vector<MathematicalRayProduct *> *> getRays();
     void notifyObservables();
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;

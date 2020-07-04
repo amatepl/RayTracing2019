@@ -20,7 +20,7 @@ public:
 
 protected:
     std::string m_type;
-    GraphicsProduct* m_graphic;
+    GraphicsProduct* m_graphic = nullptr;
     QDialog* m_dialog;
 };
 

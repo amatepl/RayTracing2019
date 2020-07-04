@@ -25,6 +25,7 @@
 
 #include "Model/model.h"
 #include "Model/raytracing.h"
+#include "Model/coverage.h"
 
 
 #include "Observer/AppInterface.h"
@@ -54,6 +55,7 @@ public:
 
     QWidget* createToolButton(const QString &text,int id);
     QWidget* rayTracingWidget();
+    QWidget* coverageWidget();
 
     void createActions();
     void createMenus();
@@ -72,6 +74,7 @@ private:
     SceneFactory *m_receiverFactory, *m_transmitterFactory, *m_buildingFactory,
                  *m_treeFactory, *m_carFactory;
     RayTracing*  m_rayTracingAlgorithm;
+    Coverage* m_coverageAlgorithm;
 
     GraphicsMode m_graphicsmode;
     ActionMode m_actionmode;
@@ -83,6 +86,7 @@ private:
     QButtonGroup *m_obstaclegroup;
     QButtonGroup *m_raytracinggroup;
     QPushButton *launch_raytracing;
+    QPushButton *launch_coverage;
 
     QToolBox *m_toolbox;
     QToolBar *m_toolbarobject;
@@ -104,6 +108,7 @@ public slots:
     void antennaGroupClicked(int);
     void obstacleGroupClicked(int);
     void LaunchRayTracing();
+    void launchCoverage();
     void deleteProduct();
     void openProduct();
 };

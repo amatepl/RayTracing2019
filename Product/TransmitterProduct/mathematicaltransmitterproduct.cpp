@@ -11,6 +11,8 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_kind = dipole;
     m_power = 2;
     m_orientation = 0;
+    lambda = c/m_frequency;
+    epsilonWallRel = 5;
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
@@ -29,62 +31,6 @@ QPolygonF MathematicalTransmitterProduct::buildCoverage(){
     return coverage;
 }
 
-void MathematicalTransmitterProduct::update(ProductObservable* receiver, const float speed, const float direction){
-    //m_EMfield = 0;
-    //m_power = 0;
-    //cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
-    //cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
-    //cout<<"Transmitter notified !"<<endl;
-
-    m_receiversField[receiver] = 0;
-    m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(),m_receiversPowers[receiver].end());
-
-    QPointF* pos = receiver->getPos();
-    //vector<vector<MathematicalRayProduct*>*> *wholeRays;
-    if(m_receiversRays.count(receiver)){
-        for(int i =0; i<m_receiversRays[receiver].size();i++){
-            for(int j=0;j<m_receiversRays[receiver].at(i)->size();j++){
-                delete m_receiversRays[receiver].at(i)->at(j);
-            }
-        }
-        m_receiversRays[receiver].erase(m_receiversRays[receiver].begin(),m_receiversRays[receiver].end());
-    }
-
-//    for(int i =0; i<m_wholeRays.size();i++){
-//        for(int j=0;j<m_wholeRays.at(i)->size();j++){
-//            delete m_wholeRays.at(i)->at(j);
-//        }
-//    }
-    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
-//    cout<<"Are you ok Annie?"<<endl;
-    //m_wholeRays.shrink_to_fit();
-
-    if(m_zone.containsPoint(*pos,Qt::OddEvenFill)){
-        vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
-        QPointF m_pos(int(this->x()),int(this->y()));
-        //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
-        wholeRay->push_back(m_rayFactory->createRay(*this,*pos));
-        m_wholeRays.push_back(wholeRay);
-
-//        cout<<"Annie are you ok?"<<m_receiversRays[receiver].size()<<endl;
-        m_receiversRays[receiver].push_back(wholeRay);
-
-        complex<double> EMfield = computeEMfield(wholeRay);
-        m_receiversField[receiver] += EMfield;
-        double power = computePrx(EMfield);
-        m_receiversPowers[receiver].push_back(power);
-        double totalPower = computePrx(m_receiversField[receiver]);
-
-        //m_model->notify(this);
-
-        receiver->answer(this,totalPower,&m_receiversPowers[receiver],m_receiversField[receiver]);
-    }
-
-
-    //}
-
-        //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
-}
 
 void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservable, bool draw){
     if(draw){
@@ -103,29 +49,9 @@ void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservab
     }
 }
 
-void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) {
-    MathematicalRayProduct *newRay = m_rayFactory->createRay(*this,point);
-    wholeRay->push_back(newRay);
-    m_wholeRays.push_back(wholeRay);
-
-    m_receiversRays[receiver].push_back(wholeRay);
-
-    complex<double>EMfield = computeEMfield(wholeRay);
-    m_receiversField[receiver] += EMfield;
-    double power = computePrx(EMfield);
-    m_receiversPowers[receiver].push_back(power);
-    double totalPower = computePrx(m_receiversField[receiver]);
-    //m_receiver->addWholeRay(wholeRay);
-    //m_EMfield += computeEMfield(wholeRay);
-    //m_power = computePrx(m_EMfield,this);
-    //m_model->notify(this);
-
-    receiver->answer(this,totalPower,&m_receiversPowers[receiver],m_receiversField[receiver]);
-
-}
 
 
-complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct*> *rayLine){
+complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver){
     /* One vector<ray*> is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
      * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
      *
@@ -139,62 +65,212 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     double theta = 0.0;
     double R = 1;
     complex <double> Efield = 0.0;
-//    MathematicalRayProduct* currentRay;
+    MathematicalRayProduct* currentRay;
     for (int i=0; i<amountSegment; i++){
-//        currentRay = &rayLine->at(i);
-//        theta = currentRay->getTheta();
-
-        theta = rayLine->at(i)->getTheta();
-
+        currentRay = rayLine->at(i);
+        theta = currentRay->getTheta();
         if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
-            //double thetaI = abs(currentRay->getTetai());
-            double thetaI = abs(rayLine->at(i)->getTetai());
-
+            double thetaI = abs(currentRay->getTetai());
             R *= computeReflexionPer(thetaI,epsilonWallRel);
         }
-        completeLength += rayLine->at(i)->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
-        //completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
-
+        completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
+//        cout<<"lenght of the ray: "<<currentRay->length()<<endl;
+        //cout<<"lenght of the ray: "<<rayLine->at(i)->length()<<endl;
     }
     double Ia = sqrt(2.0*m_power/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
     Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
 
-    /*
-     * This part needs to be reviewed for the new architecture
-     *
     if(amountSegment==1){
-        this->minLength = completeLength; // for delay spread computation
-        this->LOS = pow(a,2);
-    } else{
-        this->NLOS += pow(a,2);
+        // Adding the ground component
+        complex <double> groundEfield = this->computeEfieldGround(receiver); // Compute the electrical field from the ray reflected off the ground
+        double dist = distance(receiver);
+        double thetaI = atan(antennaHeight/(dist/2))+M_PI/2;
+        Efield += groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI));
     }
-    if(completeLength > this->maxLength){
-        this->maxLength = completeLength; // for delay spread computation
-    }
-    // Store ray parameter for Physical impulse response
-    if(computePhysicalResponse){
-        // Store attenuation a and distance completeLength
-        channelData[rayNumber] = R/completeLength;
-        channelData[rayNumber+20] = completeLength;
-        double degangle = round((theta+direction)*180/M_PI);
-        double radangle = degangle*M_PI/180;
-        spectrumField[specNumber] = Efield;
-        spectrumAngle[specNumber] = (2.0*M_PI/lambda)*speedReal*cos(radangle);
-        int save = specNumber;
-        for (int j = 0; j < save; j++){
-            if (spectrumAngle[j] == spectrumAngle[save]){
-                spectrumField[j] += Efield;
-                specNumber -= 1;
-            }
-        }
-        specNumber += 1;
-        rayNumber += 1;
-    }*/
+
+//    if(amountSegment==1){
+//        this->minLength = completeLength; // for delay spread computation
+//        this->LOS = pow(a,2);
+//    } else{
+//        this->NLOS += pow(a,2);
+//    }
+//    if(completeLength > this->maxLength){
+//        this->maxLength = completeLength; // for delay spread computation
+//    }
+//    // Store ray parameter for Physical impulse response
+//    if(computePhysicalResponse){
+//        // Store attenuation a and distance completeLength
+//        channelData[rayNumber] = R/completeLength;
+//        channelData[rayNumber+20] = completeLength;
+//        double degangle = round((theta+direction)*180/M_PI);
+//        double radangle = degangle*M_PI/180;
+//        spectrumField[specNumber] = Efield;
+//        spectrumAngle[specNumber] = (2.0*M_PI/lambda)*speedReal*cos(radangle);
+//        int save = specNumber;
+//        for (int j = 0; j < save; j++){
+//            if (spectrumAngle[j] == spectrumAngle[save]){
+//                spectrumField[j] += Efield;
+//                specNumber -= 1;
+//            }
+//        }
+//        specNumber += 1;
+//        rayNumber += 1;
+//    }
     return Efield;
 }
 
-//<<<<<<< HEAD
+complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObservable* receiver){
+    // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
+    // To Do: check if there is a wall between the TX and RX
+    double distance = this->distance(receiver); // conversion (1px == 2cm)
+    double thetaG = atan((distance/2)/antennaHeight);
+    double thetaI = M_PI - thetaG;
+    double R = computeReflexionPar(thetaG,epsilonWallRel);
+    double completeLength = distance/sin(thetaG);
+    //if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
+    complex <double> i(0.0, 1.0);
+    double Ia = sqrt(2*m_power/Ra); // Ia could be changed for Beamforming application
+    double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;
+    complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+//    this->NLOS += pow(a,2);
+
+//    // Store ray parameter for Physical impulse response
+//    if(computePhysicalResponse){
+//        // Store attenuation a and distance completeLength
+//        channelData[rayNumber] = R/completeLength;
+//        channelData[rayNumber+20] = completeLength;
+//        rayNumber += 1;
+//    }
+
+    return Efield;
+}
+
+double MathematicalTransmitterProduct::distance(ProductObservable* receiver){
+
+    /*
+     * For display, it calcultes the direct Euclidian distance from the receiver to the emettor, displays the results on the UI
+     */
+
+    double x1 = x();
+    double y1 = y();
+    double x2 = receiver->getPos()->x();
+    double y2 = receiver->getPos()->y();
+
+    float pxToMeter = 0.1;
+    return sqrt(pow((x2-x1),2)+pow((y2-y1),2))*pxToMeter; // conversion (1px == 1dm)
+}
+
+//complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct*> *rayLine){
+//    /* One vector<ray*> is one multi-path componant, the size of the vector determine the n-level we are in, for each ray only the power in the last ray is transmitted to
+//     * the receptor. As seen in the power formula, n rays -> n-1 additions to the power.
+//     *
+//     * This function gives the electrical field, generated by one MPC, at the receiver. The electric field is // to the dipole antenna since we only consider relections
+//     * off the buildings. The electric field is not // for the reflexion with the ground though. This is taken into account in the function computePrx.
+//     */
+
+//    complex <double> i(0.0, 1.0);
+//    int amountSegment = rayLine->size();
+//    double completeLength = 0.0;
+//    double theta = 0.0;
+//    double R = 1;
+//    complex <double> Efield = 0.0;
+////    MathematicalRayProduct* currentRay;
+//    for (int i=0; i<amountSegment; i++){
+////        currentRay = &rayLine->at(i);
+////        theta = currentRay->getTheta();
+
+//        theta = rayLine->at(i)->getTheta();
+
+//        if((i != amountSegment-1)){   // The last segment, the one that reach the receptor does not have a rebound
+//            //double thetaI = abs(currentRay->getTetai());
+//            double thetaI = abs(rayLine->at(i)->getTetai());
+
+//            R *= computeReflexionPer(thetaI,epsilonWallRel);
+//        }
+//        completeLength += rayLine->at(i)->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
+//        //completeLength += currentRay->getMeterLength(); // Get each length of each ray segment after the meter conversion (1px == 1dm)
+
+//    }
+//    double Ia = sqrt(2.0*m_power/Ra); // Ia could be changed for Beamforming application (add exp)
+//    double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
+//    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+
+//    /*
+//     * This part needs to be reviewed for the new architecture
+//     *
+//    if(amountSegment==1){
+//        this->minLength = completeLength; // for delay spread computation
+//        this->LOS = pow(a,2);
+//    } else{
+//        this->NLOS += pow(a,2);
+//    }
+//    if(completeLength > this->maxLength){
+//        this->maxLength = completeLength; // for delay spread computation
+//    }
+//    // Store ray parameter for Physical impulse response
+//    if(computePhysicalResponse){
+//        // Store attenuation a and distance completeLength
+//        channelData[rayNumber] = R/completeLength;
+//        channelData[rayNumber+20] = completeLength;
+//        double degangle = round((theta+direction)*180/M_PI);
+//        double radangle = degangle*M_PI/180;
+//        spectrumField[specNumber] = Efield;
+//        spectrumAngle[specNumber] = (2.0*M_PI/lambda)*speedReal*cos(radangle);
+//        int save = specNumber;
+//        for (int j = 0; j < save; j++){
+//            if (spectrumAngle[j] == spectrumAngle[save]){
+//                spectrumField[j] += Efield;
+//                specNumber -= 1;
+//            }
+//        }
+//        specNumber += 1;
+//        rayNumber += 1;
+//    }*/
+//    return Efield;
+//}
+
+
+complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine){
+
+    // Direct distance between the receiver and the transmitter
+//    double direct_dist = sqrt(pow(transmitter->getPosition().x()-m_Receiver->getPosX(),2)
+//                              + pow(transmitter->getPosition().y()-m_Receiver->getPosY(),2)); //convertir px to cm?
+
+    double direct_dist = sqrt(pow(rayLine->at(1)->p1().x()-rayLine->at(0)->p2().x(),2)
+                              + pow(rayLine->at(1)->p1().y()-rayLine->at(0)->p2().y(),2)); //convertir px to cm?
+
+    complex<double> Efield =0.0;
+    complex<double> F =0.0;
+    complex <double> i(0.0, 1.0);
+
+    // The length defference between the path going through the tip of the obstacle, and the direct path.
+
+    double delta_r = (rayLine->at(0)->length()+rayLine->at(1)->length() - direct_dist)*pow(10, -1.0);
+
+    double nu = sqrt(2*2*M_PI/lambda*delta_r/M_PI);
+    // The ITU's approximation for |F(nu)|^2
+
+    double absF = pow(10,-6.9/40)/sqrt((sqrt(pow(nu-0.1,2)+1)+nu-0.1));
+    double argF = -M_PI/4 - pow(nu,2)*M_PI/2;
+    F = absF*exp(i*argF);
+
+    //ray* directRay = new ray(m_Receiver->getPosX(),m_Receiver->getPosY(),Transmitter->getPosX(),Transmitter->getPosY(),0,0);
+
+    //MathematicalRayProduct* directRay = new MathematicalRayProduct(rayLine->at(0).p2(),rayLine->at(1).p1(),0,0);
+    Line* directRay = new Line(rayLine->at(0)->p2(),rayLine->at(1)->p1());
+
+    //MathematicalRayProduct* directRay = m_rayFactory->createRay(rayLine->at(0).p2(),rayLine->at(1).p1(),0,0);
+    double Ia = sqrt(2*m_power/Ra); // Ia could be changed for Beamforming application (add exp)
+    Efield =-i  * ((Zvoid*Ia)/(2*M_PI)) * (exp(-i*(2.0*M_PI/lambda)*directRay->getMeterLength())/directRay->getMeterLength());
+    Efield = F*Efield;
+//    cout<<"Fresnel integral: "<<F<<endl;
+//    cout<<"Diffracted field: "<<Efield<<endl;
+    delete directRay;
+    return Efield;
+}
+
+
 double MathematicalTransmitterProduct::computePrx(complex <double> totalEfield){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
 
@@ -203,17 +279,8 @@ double MathematicalTransmitterProduct::computePrx(complex <double> totalEfield){
     return Prx;
 }
 
+double MathematicalTransmitterProduct::dBm(double power){return 10*(log10(power)) + 30.0;}
 
-//void MathematicalTransmitterProduct::setRayFactory(AbstractRayFactory *rayFactory){
-//    m_rayFactory = rayFactory;
-//}
-
-
-//--------------------------
-
-
-//=======
-//>>>>>>> d1ec8e004ad1b2afa2d74871dff3deaf7bbc3b77
 
 double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR){
     //double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
@@ -224,6 +291,11 @@ double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double
      */
 
     double R = (abs(sin(thetaI)) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(cos(thetaI),2)))/(abs(sin(thetaI)) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(cos(thetaI),2)));
+    return R;
+}
+
+double MathematicalTransmitterProduct::computeReflexionPar(double thetaI, double epsilonR){
+    double R = (cos(thetaI) - (1/sqrt(epsilonR))*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + (1/sqrt(epsilonR))*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
     return R;
 }
 
@@ -283,6 +355,17 @@ void MathematicalTransmitterProduct::setSceneBoundary(const QRectF &rect){
     m_sceneBoundary = rect;
 }
 
+// Tree transmition
+
+
+
+
+
+
+
+
+
+
 // ---------------------------------------------------- TransmitterProduct -------------------------------------------------------------------
 
 void MathematicalTransmitterProduct::newProperties(){
@@ -311,6 +394,82 @@ void MathematicalTransmitterProduct::openDialog(){
 // ---------------------------------------------------- ProductObserver -------------------------------------------------------------------
 
 
+void MathematicalTransmitterProduct::update(ProductObservable* receiver, const float speed, const float direction){
+    //m_EMfield = 0;
+    //m_power = 0;
+    //cout<<"Transmitter position: "<<x()<<", "<< y() <<endl;
+    //cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
+    //cout<<"Transmitter notified !"<<endl;
+
+    m_receiversField[receiver] = 0;
+    m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(),m_receiversPowers[receiver].end());
+
+    QPointF* pos = receiver->getPos();
+    //vector<vector<MathematicalRayProduct*>*> *wholeRays;
+    if(m_receiversRays.count(receiver)){
+        for(int i =0; i<m_receiversRays[receiver].size();i++){
+            for(int j=0;j<m_receiversRays[receiver].at(i)->size();j++){
+                delete m_receiversRays[receiver].at(i)->at(j);
+            }
+        }
+        m_receiversRays[receiver].erase(m_receiversRays[receiver].begin(),m_receiversRays[receiver].end());
+    }
+
+//    for(int i =0; i<m_wholeRays.size();i++){
+//        for(int j=0;j<m_wholeRays.at(i)->size();j++){
+//            delete m_wholeRays.at(i)->at(j);
+//        }
+//    }
+//    m_wholeRays.erase(m_wholeRays.begin(),m_wholeRays.end());
+//    cout<<"Are you ok Annie?"<<endl;
+    //m_wholeRays.shrink_to_fit();
+
+//    cout<< "Mathtrans rec pos: "<<pos->x()<<", "<<pos->y()<<" m_zone size: "<<m_zone.size()<<endl;
+
+    if(m_zone.containsPoint(*pos,Qt::OddEvenFill)){
+
+//        cout<<"In da zone"<<endl;
+        vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
+        QPointF m_pos(int(this->x()),int(this->y()));
+        //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
+        wholeRay->push_back(m_rayFactory->createRay(*this,*pos));
+//        m_wholeRays.push_back(wholeRay);
+
+
+        m_receiversRays[receiver].push_back(wholeRay);
+
+        if(wholeRay->at(0)->getDiffracted()){
+            complex<double>EMfield = computeDiffractedEfield(wholeRay);
+            m_receiversField[receiver] += EMfield;
+            double power = computePrx(EMfield);
+            m_receiversPowers[receiver].push_back(power);
+        }
+        else{
+            complex<double>EMfield = computeEMfield(wholeRay,receiver);
+            m_receiversField[receiver] += EMfield;
+            double power = computePrx(EMfield);
+            m_receiversPowers[receiver].push_back(power);
+        }
+        double totalPower = computePrx(m_receiversField[receiver]);
+
+        //m_model->notify(this);
+
+//        cout<< "MathTrans power: "<< totalPower<< endl;
+
+//        cout<<"EM field: "<<m_receiversField[receiver]<<endl;
+        double powerDBm = dBm(totalPower);
+//        cout<< "MathTrans power dBm : "<< powerDBm<< endl;
+
+        receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
+    }
+
+
+    //}
+
+        //cout<<"Ray: "<<newRay.x1()<<", "<<newRay.y1()<<", "<<" and "<<newRay.x2()<<", "<<newRay.y2()<<endl;
+}
+
+
 void MathematicalTransmitterProduct::attachObservable(ProductObservable* productObservable){
     m_productObservable.push_back(productObservable);
 }
@@ -324,6 +483,35 @@ void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObse
 
 // ---------------------------------------------------- AbstractAntenna -------------------------------------------------------------------
 
+
+void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) {
+    MathematicalRayProduct *newRay = m_rayFactory->createRay(*this,point);
+    wholeRay->push_back(newRay);
+//    m_wholeRays.push_back(wholeRay);
+
+    m_receiversRays[receiver].push_back(wholeRay);
+
+    if(wholeRay->at(0)->getDiffracted()){
+        complex<double>EMfield = computeDiffractedEfield(wholeRay);
+        m_receiversField[receiver] += EMfield;
+        double power = computePrx(EMfield);
+        m_receiversPowers[receiver].push_back(power);
+    }
+    else{
+        complex<double>EMfield = computeEMfield(wholeRay, receiver);
+        m_receiversField[receiver] += EMfield;
+        double power = computePrx(EMfield);
+        m_receiversPowers[receiver].push_back(power);
+    }
+    double totalPower = computePrx(m_receiversField[receiver]);
+
+    //m_model->notify(this);
+
+    double powerDBm = dBm(totalPower);
+
+    receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
+
+}
 
 QPointF MathematicalTransmitterProduct::getPosition()const{
     return *this;

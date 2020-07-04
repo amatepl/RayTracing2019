@@ -13,6 +13,9 @@ public:
     MathematicalTreeProduct(QPolygonF poly, QPointF center);
     ~MathematicalTreeProduct() override;
 
+    struct TreeParams{float radius,length,density;};
+
+
     int getPosX() override;
     int getPosY() override;
     void setPosX(int) override;
@@ -24,6 +27,11 @@ public:
 
 private:
     QPointF m_center;
+    float a;            // Radius (m)
+    float h;            // length (m) of branches and leafs
+    float epsilon_r;    // dielectric constant
+    float rho;          // density (m^{-3})
+    vector<TreeParams> m_params;
 };
 
 #endif // MATHEMATICALTREEPRODUCT_H

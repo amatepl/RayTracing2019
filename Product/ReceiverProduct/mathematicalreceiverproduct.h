@@ -20,6 +20,8 @@ public:
     MathematicalReceiverProduct(int posX, int posY);
     ~MathematicalReceiverProduct() override;
 
+    void clearData();
+
     // From ReceiverProduct:
     int getPosX() override;
     int getPosY() override;

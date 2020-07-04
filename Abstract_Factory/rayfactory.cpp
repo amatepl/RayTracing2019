@@ -16,7 +16,7 @@ MathematicalRayProduct* RayFactory::createRay(const QPointF &p1, const QPointF &
         mathematicalComponent->attachObservable(graphicsComponent);
     }
     else{
-        mathematicalComponent = new MathematicalRayProduct();
+        mathematicalComponent = new MathematicalRayProduct(p1, p2, Tetai, indWall);
     }
     return mathematicalComponent;
 }

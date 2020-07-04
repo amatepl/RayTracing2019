@@ -91,3 +91,5 @@ bool Line::onLine(const QPointF &point){
             && testLine1.length() <= length()
             && testLine2.length() <= length());
 }
+
+double Line::getMeterLength()const{return length()*0.1;}

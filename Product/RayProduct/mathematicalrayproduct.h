@@ -24,7 +24,7 @@ private:
     double meterLength;
     int wallIBouncedOn;
     double theta;
-    bool m_diffracted;
+    bool m_diffracted = false;
 
     //std::vector <Wall*> walls_intersected;   // Pas la meilleure approche, trop à enregsitrer.
 
@@ -39,9 +39,10 @@ public:
     double getTetai()const;
     void setTetai(double tetai);
     double getTheta()const;
-    double getMeterLength()const;
+//    double getMeterLength()const;
     int getIndWall()const;
     void setDiffracted(bool diffracted);
+    bool getDiffracted()const;
     void draw();
     void erase();
 

@@ -13,6 +13,11 @@ MathematicalReceiverProduct::~MathematicalReceiverProduct(){
 
 }
 
+void MathematicalReceiverProduct::clearData(){
+    m_power = 0;
+    m_e_field = 0;
+}
+
 // From ReceiverProduct
 int MathematicalReceiverProduct::getPosX(){return x();}
 int MathematicalReceiverProduct::getPosY(){return y();}
@@ -20,8 +25,18 @@ double MathematicalReceiverProduct::getPower() {return m_power;}
 complex <double> MathematicalReceiverProduct::getEField() {return m_e_field;}
 bool MathematicalReceiverProduct::getEnable() {return enable;}
 
-void MathematicalReceiverProduct::setPosX(int posX) {setX(posX);}
-void MathematicalReceiverProduct::setPosY(int posY) {setY(posY);}
+void MathematicalReceiverProduct::setPosX(int posX) {
+    clearData();
+    setX(posX);
+    m_graphic->notifyToGraphic(this, m_power);
+    notifyObservers();
+}
+void MathematicalReceiverProduct::setPosY(int posY) {
+    clearData();
+    setY(posY);
+    m_graphic->notifyToGraphic(this);
+    notifyObservers();
+}
 void MathematicalReceiverProduct::setPower(double p) {m_power = p;}
 void MathematicalReceiverProduct::setEField(complex<double> e) {m_e_field = e;}
 void MathematicalReceiverProduct::setEnable(bool enable) {this->enable = enable;}
@@ -53,7 +68,9 @@ void MathematicalReceiverProduct::notifyObservers(){
 //        observer->notify(this,m_speed,m_orientation);
 //    }
 
+//    cout<< "MathRec number of observers: "<< m_observers.size()<<endl;
     for(int i = 0;i<m_observers.size();i++){
+//        cout<< "MathRec position: "<<x()<<", "<<y()<<endl;
         m_observers.at(i)->update(this,m_speed,m_orientation);
     }
 
@@ -74,8 +91,9 @@ void MathematicalReceiverProduct::notify(double &power, std::vector<double> *pow
 
 void MathematicalReceiverProduct::answer(ProductObserver *observer, double &power, std::vector<double> *powers, std::complex<double> &EMfield){
     m_e_field += EMfield;
-    if(m_power < power && observer != m_transmitter){
+    if(m_power < power - 20 && observer != m_transmitter){
         m_power = power;
+        m_graphic->notifyToGraphic(this,m_power);
         if(m_transmitter!=nullptr){
             m_transmitter->drawRays(this,false);
         }
@@ -84,6 +102,7 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double &powe
     }
     else{
         m_power = power;
+        m_graphic->notifyToGraphic(this,m_power);
         if(m_transmitter != 0){
             m_transmitter->drawRays(this,true);
         }

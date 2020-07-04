@@ -44,6 +44,8 @@ QColor GraphicsReceiverProduct::scaleColor(double min, double max, double value)
         color.setRgb(255,0,255*(max-value)/interval);
     }
     return color;
+
+
 }
 
 QPixmap GraphicsReceiverProduct::getImage(){
@@ -82,4 +84,26 @@ void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *e
 
 void GraphicsReceiverProduct::notifyToGraphic(QPointF *point){
     setPos(*point);
+}
+
+void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, double power){
+
+//    cout<<"Goiong strong in GraphicsRceiverProduct"<<endl;
+    setPos(*point);
+    QColor color;
+    if((-20 - power)*3>=0){color.setHsv((-20 - power)*3,255,255 - (-20 - power),255);}
+    else if(power == 0){
+        color.setHsv(240,150,80,255);
+    }
+    else{color.setHsv(0,255,255,255);}
+
+    QPixmap pixmap(m_sizex,m_sizey);
+    pixmap.fill(color);
+    QPainter painter(&pixmap);
+    painter.setPen(QPen(Qt::black, 0));
+    setPixmap(pixmap);
+    setOffset(-m_sizex/2,-m_sizey/2);
+
+    //draw();
+//    brush->setColor(color);
 }

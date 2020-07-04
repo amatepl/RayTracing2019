@@ -72,15 +72,15 @@ void Model::launchAlgorithm(AlgorithmInterface *algorithm){
     //setObservableProducts();
     m_algorithm->compute(m_mathematicalComponents);
     setModelObservers();
-    for(int i = 0; i < m_mathematicalComponents.count("Receiver"); i++){
-        //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
-        dynamic_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
-    }
+//    for(int i = 0; i < m_mathematicalComponents.count("Receiver"); i++){
+//        //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
+//        dynamic_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
+//    }
 
 
-    MathematicalTransmitterProduct* transmitter = selectTransmitter();
+//    MathematicalTransmitterProduct* transmitter = selectTransmitter();
 
-    MathematicalReceiverProduct* receiver = (MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(0);
+//    MathematicalReceiverProduct* receiver = (MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(0);
 
     //m_windowModelObservable->modelAnswer(transmitter->getRays().at(0));
 

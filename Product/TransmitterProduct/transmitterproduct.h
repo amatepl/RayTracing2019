@@ -112,7 +112,7 @@ protected:
     unsigned long m_frequency;           // Hz
     int m_row;
     int m_column;
-    double lambda;
+    double lambda = c/m_frequency;
 };
 
 #endif // TRANSMITTERPRODUCT_H
