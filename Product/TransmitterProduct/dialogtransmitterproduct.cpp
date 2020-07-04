@@ -10,7 +10,7 @@ DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *mathemati
     setOrientation(m_mathematicalproduct->getOrientation());
     setKind(m_mathematicalproduct->getKind());
     setAttribute(Qt::WA_DeleteOnClose,true);
-    exec();
+    open();
 }
 
 DialogTransmitterProduct::~DialogTransmitterProduct(){
@@ -33,6 +33,8 @@ void DialogTransmitterProduct::createDialog(){
     m_modelBox = new QComboBox(this);
     m_modelBox->addItem("Half-wave dipole antenna");
     m_modelBox->addItem("Array dipole antenna");
+    m_modelBox->addItem("Half-wave dipole antenna with reflector");
+    m_modelBox->addItem("Array dipole antenna with reflector");
 
     m_rowBox = new QSpinBox(this);
     m_columnBox = new QSpinBox(this);
@@ -147,8 +149,20 @@ void  DialogTransmitterProduct::setKind(Kind kind) {
         m_rowBox->setEnabled(false);
         m_columnBox->setEnabled(false);
     }
+    else if (kind == dipolereflector){
+        m_modelBox->setCurrentText("Half-wave dipole antenna with reflector");
+        setRow(1);
+        setColumn(1);
+        m_rowBox->setEnabled(false);
+        m_columnBox->setEnabled(false);
+    }
     else if (kind == array) {
         m_modelBox->setCurrentText("Array dipole antenna");
+        m_rowBox->setEnabled(true);
+        m_columnBox->setEnabled(true);
+    }
+    else if (kind == arrayreflector) {
+        m_modelBox->setCurrentText("Array dipole antenna with reflector");
         m_rowBox->setEnabled(true);
         m_columnBox->setEnabled(true);
     }
@@ -182,4 +196,6 @@ void DialogTransmitterProduct::changeModel(QString model)
 {
     if (model == "Half-wave dipole antenna")setKind(dipole);
     else if (model == "Array dipole antenna")setKind(array);
+    else if (model == "Half-wave dipole antenna with reflector")setKind(dipolereflector);
+    else if (model == "Array dipole antenna with reflector")setKind(arrayreflector);
 }

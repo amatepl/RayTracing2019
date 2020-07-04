@@ -8,6 +8,7 @@
 #include <QtDataVisualization/QHeightMapSurfaceDataProxy>
 #include <QtDataVisualization/QSurface3DSeries>
 #include <QtWidgets/QSlider>
+#include <QtCore/QTimer>
 #include <iostream>
 
 using namespace QtDataVisualization;
@@ -34,13 +35,16 @@ public:
 
 public Q_SLOTS:
     void changeTheme(int theme);
+    void toggleRotation();
+    void triggerRotation();
 
 private:
     Q3DSurface *m_graph;
+    QTimer m_rotationTimer;
     QSurfaceDataProxy *m_patternProxy;
     QSurface3DSeries *m_patternSeries;
+    QSurfaceDataArray *m_patternArray;
     TransmitterProduct *m_dialog;
-    QSurfaceDataArray *m_dataArray;
 
     float m_stepTheta;
     float m_stepY;
@@ -48,7 +52,13 @@ private:
     float m_ymin,m_ymax;
     float m_rmin,m_rmax;
 
-    void fillPatternProxy();
+    float m_angleOffset;
+    float m_angleStep;
+
+    //int m_fieldLines;
+    //int m_arrowsPerLine;
+
+    void generateData();
 };
 
 #endif // SURFACE3D_H

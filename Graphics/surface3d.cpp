@@ -1,8 +1,10 @@
 #include "surface3d.h"
-
-#include <QtDataVisualization/QValue3DAxis>
-#include <QtDataVisualization/Q3DTheme>
-#include <QtGui/QImage>
+#include <QtDataVisualization/qsurfacedataproxy.h>
+#include <QtDataVisualization/qvalue3daxis.h>
+#include <QtDataVisualization/q3dscene.h>
+#include <QtDataVisualization/q3dcamera.h>
+#include <QtDataVisualization/qsurface3dseries.h>
+#include <QtDataVisualization/q3dtheme.h>
 #include <QtCore/qmath.h>
 
 using namespace QtDataVisualization;
@@ -24,21 +26,32 @@ Surface3D::Surface3D(Q3DSurface *surface, TransmitterProduct *dialog)
     m_graph->setAxisZ(new QValue3DAxis);
     m_graph->setPolar(true);
     m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityHigh);
+    m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
     m_patternProxy = new QSurfaceDataProxy();
     m_patternSeries = new QSurface3DSeries(m_patternProxy);
-    fillPatternProxy();
+
+    QObject::connect(&m_rotationTimer, &QTimer::timeout, this,
+                     &Surface3D::triggerRotation);
+    m_angleStep = 0.0;
+
+    toggleRotation();
+    generateData();
 }
 
 Surface3D::~Surface3D(){
 
 }
 
-void Surface3D::fillPatternProxy()
+void Surface3D::generateData()
 {
     float stepTheta = (sampleThetaMax - sampleThetaMin) / sampleCountTheta;
     float stepPhy = (samplePhyMax - samplePhyMin) / sampleCountPhy;
-    m_dataArray = new QSurfaceDataArray;
-    m_dataArray->reserve(sampleCountPhy);
+
+    if (!m_patternArray)
+        m_patternArray = new QSurfaceDataArray;
+
+    m_patternArray = new QSurfaceDataArray;
+    m_patternArray->reserve(sampleCountPhy);
     for (int i = 0 ; i < sampleCountPhy; i++) {
         QSurfaceDataRow *newRow = new QSurfaceDataRow(sampleCountTheta);
         // Keep values within range bounds, since just adding step can cause minor drift due
@@ -47,7 +60,7 @@ void Surface3D::fillPatternProxy()
         int index = 0;
         for (int j = 0; j < sampleCountTheta; j++) {
             float theta = qMin(sampleThetaMax, (j * stepTheta + sampleThetaMin));
-            double gain = abs(m_dialog->totaleArrayFactor(double(theta),double(phy)));
+            double gain = abs(m_dialog->totaleArrayFactor(double(theta),double(phy),double(m_angleStep)));
             float xtheta = theta*M_PI/180.0;
             m_thetamax = qMax(xtheta,m_thetamax);
             m_thetamin = qMin(xtheta,m_thetamin);
@@ -59,12 +72,12 @@ void Surface3D::fillPatternProxy()
             m_rmin = qMin(r,m_rmin);
             (*newRow)[index++].setPosition(QVector3D(xtheta, y, r));
         }
-        *m_dataArray << newRow;
+        *m_patternArray << newRow;
     }
     m_graph->axisX()->setRange(m_thetamin, m_thetamax);
     m_graph->axisY()->setRange(m_ymin-5.0, m_ymax+5.0);
     m_graph->axisZ()->setRange(m_rmin, m_rmax+1);
-    m_patternProxy->resetArray(m_dataArray);
+    m_patternProxy->resetArray(m_patternArray);
 }
 
 void Surface3D::enablePatternModel(bool enable)
@@ -89,9 +102,26 @@ void Surface3D::enablePatternModel(bool enable)
     }
 }
 
+void Surface3D::triggerRotation()
+{
+    m_angleStep += M_PI/4;
+    if (m_angleStep >= 2*M_PI){
+        m_angleStep = 0;
+    }
+    m_angleStep += M_PI/4;
+    generateData();
+}
+
 void Surface3D::changeTheme(int theme)
 {
     m_graph->activeTheme()->setType(Q3DTheme::Theme(theme));
+}
+
+void Surface3D::toggleRotation(){
+    if (m_rotationTimer.isActive())
+        m_rotationTimer.stop();
+    else
+        m_rotationTimer.start(500);
 }
 
 void Surface3D::setBlackToYellowGradient()

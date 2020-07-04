@@ -84,9 +84,11 @@ private:
 
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;
+
     QButtonGroup *m_raytracinggroup;
     QPushButton *launch_raytracing;
     QPushButton *launch_coverage;
+
 
     QToolBox *m_toolbox;
     QToolBar *m_toolbarobject;
