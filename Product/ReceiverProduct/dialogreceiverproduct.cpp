@@ -145,6 +145,32 @@ QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
 
+    // Number of rays = Number of powers received:
+        // int rayNumber = scene->getRayNumber();
+    // The channel data gives : attenuation (R/completelenght) + completelength
+        // double *channelData = scene->getChannelData();
+    // Speed of light
+        double  c =2.998e+8; // m/s
+    // Creation of two vectors (impusle) and time of each impulse
+        // QVector<double> h(rayNumber), tau(rayNumber);
+    // loop over all rays
+        // for (int i=0; i<(rayNumber); ++i){
+            // Compute attenuation factor
+                // h[i] = 10*log10(abs(channelData[i])); // alpha
+            // Compute time of arrival in ns
+            // tau[i] = channelData[i+20]/c*1e9; // tau
+
+            QCPItemLine *line = new QCPItemLine(customplot);
+            // line->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
+            // line->end->setCoords(tau[i], -100);  // location of point 2 in plot coordinate
+
+        // Plot physiscal impulse response
+        customplot->addGraph();
+        customplot->graph(0)->setPen(QPen(Qt::blue));
+        customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
+        customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+        // customplot->graph(0)->setData(tau, h);
+
     customplot->xAxis->setLabel("\u03C4[ns]");
     customplot->yAxis->setLabel("h(\u03C4)[dB]");
     customplot->yAxis->grid()->setSubGridVisible(true);
