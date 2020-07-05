@@ -7,6 +7,7 @@ DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *mathemati
     setPosY(m_mathematicalproduct->getPosY());
     setPower(m_mathematicalproduct->getPower());
     setFrequency(m_mathematicalproduct->getFrequency());
+    setBandwidth(m_mathematicalproduct->getBandwidth());
     setOrientation(m_mathematicalproduct->getOrientation());
     setKind(m_mathematicalproduct->getKind());
     setAttribute(Qt::WA_DeleteOnClose,true);
@@ -55,16 +56,26 @@ void DialogTransmitterProduct::createDialog(){
     m_frequencyValue = new QDoubleSpinBox(this);
     m_frequencyValue->setRange(0.00,999.00);
     m_frequencyValue->setAccelerated(true);
+    m_bwvalue = new QDoubleSpinBox(this);
+    m_bwvalue->setRange(0.00,999.00);
+    m_bwvalue->setAccelerated(true);
 
     m_frequencyorder = new QComboBox(this);
     m_frequencyorder->addItem("kHz");
     m_frequencyorder->addItem("MHz");
     m_frequencyorder->addItem("GHz");
+    m_bworder = new QComboBox(this);
+    m_bworder->addItem("kHz");
+    m_bworder->addItem("MHz");
+    m_bworder->addItem("GHz");
 
     QHBoxLayout *frequency = new QHBoxLayout();
     frequency->addWidget(m_frequencyValue);
-
     frequency->addWidget(m_frequencyorder);
+
+    QHBoxLayout *bandwidth = new QHBoxLayout();
+    bandwidth->addWidget(m_bwvalue);
+    bandwidth->addWidget(m_bworder);
 
     m_power = new QDoubleSpinBox(this);
     m_power->setRange(0.0,100.0);
@@ -90,6 +101,7 @@ void DialogTransmitterProduct::createDialog(){
 
     QFormLayout *phyProperties = new QFormLayout(this);
     phyProperties->addRow("Frequency: ",frequency);
+    phyProperties->addRow("Bandwidth: ",bandwidth);
     phyProperties->addRow("Power: ",m_power);
 
     QGroupBox *phy = new QGroupBox("Physical properties");
@@ -113,31 +125,61 @@ void DialogTransmitterProduct::createDialog(){
 unsigned long DialogTransmitterProduct::getFrequency(){
     QString text = m_frequencyorder->currentText();
     if (text == "kHz"){
-        m_frequency = long(m_frequencyValue->value()*1e3);
+        m_frequency = unsigned(long(m_frequencyValue->value()*1e3));
     }
     else if (text == "MHz"){
-        m_frequency = long(m_frequencyValue->value()*1e6);
+        m_frequency = unsigned(long(m_frequencyValue->value()*1e6));
     }
     else {
-        m_frequency = long(m_frequencyValue->value()*1e9);
+        m_frequency = unsigned(long(m_frequencyValue->value()*1e9));
     }
     return m_frequency;
 }
 
+unsigned long DialogTransmitterProduct::getBandwidth(){
+    QString text = m_bworder->currentText();
+    if (text == "kHz"){
+        m_bandwidth = unsigned(long(m_bwvalue->value()*1e3));
+    }
+    else if (text == "MHz"){
+        m_bandwidth = unsigned(long(m_bwvalue->value()*1e6));
+    }
+    else {
+        m_bandwidth = unsigned(long(m_bwvalue->value()*1e9));
+    }
+    return m_bandwidth;
+}
+
 void DialogTransmitterProduct::setFrequency(unsigned long frequency){
-    if (frequency/1e3 <= 999){
-        m_frequencyValue->setValue(int(frequency/1e3));
+    if (frequency/1e3 <= 999.0){
+        m_frequencyValue->setValue(frequency/1e3);
         m_frequencyorder->setCurrentText("kHz");
     }
-    else if (frequency/1e6 <= 999){
-        m_frequencyValue->setValue(int(frequency/1e6));
+    else if (frequency/1e6 <= 999.0){
+        m_frequencyValue->setValue(frequency/1e6);
         m_frequencyorder->setCurrentText("MHz");
     }
     else{
-        m_frequencyValue->setValue(int(frequency/1e9));
+        m_frequencyValue->setValue(frequency/1e9);
         m_frequencyorder->setCurrentText("GHz");
     }
     m_frequency = frequency;
+}
+
+void DialogTransmitterProduct::setBandwidth(unsigned long bandwidth){
+    if (bandwidth/1e3 <= 999){
+        m_bwvalue->setValue(bandwidth/1e3);
+        m_bworder->setCurrentText("kHz");
+    }
+    else if (bandwidth/1e6 <= 999){
+        m_bwvalue->setValue(bandwidth/1e6);
+        m_bworder->setCurrentText("MHz");
+    }
+    else{
+        m_bwvalue->setValue(bandwidth/1e9);
+        m_bworder->setCurrentText("GHz");
+    }
+    m_bandwidth = bandwidth;
 }
 
 void  DialogTransmitterProduct::setKind(Kind kind) {
@@ -175,6 +217,7 @@ void DialogTransmitterProduct::newProperties(){
     m_mathematicalproduct->setPosX(getPosX());
     m_mathematicalproduct->setPosY(getPosY());
     m_mathematicalproduct->setFrequency(getFrequency());
+    m_mathematicalproduct->setBandwidth(getBandwidth());
     m_mathematicalproduct->setPower(getPower());
     m_mathematicalproduct->setOrientation(getOrientation());
     m_mathematicalproduct->newProperties();

@@ -6,6 +6,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_radius = 500;
     m_zone = buildCoverage();
     m_frequency = 26e9;
+    m_bandwidth = 100e6;
     m_row = 1;
     m_column = 1;
     m_kind = dipole;
@@ -358,6 +359,11 @@ void MathematicalTransmitterProduct::setSceneBoundary(const QRectF &rect){
     m_sceneBoundary = rect;
 }
 
+void MathematicalTransmitterProduct::computePathLoss(QLineF direct_ray){
+    std::cout << "p1: " << direct_ray.p1().x() << " and " << direct_ray.p1().y() << std::endl;
+    std::cout << "p2: " << direct_ray.p2().x() << " and " << direct_ray.p2().y() << std::endl;
+}
+
 // Tree transmition
 
 
@@ -441,7 +447,10 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 //        m_wholeRays.push_back(wholeRay);
 
         m_receiversRays[receiver].push_back(wholeRay);
-
+        QPointF p1 = wholeRay->at(0)->p1();
+        QPointF p2 = wholeRay->at(0)->p2();
+        QLineF direct_ray = QLineF(p1,p2);
+        computePathLoss(direct_ray);
         if(wholeRay->at(0)->getDiffracted()){
             complex<double>EMfield = computeDiffractedEfield(wholeRay);
             m_receiversField[receiver] += EMfield;

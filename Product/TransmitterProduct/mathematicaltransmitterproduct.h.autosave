@@ -90,7 +90,6 @@ public:
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
-//>>>>>>> d1ec8e004ad1b2afa2d74871dff3deaf7bbc3b77
     void openDialog() override;
 
 //    // From ProductObserver

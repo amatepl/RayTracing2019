@@ -25,6 +25,7 @@ public:
     std::vector<double> rayLength() {return m_raylength;}
     std::vector<double> attenuation() {return m_attenuation;}
     unsigned long frequency() {return m_transmitterfrequency;}
+    unsigned long bandwidth() {return m_transmitterbandwidth;}
     void setAttenuation(std::vector<double> attenuation){
         m_attenuation.erase(m_attenuation.begin(),m_attenuation.end());
         m_attenuation = attenuation;
@@ -35,6 +36,7 @@ public:
         m_raylength = raylength;
     }
     void setFrequency(unsigned long frequency){m_transmitterfrequency = frequency;}
+    void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
 
     virtual void newProperties() = 0;
 
@@ -42,5 +44,6 @@ protected:
     std::vector<double> m_attenuation;
     std::vector<double> m_raylength;
     unsigned long m_transmitterfrequency;
+    unsigned long m_transmitterbandwidth;
 };
 #endif // RECEIVERPRODUCT_H

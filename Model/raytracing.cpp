@@ -62,6 +62,7 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
     true_receiver->setAttenuation(true_transmitter->attenuation(true_receiver));
     true_receiver->setRayLength(true_transmitter->rayLength(true_receiver));
     true_receiver->setFrequency(true_transmitter->getFrequency());
+    true_receiver->setBandwidth(true_transmitter->getBandwidth());
 }
 
 void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){

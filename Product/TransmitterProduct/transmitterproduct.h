@@ -20,12 +20,14 @@ public:
     virtual int getRow() = 0;
     virtual int getColumn() = 0;
     virtual unsigned long getFrequency() = 0;
+    virtual unsigned long getBandwidth() = 0;
 
     virtual void setPosX(int posX) = 0;
     virtual void setPosY(int posY) = 0;
     virtual void setOrientation(double orientation) = 0;
     virtual void setPower(double power) = 0;
     virtual void setFrequency(unsigned long frequency) = 0;
+    virtual void setBandwidth(unsigned long bandwidth) = 0;
     virtual void setRow(int row) = 0;
     virtual void setColumn(int column) = 0;
     virtual void setKind(Kind kind) = 0;
@@ -147,6 +149,7 @@ protected:
 
     double epsilonWallRel;
     unsigned long m_frequency;           // Hz
+    unsigned long m_bandwidth;
     int m_row;
     int m_column;
     double lambda = c/m_frequency;
