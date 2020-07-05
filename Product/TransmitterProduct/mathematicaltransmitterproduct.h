@@ -60,6 +60,10 @@ public:
     //ModelObserver
     void attachObservable(ModelObservable* modelObserver) override;
     void attachObservable(ProductObservable *productObservable) override;
+
+    // Vector to receive all the physical informations to share
+    std::vector <double> attenuation(ProductObservable *receiver) {return m_attenuation[receiver];}
+    std::vector <double> rayLength(ProductObservable* receiver) {return m_raylength[receiver];}
 //==============
     // From TransmitterProduct
     int getPosX() override {return x();}
@@ -117,9 +121,12 @@ private:
     ModelObservable* m_model;
     vector<ProductObservable*> m_productObservable;
     //map<const QPointF*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
+
     map<ProductObservable*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
     map<ProductObservable*,complex<double>> m_receiversField;
     map<ProductObservable*,vector<double>> m_receiversPowers;
+    map<ProductObservable*,vector<double>> m_attenuation;
+    map<ProductObservable*,vector<double>> m_raylength;
 
     int m_radius;
 

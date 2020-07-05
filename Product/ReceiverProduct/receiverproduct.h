@@ -2,6 +2,7 @@
 #define RECEIVERPRODUCT_H
 
 #include <complex>
+#include <vector>
 
 class ReceiverProduct
 {
@@ -20,6 +21,26 @@ public:
     virtual void setEField(std::complex<double> e) = 0;
     virtual void setPower(double p) = 0;
 
+    // Physical Result and parameters
+    std::vector<double> rayLength() {return m_raylength;}
+    std::vector<double> attenuation() {return m_attenuation;}
+    unsigned long frequency() {return m_transmitterfrequency;}
+    void setAttenuation(std::vector<double> attenuation){
+        m_attenuation.erase(m_attenuation.begin(),m_attenuation.end());
+        m_attenuation = attenuation;
+    }
+
+    void setRayLength(std::vector<double> raylength){
+        m_raylength.erase(m_raylength.begin(),m_raylength.end());
+        m_raylength = raylength;
+    }
+    void setFrequency(unsigned long frequency){m_transmitterfrequency = frequency;}
+
     virtual void newProperties() = 0;
+
+protected:
+    std::vector<double> m_attenuation;
+    std::vector<double> m_raylength;
+    unsigned long m_transmitterfrequency;
 };
 #endif // RECEIVERPRODUCT_H

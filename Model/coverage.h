@@ -16,6 +16,8 @@ public:
     MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
                                            vector<MathematicalBuildingProduct*> buildings) override;
     MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents) override;
+
+    void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;
     vector<QRectF> buildCoverageZone();
 
 protected:

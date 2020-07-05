@@ -58,6 +58,9 @@ private:
     float m_speed;
     float m_orientation;
     ProductObserver *m_transmitter = nullptr;
+
+    std::vector<double> m_attenuation;
+    std::vector<double> m_raylength;
 };
 
 #endif // MATHEMATICALRECEIVERPRODUCT_H

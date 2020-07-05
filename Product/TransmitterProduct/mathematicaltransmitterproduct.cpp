@@ -88,7 +88,8 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         double thetaI = atan(antennaHeight/(dist/2))+M_PI/2;
         Efield += groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI));
     }
-
+    m_attenuation[receiver].push_back(R/completeLength);
+    m_raylength[receiver].push_back(completeLength);
 //    if(amountSegment==1){
 //        this->minLength = completeLength; // for delay spread computation
 //        this->LOS = pow(a,2);
@@ -133,6 +134,8 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
     double Ia = sqrt(2*m_power/Ra); // Ia could be changed for Beamforming application
     double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;
     complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+    m_attenuation[receiver].push_back(R/completeLength);
+    m_raylength[receiver].push_back(completeLength);
 //    this->NLOS += pow(a,2);
 
 //    // Store ray parameter for Physical impulse response
@@ -403,6 +406,8 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 
     m_receiversField[receiver] = 0;
     m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(),m_receiversPowers[receiver].end());
+    m_attenuation[receiver].erase(m_attenuation[receiver].begin(),m_attenuation[receiver].end());
+    m_raylength[receiver].erase(m_raylength[receiver].begin(), m_raylength[receiver].end());
 
     QPointF* pos = receiver->getPos();
     //vector<vector<MathematicalRayProduct*>*> *wholeRays;
@@ -435,7 +440,6 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
         wholeRay->push_back(m_rayFactory->createRay(*this,*pos));
 //        m_wholeRays.push_back(wholeRay);
 
-
         m_receiversRays[receiver].push_back(wholeRay);
 
         if(wholeRay->at(0)->getDiffracted()){
@@ -459,7 +463,7 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 //        cout<<"EM field: "<<m_receiversField[receiver]<<endl;
         double powerDBm = dBm(totalPower);
 //        cout<< "MathTrans power dBm : "<< powerDBm<< endl;
-
+        m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
         receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
     }
 
@@ -488,7 +492,6 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
     MathematicalRayProduct *newRay = m_rayFactory->createRay(*this,point);
     wholeRay->push_back(newRay);
 //    m_wholeRays.push_back(wholeRay);
-
     m_receiversRays[receiver].push_back(wholeRay);
 
     if(wholeRay->at(0)->getDiffracted()){
@@ -508,6 +511,7 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
     //m_model->notify(this);
 
     double powerDBm = dBm(totalPower);
+    m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
 
     receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
 

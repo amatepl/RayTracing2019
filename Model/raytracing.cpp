@@ -35,7 +35,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 {
 
     setAttributs(mathematicalComponents);
-    reflectionsNumber = 5;
+    reflectionsNumber = 2;
     //cout<<"I am computing"<<endl;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
@@ -55,11 +55,24 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
 }
 
+void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver){
+    // Send data is used to share some computed data from the transmitter to the receiver.
+    MathematicalTransmitterProduct* true_transmitter = static_cast<MathematicalTransmitterProduct*>(transmitter);
+    MathematicalReceiverProduct* true_receiver = static_cast<MathematicalReceiverProduct*>(receiver);
+    true_receiver->setAttenuation(true_transmitter->attenuation(true_receiver));
+    true_receiver->setRayLength(true_transmitter->rayLength(true_receiver));
+    true_receiver->setFrequency(true_transmitter->getFrequency());
+}
+
 void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){
     if(m_mathematicalComponents.count("Transmitter")){
         //m_transmitters.push_back((MathematicalTransmitterProduct*) m_mathematicalComponents["Transmitter"].at(i));
         for(int i=0;i<m_mathematicalComponents["Transmitter"].size();i++){
             m_transmitters.push_back(static_cast<MathematicalTransmitterProduct*>(m_mathematicalComponents["Transmitter"].at(i)) );
+
+            // The mediator pattern begins here. The transmitter received the algorithminterface to send the correct data between transmitter and receiver.
+            // One advantage of this pattern is that the receiver can also send data at transmitter if we want.
+            m_transmitters.at(i)->setMediator(this);
         }
 
     }

@@ -2,6 +2,7 @@
 #define MATHEMATICALPRODUCT_H
 
 #include <QGraphicsItem>
+#include "Model/algorithmInterface.h"
 
 class GraphicsProduct;
 
@@ -18,10 +19,14 @@ public:
     virtual void update(QGraphicsItem* graphic) = 0;
     GraphicsProduct* toGraphicsProduct() {return m_graphic;}
 
+    // Method for mediator pattern. MathematicalProduct have a pointer to AlgorithmInterface that we can set at a good time
+    void setMediator(AlgorithmInterface* algorithm) {m_algorithm = algorithm;}
+
 protected:
     std::string m_type;
     GraphicsProduct* m_graphic = nullptr;
     QDialog* m_dialog;
+    AlgorithmInterface *m_algorithm = nullptr;
 };
 
 #endif // MATHEMATICALPRODUCT_H
