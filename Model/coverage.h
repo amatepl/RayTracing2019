@@ -15,9 +15,11 @@ public:
     // AlgorithmInterface
     MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
                                            vector<MathematicalBuildingProduct*> buildings) override;
-    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents) override;
+    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
 
     void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;
+    void pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter) override;
+
     vector<QRectF> buildCoverageZone();
 
 protected:

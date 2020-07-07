@@ -52,6 +52,7 @@ private:
     QLineEdit *m_e_field;
     QTabWidget* m_tabwidget;
     QDialogButtonBox *m_buttonbox;
+    QVector<double> h_TDL,tau_delay;
     bool enable;
 
 public slots:

@@ -3,6 +3,8 @@
 
 #include <complex>
 #include <vector>
+#include <map>
+#include <QPointF>
 
 class ReceiverProduct
 {
@@ -22,27 +24,24 @@ public:
     virtual void setPower(double p) = 0;
 
     // Physical Result and parameters
-    std::vector<double> rayLength() {return m_raylength;}
-    std::vector<double> attenuation() {return m_attenuation;}
+    std::map<std::vector<double>,double> impulseRayLength() {return m_raylength;}
+    std::map<std::vector<double>,double> impulseAttenuation() {return m_attenuation;}
+    std::map<double,double> pathLoss(){return m_pathloss;}
     unsigned long frequency() {return m_transmitterfrequency;}
     unsigned long bandwidth() {return m_transmitterbandwidth;}
-    void setAttenuation(std::vector<double> attenuation){
-        m_attenuation.erase(m_attenuation.begin(),m_attenuation.end());
-        m_attenuation = attenuation;
-    }
-
-    void setRayLength(std::vector<double> raylength){
-        m_raylength.erase(m_raylength.begin(),m_raylength.end());
-        m_raylength = raylength;
-    }
+    void setImpulseRayLength(std::map<std::vector<double>,double> raylength){m_raylength = raylength;}
+    void setImpulseAttenuation(std::map<std::vector<double>,double> attenuation){m_attenuation = attenuation;}
+    void setPathLoss(std::map<double,double> pathloss) {m_pathloss = pathloss;}
     void setFrequency(unsigned long frequency){m_transmitterfrequency = frequency;}
     void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
 
     virtual void newProperties() = 0;
 
 protected:
-    std::vector<double> m_attenuation;
-    std::vector<double> m_raylength;
+    std::map<std::vector<double>,double> m_raylength;
+    std::map<std::vector<double>,double> m_attenuation;
+    std::map<double,double> m_pathloss;
+
     unsigned long m_transmitterfrequency;
     unsigned long m_transmitterbandwidth;
 };

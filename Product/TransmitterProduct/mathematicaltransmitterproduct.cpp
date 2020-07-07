@@ -2,7 +2,7 @@
 MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY):QPointF(posX,posY)
 {
     m_type = "Transmitter";
-
+    px_to_meter = 0.1;
     m_radius = 500;
     m_zone = buildCoverage();
     m_frequency = 26e9;
@@ -14,6 +14,8 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_orientation = 0;
     lambda = c/m_frequency;
     epsilonWallRel = 5;
+    active_pathloss = true;
+    compute_pathloss = true;
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct(){
@@ -89,8 +91,14 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         double thetaI = atan(antennaHeight/(dist/2))+M_PI/2;
         Efield += groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI));
     }
-    m_attenuation[receiver].push_back(R/completeLength);
-    m_raylength[receiver].push_back(completeLength);
+    QPointF p1 = rayLine->at(rayLine->size()-1)->p2();
+    if (p1.x()-1 != this->getPosX() && p1.y() != this->getPosY()){
+        vector<double> point(2);
+        point[0] = p1.x();
+        point[1] = p1.y();
+        m_attenuation[receiver][point] = R/completeLength;
+        m_raylength[receiver][point] = completeLength;
+    }
 //    if(amountSegment==1){
 //        this->minLength = completeLength; // for delay spread computation
 //        this->LOS = pow(a,2);
@@ -135,8 +143,11 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
     double Ia = sqrt(2*m_power/Ra); // Ia could be changed for Beamforming application
     double a = R * ((Zvoid*Ia)/(2*M_PI)) * (cos(M_PI/2*cos(thetaI))/sin(thetaI))/completeLength;
     complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
-    m_attenuation[receiver].push_back(R/completeLength);
-    m_raylength[receiver].push_back(completeLength);
+    vector<double> point(2);
+    point[0] = 0;
+    point[1] = 0;
+    m_attenuation[receiver][point] = R/completeLength;
+    m_raylength[receiver][point] = completeLength;
 //    this->NLOS += pow(a,2);
 
 //    // Store ray parameter for Physical impulse response
@@ -161,8 +172,7 @@ double MathematicalTransmitterProduct::distance(ProductObservable* receiver){
     double x2 = receiver->getPos()->x();
     double y2 = receiver->getPos()->y();
 
-    float pxToMeter = 0.1;
-    return sqrt(pow((x2-x1),2)+pow((y2-y1),2))*pxToMeter; // conversion (1px == 1dm)
+    return sqrt(pow((x2-x1),2)+pow((y2-y1),2))*px_to_meter; // conversion (1px == 1dm)
 }
 
 //complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct*> *rayLine){
@@ -359,9 +369,13 @@ void MathematicalTransmitterProduct::setSceneBoundary(const QRectF &rect){
     m_sceneBoundary = rect;
 }
 
-void MathematicalTransmitterProduct::computePathLoss(QLineF direct_ray){
-    std::cout << "p1: " << direct_ray.p1().x() << " and " << direct_ray.p1().y() << std::endl;
-    std::cout << "p2: " << direct_ray.p2().x() << " and " << direct_ray.p2().y() << std::endl;
+void MathematicalTransmitterProduct::computePathLoss(QLineF direct_ray, ProductObservable* true_receiver){
+    std::vector<QPointF> points;
+    int number_points = 50;
+    for (int i = 0; i<=number_points; i++){
+        points.push_back(direct_ray.pointAt(double(i)/number_points));
+    }
+    m_algorithm->pathLossComputation(points,true_receiver,this);
 }
 
 // Tree transmition
@@ -412,8 +426,8 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 
     m_receiversField[receiver] = 0;
     m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(),m_receiversPowers[receiver].end());
-    m_attenuation[receiver].erase(m_attenuation[receiver].begin(),m_attenuation[receiver].end());
-    m_raylength[receiver].erase(m_raylength[receiver].begin(), m_raylength[receiver].end());
+    m_attenuation.erase(receiver);
+    m_raylength.erase(receiver);
 
     QPointF* pos = receiver->getPos();
     //vector<vector<MathematicalRayProduct*>*> *wholeRays;
@@ -450,7 +464,9 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
         QPointF p1 = wholeRay->at(0)->p1();
         QPointF p2 = wholeRay->at(0)->p2();
         QLineF direct_ray = QLineF(p1,p2);
-        computePathLoss(direct_ray);
+        if (active_pathloss){
+            computePathLoss(direct_ray, receiver);
+        }
         if(wholeRay->at(0)->getDiffracted()){
             complex<double>EMfield = computeDiffractedEfield(wholeRay);
             m_receiversField[receiver] += EMfield;
@@ -472,8 +488,10 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 //        cout<<"EM field: "<<m_receiversField[receiver]<<endl;
         double powerDBm = dBm(totalPower);
 //        cout<< "MathTrans power dBm : "<< powerDBm<< endl;
-        m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
-        receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
+        if (!compute_pathloss){
+            m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
+            receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
+        }
     }
 
 
@@ -520,10 +538,15 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
     //m_model->notify(this);
 
     double powerDBm = dBm(totalPower);
-    m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
-
-    receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
-
+    if (compute_pathloss){
+        QPointF* point_receiver = dynamic_cast<QPointF*>(receiver);
+        QLineF line = QLineF(*this,*point_receiver);
+        m_pathloss[receiver][line.length()*px_to_meter] = powerDBm;
+    }
+    else {
+        m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
+        receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
+    }
 }
 
 QPointF MathematicalTransmitterProduct::getPosition()const{

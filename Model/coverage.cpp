@@ -10,7 +10,7 @@ MathematicalComponent* Coverage::compute(vector<MathematicalTransmitterProduct*>
 
 }
 
-MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct *> > mathematicalComponents){
+MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct *> > mathematicalComponents, ReceiverFactory* receiverfactory){
     setAttributs(mathematicalComponents);
     reflectionsNumber = 5;
     //cout<<"I am computing"<<endl;
@@ -61,11 +61,17 @@ void Coverage::sendData(MathematicalProduct *transmitter, MathematicalProduct *r
     MathematicalReceiverProduct* true_receiver = static_cast<MathematicalReceiverProduct*>(receiver);
 }
 
+void Coverage::pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter){
+    MathematicalTransmitterProduct* original_transmitter = (MathematicalTransmitterProduct*) true_transmitter;
+    original_transmitter->activePathLoss(false);
+    original_transmitter->computePathLoss(false);
+}
 
 void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){
     if(m_mathematicalComponents.count("Transmitter")){
         for(int i=0;i<m_mathematicalComponents["Transmitter"].size();i++){
             m_transmitters.push_back(static_cast<MathematicalTransmitterProduct*>(m_mathematicalComponents["Transmitter"].at(i)) );
+            m_transmitters.at(i)->setMediator(this);
         }
 
     }

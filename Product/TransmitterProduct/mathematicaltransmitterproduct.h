@@ -51,11 +51,16 @@ public:
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
     void setSceneBoundary(const QRectF &rect);
     // The path loss must take the direct ray and compute the different power on this ray.
-    void computePathLoss(QLineF direct_ray);
+    void computePathLoss(QLineF direct_ray, ProductObservable* true_receiver);
+    void activePathLoss(bool active) {active_pathloss = active;}
+    void computePathLoss(bool compute) {compute_pathloss = compute;}
+    void erasePathLoss(ProductObservable* receiver){m_pathloss.erase(receiver);}
 
     // Vector to receive all the physical informations to share
-    std::vector <double> attenuation(ProductObservable *receiver) {return m_attenuation[receiver];}
-    std::vector <double> rayLength(ProductObservable* receiver) {return m_raylength[receiver];}
+    map<vector<double>,double> impulseAttenuation(ProductObservable *receiver) {return m_attenuation[receiver];}
+    map<vector<double>,double> impulseRayLength(ProductObservable *receiver) {return m_raylength[receiver];}
+
+    map<double,double> pathLoss(ProductObservable* receiver){return m_pathloss[receiver];}
 
     // ProductObserver
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
@@ -90,7 +95,6 @@ public:
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
-//>>>>>>> d1ec8e004ad1b2afa2d74871dff3deaf7bbc3b77
     void openDialog() override;
 
 //    // From ProductObserver
@@ -116,8 +120,11 @@ public:
 
 
 private:
+    double px_to_meter;
     float m_orientation;
     double m_power;
+    bool active_pathloss;
+    bool compute_pathloss;
     Kind m_kind;
 
     double m_powerAtReceiver;
@@ -128,8 +135,13 @@ private:
     map<ProductObservable*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
     map<ProductObservable*,complex<double>> m_receiversField;
     map<ProductObservable*,vector<double>> m_receiversPowers;
-    map<ProductObservable*,vector<double>> m_attenuation;
-    map<ProductObservable*,vector<double>> m_raylength;
+
+    // Attenuation for impulse response and TDL
+    map<ProductObservable*,map<vector<double>,double>> m_attenuation;
+    map<ProductObservable*,map<vector<double>,double>> m_raylength;
+
+    // Path loss computation
+    map<ProductObservable*,map<double,double>> m_pathloss;
 
     int m_radius;
 
