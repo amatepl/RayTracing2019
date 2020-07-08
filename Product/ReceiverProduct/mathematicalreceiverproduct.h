@@ -22,6 +22,7 @@ class MathematicalReceiverProduct: public QPointF, public MathematicalProduct, p
 {
 public:
     MathematicalReceiverProduct(int posX, int posY);
+    MathematicalReceiverProduct(MathematicalReceiverProduct *receiver);
     ~MathematicalReceiverProduct() override;
 
     void clearData();
