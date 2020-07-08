@@ -31,7 +31,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 //    MathematicalProduct* receiver = m_receiverFactory->createMathematicalProduct(workingZone.topLeft().x(),workingZone.topLeft().y(),true);
     MathematicalProduct* receiver = m_receiverFactory->createMathematicalProduct(0,0,true);
     m_receivers.push_back(dynamic_cast<MathematicalReceiverProduct*>(receiver));
-    m_receiver = dynamic_cast<MathematicalReceiverProduct*>(receiver);
+//    m_receiver = dynamic_cast<MathematicalReceiverProduct*>(receiver);
 
     illuminationZones();
 

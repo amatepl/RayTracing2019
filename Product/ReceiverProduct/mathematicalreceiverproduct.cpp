@@ -94,9 +94,9 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double &powe
     if(m_power < power - 20 && observer != m_transmitter){
         m_power = power;
         m_graphic->notifyToGraphic(this,m_power);
-        if(m_transmitter!=nullptr){
-            m_transmitter->drawRays(this,false);
-        }
+//        if(m_transmitter!=nullptr){
+//            //m_transmitter->drawRays(this,false);
+//        }
         m_transmitter = observer;
         m_transmitter->drawRays(this,true);
     }

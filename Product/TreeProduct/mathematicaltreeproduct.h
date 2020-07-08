@@ -14,6 +14,8 @@ public:
     ~MathematicalTreeProduct() override;
 
     struct TreeParams{float radius,length,density;};
+    float getRadius()const;
+    void setRadius(float radius);
 
 
     int getPosX() override;
@@ -21,6 +23,7 @@ public:
     void setPosX(int) override;
     void setPosY(int) override;
     void newProperties() override;
+    void attachObservable(GraphicsProduct *graphic) override;
 
     void update(QGraphicsItem *graphic) override;
     void openDialog() override;

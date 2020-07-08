@@ -14,11 +14,11 @@ void ImagesMethod::illuminationZones(){
     illumination1.setAlpha(100);
 
     foreach(MathematicalTransmitterProduct* transmitter,m_transmitters){
-//        for(int i=0;i<m_receivers.size();i++){
-//            m_receivers.at(i)->attachObserver(transmitter);
-//            transmitter->attachObservable(m_receivers.at(i));
-//        }
-        m_receiver->attachObserver(transmitter);
+        for(int i=0;i<m_receivers.size();i++){
+            m_receivers.at(i)->attachObserver(transmitter);
+            transmitter->attachObservable(m_receivers.at(i));
+        }
+//        m_receiver->attachObserver(transmitter);
         transmitter->attachObservable(m_receiver);
         forImage data = transmitterIllumination(transmitter);
 
@@ -159,7 +159,7 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
                 for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
                     m_receivers.at(numberReceivers)->attachObserver(corner);
                 }
-                m_receiver->attachObserver(corner);
+//                m_receiver->attachObserver(corner);
 //                m_scene->addPolygon(cornerZone,QPen(),illumination1);         // Illumination zone for first diffraction
                 //m_scene->addEllipse(cornerZone.at(0).x(),cornerZone.at(0).y(),10,10,redPen);
 
@@ -220,7 +220,7 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 //                        m_scene->addEllipse(cornerZone.at(1).x(),cornerZone.at(1).y(),10,10,greenPen);    // GREEN corner zone
                         AntenaDiffraction *corner2 = new AntenaDiffraction(pos, cornerZone.at(1),p2, corner);
                         corner2->setRayFactory(m_rayFactory);
-                        m_receiver->attachObserver(corner2);
+//                        m_receiver->attachObserver(corner2);
                         for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
                             m_receivers.at(numberReceivers)->attachObserver(corner2);
                         }
@@ -390,7 +390,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                 image->setBuilding(walls.at(j)->getBuilding());
                 //image->setSceneBoundary(itemsBoundingRect());
                 image->setRayFactory(m_rayFactory);
-                m_receiver->attachObserver(image);
+//                m_receiver->attachObserver(image);
                 for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
                     m_receivers.at(numberReceivers)->attachObserver(image);
                 }

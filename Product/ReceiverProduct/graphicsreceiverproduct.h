@@ -9,7 +9,7 @@
 
 #include "Product/graphicsproduct.h"
 
-class GraphicsReceiverProduct :public QGraphicsPixmapItem, public GraphicsProduct
+class GraphicsReceiverProduct : public QGraphicsPixmapItem, public GraphicsProduct
 {
 public:
     GraphicsReceiverProduct(bool enable, QMenu *menuproduct, QGraphicsScene *scene);

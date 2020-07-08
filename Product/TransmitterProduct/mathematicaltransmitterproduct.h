@@ -19,6 +19,7 @@
 #include "Observer/modelobservable.h"
 
 #include <Product/RayProduct/mathematicalrayproduct.h>
+#include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include <Product/abstractantena.h>
 
 
@@ -40,11 +41,19 @@ public:
     complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver);
     double distance(ProductObservable *receiver);
     complex<double> computeDiffractedEfield(vector<MathematicalRayProduct*> *rayLine);
+    complex<double> computeDiffractedTreeEfield(vector<QLineF>rayLine);
+    vector<vector<QLineF>> buildTreeRays(QPointF* Rx,MathematicalTreeProduct* tree);
+    void computeRayThroughTree(QPointF* Rx,MathematicalTreeProduct* tree);
+
     double computePrx(complex <double> totalEfield);
     double dBm(double power);
-
     double computeReflexionPer(double thetaI, double epsilonR);
     double computeReflexionPar(double thetaI, double epsilonR);
+
+    double computeElevationScaterringAngle(float heightRx, float heightTx, float heightConopy, float distanceRxTree);
+    map<string,double> computeIncidenceDepartureAngles(float angleIncidenceConopy, float angleAzimuth, float angleElevation);
+
+
     vector<vector<MathematicalRayProduct *> *> getRays();
     void notifyObservables();
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
