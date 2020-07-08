@@ -65,13 +65,13 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
     true_receiver->setBandwidth(true_transmitter->getBandwidth());
     true_receiver->setImpulseRayLength(true_transmitter->impulseRayLength(true_receiver));
     true_receiver->setImpulseAttenuation(true_transmitter->impulseAttenuation(true_receiver));
-    true_receiver->setPathLoss(true_transmitter->pathLoss(true_receiver));
+    true_receiver->setPathLoss(true_transmitter->pathLoss(copy_receiver));
     true_receiver->computeMinPrx();
 }
 
 void RayTracing::pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter){
     MathematicalReceiverProduct* original_receiver = dynamic_cast<MathematicalReceiverProduct*>(true_receiver);
-    MathematicalReceiverProduct* copy_receiver = (MathematicalReceiverProduct*)m_receiverfactory->createMathematicalProduct(original_receiver,false);
+    copy_receiver = (MathematicalReceiverProduct*)m_receiverfactory->createMathematicalProduct(original_receiver,false);
     MathematicalTransmitterProduct* original_transmitter = (MathematicalTransmitterProduct*) true_transmitter;
     original_transmitter->erasePathLoss(original_receiver);
     original_transmitter->activePathLoss(false);
@@ -82,7 +82,6 @@ void RayTracing::pathLossComputation(std::vector<QPointF> points, ProductObserva
     }
     original_transmitter->activePathLoss(true);
     original_transmitter->computePathLoss(false);
-    delete(copy_receiver);
 }
 
 void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){

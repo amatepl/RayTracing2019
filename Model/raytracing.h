@@ -27,6 +27,7 @@ public:
 
 private:
     ReceiverFactory* m_receiverfactory;
+    MathematicalReceiverProduct* copy_receiver;
 
 };
 
