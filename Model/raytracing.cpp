@@ -76,7 +76,7 @@ void RayTracing::pathLossComputation(std::vector<QPointF> points, ProductObserva
     original_transmitter->erasePathLoss(original_receiver);
     original_transmitter->activePathLoss(false);
     original_transmitter->computePathLoss(true);
-    for (unsigned long i = 0; i<points.size(); i++){
+    for (unsigned long i = 0; i<points.size()-1; i++){
         copy_receiver->setPosX(points.at(i).x());
         copy_receiver->setPosY(points.at(i).y());
     }

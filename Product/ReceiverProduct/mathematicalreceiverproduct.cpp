@@ -23,6 +23,7 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     m_target_snr = receiver->targetSNR(); // [dB]
     m_noise_figure = receiver->noiseFigure(); // [dB]
     m_interferencemargin = receiver->interFerenceMargin(); // [dB]
+    m_observers = receiver->m_observers;
     computeMinPrx();
 }
 
