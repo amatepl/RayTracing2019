@@ -32,7 +32,7 @@ MathematicalProduct* ReceiverFactory::createMathematicalProduct(int posX, int po
 }
 
 MathematicalProduct* ReceiverFactory::createMathematicalProduct(MathematicalProduct *original, bool linkgraphic){
-    MathematicalReceiverProduct* mathematicalReceiverProduct = dynamic_cast<MathematicalReceiverProduct*>(original);
+    MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(dynamic_cast<MathematicalReceiverProduct*>(original));
     if (linkgraphic){
         GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(false,m_productmenu, m_scene);
         graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);

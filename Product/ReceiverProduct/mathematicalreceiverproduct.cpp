@@ -13,6 +13,20 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY): QP
     computeMinPrx();
 }
 
+MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverProduct* receiver): QPointF(receiver->getPosX(),receiver->getPosY())
+{
+    m_type = "Receiver";
+    m_power = receiver->getPower();
+    m_e_field = receiver->getEField();
+    // Enable the setters of position. Can mathematical product move ?
+    enable = receiver->getEnable();
+    m_target_snr = receiver->targetSNR(); // [dB]
+    m_noise_figure = receiver->noiseFigure(); // [dB]
+    m_interferencemargin = receiver->interFerenceMargin(); // [dB]
+    m_observers = receiver->m_observers;
+    computeMinPrx();
+}
+
 MathematicalReceiverProduct::~MathematicalReceiverProduct(){
 
 }
@@ -238,13 +252,17 @@ bool MathematicalReceiverProduct::getEnable() {return enable;}
 void MathematicalReceiverProduct::setPosX(int posX) {
     clearData();
     setX(posX);
-    m_graphic->notifyToGraphic(this, m_power);
+    if (m_graphic != nullptr){
+        m_graphic->notifyToGraphic(this, m_power);
+    }
     notifyObservers();
 }
 void MathematicalReceiverProduct::setPosY(int posY) {
     clearData();
     setY(posY);
-    m_graphic->notifyToGraphic(this);
+    if (m_graphic != nullptr){
+        m_graphic->notifyToGraphic(this);
+    }
     notifyObservers();
 }
 void MathematicalReceiverProduct::setPower(double p) {m_power = p;}
@@ -253,7 +271,9 @@ void MathematicalReceiverProduct::setEnable(bool enable) {this->enable = enable;
 
 void MathematicalReceiverProduct::newProperties(){
     computeMinPrx();
-    m_graphic->notifyToGraphic(this);
+    if (m_graphic != nullptr){
+        m_graphic->notifyToGraphic(this);
+    }
 }
 
 // From MathematicalProduct
@@ -265,6 +285,11 @@ void MathematicalReceiverProduct::update(QGraphicsItem* graphic){
     setX(graphic->scenePos().x());
     setY(graphic->scenePos().y());
     notifyObservers();
+}
+
+void MathematicalReceiverProduct::attachObservable(GraphicsProduct *graphic){
+    m_graphic = graphic;
+    m_graphic->notifyToGraphic(this,m_power);
 }
 
 // From ProductObservable

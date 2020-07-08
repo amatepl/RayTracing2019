@@ -442,7 +442,9 @@ void MathematicalTransmitterProduct::setSceneBoundary(const QRectF &rect){
 
 void MathematicalTransmitterProduct::computePathLoss(QLineF direct_ray, ProductObservable* true_receiver){
     std::vector<QPointF> points;
-    int number_points = 0;
+
+    int number_points = 2;
+
     for (int i = 1; i<=number_points; i++){
         points.push_back(direct_ray.pointAt(double(i)/number_points));
     }
