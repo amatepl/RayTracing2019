@@ -43,6 +43,12 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     m_posy->setRange(0,5000);
     m_posy->setAccelerated(true);
 
+    m_target_snr = new QSpinBox(this);
+    m_noise_figure = new QSpinBox(this);
+    m_interferencemargin = new QSpinBox(this);
+    m_target_snr->setRange(0,20);
+    m_noise_figure->setRange(0,20);
+    m_interferencemargin->setRange(0,20);
     m_power = new QLineEdit("Received power [dB]: ", this);
     m_power->setEnabled(false);
     m_e_field = new QLineEdit("Electric fiedl [V/m]: ", this);
@@ -56,6 +62,9 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     geo->setLayout(geoProperties);
 
     QFormLayout *phyProperties = new QFormLayout(this);
+    phyProperties->addRow("Target SNR [dB]: ", m_target_snr);
+    phyProperties->addRow("Noise Figure [dB]: ", m_noise_figure);
+    phyProperties->addRow("Interference Margin [dB]: ", m_interferencemargin);
     phyProperties->addRow(m_power);
     phyProperties->addRow(m_e_field);
 
@@ -73,6 +82,9 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     setPower(m_mathematicalproduct->getPower());
     setEField(m_mathematicalproduct->getEField());
     setEnable(m_mathematicalproduct->getEnable());
+    setTargetSNR(m_mathematicalproduct->targetSNR());
+    setNoiseFigure(m_mathematicalproduct->noiseFigure());
+    setInterferecenceMargin(m_mathematicalproduct->interFerenceMargin());
 
     return widget;
 }
@@ -80,19 +92,22 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
 QWidget* DialogReceiverProduct::RealPathLossDialog(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
-    setPathLoss(m_mathematicalproduct->pathLoss());
-    QVector<double> D(m_pathloss.size()), logD(m_pathloss.size()), Prx(m_pathloss.size()), pl(m_pathloss.size()), fading(m_pathloss.size());
-    int i = 0;
-    for(const auto &path : m_pathloss){
-        D[i] = path.first;
-        logD[i] = log10(D[i]);
-        Prx[i] = path.second;
-        i++;
-    }
+    D = m_mathematicalproduct->distancePathLoss();
+    Prx = m_mathematicalproduct->powerPathLoss();
+    path_loss = m_mathematicalproduct->linearPathLoss();
+    double n = m_mathematicalproduct->pathLossExponent();
+    fading_variability = m_mathematicalproduct->fadingVariability();
 
     customplot->addGraph();
     customplot->graph(0)->setPen(QPen(Qt::blue));
     customplot->graph(0)->setData(D, Prx);
+    customplot->graph(0)->setName("Power Received");
+
+
+    customplot->addGraph();
+    customplot->graph(1)->setPen(QPen(Qt::red));
+    customplot->graph(1)->setData(D, path_loss);
+    customplot->graph(1)->setName("Path Loss");
 
     customplot->xAxis->setLabel("Distance[m]");
     customplot->yAxis->setLabel("Prx[dbm]");
@@ -104,6 +119,16 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
     customplot->replot();
     customplot->plotLayout()->insertRow(0);
     customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Real line of sight path-loss", QFont("sans", 12, QFont::Bold)));
+    customplot->legend->setVisible(true);
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(customplot);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(n)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fading_variability));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(customplot,0,0);
@@ -115,10 +140,38 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
 QWidget* DialogReceiverProduct::ModelPathLossDialog(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
+    D_model = m_mathematicalproduct->distancePathLossModel();
+    Prx_model = m_mathematicalproduct->powerPathLossModel();
+    path_loss_model = m_mathematicalproduct->linearPathLossModel();
+    double n = m_mathematicalproduct->pathLossExponent();
+    fading_variability = m_mathematicalproduct->fadingVariability();
+    min_prx = m_mathematicalproduct->minPower();
+    QVector<double> threshold(Prx_model.size());
+    for (int i =0; i< Prx_model.size(); i++){
+        threshold[i] = min_prx;
+    }
+    // create graph and assign data to it:
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::blue));
+    customplot->graph(0)->setData(D_model, Prx_model);
+    customplot->graph(0)->setName("Theoretical Power Received");
 
+    customplot->addGraph();
+    customplot->graph(1)->setPen(QPen(Qt::red));
+    customplot->graph(1)->setData(D_model, path_loss_model);
+    customplot->graph(1)->setName("Path Loss");
+
+    customplot->addGraph();
+    customplot->graph(2)->setPen(QPen(Qt::green));
+    customplot->graph(2)->setData(D_model, threshold);
+    customplot->graph(2)->setName("Minimal Power Accepted");
+
+    // give the axes some labels:
     customplot->xAxis->setLabel("Distance[m]");
     customplot->yAxis->setLabel("Prx[dbm]");
     customplot->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
+    customplot->xAxis->setTicker(logTicker);
     customplot->yAxis->grid()->setSubGridVisible(true);
     customplot->xAxis->grid()->setSubGridVisible(true);
     customplot->rescaleAxes();
@@ -126,6 +179,16 @@ QWidget* DialogReceiverProduct::ModelPathLossDialog(){
     customplot->replot();
     customplot->plotLayout()->insertRow(0);
     customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Model line of sight path-loss", QFont("sans", 12, QFont::Bold)));
+    customplot->legend->setVisible(true);
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(customplot);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(n)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fading_variability));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(customplot,0,0);
@@ -330,6 +393,9 @@ void DialogReceiverProduct::setEnable(bool enable){
 void DialogReceiverProduct::newProperties(){
     m_mathematicalproduct->setPosX(getPosX());
     m_mathematicalproduct->setPosY(getPosY());
+    m_mathematicalproduct->setTargetSNR(targetSNR());
+    m_mathematicalproduct->setNoiseFigure(noiseFigure());
+    m_mathematicalproduct->setInterferecenceMargin(interFerenceMargin());
     m_mathematicalproduct->newProperties();
     close();
 }

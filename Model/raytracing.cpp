@@ -60,11 +60,12 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
     // Send data is used to share some computed data from the transmitter to the receiver.
     MathematicalTransmitterProduct* true_transmitter = static_cast<MathematicalTransmitterProduct*>(transmitter);
     MathematicalReceiverProduct* true_receiver = static_cast<MathematicalReceiverProduct*>(receiver);
+    true_receiver->setFrequency(true_transmitter->getFrequency());
+    true_receiver->setBandwidth(true_transmitter->getBandwidth());
     true_receiver->setImpulseRayLength(true_transmitter->impulseRayLength(true_receiver));
     true_receiver->setImpulseAttenuation(true_transmitter->impulseAttenuation(true_receiver));
     true_receiver->setPathLoss(true_transmitter->pathLoss(true_receiver));
-    true_receiver->setFrequency(true_transmitter->getFrequency());
-    true_receiver->setBandwidth(true_transmitter->getBandwidth());
+    true_receiver->computeMinPrx();
 }
 
 void RayTracing::pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter){
