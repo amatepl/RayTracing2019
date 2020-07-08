@@ -38,7 +38,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
     m_receiverfactory = receiverfactory;
 
-    reflectionsNumber = 1;
+    reflectionsNumber = 5;
     //cout<<"I am computing"<<endl;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
@@ -83,6 +83,7 @@ void RayTracing::pathLossComputation(std::vector<QPointF> points, ProductObserva
     }
     original_transmitter->activePathLoss(true);
     original_transmitter->computePathLoss(false);
+    //delete [] copy_receiver;
     copy_receiver = nullptr;
 }
 
