@@ -11,6 +11,10 @@
 #include "receiverproduct.h"
 #include "dialogreceiverproduct.h"
 
+const double kb = 1.379e-23;
+const double To = 290.0;
+const double c = 2.998e+8;
+
 using namespace std;
 
 class MathematicalReceiverProduct: public QPointF, public MathematicalProduct, public ProductObservable,
@@ -21,6 +25,26 @@ public:
     ~MathematicalReceiverProduct() override;
 
     void clearData();
+    double inputNoise();
+    void computeMinPrx();
+
+    // 1. Path Loss Computation:
+    std::map<double,double> pathLoss(){return m_pathloss;}
+    void setPathLoss(std::map<double,double> pathloss);
+    void linearRegressionPathLoss();
+    void computePathLossFading();
+    double standardDeviation();
+    void modelPathLoss();
+
+    // 2. Impulse Response and TDL Computation:
+    std::map<std::vector<double>,double> impulseRayLength() {return m_raylength;}
+    std::map<std::vector<double>,double> impulseAttenuation() {return m_attenuation;}
+    void setImpulseRayLength(std::map<std::vector<double>,double> raylength){m_raylength = raylength;}
+    void setImpulseAttenuation(std::map<std::vector<double>,double> attenuation);
+    void computeImpulseTDL();
+
+    // 3. Cell Range Computation:
+    void cellRange();
 
     // From ReceiverProduct:
     int getPosX() override;
@@ -28,12 +52,18 @@ public:
     double getPower() override;
     complex<double> getEField() override;
     bool getEnable() override;
+    int targetSNR() override {return m_target_snr;}
+    int noiseFigure() override {return m_noise_figure;}
+    int interFerenceMargin() override {return m_interferencemargin;}
 
     void setPosX(int posX) override;
     void setPosY(int posY) override;
     void setPower(double p) override;
     void setEField(complex<double> e) override;
     void setEnable(bool enable) override;
+    void setTargetSNR(int target) override {m_target_snr = target;}
+    void setNoiseFigure(int figure) override {m_noise_figure = figure;}
+    void setInterferecenceMargin(int interference) override {m_interferencemargin = interference;}
 
     void newProperties() override;
 
@@ -51,13 +81,29 @@ public:
     QPointF* getPos()override;
 
 private:
-    vector<ProductObserver*> m_observers;
-    complex <double> m_e_field;
-    double m_power=0;
+    // 0. Intrisic parameters
     bool enable;
     float m_speed;
     float m_orientation;
+    int m_target_snr;
+    int m_noise_figure;
+    int m_interferencemargin;
+
+    // 1. For ProductOBserves
+    vector<ProductObserver*> m_observers;
     ProductObserver *m_transmitter = nullptr;
+
+    // 2. For E Field And Power Computation
+    complex <double> m_e_field;
+    double m_power=0;
+
+    // 3. For Path Loss Computation
+    std::map<double,double> m_pathloss;
+    QVector<double> logD, fading, logD_model;
+
+    // 4. For Impulse Response and TDL
+    std::map<std::vector<double>,double> m_raylength;
+    std::map<std::vector<double>,double> m_attenuation;
 };
 
 #endif // MATHEMATICALRECEIVERPRODUCT_H

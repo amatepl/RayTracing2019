@@ -28,6 +28,7 @@ public:
     int getPosY() override {return m_posy->value();}
     double getOrientation() override {return m_orientation->value();}
     unsigned long getFrequency() override;
+    unsigned long getBandwidth() override;
     double getPower() override {return m_power->value();}
     int getRow() override {return m_rowBox->value();}
     int getColumn() override {return m_columnBox->value();}
@@ -38,6 +39,7 @@ public:
     void setOrientation(double orientation) override {m_orientation->setValue(orientation);}
     void setPower(double power) override {m_power->setValue(power);}
     void setFrequency(unsigned long frequency) override;
+    void setBandwidth(unsigned long bandwidth) override;
     void setRow(int row) override {m_rowBox->setValue(row); m_row = row;}
     void setColumn(int column) override {m_columnBox->setValue(column); m_column = column;}
     virtual void setKind(Kind kind) override;
@@ -49,8 +51,10 @@ private:
     QSpinBox *m_posx,*m_posy,*m_rowBox,*m_columnBox;
     QDoubleSpinBox *m_orientation;
     QDoubleSpinBox *m_frequencyValue;
+    QDoubleSpinBox *m_bwvalue;
     QDoubleSpinBox *m_power;
     QComboBox *m_frequencyorder;
+    QComboBox *m_bworder;
 
     TransmitterProduct* m_mathematicalproduct;
 

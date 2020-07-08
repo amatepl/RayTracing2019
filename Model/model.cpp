@@ -3,15 +3,13 @@
 Model::Model(WindowModelObservable* windowModelObservale)
 {
     m_windowModelObservable = windowModelObservale;
-
-
 }
 
 Model::~Model(){
     delete [] this;
 }
 
-void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory, CarFactory* carFactory){
+void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory, CarFactory* carFactory, ReceiverFactory* receiverfactory){
 
     /* This will have to change
      */
@@ -22,6 +20,7 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory, Car
     map->setBuildingFactory(buildingFactory);
     map->setCarFactory(carFactory);
     map->generateMap();
+    m_receiverfactory = receiverfactory;
     //m_thread = thread((map->moveCars),ref(*map));
     //m_thread.join();
     m_mathematicalComponents["Building"] = map->getProducts();
@@ -70,7 +69,7 @@ void Model::launchAlgorithm(AlgorithmInterface *algorithm){
 
     //m_algorithm->compute(m_mathematicalComponents["Transmitter"],m_mathematicalComponents["Receiver"].at(0),m_mathematicalComponents["Builiding"]);
     //setObservableProducts();
-    m_algorithm->compute(m_mathematicalComponents);
+    m_algorithm->compute(m_mathematicalComponents, m_receiverfactory);
     setModelObservers();
 //    for(int i = 0; i < m_mathematicalComponents.count("Receiver"); i++){
 //        //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();

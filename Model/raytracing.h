@@ -7,6 +7,7 @@
 #include "Abstract_Factory/rayfactory.h"
 #include "Model/algorithmInterface.h"
 #include "Model/imagesmethod.h"
+#include "Abstract_Factory/receiverfactory.h"
 
 class RayTracing: public AlgorithmInterface, public ImagesMethod
 {
@@ -17,9 +18,15 @@ public:
     //AlgorithmInterface
     MathematicalComponent* compute(vector<MathematicalTransmitterProduct *> transmitters, MathematicalReceiverProduct* receiver,
                                    vector<MathematicalBuildingProduct*> buildings) override;
-    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents) override;
+    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
+
+    void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;
+    void pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter) override;
 
     void setAttributs(map<string,vector<MathematicalProduct*>> mathematicalComponents);
+
+private:
+    ReceiverFactory* m_receiverfactory;
 
 };
 

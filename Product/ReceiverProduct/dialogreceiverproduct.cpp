@@ -5,7 +5,8 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
 {
     setWindowTitle("Receiver properties: ");
     setWindowIcon(QIcon(GraphicsReceiverProduct::getImage()));
-    setMinimumSize(500,500);
+    setMinimumSize(1000,500);
+    show_tdl = true;
 
     m_tabwidget = new QTabWidget;
     m_tabwidget->addTab(GeneralTabDialog(), tr("General"));
@@ -26,7 +27,7 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     setAttribute(Qt::WA_DeleteOnClose,true);
     connect(m_buttonbox, SIGNAL(rejected()), this, SLOT(close()));
     connect(m_buttonbox, SIGNAL(accepted()), this, SLOT(saveProperties()));
-    exec();
+    open();
 }
 
 DialogReceiverProduct::~DialogReceiverProduct(){
@@ -43,6 +44,12 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     m_posy->setRange(0,5000);
     m_posy->setAccelerated(true);
 
+    m_target_snr = new QSpinBox(this);
+    m_noise_figure = new QSpinBox(this);
+    m_interferencemargin = new QSpinBox(this);
+    m_target_snr->setRange(0,20);
+    m_noise_figure->setRange(0,20);
+    m_interferencemargin->setRange(0,20);
     m_power = new QLineEdit("Received power [dB]: ", this);
     m_power->setEnabled(false);
     m_e_field = new QLineEdit("Electric fiedl [V/m]: ", this);
@@ -56,6 +63,9 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     geo->setLayout(geoProperties);
 
     QFormLayout *phyProperties = new QFormLayout(this);
+    phyProperties->addRow("Target SNR [dB]: ", m_target_snr);
+    phyProperties->addRow("Noise Figure [dB]: ", m_noise_figure);
+    phyProperties->addRow("Interference Margin [dB]: ", m_interferencemargin);
     phyProperties->addRow(m_power);
     phyProperties->addRow(m_e_field);
 
@@ -73,6 +83,9 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     setPower(m_mathematicalproduct->getPower());
     setEField(m_mathematicalproduct->getEField());
     setEnable(m_mathematicalproduct->getEnable());
+    setTargetSNR(m_mathematicalproduct->targetSNR());
+    setNoiseFigure(m_mathematicalproduct->noiseFigure());
+    setInterferecenceMargin(m_mathematicalproduct->interFerenceMargin());
 
     return widget;
 }
@@ -80,6 +93,22 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
 QWidget* DialogReceiverProduct::RealPathLossDialog(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
+    D = m_mathematicalproduct->distancePathLoss();
+    Prx = m_mathematicalproduct->powerPathLoss();
+    path_loss = m_mathematicalproduct->linearPathLoss();
+    double n = m_mathematicalproduct->pathLossExponent();
+    fading_variability = m_mathematicalproduct->fadingVariability();
+
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::blue));
+    customplot->graph(0)->setData(D, Prx);
+    customplot->graph(0)->setName("Power Received");
+
+
+    customplot->addGraph();
+    customplot->graph(1)->setPen(QPen(Qt::red));
+    customplot->graph(1)->setData(D, path_loss);
+    customplot->graph(1)->setName("Path Loss");
 
     customplot->xAxis->setLabel("Distance[m]");
     customplot->yAxis->setLabel("Prx[dbm]");
@@ -91,6 +120,16 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
     customplot->replot();
     customplot->plotLayout()->insertRow(0);
     customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Real line of sight path-loss", QFont("sans", 12, QFont::Bold)));
+    customplot->legend->setVisible(true);
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(customplot);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(n)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fading_variability));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(customplot,0,0);
@@ -102,10 +141,38 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
 QWidget* DialogReceiverProduct::ModelPathLossDialog(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
+    D_model = m_mathematicalproduct->distancePathLossModel();
+    Prx_model = m_mathematicalproduct->powerPathLossModel();
+    path_loss_model = m_mathematicalproduct->linearPathLossModel();
+    double n = m_mathematicalproduct->pathLossExponent();
+    fading_variability = m_mathematicalproduct->fadingVariability();
+    min_prx = m_mathematicalproduct->minPower();
+    QVector<double> threshold(Prx_model.size());
+    for (int i =0; i< Prx_model.size(); i++){
+        threshold[i] = min_prx;
+    }
+    // create graph and assign data to it:
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::blue));
+    customplot->graph(0)->setData(D_model, Prx_model);
+    customplot->graph(0)->setName("Theoretical Power Received");
 
+    customplot->addGraph();
+    customplot->graph(1)->setPen(QPen(Qt::red));
+    customplot->graph(1)->setData(D_model, path_loss_model);
+    customplot->graph(1)->setName("Path Loss");
+
+    customplot->addGraph();
+    customplot->graph(2)->setPen(QPen(Qt::green));
+    customplot->graph(2)->setData(D_model, threshold);
+    customplot->graph(2)->setName("Minimal Power Accepted");
+
+    // give the axes some labels:
     customplot->xAxis->setLabel("Distance[m]");
     customplot->yAxis->setLabel("Prx[dbm]");
     customplot->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
+    customplot->xAxis->setTicker(logTicker);
     customplot->yAxis->grid()->setSubGridVisible(true);
     customplot->xAxis->grid()->setSubGridVisible(true);
     customplot->rescaleAxes();
@@ -113,6 +180,16 @@ QWidget* DialogReceiverProduct::ModelPathLossDialog(){
     customplot->replot();
     customplot->plotLayout()->insertRow(0);
     customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Model line of sight path-loss", QFont("sans", 12, QFont::Bold)));
+    customplot->legend->setVisible(true);
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(customplot);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(n)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fading_variability));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(customplot,0,0);
@@ -124,15 +201,32 @@ QWidget* DialogReceiverProduct::ModelPathLossDialog(){
 QWidget* DialogReceiverProduct::CellRange(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
+    probability = m_mathematicalproduct->probabilityConnection();
+    cell_range = m_mathematicalproduct->cellRangeConnection();
 
+    // Plot Range vs Probability
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::blue));
+    customplot->graph(0)->setData(probability, cell_range);
+
+    // give the axes some labels:
     customplot->xAxis->setLabel("Connection probability");
     customplot->yAxis->setLabel("Cell range[m]");
     customplot->yAxis->setScaleType(QCPAxis::stLogarithmic);
     customplot->rescaleAxes();
     customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    customplot->replot();
     customplot->plotLayout()->insertRow(0);
-    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Connection probabibility between cellule range", QFont("sans", 12, QFont::Bold)));
+    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Cell Range For Probability Connection", QFont("sans", 12, QFont::Bold)));
+    customplot->replot();
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(customplot);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("For a minimal received power of ") + QString::number(min_prx) + QString("dBm"));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(customplot,0,0);
@@ -143,28 +237,78 @@ QWidget* DialogReceiverProduct::CellRange(){
 
 QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
     QWidget *widget = new QWidget;
-    QCustomPlot *customplot = new QCustomPlot;
+    impulse_plot = new QCustomPlot;
+    h = m_mathematicalproduct->impulse();
+    h_tdl = m_mathematicalproduct->impulseTDL();
+    tau = m_mathematicalproduct->impulseTau();
+    tau_tdl = m_mathematicalproduct->impulseTauTDL();
+    for(int i = 0; i < h.size(); i++){
+        QCPItemLine *line_impulse = new QCPItemLine(impulse_plot);
+        line_impulse->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(tau[i], -130);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+    for (int i=0; i<h_tdl.size();i++){
+        QCPItemLine *line_tdl = new QCPItemLine(impulse_plot);
+        impulse_tdl.push_back(line_tdl);
+        line_tdl->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
+        line_tdl->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+        line_tdl->setPen(QPen(Qt::red));
+    }
 
-    customplot->xAxis->setLabel("\u03C4[ns]");
-    customplot->yAxis->setLabel("h(\u03C4)[dB]");
-    customplot->yAxis->grid()->setSubGridVisible(true);
-    customplot->xAxis->grid()->setSubGridVisible(true);
-    customplot->rescaleAxes();
-    customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    customplot->replot();
-    customplot->plotLayout()->insertRow(0);
-    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Physical impulse response", QFont("sans", 12, QFont::Bold)));
+    // Plot physiscal impulse response
+    impulse_plot->addGraph();
+    impulse_plot->graph(0)->setPen(QPen(Qt::blue));
+    impulse_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    impulse_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    impulse_plot->graph(0)->setData(tau, h);
+    impulse_plot->graph(0)->setName("Impulse");
+
+    impulse_plot->addGraph();
+    impulse_plot->graph(1)->setPen(QPen(Qt::red));
+    impulse_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+    impulse_plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    impulse_plot->graph(1)->setData(tau_tdl, h_tdl);
+    impulse_plot->graph(1)->setName("TDL");
+
+    impulse_plot->xAxis->setLabel("\u03C4[ns]");
+    impulse_plot->yAxis->setLabel("h(\u03C4)[dB]");
+    impulse_plot->yAxis->grid()->setSubGridVisible(true);
+    impulse_plot->xAxis->grid()->setSubGridVisible(true);
+    impulse_plot->rescaleAxes();
+    impulse_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    impulse_plot->replot();
+    impulse_plot->legend->setVisible(true);
+    impulse_plot->plotLayout()->insertRow(0);
+    impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Physical impulse response and TDL", QFont("sans", 12, QFont::Bold)));
+    QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(customplot,0,0);
+    firstLayout->addWidget(impulse_plot,0,0);
+    firstLayout->addWidget(show_tdl,1,0);
 
     widget->setLayout(firstLayout);
+
+    connect(show_tdl,&QPushButton::clicked,this,&DialogReceiverProduct::showTDL);
     return widget;
 }
 
 QWidget* DialogReceiverProduct::TDLImpulseResponse(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
+    for(int i = 0; i<h_tdl.size(); i++){
+        QCPItemLine *line = new QCPItemLine(customplot);
+        line->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
+        line->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+        line->setPen(QPen(Qt::red));
+    }
+    // Plot physiscal impulse response
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::red));
+    customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    customplot->graph(0)->setData(tau_tdl, h_tdl);
+    customplot->graph(0)->setName("TDL");
 
     customplot->xAxis->setLabel("\u03C4[ns]");
     customplot->yAxis->setLabel("h_TDL(\u03C4)[dB]");
@@ -216,10 +360,41 @@ void DialogReceiverProduct::setEnable(bool enable){
 void DialogReceiverProduct::newProperties(){
     m_mathematicalproduct->setPosX(getPosX());
     m_mathematicalproduct->setPosY(getPosY());
+    m_mathematicalproduct->setTargetSNR(targetSNR());
+    m_mathematicalproduct->setNoiseFigure(noiseFigure());
+    m_mathematicalproduct->setInterferecenceMargin(interFerenceMargin());
     m_mathematicalproduct->newProperties();
     close();
 }
 
 void DialogReceiverProduct::saveProperties(){
     newProperties();
+}
+
+void DialogReceiverProduct::showTDL(){
+    show_tdl = !show_tdl;
+    if (show_tdl){
+        for (int i=0; i<h_tdl.size();i++){
+            QCPItemLine *line_tdl = new QCPItemLine(impulse_plot);
+            impulse_tdl.push_back(line_tdl);
+            line_tdl->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
+            line_tdl->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+            line_tdl->setPen(QPen(Qt::red));
+        }
+        impulse_plot->addGraph();
+        impulse_plot->graph(1)->setPen(QPen(Qt::red));
+        impulse_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+        impulse_plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+        impulse_plot->graph(1)->setData(tau_tdl, h_tdl);
+        impulse_plot->graph(1)->setName("TDL");
+        impulse_plot->replot();
+    }
+    else{
+        for(int i = 0; i<impulse_tdl.count(); i++)
+        {
+             impulse_plot->removeItem(impulse_tdl[i]); //returns true
+        }
+        impulse_plot->removeGraph(impulse_plot->graph(1));
+        impulse_plot->replot();
+    }
 }

@@ -59,7 +59,17 @@ public:
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
     void setSceneBoundary(const QRectF &rect);
+    // The path loss must take the direct ray and compute the different power on this ray.
+    void computePathLoss(QLineF direct_ray, ProductObservable* true_receiver);
+    void activePathLoss(bool active) {active_pathloss = active;}
+    void computePathLoss(bool compute) {compute_pathloss = compute;}
+    void erasePathLoss(ProductObservable* receiver){m_pathloss.erase(receiver);}
 
+    // Vector to receive all the physical informations to share
+    map<vector<double>,double> impulseAttenuation(ProductObservable *receiver) {return m_attenuation[receiver];}
+    map<vector<double>,double> impulseRayLength(ProductObservable *receiver) {return m_raylength[receiver];}
+
+    map<double,double> pathLoss(ProductObservable* receiver){return m_pathloss[receiver];}
 
     // ProductObserver
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
@@ -69,7 +79,7 @@ public:
     //ModelObserver
     void attachObservable(ModelObservable* modelObserver) override;
     void attachObservable(ProductObservable *productObservable) override;
-//==============
+
     // From TransmitterProduct
     int getPosX() override {return x();}
     int getPosY() override {return y();}
@@ -79,12 +89,14 @@ public:
     int getRow() override {return m_row;}
     int getColumn() override {return m_column;}
     unsigned long getFrequency() override {return m_frequency;}
+    unsigned long getBandwidth() override{return m_bandwidth;}
 
     void setPosX(int posX) override {setX(posX);}
     void setPosY(int posY) override {setY(posY);}
     void setOrientation(double orientation) override {m_orientation = orientation;}
     void setPower(double power) override {m_power = power;}
     void setFrequency(unsigned long frequency) override {m_frequency = frequency;}
+    void setBandwidth(unsigned long bandwidth) override {m_bandwidth = bandwidth;}
     void setRow(int row) override {m_row = row;}
     void setColumn(int column) override {m_column = column;}
     void setKind(Kind kind) override {m_kind = kind;}
@@ -92,7 +104,6 @@ public:
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
-//>>>>>>> d1ec8e004ad1b2afa2d74871dff3deaf7bbc3b77
     void openDialog() override;
 
 //    // From ProductObserver
@@ -118,17 +129,28 @@ public:
 
 
 private:
+    double px_to_meter;
     float m_orientation;
     double m_power;
+    bool active_pathloss;
+    bool compute_pathloss;
     Kind m_kind;
 
     double m_powerAtReceiver;
     ModelObservable* m_model;
     vector<ProductObservable*> m_productObservable;
     //map<const QPointF*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
+
     map<ProductObservable*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
     map<ProductObservable*,complex<double>> m_receiversField;
     map<ProductObservable*,vector<double>> m_receiversPowers;
+
+    // Attenuation for impulse response and TDL
+    map<ProductObservable*,map<vector<double>,double>> m_attenuation;
+    map<ProductObservable*,map<vector<double>,double>> m_raylength;
+
+    // Path loss computation
+    map<ProductObservable*,map<double,double>> m_pathloss;
 
     int m_radius;
 
