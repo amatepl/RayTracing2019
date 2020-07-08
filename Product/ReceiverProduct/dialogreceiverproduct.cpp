@@ -6,6 +6,7 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     setWindowTitle("Receiver properties: ");
     setWindowIcon(QIcon(GraphicsReceiverProduct::getImage()));
     setMinimumSize(1000,500);
+    show_tdl = true;
 
     m_tabwidget = new QTabWidget;
     m_tabwidget->addTab(GeneralTabDialog(), tr("General"));
@@ -200,15 +201,32 @@ QWidget* DialogReceiverProduct::ModelPathLossDialog(){
 QWidget* DialogReceiverProduct::CellRange(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
+    probability = m_mathematicalproduct->probabilityConnection();
+    cell_range = m_mathematicalproduct->cellRangeConnection();
 
+    // Plot Range vs Probability
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::blue));
+    customplot->graph(0)->setData(probability, cell_range);
+
+    // give the axes some labels:
     customplot->xAxis->setLabel("Connection probability");
     customplot->yAxis->setLabel("Cell range[m]");
     customplot->yAxis->setScaleType(QCPAxis::stLogarithmic);
     customplot->rescaleAxes();
     customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    customplot->replot();
     customplot->plotLayout()->insertRow(0);
-    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Connection probabibility between cellule range", QFont("sans", 12, QFont::Bold)));
+    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Cell Range For Probability Connection", QFont("sans", 12, QFont::Bold)));
+    customplot->replot();
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(customplot);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("For a minimal received power of ") + QString::number(min_prx) + QString("dBm"));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(customplot,0,0);
@@ -219,77 +237,23 @@ QWidget* DialogReceiverProduct::CellRange(){
 
 QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
     QWidget *widget = new QWidget;
-    QCustomPlot *impulse_plot = new QCustomPlot;
-    setImpulseRayLength(m_mathematicalproduct->impulseRayLength());
-    setImpulseAttenuation(m_mathematicalproduct->impulseAttenuation());
-    setFrequency(m_mathematicalproduct->frequency());
-    setBandwidth(m_mathematicalproduct->bandwidth());
-    // Number of rays = Number of powers received:
-    unsigned long rayNumber = m_raylength.size();
-    // Speed of light
-    double  c =2.998e+8; // m/s
-    // Creation of two vectors (impusle) and time of each impulse
-    std::vector <double> h(rayNumber), tau(rayNumber);
-    // Creation of TDL delay
-    double deltaTau = 1.0/(2.0*double(m_transmitterbandwidth));
-    std::vector<double> x(rayNumber);
-    std::vector <std::complex <double>> y(rayNumber);
-    complex <double> k(0.0, 1.0);
-
-    // loop over all rays
-    double tau_check;
-    int i = 0;
-    map<vector<double>,double>::iterator it;
-    it = m_attenuation.begin();
-    for(const auto &imp : m_raylength){
-        // Compute attenuation factor
-        h[i] = 10*log10(abs(it->second));
-        // Compute time of arrival in ns
-        tau[i] = imp.second/c*1e9; // tau
-        tau_check = imp.second/c;
-
-        int l = 0;
-        while(!(l*deltaTau-deltaTau/2<=tau_check && tau_check<l*deltaTau+deltaTau/2)){
-            l++;
-        }
-        x[i] = l*deltaTau*1e9;
-        y[i] = it->second * exp(-k * 2.0*M_PI * std::complex<double>(m_transmitterbandwidth * tau_check));
-
-        QCPItemLine *line = new QCPItemLine(impulse_plot);
-        line->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
-        line->end->setCoords(tau[i], -100);  // location of point 2 in plot coordinate
-        i++;
-        it++;
+    impulse_plot = new QCustomPlot;
+    h = m_mathematicalproduct->impulse();
+    h_tdl = m_mathematicalproduct->impulseTDL();
+    tau = m_mathematicalproduct->impulseTau();
+    tau_tdl = m_mathematicalproduct->impulseTauTDL();
+    for(int i = 0; i < h.size(); i++){
+        QCPItemLine *line_impulse = new QCPItemLine(impulse_plot);
+        line_impulse->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(tau[i], -130);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
     }
-    for (unsigned long i=0; i<rayNumber; ++i){
-        for (unsigned long j=0; j<rayNumber; ++j){
-            if(i<j && round(x.at(i)*1.0e3) == round(x.at(j)*1.0e3)){
-                y[i] += y[j];
-                y[j] = 0;
-            }
-        }
-    }
-
-    int counter = 0;
-    for (unsigned long i=0; i<rayNumber; ++i){
-        if(y[i]!=0.0){counter++;}
-    }
-
-    h_TDL.resize(counter);
-    tau_delay.resize(counter);
-    unsigned long p = 0;
-    int counter2 = 0;
-    while(p<rayNumber){
-        if(y[p] != 0.0){
-            tau_delay[counter2] = x[p];
-            h_TDL[counter2] = 10*log10(abs(y[p]));
-            QCPItemLine *line = new QCPItemLine(impulse_plot);
-            line->start->setCoords(tau_delay[counter2], h_TDL[counter2]);  // location of point 1 in plot coordinate
-            line->end->setCoords(tau_delay[counter2], -100);  // location of point 2 in plot coordinate
-            line->setPen(QPen(Qt::red));
-            counter2++;
-        }
-        p++;
+    for (int i=0; i<h_tdl.size();i++){
+        QCPItemLine *line_tdl = new QCPItemLine(impulse_plot);
+        impulse_tdl.push_back(line_tdl);
+        line_tdl->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
+        line_tdl->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+        line_tdl->setPen(QPen(Qt::red));
     }
 
     // Plot physiscal impulse response
@@ -297,16 +261,14 @@ QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
     impulse_plot->graph(0)->setPen(QPen(Qt::blue));
     impulse_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     impulse_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    QVector<double> vec_tau = QVector<double>(tau.begin(),tau.end());
-    QVector<double> vec_h = QVector<double>(h.begin(),h.end());
-    impulse_plot->graph(0)->setData(vec_tau, vec_h);
+    impulse_plot->graph(0)->setData(tau, h);
     impulse_plot->graph(0)->setName("Impulse");
 
     impulse_plot->addGraph();
     impulse_plot->graph(1)->setPen(QPen(Qt::red));
     impulse_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
     impulse_plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    impulse_plot->graph(1)->setData(tau_delay, h_TDL);
+    impulse_plot->graph(1)->setData(tau_tdl, h_tdl);
     impulse_plot->graph(1)->setName("TDL");
 
     impulse_plot->xAxis->setLabel("\u03C4[ns]");
@@ -319,28 +281,33 @@ QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
     impulse_plot->legend->setVisible(true);
     impulse_plot->plotLayout()->insertRow(0);
     impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Physical impulse response and TDL", QFont("sans", 12, QFont::Bold)));
+    QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(impulse_plot,0,0);
+    firstLayout->addWidget(show_tdl,1,0);
 
     widget->setLayout(firstLayout);
+
+    connect(show_tdl,&QPushButton::clicked,this,&DialogReceiverProduct::showTDL);
     return widget;
 }
 
 QWidget* DialogReceiverProduct::TDLImpulseResponse(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
-    for(int i = 0; i<h_TDL.size(); i++){
+    for(int i = 0; i<h_tdl.size(); i++){
         QCPItemLine *line = new QCPItemLine(customplot);
-        line->start->setCoords(tau_delay[i], h_TDL[i]);  // location of point 1 in plot coordinate
-        line->end->setCoords(tau_delay[i], -100);  // location of point 2 in plot coordinate
+        line->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
+        line->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+        line->setPen(QPen(Qt::red));
     }
     // Plot physiscal impulse response
     customplot->addGraph();
     customplot->graph(0)->setPen(QPen(Qt::red));
     customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
     customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    customplot->graph(0)->setData(tau_delay, h_TDL);
+    customplot->graph(0)->setData(tau_tdl, h_tdl);
     customplot->graph(0)->setName("TDL");
 
     customplot->xAxis->setLabel("\u03C4[ns]");
@@ -402,4 +369,32 @@ void DialogReceiverProduct::newProperties(){
 
 void DialogReceiverProduct::saveProperties(){
     newProperties();
+}
+
+void DialogReceiverProduct::showTDL(){
+    show_tdl = !show_tdl;
+    if (show_tdl){
+        for (int i=0; i<h_tdl.size();i++){
+            QCPItemLine *line_tdl = new QCPItemLine(impulse_plot);
+            impulse_tdl.push_back(line_tdl);
+            line_tdl->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
+            line_tdl->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+            line_tdl->setPen(QPen(Qt::red));
+        }
+        impulse_plot->addGraph();
+        impulse_plot->graph(1)->setPen(QPen(Qt::red));
+        impulse_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+        impulse_plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+        impulse_plot->graph(1)->setData(tau_tdl, h_tdl);
+        impulse_plot->graph(1)->setName("TDL");
+        impulse_plot->replot();
+    }
+    else{
+        for(int i = 0; i<impulse_tdl.count(); i++)
+        {
+             impulse_plot->removeItem(impulse_tdl[i]); //returns true
+        }
+        impulse_plot->removeGraph(impulse_plot->graph(1));
+        impulse_plot->replot();
+    }
 }

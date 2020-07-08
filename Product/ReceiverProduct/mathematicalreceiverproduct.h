@@ -13,6 +13,7 @@
 
 const double kb = 1.379e-23;
 const double To = 290.0;
+const double c = 2.998e+8;
 
 using namespace std;
 
@@ -34,6 +35,16 @@ public:
     void computePathLossFading();
     double standardDeviation();
     void modelPathLoss();
+
+    // 2. Impulse Response and TDL Computation:
+    std::map<std::vector<double>,double> impulseRayLength() {return m_raylength;}
+    std::map<std::vector<double>,double> impulseAttenuation() {return m_attenuation;}
+    void setImpulseRayLength(std::map<std::vector<double>,double> raylength){m_raylength = raylength;}
+    void setImpulseAttenuation(std::map<std::vector<double>,double> attenuation);
+    void computeImpulseTDL();
+
+    // 3. Cell Range Computation:
+    void cellRange();
 
     // From ReceiverProduct:
     int getPosX() override;
@@ -89,6 +100,10 @@ private:
     // 3. For Path Loss Computation
     std::map<double,double> m_pathloss;
     QVector<double> logD, fading, logD_model;
+
+    // 4. For Impulse Response and TDL
+    std::map<std::vector<double>,double> m_raylength;
+    std::map<std::vector<double>,double> m_attenuation;
 };
 
 #endif // MATHEMATICALRECEIVERPRODUCT_H

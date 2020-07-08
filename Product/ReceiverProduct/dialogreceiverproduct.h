@@ -58,11 +58,14 @@ private:
     QLineEdit *m_e_field;
     QTabWidget* m_tabwidget;
     QDialogButtonBox *m_buttonbox;
-    QVector<double> h_TDL,tau_delay;
+    QVector<QCPItemLine*> impulse_tdl;
+    QCustomPlot *impulse_plot;
+    bool show_tdl;
     bool enable;
 
 public slots:
     void saveProperties();
+    void showTDL();
 };
 
 #endif // DIALOGRECEIVERPRODUCT_H

@@ -42,12 +42,17 @@ public:
     double fadingVariability() {return fading_variability;}
     double minPower() {return min_prx;}
 
-    std::map<std::vector<double>,double> impulseRayLength() {return m_raylength;}
-    std::map<std::vector<double>,double> impulseAttenuation() {return m_attenuation;}
+    // 2. Impulse and TDL Results:
+    QVector<double> impulse(){return h;}
+    QVector<double> impulseTDL(){return h_tdl;}
+    QVector<double> impulseTau() {return tau;}
+    QVector<double> impulseTauTDL() {return tau_tdl;}
+
+    // 3. Cell Range Results:
+    QVector<double> probabilityConnection() {return probability;}
+    QVector<double> cellRangeConnection() {return cell_range;}
     unsigned long frequency() {return m_transmitterfrequency;}
     unsigned long bandwidth() {return m_transmitterbandwidth;}
-    void setImpulseRayLength(std::map<std::vector<double>,double> raylength){m_raylength = raylength;}
-    void setImpulseAttenuation(std::map<std::vector<double>,double> attenuation){m_attenuation = attenuation;}
     void setFrequency(unsigned long frequency){m_transmitterfrequency = frequency;}
     void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
 
@@ -59,8 +64,11 @@ protected:
     QVector<double> Prx_model, path_loss_model, D_model;
     double m,b,r,fading_variability, min_prx; //Path loss slope and intercept and regression coefficient
 
-    std::map<std::vector<double>,double> m_raylength;
-    std::map<std::vector<double>,double> m_attenuation;
+    // 2. Impulse and TDL vVariables
+    QVector<double> h,h_tdl,tau, tau_tdl;
+
+    // 3. Cell Range
+    QVector<double> cell_range, probability;
 
     unsigned long m_transmitterfrequency;
     unsigned long m_transmitterbandwidth;

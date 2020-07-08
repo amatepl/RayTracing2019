@@ -29,12 +29,13 @@ double MathematicalReceiverProduct::inputNoise(){
 void MathematicalReceiverProduct::computeMinPrx(){
     min_prx = m_target_snr + m_noise_figure + inputNoise() + m_interferencemargin + 30; // [dBm]
 }
-
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 1. Path Loss Computation:
 void MathematicalReceiverProduct::setPathLoss(std::map<double, double> pathloss){
     m_pathloss = pathloss;
     computePathLossFading();
     modelPathLoss();
+    cellRange();
 }
 
 void MathematicalReceiverProduct::computePathLossFading(){
@@ -125,7 +126,6 @@ void MathematicalReceiverProduct::modelPathLoss(){
     logD_model.resize(lengthData);
     Prx_model.resize(lengthData);
     path_loss_model.resize(lengthData);
-    //threshold(lengthData);
     double L_fading_model;
     for (int i=0; i<lengthData; ++i){
         logD_model[i] = minDist + i*step;
@@ -133,10 +133,100 @@ void MathematicalReceiverProduct::modelPathLoss(){
         path_loss_model[i] =  m*logD_model[i] + b;
         L_fading_model = distribution(generator);
         Prx_model[i] = path_loss_model[i] + L_fading_model;
-        //threshold[i] = minPrx;
+    }
+}
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 2. Impulse Resoonse and TDL Computation:
+void MathematicalReceiverProduct::setImpulseAttenuation(std::map<std::vector<double>, double> attenuation){
+    for (int i = 0; i< h_tdl.size(); i++){
+        tau_tdl.removeAt(i);
+        h_tdl.removeAt(i);
+    }
+    m_attenuation = attenuation;
+    computeImpulseTDL();
+}
+
+void MathematicalReceiverProduct::computeImpulseTDL(){
+   // Number of rays = Number of powers received:
+    unsigned long rayNumber = m_attenuation.size();
+    // Creation of two vectors (impusle) and time of each impulse
+    h.resize(rayNumber);
+    tau.resize(rayNumber);
+
+    // Creation of TDL delay
+    double deltaTau = 1.0/(2.0*double(m_transmitterbandwidth));
+    std::vector<double> x(rayNumber);
+    std::vector <std::complex <double>> y(rayNumber);
+    complex <double> k(0.0, 1.0);
+
+    // loop over all rays
+    double tau_check;
+    int i = 0;
+    map<vector<double>,double>::iterator it;
+    it = m_attenuation.begin();
+    for(const auto &imp : m_raylength){
+        // Compute attenuation factor
+        h[i] = 10*log10(abs(it->second));
+        // Compute time of arrival in ns
+        tau[i] = imp.second/c*1e9; // tau
+        tau_check = imp.second/c;
+
+        int l = 0;
+        while(!(l*deltaTau-deltaTau/2<=tau_check && tau_check<l*deltaTau+deltaTau/2)){
+            l++;
+         }
+        x[i] = l*deltaTau*1e9;
+        y[i] = it->second * exp(-k * 2.0*M_PI * std::complex<double>(m_transmitterbandwidth * tau_check));
+        i++;
+        it++;
+    }
+    for (unsigned long i=0; i<rayNumber; ++i){
+        for (unsigned long j=0; j<rayNumber; ++j){
+            if(i<j && round(x.at(i)*1.0e3) == round(x.at(j)*1.0e3)){
+                 y[i] += y[j];
+                 y[j] = 0.0;
+            }
+        }
+    }
+
+    int counter = 0;
+    for (unsigned long i=0; i<rayNumber; ++i){
+        if(y[i]!=0.0){counter++;}
+    }
+
+    unsigned long p = 0;
+    int counter2 = 0;
+    while(p<rayNumber){
+        if(y[p] != 0.0){
+            tau_tdl.push_back(x[p]);
+            h_tdl.push_back(10*log10(abs(y[p])));
+            counter2++;
+        }
+        p++;
     }
 }
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 3. Cell Range Computation:
+void MathematicalReceiverProduct::cellRange(){
+    // minPrx = <Prx> - L_fading
+    // <Prx> = mx + b; where x = log10(d)
+    // Pr[L_fading<gamma] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)))
+
+    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma => Compute R such that minPrx> = <Prx(R)> - gamma
+    int lengthData = 100;
+    double step = (3*fading_variability)/lengthData;
+    double gamma;
+    probability.resize(lengthData);
+    cell_range.resize(lengthData);
+    for (int i=0; i<lengthData; ++i){
+        gamma = i*step;
+        probability[i] = 1 - 0.5*erfc(gamma/(fading_variability * sqrt(2)));// Pr[L_fading<gamma]
+
+        // minPrx = mx + b - gamma[dBm] => x = (minPrx + gamma - b)/m => log10(d) = (-102 + gamma - b)/m => d = 10((minPrx + gamma - b)/m)
+        cell_range[i] = pow(10,(min_prx + gamma - b)/m);
+    }
+}
 
 // From ReceiverProduct
 int MathematicalReceiverProduct::getPosX(){return x();}
