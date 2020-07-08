@@ -5,11 +5,12 @@
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsScene>
+#include <QGraphicsPolygonItem>
 #include "treeproduct.h"
 #include "Product/graphicsproduct.h"
 
 
-class GraphicsTreeProduct: public QGraphicsPixmapItem, public GraphicsProduct
+class GraphicsTreeProduct:public QGraphicsPolygonItem, /*public QGraphicsPixmapItem,*/ public GraphicsProduct
 {
 public:
     GraphicsTreeProduct(QMenu *productmenu, QGraphicsScene *scene);

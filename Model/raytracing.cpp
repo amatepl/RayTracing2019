@@ -35,6 +35,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 {
 
     setAttributs(mathematicalComponents);
+
     m_receiverfactory = receiverfactory;
     reflectionsNumber = 0;
     //cout<<"I am computing"<<endl;

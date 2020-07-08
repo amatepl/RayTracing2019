@@ -1,8 +1,31 @@
 #include "mathematicaltreeproduct.h"
 
 MathematicalTreeProduct::MathematicalTreeProduct(QPolygonF poly, QPointF center) : QPolygonF(poly),
-    m_center(center)
+    m_center(center),a(10)
 {
+    QPolygonF crown;
+
+    cout<<"Size before clear"<<this->size()<<endl;
+
+    this->clear();
+
+    cout<<"Size after clear"<<this->size()<<endl;
+    this->shrink_to_fit();
+
+    cout<<"Size after shrink"<<this->size()<<endl;
+
+    for(int i=0;i<16;i++){
+        crown<<QPointF(getPosX()+a*cos(M_PI*i/8),getPosY()+a*sin(M_PI*i/8));
+        cout<<getPosX()+a*cos(M_PI*i/8)<<", "<<getPosY()+a*sin(M_PI*i/8)<<endl;
+//        cout<<getPosX()+a*cos(M_PI*i/8)<<", "<<getPosY()+a*sin(M_PI*i/8)<<endl;
+//        cout<<this->at(i).x()<<endl;
+    }
+
+
+    this->swap(crown);
+
+    cout<<"Final size: "<<this->size()<<endl;
+
     m_type = "Tree";
     TreeParams branch1;
     branch1.radius = 11.4;
@@ -41,6 +64,12 @@ MathematicalTreeProduct::MathematicalTreeProduct(QPolygonF poly, QPointF center)
     m_params.push_back(leaf);
 }
 
+float MathematicalTreeProduct::getRadius() const{
+    return a;
+}
+
+void MathematicalTreeProduct::setRadius(float radius){a = radius;}
+
 MathematicalTreeProduct::~MathematicalTreeProduct(){
 
 }
@@ -61,10 +90,11 @@ void MathematicalTreeProduct::setPosY(int posY){
 }
 
 void MathematicalTreeProduct::update(QGraphicsItem *graphic){
-    QRectF rect = graphic->sceneBoundingRect();
-    QPolygonF polyRect = QPolygonF(rect);
-    swap(polyRect);
-    m_center = graphic->pos();
+    //QRectF rect = graphic->sceneBoundingRect();
+    //QPolygonF polyRect = QPolygonF(rect);
+    //swap(polyRect);
+    //m_center = graphic->pos();
+    //translate(graphic->pos() - m_center);
 }
 
 void MathematicalTreeProduct::openDialog(){
@@ -75,3 +105,11 @@ void MathematicalTreeProduct::newProperties(){
     m_graphic->notifyToGraphic(this, getPosX(), getPosY());
 }
 
+void MathematicalTreeProduct::attachObservable(GraphicsProduct *graphic){
+    m_graphic = graphic;
+    for(int i=0;i<16;i++){
+        cout<<this->at(i).x()<<endl;
+    }
+    m_graphic->notifyToGraphic(this,getPosX(),getPosY());
+
+}

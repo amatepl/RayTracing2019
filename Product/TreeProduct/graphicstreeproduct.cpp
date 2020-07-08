@@ -3,15 +3,30 @@
 GraphicsTreeProduct::GraphicsTreeProduct(QMenu * productmenu, QGraphicsScene *scene):
     m_scene(scene),m_productmenu(productmenu)
 {
-    QPixmap icon(":/Images/Tree.png");
-    setPixmap(icon);
-    setOffset(-icon.width()/2,-icon.height()/2);
+    //QPixmap icon(":/Images/Tree.png");
+    //setPixmap(icon);
+    //setOffset(-icon.width()/2,-icon.height()/2);
+
+
+
+
+    QColor illumination1;
+    illumination1.setGreen(255);
+    illumination1.setAlpha(100);
+
+    QBrush brush(illumination1);
+
+    //brush.setColor(illumination1);
+
+    setBrush(brush);
+
+
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
     m_type = "tree";
-    draw();
+    //draw();
 }
 
 GraphicsTreeProduct::~GraphicsTreeProduct(){
@@ -24,6 +39,8 @@ QPixmap GraphicsTreeProduct::getImage(){
 }
 
 void GraphicsTreeProduct::draw() {
+
+
     m_scene->addItem(this);
 }
 
@@ -50,7 +67,18 @@ void GraphicsTreeProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 }
 
 void GraphicsTreeProduct::notifyToGraphic(QPolygonF *poly, int centerx, int centery){
-    setPos(centerx,centery);
+
+    QColor illumination1;
+    illumination1.setGreen(255);
+    illumination1.setAlpha(100);
+//    m_scene->addPolygon(*poly,QPen(),illumination1);
+    setPolygon(*poly);
+    //setPos(centerx,centery);
+    cout<<"Size of the polygon: "<<poly->size()<<endl;
+    for(int i =0;i<poly->size();i++){
+        cout<<poly->at(i).x()<<", "<<poly->at(i).y()<<endl;
+    }
+    draw();
 }
 
 

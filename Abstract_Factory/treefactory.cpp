@@ -11,8 +11,8 @@ GraphicsProduct* TreeFactory::createGraphicsProduct(int posX, int posY){
     QPolygonF poly(QRectF(0,0,posX,posY));
     MathematicalTreeProduct* mathematicalProduct = new MathematicalTreeProduct(poly, QPointF(posX,posY));
     graphicsProduct->attachObserver(mathematicalProduct);
-    graphicsProduct->setX(posX);
-    graphicsProduct->setY(posY);
+    //graphicsProduct->setX(posX);
+    //graphicsProduct->setY(posY);
     mathematicalProduct->attachObservable(graphicsProduct);
     return graphicsProduct;
 }
@@ -24,6 +24,9 @@ MathematicalProduct* TreeFactory::createMathematicalProduct(int posX, int posY, 
     if (linkgraphic){
         GraphicsTreeProduct* graphicsProduct = new GraphicsTreeProduct(m_productmenu, m_scene);
         graphicsProduct->attachObserver(mathematicalProduct);
+        graphicsProduct->setX(posX);
+        graphicsProduct->setY(posY);
+        mathematicalProduct->attachObservable(graphicsProduct);
     }
     return mathematicalProduct;
 }
