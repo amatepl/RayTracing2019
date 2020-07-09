@@ -37,8 +37,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     setAttributs(mathematicalComponents);
 
     m_receiverfactory = receiverfactory;
-
-    reflectionsNumber = 5;
+    reflectionsNumber = 4;
     //cout<<"I am computing"<<endl;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
@@ -117,7 +116,7 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_math
     if(m_mathematicalComponents.count("Tree")){
         //m_buildings.push_back((MathematicalBuildingProduct*) m_mathematicalComponents["Building"].at(i));
         for(int i=0;i<m_mathematicalComponents["Tree"].size();i++){
-            m_trees.push_back(static_cast<MathematicalBuildingProduct*>(m_mathematicalComponents["Tree"].at(i)) );
+            m_trees.push_back(static_cast<MathematicalTreeProduct*>(m_mathematicalComponents["Tree"].at(i)) );
         }
     }
 }

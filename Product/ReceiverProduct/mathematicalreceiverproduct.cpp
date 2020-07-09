@@ -327,25 +327,29 @@ void MathematicalReceiverProduct::notify(double &power, std::vector<double> *pow
 
 void MathematicalReceiverProduct::answer(ProductObserver *observer, double &power, std::vector<double> *powers, std::complex<double> &EMfield){
     m_e_field += EMfield;
-    if(m_power < power - 20 && observer != m_transmitter){
-        m_power = power;
-        m_graphic->notifyToGraphic(this,m_power);
-//        if(m_transmitter!=nullptr){
-//            //m_transmitter->drawRays(this,false);
+    m_power = power;
+    m_graphic->notifyToGraphic(this,m_power);
+    m_transmitter = observer;
+    m_transmitter->drawRays(this, true);
+//    if(m_power < power - 20 && observer != m_transmitter){
+//        m_power = power;
+//        m_graphic->notifyToGraphic(this,m_power);
+////        if(m_transmitter!=nullptr){
+////            //m_transmitter->drawRays(this,false);
+////        }
+//        m_transmitter = observer;
+//        m_transmitter->drawRays(this,true);
+//    }
+//    else{
+//        m_power = power;
+//        m_graphic->notifyToGraphic(this,m_power);
+//        if(m_transmitter != 0){
+//            m_transmitter->drawRays(this,true);
 //        }
-        m_transmitter = observer;
-        m_transmitter->drawRays(this,true);
-    }
-    else{
-        m_power = power;
-        m_graphic->notifyToGraphic(this,m_power);
-        if(m_transmitter != 0){
-            m_transmitter->drawRays(this,true);
-        }
-        else{
-            m_transmitter = observer;
-        }
-    }
+//        else{
+//            m_transmitter = observer;
+//        }
+//    }
 
 }
 

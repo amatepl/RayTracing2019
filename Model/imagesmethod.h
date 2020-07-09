@@ -55,7 +55,9 @@ protected:
 
     QGraphicsScene* m_scene;
 
+    QPolygonF m_currentTransmitterRange;
     QPolygonF m_totalIlluminationZone;            // For tests
+
 
 
 };
