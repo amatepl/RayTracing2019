@@ -82,6 +82,9 @@ void RayTracing::pathLossComputation(std::vector<QPointF> points, ProductObserva
     }
     original_transmitter->activePathLoss(true);
     original_transmitter->computePathLoss(false);
+
+    delete copy_receiver;
+
 }
 
 void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){

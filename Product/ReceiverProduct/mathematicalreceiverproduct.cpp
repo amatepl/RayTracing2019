@@ -287,6 +287,11 @@ void MathematicalReceiverProduct::update(QGraphicsItem* graphic){
     notifyObservers();
 }
 
+void MathematicalReceiverProduct::attachObservable(GraphicsProduct *graphic){
+    m_graphic = graphic;
+    m_graphic->notifyToGraphic(this,m_power);
+}
+
 // From ProductObservable
 void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserver){
     //cout<<"Observevr attached"<<endl;

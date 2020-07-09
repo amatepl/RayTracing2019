@@ -70,6 +70,7 @@ public:
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
+    void attachObservable(GraphicsProduct* graphic) override;
     void openDialog() override;
 
 
