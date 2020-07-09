@@ -9,6 +9,7 @@
 #include "Model/algorithmInterface.h"
 #include "Product/abstractantena.h"
 #include "Product/BuildingProduct/mathematicalbuildingproduct.h"
+#include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
 #include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
 #include "Product/TransmitterProduct/transmitterimage.h"
@@ -44,6 +45,8 @@ public:
 protected:
     vector<MathematicalTransmitterProduct*> m_transmitters;
     vector<MathematicalBuildingProduct*> m_buildings;
+    vector<MathematicalTreeProduct*> m_trees;
+
     MathematicalReceiverProduct* m_receiver;
     vector<MathematicalReceiverProduct*> m_receivers;
     int reflectionsNumber;
@@ -52,7 +55,9 @@ protected:
 
     QGraphicsScene* m_scene;
 
+    QPolygonF m_currentTransmitterRange;
     QPolygonF m_totalIlluminationZone;            // For tests
+
 
 
 };

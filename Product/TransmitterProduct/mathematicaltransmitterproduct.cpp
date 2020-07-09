@@ -258,12 +258,21 @@ complex<double> MathematicalTransmitterProduct::computeDiffractedTreeEfield(vect
 
 
 
-vector<vector<QLineF> > MathematicalTransmitterProduct::buildTreeRays(QPointF* Rx,MathematicalTreeProduct* tree){
+vector<vector<QLineF> >
+MathematicalTransmitterProduct::buildTreeRays(QPointF* Rx,MathematicalTreeProduct* tree){
+    /*
+     * Construct the diffracted rays around the tree
+     *
+     * Rx: receivers position
+     *
+     */
+
     float radius = tree->getRadius();
     QPointF treeCenter;
     treeCenter.setX(tree->getPosX());
     treeCenter.setY(tree->getPosY());
 
+    // The direct path is used in order to build a tree square model perpendicualr to the path
     QLineF directPath(*this,*Rx);
     directPath.setAngle(directPath.angle()+90);
     directPath.translate(treeCenter - *this);
@@ -293,6 +302,17 @@ vector<vector<QLineF> > MathematicalTransmitterProduct::buildTreeRays(QPointF* R
     vector<QLineF> wholeRay3;
 
     if(distance1.length()<distance2.length()){
+
+        /*
+         *          Rx
+         *
+         *      4 ----- 3
+         *      |       |
+         *      |       |
+         *      1 ----- 2
+         *
+         *          Tx
+         */
 
         wholeRay1.push_back(distance1);
         wholeRay1.push_back(QLineF(treeCorner1,treeCorner4));
@@ -325,6 +345,17 @@ vector<vector<QLineF> > MathematicalTransmitterProduct::buildTreeRays(QPointF* R
 
     }
     else{
+
+        /*
+         *          Rx
+         *
+         *      2 ----- 1
+         *      |       |
+         *      |       |
+         *      3 ----- 4
+         *
+         *          Tx
+         */
 
         wholeRay1.push_back(QLineF(distance2));
         wholeRay1.push_back(QLineF(treeCorner4,treeCorner1));
