@@ -532,6 +532,8 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
     //cout<<"Receiver position: "<<pos.x()<<", "<< pos.y() <<endl;
     //cout<<"Transmitter notified !"<<endl;
 
+    cout<<"First!"<<endl;
+
     m_receiversField[receiver] = 0;
     m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(),m_receiversPowers[receiver].end());
     m_attenuation.erase(receiver);
@@ -560,6 +562,7 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 
 //    cout<< "Mathtrans rec pos: "<<pos->x()<<", "<<pos->y()<<" m_zone size: "<<m_zone.size()<<endl;
 
+
     if(m_zone.containsPoint(*pos,Qt::OddEvenFill)){
 
 //        cout<<"In da zone"<<endl;
@@ -573,9 +576,11 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
         QPointF p1 = wholeRay->at(0)->p1();
         QPointF p2 = wholeRay->at(0)->p2();
         QLineF direct_ray = QLineF(p1,p2);
+
         if (active_pathloss){
             computePathLoss(direct_ray, receiver);
         }
+
         if(wholeRay->at(0)->getDiffracted()){
             complex<double>EMfield = computeDiffractedEfield(wholeRay);
             m_receiversField[receiver] += EMfield;
@@ -588,6 +593,7 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
             double power = computePrx(EMfield);
             m_receiversPowers[receiver].push_back(power);
         }
+
         double totalPower = computePrx(m_receiversField[receiver]);
 
         //m_model->notify(this);
@@ -607,7 +613,6 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
             receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
         }
     }
-
 
     //}
 
@@ -636,6 +641,9 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
     m_receiversRays[receiver].push_back(wholeRay);
 
     if(wholeRay->at(0)->getDiffracted()){
+
+        cout<<"I'm a little diffracted ray"<<endl;
+
         complex<double>EMfield = computeDiffractedEfield(wholeRay);
         m_receiversField[receiver] += EMfield;
         double power = computePrx(EMfield);
