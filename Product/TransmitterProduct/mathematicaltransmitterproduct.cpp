@@ -560,7 +560,12 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 //        cout<<"EM field: "<<m_receiversField[receiver]<<endl;
         double powerDBm = dBm(totalPower);
 //        cout<< "MathTrans power dBm : "<< powerDBm<< endl;
-        if (!compute_pathloss){
+        if (compute_pathloss){
+            QPointF* point_receiver = dynamic_cast<QPointF*>(receiver);
+            QLineF line = QLineF(*this,*point_receiver);
+            m_pathloss[receiver][line.length()*px_to_meter] = powerDBm;
+        }
+        else {
             m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
             receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
         }
