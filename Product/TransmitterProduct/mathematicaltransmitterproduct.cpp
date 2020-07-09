@@ -82,14 +82,25 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     }
     double Ia = sqrt(2.0*m_power/Ra); // Ia could be changed for Beamforming application (add exp)
     double a = R * ((Zvoid*Ia)/(2.0*M_PI))/completeLength;
+    // Angle in degrees
+    double angle_prime = 0.0;
+    double angle = rayLine->back()->angle();
+    if (angle >= 0.0 && angle <= 90.0){
+        angle_prime = 90.0-angle;
+    }
+    else if(angle > 90.0 && angle < 360.0){
+        angle_prime = 270.0+180.0-angle;
+    }
+    cout << angle << endl;
     Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
-
+    Efield *= totaleArrayFactor(angle_prime,90,0);
     if(amountSegment==1){
         // Adding the ground component
         complex <double> groundEfield = this->computeEfieldGround(receiver); // Compute the electrical field from the ray reflected off the ground
         double dist = distance(receiver);
         double thetaI = atan(antennaHeight/(dist/2))+M_PI/2;
-        Efield += groundEfield*(cos(M_PI/2*cos(thetaI))/sin(thetaI));
+        double thetat = 90-atan(antennaHeight/(dist/2))*180/M_PI;
+        Efield += groundEfield*totaleArrayFactor(angle_prime,thetat,0);//(cos(M_PI/2*cos(thetaI))/sin(thetaI));
     }
     QPointF p1 = rayLine->at(rayLine->size()-1)->p2();
     if (p1.x()-1 != this->getPosX() && p1.y() != this->getPosY()){
@@ -358,7 +369,6 @@ void MathematicalTransmitterProduct::computeRayThroughTree(QPointF *Rx, Mathemat
 
 double MathematicalTransmitterProduct::computePrx(complex <double> totalEfield){
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-
     complex <double> Voc = (lambda/M_PI)*(totalEfield);
     double Prx = 1/(8*Ra)*norm(Voc);
     return Prx;
@@ -537,7 +547,6 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
         //MathematicalRayProduct newRay = *(m_rayFactory->createRay(*this,pos));
         wholeRay->push_back(m_rayFactory->createRay(*this,*pos));
 //        m_wholeRays.push_back(wholeRay);
-
         m_receiversRays[receiver].push_back(wholeRay);
         QPointF p1 = wholeRay->at(0)->p1();
         QPointF p2 = wholeRay->at(0)->p2();
@@ -619,7 +628,6 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
     double totalPower = computePrx(m_receiversField[receiver]);
 
     //m_model->notify(this);
-
     double powerDBm = dBm(totalPower);
     if (compute_pathloss){
         QPointF* point_receiver = dynamic_cast<QPointF*>(receiver);

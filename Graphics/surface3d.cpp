@@ -30,8 +30,7 @@ Surface3D::Surface3D(Q3DSurface *surface, TransmitterProduct *dialog)
     m_patternProxy = new QSurfaceDataProxy();
     m_patternSeries = new QSurface3DSeries(m_patternProxy);
 
-    QObject::connect(&m_rotationTimer, &QTimer::timeout, this,
-                     &Surface3D::triggerRotation);
+    //QObject::connect(&m_rotationTimer, &QTimer::timeout, this,&Surface3D::triggerRotation);
     m_angleStep = 0.0;
 
     toggleRotation();
