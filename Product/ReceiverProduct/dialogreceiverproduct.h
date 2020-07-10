@@ -31,6 +31,7 @@ public:
     QWidget* ModelPathLossDialog();
     QWidget* CellRange();
     QWidget* DopplerSpectrum();
+    void changeGraph();
 
     int getPosX() override {return m_posx->value();}
     int getPosY() override {return m_posy->value();}
