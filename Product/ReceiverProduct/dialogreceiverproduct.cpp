@@ -16,7 +16,8 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     m_tabwidget->addTab(RealPathLossDialog(), tr("Real Path-Loss"));
     m_tabwidget->addTab(CellRange(),tr("Cellule range"));
     m_tabwidget->addTab(DopplerSpectrum(), tr("Doppler Spectrum"));
-
+    std::cout << "h_tdl: " << h_tdl.size() << endl;
+    std::cout << "h: " << h.size() << endl;
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
 
     QVBoxLayout *mainlayout = new QVBoxLayout;

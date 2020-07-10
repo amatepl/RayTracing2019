@@ -18,7 +18,7 @@ MathematicalComponent* RayTracing::compute(vector<MathematicalTransmitterProduct
     m_transmitters = transmitters;
     m_receiver=receiver;
     m_buildings = buildings;
-    reflectionsNumber = 0;
+    reflectionsNumber = 1;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
@@ -37,7 +37,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     setAttributs(mathematicalComponents);
 
     m_receiverfactory = receiverfactory;
-    reflectionsNumber = 0;
+    reflectionsNumber = 1;
     //cout<<"I am computing"<<endl;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);

@@ -328,9 +328,11 @@ void MathematicalReceiverProduct::notify(double &power, std::vector<double> *pow
 void MathematicalReceiverProduct::answer(ProductObserver *observer, double &power, std::vector<double> *powers, std::complex<double> &EMfield){
     m_e_field += EMfield;
     m_power = power;
-    m_graphic->notifyToGraphic(this,m_power);
-    m_transmitter = observer;
-    m_transmitter->drawRays(this, true);
+    if (m_graphic != nullptr){
+        m_graphic->notifyToGraphic(this,m_power);
+        m_transmitter = observer;
+        m_transmitter->drawRays(this, true);
+    }
 //    if(m_power < power - 20 && observer != m_transmitter){
 //        m_power = power;
 //        m_graphic->notifyToGraphic(this,m_power);

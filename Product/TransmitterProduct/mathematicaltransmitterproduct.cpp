@@ -639,6 +639,9 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
     m_receiversRays[receiver].push_back(wholeRay);
 
     if(wholeRay->at(0)->getDiffracted()){
+        map<ProductObservable*,map<double,double>>::iterator it;
+        it = m_pathloss.begin();
+        m_pathloss.erase(it->first);
         complex<double>EMfield = computeDiffractedEfield(wholeRay);
         m_receiversField[receiver] += EMfield;
         double power = computePrx(EMfield);
