@@ -15,6 +15,7 @@ public:
     virtual int getPosX() = 0;
     virtual int getPosY() = 0;
     virtual double getOrientation() = 0;
+    virtual char principalOrientation() = 0;
     virtual Kind getKind() = 0;
     virtual double getPower() = 0;
     virtual int getRow() = 0;
@@ -25,6 +26,7 @@ public:
     virtual void setPosX(int posX) = 0;
     virtual void setPosY(int posY) = 0;
     virtual void setOrientation(double orientation) = 0;
+    virtual void setPrincipalOrientation(char orientation) = 0;
     virtual void setPower(double power) = 0;
     virtual void setFrequency(unsigned long frequency) = 0;
     virtual void setBandwidth(unsigned long bandwidth) = 0;
@@ -33,7 +35,7 @@ public:
     virtual void setKind(Kind kind) = 0;
     virtual void newProperties() = 0;
 
-    virtual complex <double> arrayFactor(double theta, double phi, double principal) {
+    virtual complex <double> arrayFactor(double theta, double phi) {
         complex <double> xarray(0.0,0.0);
         complex <double> yarray(0.0,0.0);
         complex <double> arrayfactor(0.0,0.0);
@@ -45,9 +47,10 @@ public:
         double d = lambda*0.5;
         double k = 2.0*M_PI/lambda;
         double alpha  = phi*M_PI/180;
-        double beta = theta*M_PI/180;
+        double principal_angle = m_pr_orientation*M_PI/12; // -5 -4 -3 ... 0 ... 3 4 5
+        double beta = (theta-m_orientation)*M_PI/180;
         double alphaprime = M_PI/2;
-        double betaprime = principal;
+        double betaprime = principal_angle;
         double A = sin(alpha)*sin(beta);
         double Aprime = sin(alphaprime)*sin(betaprime);
         double B = sin(alpha)*cos(beta);
@@ -88,14 +91,17 @@ public:
         double d = lambda/4.0;
         double k = 2.0*M_PI/lambda;
         complex <double> i(0.0,1.0);
-
-        complex <double> psy = k*d*sin(phi*M_PI/180)*cos(theta*M_PI/180);
-        if ((theta >= 270 && theta < 360.0) || (theta >=0 && theta < 90.0)){reflectorfactor = 2.0*i*exp(-i*psy)*sin(psy);}
+        double thetaprime = theta - m_orientation;
+        if (thetaprime < 0.0){
+            thetaprime = 360 + thetaprime;
+        }
+        complex <double> psy = k*d*sin(phi*M_PI/180)*cos(thetaprime*M_PI/180);
+        if ((thetaprime >= 270 && thetaprime < 360.0) || (thetaprime >=0 && thetaprime < 90.0)){reflectorfactor = 2.0*i*exp(-i*psy)*sin(psy);}
         return reflectorfactor;
     }
 
-    virtual complex <double> totaleArrayFactor(double theta, double phi, double principal){
-        complex <double> arrayfactor = arrayFactor(theta, phi, principal);
+    virtual complex <double> totaleArrayFactor(double theta, double phi){
+        complex <double> arrayfactor = arrayFactor(theta, phi);
         complex <double> dipolefactor = dipoleFactor(theta,phi);
         complex <double> reflectorfactor = reflectorFactor(theta,phi);
         if (getKind() == dipole){
@@ -112,12 +118,12 @@ public:
         }
     }
 
-    virtual double electricalGain(double theta, double phi, double principal){
-        return abs(totaleArrayFactor(theta,phi,principal));
+    virtual double electricalGain(double theta, double phi){
+        return abs(totaleArrayFactor(theta,phi));
     }
 
-    virtual double powerGain(double theta, double phi, double principal){
-        complex <double> arrayfactor = arrayFactor(theta, phi, principal);
+    virtual double powerGain(double theta, double phi){
+        complex <double> arrayfactor = arrayFactor(theta, phi);
         complex <double> dipolefactor = dipoleFactor(theta,phi);
         complex <double> reflectorfactor = reflectorFactor(theta,phi);
         if (getKind() == dipole){
@@ -153,6 +159,8 @@ protected:
     int m_row;
     int m_column;
     double lambda = c/m_frequency;
+    double m_orientation;
+    char m_pr_orientation;
 };
 
 #endif // TRANSMITTERPRODUCT_H

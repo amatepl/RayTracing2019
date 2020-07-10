@@ -84,6 +84,7 @@ public:
     int getPosX() override {return x();}
     int getPosY() override {return y();}
     double getOrientation() override {return m_orientation;}
+    char principalOrientation() override {return m_pr_orientation;}
     Kind getKind() override {return m_kind;}
     double getPower() override {return m_power;}
     int getRow() override {return m_row;}
@@ -94,6 +95,7 @@ public:
     void setPosX(int posX) override {setX(posX);}
     void setPosY(int posY) override {setY(posY);}
     void setOrientation(double orientation) override {m_orientation = orientation;}
+    void setPrincipalOrientation(char orientation) override {m_pr_orientation = orientation;}
     void setPower(double power) override {m_power = power;}
     void setFrequency(unsigned long frequency) override {m_frequency = frequency;}
     void setBandwidth(unsigned long bandwidth) override {m_bandwidth = bandwidth;}
@@ -130,7 +132,6 @@ public:
 
 private:
     double px_to_meter;
-    float m_orientation;
     double m_power;
     bool active_pathloss;
     bool compute_pathloss;

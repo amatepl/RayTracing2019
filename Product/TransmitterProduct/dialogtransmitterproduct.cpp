@@ -9,6 +9,7 @@ DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *mathemati
     setFrequency(m_mathematicalproduct->getFrequency());
     setBandwidth(m_mathematicalproduct->getBandwidth());
     setOrientation(m_mathematicalproduct->getOrientation());
+    setPrincipalOrientation(m_mathematicalproduct->principalOrientation());
     setKind(m_mathematicalproduct->getKind());
     setRow(m_mathematicalproduct->getRow());
     setColumn(m_mathematicalproduct->getColumn());
@@ -48,8 +49,10 @@ void DialogTransmitterProduct::createDialog(){
 
     m_posx = new QSpinBox(this);
     m_posy = new QSpinBox(this);
-    m_orientation = new QDoubleSpinBox(this);
-    m_orientation->setRange(-360,360);
+    m_orientationValue = new QDoubleSpinBox(this);
+    m_orientationValue->setRange(-360,360);
+    m_pr_orientationValue = new QSpinBox(this);
+    m_pr_orientationValue->setRange(-5,5);
     m_posx->setRange(0,5000);
     m_posx->setAccelerated(true);
     m_posy->setRange(0,5000);
@@ -94,7 +97,8 @@ void DialogTransmitterProduct::createDialog(){
     model->setLayout(modelProperties);
 
     QFormLayout *geoProperties = new QFormLayout(this);
-    geoProperties->addRow("Orientation: ",m_orientation);
+    geoProperties->addRow("Orientation: ",m_orientationValue);
+    geoProperties->addRow("Principal orientation: ", m_pr_orientationValue);
     geoProperties->addRow("X center: ",m_posx);
     geoProperties->addRow("Y center: ",m_posy);
 
@@ -138,6 +142,11 @@ unsigned long DialogTransmitterProduct::getFrequency(){
     return m_frequency;
 }
 
+double DialogTransmitterProduct::getOrientation(){
+    m_orientation = m_orientationValue->value();
+    return m_orientation;
+}
+
 unsigned long DialogTransmitterProduct::getBandwidth(){
     QString text = m_bworder->currentText();
     if (text == "kHz"){
@@ -150,6 +159,11 @@ unsigned long DialogTransmitterProduct::getBandwidth(){
         m_bandwidth = unsigned(long(m_bwvalue->value()*1e9));
     }
     return m_bandwidth;
+}
+
+char DialogTransmitterProduct::principalOrientation(){
+    m_pr_orientation = m_pr_orientationValue->value();
+    return m_pr_orientation;
 }
 
 void DialogTransmitterProduct::setFrequency(unsigned long frequency){
@@ -182,6 +196,16 @@ void DialogTransmitterProduct::setBandwidth(unsigned long bandwidth){
         m_bworder->setCurrentText("GHz");
     }
     m_bandwidth = bandwidth;
+}
+
+void DialogTransmitterProduct::setOrientation(double orientation){
+    m_orientation = orientation;
+    m_orientationValue->setValue(m_orientation);
+}
+
+void DialogTransmitterProduct::setPrincipalOrientation(char orientation){
+    m_pr_orientation = orientation;
+    m_pr_orientationValue->setValue(m_pr_orientation);
 }
 
 void  DialogTransmitterProduct::setKind(Kind kind) {
@@ -222,6 +246,7 @@ void DialogTransmitterProduct::newProperties(){
     m_mathematicalproduct->setBandwidth(getBandwidth());
     m_mathematicalproduct->setPower(getPower());
     m_mathematicalproduct->setOrientation(getOrientation());
+    m_mathematicalproduct->setPrincipalOrientation(principalOrientation());
     m_mathematicalproduct->newProperties();
 }
 
@@ -234,6 +259,8 @@ void DialogTransmitterProduct::openPlot(){
     getFrequency();
     m_row = getRow();
     m_column = getColumn();
+    m_orientation = getOrientation();
+    m_pr_orientation = principalOrientation();
     new PatternWindow(this);
 }
 

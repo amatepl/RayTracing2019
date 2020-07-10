@@ -26,7 +26,8 @@ public:
 
     int getPosX() override {return m_posx->value();}
     int getPosY() override {return m_posy->value();}
-    double getOrientation() override {return m_orientation->value();}
+    double getOrientation() override;
+    char principalOrientation() override;
     unsigned long getFrequency() override;
     unsigned long getBandwidth() override;
     double getPower() override {return m_power->value();}
@@ -36,7 +37,8 @@ public:
 
     void setPosX(int posX) override {m_posx->setValue(posX);}
     void setPosY(int posY) override {m_posy->setValue(posY);}
-    void setOrientation(double orientation) override {m_orientation->setValue(orientation);}
+    void setOrientation(double orientation) override;
+    void setPrincipalOrientation(char orientation) override;
     void setPower(double power) override {m_power->setValue(power);}
     void setFrequency(unsigned long frequency) override;
     void setBandwidth(unsigned long bandwidth) override;
@@ -48,8 +50,8 @@ public:
 private:
     Kind m_kind;
     QComboBox *m_modelBox;
-    QSpinBox *m_posx,*m_posy,*m_rowBox,*m_columnBox;
-    QDoubleSpinBox *m_orientation;
+    QSpinBox *m_posx,*m_posy,*m_rowBox,*m_columnBox,*m_pr_orientationValue;
+    QDoubleSpinBox *m_orientationValue;
     QDoubleSpinBox *m_frequencyValue;
     QDoubleSpinBox *m_bwvalue;
     QDoubleSpinBox *m_power;

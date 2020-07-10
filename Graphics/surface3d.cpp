@@ -59,7 +59,7 @@ void Surface3D::generateData()
         int index = 0;
         for (int j = 0; j < sampleCountTheta; j++) {
             float theta = qMin(sampleThetaMax, (j * stepTheta + sampleThetaMin));
-            double gain = abs(m_dialog->totaleArrayFactor(double(theta),double(phy),double(m_angleStep)));
+            double gain = abs(m_dialog->totaleArrayFactor(double(theta),double(phy)));
             float xtheta = theta*M_PI/180.0;
             m_thetamax = qMax(xtheta,m_thetamax);
             m_thetamin = qMin(xtheta,m_thetamin);
