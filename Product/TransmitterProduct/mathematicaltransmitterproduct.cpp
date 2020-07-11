@@ -76,7 +76,7 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     double R = 1;
     complex <double> Efield = 0.0;
     MathematicalRayProduct *currentRay;
-    for (int i = 0; i <amountSegment; i++){
+    for (int i = 0; i < amountSegment; i++){
         currentRay = rayLine->at(i);
         theta = currentRay->getTheta();
         if (i != amountSegment - 1) {   // The last segment, the one that reach the receptor does not have a rebound
@@ -263,7 +263,8 @@ complex<double> MathematicalTransmitterProduct::computeDiffractedTreeEfield(vect
     Line *directRay = new Line(rayLine.at(0).p2(), rayLine.at(1).p1());
 
     double Ia = sqrt(2 * m_power/Ra); // Ia could be changed for Beamforming application (add exp)
-    Efield = -i  * ((Zvoid * Ia) / (2*M_PI)) * (exp(-i * (2.0*M_PI / lambda) * directRay->getMeterLength()) / directRay->getMeterLength());
+    Efield = -i  * ((Zvoid * Ia) / (2*M_PI)) *
+            (exp(-i * (2.0*M_PI / lambda) * directRay->getMeterLength()) / directRay->getMeterLength());
     Efield = F * Efield;
     delete directRay;
     return Efield;
@@ -643,13 +644,15 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
 }
 
 
-void MathematicalTransmitterProduct::attachObservable(ProductObservable* productObservable){
+void MathematicalTransmitterProduct::attachObservable(ProductObservable* productObservable)
+{
     m_productObservable.push_back(productObservable);
 }
 
 // ---------------------------------------------------- ModelObserver -------------------------------------------------------------------
 
-void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable){
+void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObservable)
+{
     m_model = modelObservable;
 }
 
@@ -657,7 +660,9 @@ void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObse
 // ---------------------------------------------------- AbstractAntenna -------------------------------------------------------------------
 
 
-void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) {
+void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, const float speed,
+                                                  const float direction, const QPointF &point,
+                                                  vector<MathematicalRayProduct*> *wholeRay) {
 
     /*
      * Called by the transmitter images and the diffraction points.
