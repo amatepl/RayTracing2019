@@ -10,6 +10,8 @@ DialogTransmitterProduct::DialogTransmitterProduct(TransmitterProduct *mathemati
     setBandwidth(m_mathematicalproduct->getBandwidth());
     setOrientation(m_mathematicalproduct->getOrientation());
     setKind(m_mathematicalproduct->getKind());
+    setRow(m_mathematicalproduct->getRow());
+    setColumn(m_mathematicalproduct->getColumn());
     setAttribute(Qt::WA_DeleteOnClose,true);
     open();
 }
@@ -125,13 +127,13 @@ void DialogTransmitterProduct::createDialog(){
 unsigned long DialogTransmitterProduct::getFrequency(){
     QString text = m_frequencyorder->currentText();
     if (text == "kHz"){
-        m_frequency = unsigned(long(m_frequencyValue->value()*1e3));
+        m_frequency = m_frequencyValue->value()*1.0e3;
     }
     else if (text == "MHz"){
-        m_frequency = unsigned(long(m_frequencyValue->value()*1e6));
+        m_frequency = m_frequencyValue->value()*1.0e6;
     }
     else {
-        m_frequency = unsigned(long(m_frequencyValue->value()*1e9));
+        m_frequency = m_frequencyValue->value()*1.0e9;
     }
     return m_frequency;
 }

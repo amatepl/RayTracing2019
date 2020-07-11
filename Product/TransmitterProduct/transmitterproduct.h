@@ -148,8 +148,8 @@ protected:
     double  Ra = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
 
     double epsilonWallRel;
-    unsigned long m_frequency;           // Hz
-    unsigned long m_bandwidth;
+    unsigned long long m_frequency;           // Hz
+    unsigned long long m_bandwidth;
     int m_row;
     int m_column;
     double lambda = c/m_frequency;

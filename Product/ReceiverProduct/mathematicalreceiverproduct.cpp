@@ -305,7 +305,7 @@ void MathematicalReceiverProduct::notifyObservers(){
 //    }
 
 //    cout<< "MathRec number of observers: "<< m_observers.size()<<endl;
-    for(int i = 0;i<m_observers.size();i++){
+    for(unsigned int i = 0;i<m_observers.size();i++){
 //        cout<< "MathRec position: "<<x()<<", "<<y()<<endl;
         m_observers.at(i)->update(this,m_speed,m_orientation);
     }

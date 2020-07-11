@@ -13,19 +13,13 @@ MathematicalComponent* Coverage::compute(vector<MathematicalTransmitterProduct*>
 MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct *> > mathematicalComponents, ReceiverFactory* receiverfactory){
     setAttributs(mathematicalComponents);
     reflectionsNumber = 5;
-    //cout<<"I am computing"<<endl;
-
-
 
     RayFactory* rayFactory = new RayFactory(false, m_scene);
     m_rayFactory = rayFactory;
 
-    for(int i =0;i<m_transmitters.size();i++){
+    for(unsigned int i =0;i<m_transmitters.size();i++){
         m_transmitters.at(i)->setRayFactory(rayFactory);
     }
-
-
-
 
 
 //    MathematicalProduct* receiver = m_receiverFactory->createMathematicalProduct(workingZone.topLeft().x(),workingZone.topLeft().y(),true);
@@ -69,7 +63,7 @@ void Coverage::pathLossComputation(std::vector<QPointF> points, ProductObservabl
 
 void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){
     if(m_mathematicalComponents.count("Transmitter")){
-        for(int i=0;i<m_mathematicalComponents["Transmitter"].size();i++){
+        for(unsigned int i=0;i<m_mathematicalComponents["Transmitter"].size();i++){
             m_transmitters.push_back(static_cast<MathematicalTransmitterProduct*>(m_mathematicalComponents["Transmitter"].at(i)) );
             m_transmitters.at(i)->setMediator(this);
         }
@@ -82,14 +76,14 @@ void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathem
 //    }
 //    }
     if(m_mathematicalComponents.count("Building")){
-        for(int i=0;i<m_mathematicalComponents["Building"].size();i++){
+        for(unsigned int i=0;i<m_mathematicalComponents["Building"].size();i++){
             m_buildings.push_back(static_cast<MathematicalBuildingProduct*>(m_mathematicalComponents["Building"].at(i)) );
         }
     }
 }
 
 vector<QRectF> Coverage::buildCoverageZone(){
-    for(int i=0; i<m_transmitters.size();i++){
+    for(unsigned int i=0; i<m_transmitters.size();i++){
 
     }
 }

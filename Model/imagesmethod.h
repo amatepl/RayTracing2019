@@ -27,10 +27,10 @@ class ImagesMethod
 {
 public:
     void createImages();
-    void setDiffraction(vector<Wall *> walls,const QPolygonF &zone, AbstractAntena *parent);
+    void setDiffraction(vector<Wall *> walls, const QPolygonF &zone, AbstractAntena *parent);
     forImage transmitterIllumination(MathematicalTransmitterProduct *transmitter);
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
-    vector <Line> illuminatedWalls(vector <Wall*> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+    vector <Line> illuminatedWalls(vector <Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
     void setRayFactory(AbstractRayFactory* rayFactory){m_rayFactory = rayFactory;};
     void buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent);
 
@@ -40,25 +40,23 @@ public:
     vector <Line> createImages(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
 
 
-    void setScene(QGraphicsScene* scene){m_scene=scene;};
+    void setScene(QGraphicsScene *scene) {m_scene = scene;};
 
 protected:
-    vector<MathematicalTransmitterProduct*> m_transmitters;
-    vector<MathematicalBuildingProduct*> m_buildings;
-    vector<MathematicalTreeProduct*> m_trees;
+    vector<MathematicalTransmitterProduct *> m_transmitters;
+    vector<MathematicalBuildingProduct *> m_buildings;
+    vector<MathematicalTreeProduct *> m_trees;
 
-    MathematicalReceiverProduct* m_receiver;
-    vector<MathematicalReceiverProduct*> m_receivers;
+    MathematicalReceiverProduct *m_receiver;
+    vector<MathematicalReceiverProduct *> m_receivers;
     int reflectionsNumber;
-    AbstractRayFactory* m_rayFactory;
+    AbstractRayFactory *m_rayFactory;
 
 
-    QGraphicsScene* m_scene;
+    QGraphicsScene *m_scene;
 
     QPolygonF m_currentTransmitterRange;
     QPolygonF m_totalIlluminationZone;            // For tests
-
-
 
 };
 

@@ -1,20 +1,21 @@
 #include "imagesmethod.h"
 
 struct forImage{
-    vector <Wall*> walls;
+    vector <Wall *> walls;
     const QPolygonF zone;
 };
 
 
-void ImagesMethod::illuminationZones(){
+void ImagesMethod::illuminationZones()
+{
     int recursionDepth = reflectionsNumber;
 
     QColor illumination1;
     illumination1.setGreen(255);
     illumination1.setAlpha(100);
 
-    foreach(MathematicalTransmitterProduct* transmitter,m_transmitters){
-        for(int i=0;i<m_receivers.size();i++){
+    foreach (MathematicalTransmitterProduct *transmitter, m_transmitters) {
+        for (unsigned i = 0; i < m_receivers.size(); i++) {
             m_receivers.at(i)->attachObserver(transmitter);
             transmitter->attachObservable(m_receivers.at(i));
         }
@@ -25,14 +26,12 @@ void ImagesMethod::illuminationZones(){
 
         m_totalIlluminationZone = m_totalIlluminationZone.united(data.zone.boundingRect());
 
-        setDiffraction(data.walls,data.zone,transmitter);       // Launches the methods to compute siple and double diffraction
-        if(recursionDepth > 0){
-                createImages(data.walls,data.zone,recursionDepth -1 ,transmitter);
+        setDiffraction(data.walls, data.zone, transmitter);       // Launches the methods to compute siple and double diffraction
+        if (recursionDepth > 0) {
+                createImages(data.walls, data.zone, recursionDepth - 1, transmitter);
         }
     }
 //    buildingsInIlluminationZone(Transmitter, recursionDepth);
-
-
 
 //    m_scene->addPolygon(m_totalIlluminationZone,QPen(),illumination1);
 
@@ -40,7 +39,8 @@ void ImagesMethod::illuminationZones(){
 }
 
 
-void ImagesMethod::setDiffraction(vector<Wall *> walls,const QPolygonF &zone, AbstractAntena *parent){
+void ImagesMethod::setDiffraction(vector<Wall *> walls, const QPolygonF &zone, AbstractAntena *parent)
+{
     /*
      * walls : walls illuminated by the antena
      * zone : antenas illumination zone
@@ -48,34 +48,36 @@ void ImagesMethod::setDiffraction(vector<Wall *> walls,const QPolygonF &zone, Ab
      */
 
     vector <Line> illuminatedWalls;
-    vector <Wall*> usedWalls;
+    vector <Wall *> usedWalls;
 
-    for(int i=1; i <  zone.length()-1 ;i++){
+    for (int i = 1; i < zone.length() - 1 ; i++) {
 
         /*
          * Here we go thorough the sides of the illumination zone and check if they are a part of a wall
          * If yes, then the part is used to build the diffraction image of the transmitter.
          */
 
-        int j =0;
+        unsigned j = 0;
         bool cont = true;
-        while(j<walls.size() && cont){
-            if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))){
+        while (j < walls.size() && cont) {
+            if (walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))) {
                 /*
                  * Two consecutives points of the coverage polygone are on the same wall.
                  */
-                illuminatedWalls.push_back(Line(zone.at(i),zone.at(i+1)));
+                illuminatedWalls.push_back(Line(zone.at(i), zone.at(i+1)));
                 usedWalls.push_back(walls.at(j));
-                walls.erase(walls.begin()+j);
+                walls.erase(walls.begin() + j);
                 cont = false;
             }
             j++;
         }
     }
-    buildDiffractionPoints(zone,usedWalls,0,parent);
+    buildDiffractionPoints(zone, usedWalls, 0, parent);
 }
 
-void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent){
+
+void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent)
+{
 
     QColor illumination1;
     illumination1.setGreen(255);
@@ -96,38 +98,57 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 //    m_scene->addEllipse(zone.at(0).x(),zone.at(0).y(),5,5,redPen);
 //    m_scene->addPolygon(zone,illumination2);
 
-    for(int i = 0;i<zone.length()-1;i++){
+    for(int i = 0; i < zone.length() - 1; i++){
         const QPointF *cornerP = nullptr;
         QPointF p2;
         QPointF p1;
-        int j = 0;
+        unsigned j = 0;
         bool cond = true;
-        while(j<illuminatedWalls.size() && cond){
-            if(zone.at(i) == illuminatedWalls.at(j)->p1()||zone.at(i) == illuminatedWalls.at(j)->p2()){
-                /*
-                 * The illumination zone corner is an extremity of one illuminated wall.
-                 */
-                if(cornerP == nullptr){
-                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j),zone.at(i)); //Perpendicular wall to the one illuminated
-//                    m_scene->addEllipse(p2.x(),p2.y(),10,10,greenPen);
+        while (j < illuminatedWalls.size() && cond) {
+            if (zone.at(i) == illuminatedWalls.at(j)->p1() || zone.at(i) == illuminatedWalls.at(j)->p2()) {
+
+                //
+                //  The illumination zone corner is an extremity of one illuminated wall.
+                //
+
+                //               -------
+                //              |       |
+                //              |       |
+                //              |       |
+                //               ---p1--        Rx
+
+                //              c ----- p2
+                //              |       |
+                //      Tx      |       |
+                //              |       |
+                //               -------
+
+
+                if (cornerP == nullptr) {
+
+                    //Perpendicular wall to the one illuminated
+                    p2 = illuminatedWalls.at(j)->getBuilding()->forDiffraction(illuminatedWalls.at(j), zone.at(i));
+//                    m_scene->addEllipse(p2.x(), p2.y(), 10, 10, greenPen);
 
                     cond = false;
                     cornerP = &zone.at(i);
-                    if(illuminatedWalls.at(j)->onLine(zone.at(i+1)) && zone.at(i-1) != p2){
-                        /*
-                         * Looking for the neighouring illuminatioin zone corner which doesn't lie on the same illuminated wall.
-                         * It will be used to build the illumination zone of the diffraction point.
-                         */
+                    if (illuminatedWalls.at(j)->onLine(zone.at(i+1)) && zone.at(i-1) != p2) {
+
+                        //  Looking for the neighouring illuminatioin zone corner which doesn't lie
+                        //  on the same illuminated wall.
+                        //  It will be used to build the illumination zone of the diffraction point.
+
                         p1 = zone.at(i-1);
-//                        m_scene->addEllipse(p1.x(),p1.y(),5,5,bluePen);
-                    }else{
+//                        m_scene->addEllipse(p1.x(), p1.y(), 5, 5, bluePen);
+                    } else {
                         p1 = zone.at(i+1);
-//                        m_scene->addEllipse(p1.x(),p1.y(),5,5,redPen);
+//                        m_scene->addEllipse(p1.x(), p1.y(), 5, 5, bluePen);
                     }
 
+//                    m_scene->addEllipse(cornerP->x(), cornerP->y(), 5, 5, redPen);
 
-                }
-                else{
+
+                } else {
                     cond = false;
                 }
             }
@@ -135,18 +156,19 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
         }
 
         //QPolygonF zoneCorn = buildIlluminationZone(zone.at(i));
-        if(!cond){
-            AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), p1,p2, parent);
+        if (!cond) {
+
+            AntenaDiffraction *corner = new AntenaDiffraction(zone.at(i), p1, p2, parent);
             corner->setRayFactory(m_rayFactory);
 
 //            m_scene->addPolygon(corner->getIlluminationZone(),QPen(),illumination1);
-            if(p1==p2){
-//                cout<< "Illumintion zone is a line!"<<endl;
+            if (p1 == p2) {
+                cout<< "Illumintion zone is a line!"<<endl;
             }
 
-            QPolygonF cornerZone = buildingsInIlluminationZone(corner,nbReflections);
+            QPolygonF cornerZone = buildingsInIlluminationZone(corner, nbReflections);
 
-//            m_scene->addPolygon(corner->getIlluminationZone(),QPen(),illumination2);
+            m_scene->addPolygon(corner->getIlluminationZone(), QPen(), illumination2);
 
 //            if(cornerZone.length()>0){
 //                cout<<"Illumination zone at(0) = pos: "<< (cornerZone.at(0) == corner->getPosition()) <<endl;
@@ -154,12 +176,11 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 //            }
 
 //            m_scene->addEllipse(zone.at(i).x(),zone.at(i).y(),5,5,redPen);                                  // RED for diffraction
-            if(cornerZone.length() < 3){
+            if (cornerZone.length() < 3) {
                 delete corner;
                 continue;
-            }
-            else{
-                for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
+            } else {
+                for (unsigned int numberReceivers = 0; numberReceivers < m_receivers.size(); numberReceivers++) {
                     m_receivers.at(numberReceivers)->attachObserver(corner);
                 }
 //                m_receiver->attachObserver(corner);
@@ -170,18 +191,20 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
                 //m_scene->addLine(line,redPen);
             }
 
-            for(int i=0; i<m_buildings.size();i++){
+            m_scene->addEllipse(p1.x(), p1.y(), 5, 5, bluePen);
+            m_scene->addEllipse(p2.x(), p2.y(), 5, 5, greenPen);
+            m_scene->addEllipse(cornerP->x(), cornerP->y(), 5, 5, redPen);
+
+            for (unsigned int i = 0; i < m_buildings.size(); i++) {
                 QPolygonF build(*m_buildings.at(i));
-                if(build.intersects(cornerZone)){
-
-
+                if (build.intersects(cornerZone)) {
                     QLineF line;
                     int k =0;
                     bool foundCorner = false;
-                    while(k<cornerZone.size() && !foundCorner){
-                        foundCorner = (cornerZone.at(k)==*corner);
-                        if(foundCorner){
-                            QLineF lineDraw(cornerZone.at(k),cornerZone.at((k+1)%(cornerZone.size())));
+                    while (k < cornerZone.size() && !foundCorner) {
+                        foundCorner = (cornerZone.at(k) == *corner);
+                        if (foundCorner) {
+                            QLineF lineDraw(cornerZone.at(k), cornerZone.at((k+1) % (cornerZone.size())));
                             line = lineDraw;
                             //m_scene->addLine(lineDraw, redPen);
                         }
@@ -206,7 +229,7 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
                     //m_scene->addLine(line,redPen);
 
 
-                    Wall* wall = nullptr;
+//                    Wall* wall = nullptr;
 //                    if(m_buildings.at(i)->adjacentWall(line, wall)){
 
 //                        //cout<<"Adjacent!"<<endl;
@@ -240,7 +263,9 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
     }
 }
 
-forImage ImagesMethod::transmitterIllumination(MathematicalTransmitterProduct *transmitter){
+
+forImage ImagesMethod::transmitterIllumination(MathematicalTransmitterProduct *transmitter)
+{
 
     // Painting tools
     QColor illumination;
@@ -248,33 +273,32 @@ forImage ImagesMethod::transmitterIllumination(MathematicalTransmitterProduct *t
     illumination.setAlpha(100);
 
 
-    vector <MathematicalBuildingProduct*> illuminatedBuldings; // Buildings lying in the initial illumination zone.
+    vector <MathematicalBuildingProduct *> illuminatedBuldings; // Buildings lying in the initial illumination zone.
 //    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
     QPolygonF illuminationZone = transmitter->getIlluminationZone();
-    vector <Wall*> nearestWalls;		// Vector containing the nearest walls to the transmitter of every building.
+    vector <Wall *> nearestWalls;		// Vector containing the nearest walls to the transmitter of every building.
 
-    foreach(MathematicalBuildingProduct *building, m_buildings){
+    foreach (MathematicalBuildingProduct *building, m_buildings) {
         QPolygonF p_building(*building);
 
-        if(p_building.intersects(illuminationZone)){
+        if (p_building.intersects(illuminationZone)) {
             illuminatedBuldings.push_back(building);
             illuminationZone = illuminationZone.subtracted(building->shadow(transmitter->getPosition()));
             QPointF corner = building->closestPoint(transmitter->getPosition()); // Closest point of the building to the transmitter
             nearestWalls.push_back(building->nearestWalls(corner).at(0));   // Add the 2 walls that are at the corner.
             nearestWalls.push_back(building->nearestWalls(corner).at(1));
-
         }
     }
     transmitter->setIlluminatedZone(illuminationZone);
     //m_scene->addPolygon(illuminationZone,QPen(),illumination);
 
-    forImage result{nearestWalls,illuminationZone};
+    forImage result{nearestWalls, illuminationZone};
 
     return result;
 }
 
-QPolygonF ImagesMethod::buildIlluminationZone(AbstractAntena *ant){
-
+QPolygonF ImagesMethod::buildIlluminationZone(AbstractAntena *ant)
+{
     // Painting tools
     QColor illumination;
     illumination.setBlue(255);
@@ -289,10 +313,10 @@ QPolygonF ImagesMethod::buildIlluminationZone(AbstractAntena *ant){
     //addPolygon(illuminationZone,QPen(),illumination2);
     vector <Wall*> nearestWalls;
 
-    foreach(MathematicalBuildingProduct *building, m_buildings){
+    foreach (MathematicalBuildingProduct *building, m_buildings){
         QPolygonF p_building(*building);
 
-        if(p_building.intersects(illuminationZone) && building != ant->getBuilding()){
+        if (p_building.intersects(illuminationZone) && building != ant->getBuilding()) {
             //illuminatedBuldings.push_back(building);
 
             //addPolygon(building->shadow(ant->getPosition()),QPen(),illumination2);
@@ -328,12 +352,12 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
 
 
     //m_scene->addPolygon(illuminationZone,QPen(),illumination2);
-    vector <Wall*> nearestWalls;
+    vector <Wall *> nearestWalls;
 
-    foreach(MathematicalBuildingProduct *building, m_buildings){
+    foreach (MathematicalBuildingProduct *building, m_buildings) {
         QPolygonF p_building(*building);
 
-        if(p_building.intersects(illuminationZone) && building != ant->getBuilding()){
+        if (p_building.intersects(illuminationZone) && building != ant->getBuilding()) {
             //illuminatedBuldings.push_back(building);
 
             //addPolygon(building->shadow(ant->getPosition()),QPen(),illumination2);
@@ -353,13 +377,15 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
 
 //    m_scene->addPolygon(illuminationZone,QPen(),illumination);
 
-    if(recursionDepth > 0){
-        createImages(nearestWalls,illuminationZone, recursionDepth -1,ant);
+    if (recursionDepth > 0) {
+        createImages(nearestWalls, illuminationZone, recursionDepth - 1, ant);
     }
     return illuminationZone;
 }
 
-vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent) {
+
+vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent)
+{
     vector <Line> illuminatedWalls;
     vector <Wall*> usedWalls;
 
@@ -372,40 +398,40 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
 
     vector <TransmitterImage *> images; // vector for tests
 
-    for(int i=1; i <  zone.length()-1 ;i++){
+    for (int i = 1; i < zone.length() - 1; i++) {
 
         /*
          * Here we go thorough the sides of the illumination zone and check if they are a part of a wall
          * If yes, then the part is used to build the image of the transmitter.
          */
 
-        int j =0;
+        unsigned int j = 0;
         bool cont = true;
-        bool contDiffraction = true;
-        while(j<walls.size() && cont){
-            if(walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))){
-                illuminatedWalls.push_back(Line(zone.at(i),zone.at(i+1)));
+//        bool contDiffraction = true;
+        while (j < walls.size() && cont) {
+            if (walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))) {
+                illuminatedWalls.push_back(Line(zone.at(i), zone.at(i+1)));
                 usedWalls.push_back(walls.at(j));
 
                 //addLine(Line(zone.at(i),zone.at(i+1)),redPen);
 
                 //Creation of the trasmitter image
-                TransmitterImage *image = new TransmitterImage(Line(zone.at(i),zone.at(i+1)),parent);
+                TransmitterImage *image = new TransmitterImage(Line(zone.at(i), zone.at(i+1)), parent);
                 image->setBuilding(walls.at(j)->getBuilding());
                 //image->setSceneBoundary(itemsBoundingRect());
                 image->setRayFactory(m_rayFactory);
 //                m_receiver->attachObserver(image);
-                for(int numberReceivers =0;numberReceivers<m_receivers.size();numberReceivers++){
+                for (unsigned int numberReceivers = 0; numberReceivers < m_receivers.size(); numberReceivers++) {
                     m_receivers.at(numberReceivers)->attachObserver(image);
                 }
                 images.push_back(image);
 
                 //QPolygonF imagesZone = zone.intersected(image->getIlluminationZone());
 
-                QPolygonF imagesZone = buildingsInIlluminationZone(image,nbReflections);
+                QPolygonF imagesZone = buildingsInIlluminationZone(image, nbReflections);
 
                 //usedWalls.push_back(walls.at(j));
-                walls.erase(walls.begin()+j);
+                walls.erase(walls.begin() + j);
                 cont = false;
             }
                 j++;
