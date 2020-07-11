@@ -50,6 +50,9 @@ void MathematicalReceiverProduct::setPathLoss(std::map<double, double> pathloss)
     computePathLossFading();
     modelPathLoss();
     cellRange();
+    if (m_dialog != nullptr){
+        m_dialog->changeGraph();
+    }
 }
 
 void MathematicalReceiverProduct::computePathLossFading(){
@@ -158,6 +161,9 @@ void MathematicalReceiverProduct::setImpulseAttenuation(std::map<std::vector<dou
     }
     m_attenuation = attenuation;
     computeImpulseTDL();
+    if (m_dialog != nullptr){
+        m_dialog->changeGraph();
+    }
 }
 
 void MathematicalReceiverProduct::computeImpulseTDL(){
@@ -186,37 +192,25 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
         tau_check = imp.second/c;
 
         int l = 0;
-        while(!(l*deltaTau-deltaTau/2<=tau_check && tau_check<l*deltaTau+deltaTau/2)){
+        while(!(l*deltaTau<=tau_check && tau_check<l*deltaTau+deltaTau)){
             l++;
          }
-        x[i] = l*deltaTau*1e9;
-        y[i] = it->second * exp(-k * 2.0*M_PI * std::complex<double>(m_transmitterbandwidth * tau_check));
+        x[i] = (l+1)*deltaTau*1e9;
+        y[i] = it->second * exp(-k * 2.0*M_PI * std::complex<double>(m_transmitterfrequency * tau_check));
         i++;
         it++;
     }
+    std::map<double,std::complex<double>> map_tau_tdl;
     for (unsigned long i=0; i<rayNumber; ++i){
-        for (unsigned long j=0; j<rayNumber; ++j){
-            if(i<j && round(x.at(i)*1.0e3) == round(x.at(j)*1.0e3)){
-                 y[i] += y[j];
-                 y[j] = 0.0;
-            }
-        }
+        map_tau_tdl[x.at(i)] += y[i];
     }
-
-    int counter = 0;
-    for (unsigned long i=0; i<rayNumber; ++i){
-        if(y[i]!=0.0){counter++;}
-    }
-
-    unsigned long p = 0;
-    int counter2 = 0;
-    while(p<rayNumber){
-        if(y[p] != 0.0){
-            tau_tdl.push_back(x[p]);
-            h_tdl.push_back(10*log10(abs(y[p])));
-            counter2++;
-        }
-        p++;
+    h_tdl.resize(map_tau_tdl.size());
+    tau_tdl.resize(map_tau_tdl.size());
+    i = 0;
+    for (const auto &tdl : map_tau_tdl){
+        h_tdl[i] = 10*log10(abs(tdl.second));
+        tau_tdl[i] = tdl.first;
+        i++;
     }
 }
 
@@ -278,7 +272,7 @@ void MathematicalReceiverProduct::newProperties(){
 
 // From MathematicalProduct
 void MathematicalReceiverProduct::openDialog(){
-    new DialogReceiverProduct(this);
+    m_dialog = new DialogReceiverProduct(this);
 }
 
 void MathematicalReceiverProduct::update(QGraphicsItem* graphic){
@@ -328,9 +322,11 @@ void MathematicalReceiverProduct::notify(double &power, std::vector<double> *pow
 void MathematicalReceiverProduct::answer(ProductObserver *observer, double &power, std::vector<double> *powers, std::complex<double> &EMfield){
     m_e_field += EMfield;
     m_power = power;
-    m_graphic->notifyToGraphic(this,m_power);
-    m_transmitter = observer;
-    m_transmitter->drawRays(this, true);
+    if (m_graphic != nullptr){
+        m_graphic->notifyToGraphic(this,m_power);
+        m_transmitter = observer;
+        m_transmitter->drawRays(this, true);
+    }
 //    if(m_power < power - 20 && observer != m_transmitter){
 //        m_power = power;
 //        m_graphic->notifyToGraphic(this,m_power);

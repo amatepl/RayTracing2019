@@ -90,6 +90,7 @@ private:
     int m_target_snr;
     int m_noise_figure;
     int m_interferencemargin;
+    DialogReceiverProduct *m_dialog = nullptr;
 
     // 1. For ProductOBserves
     vector<ProductObserver*> m_observers;

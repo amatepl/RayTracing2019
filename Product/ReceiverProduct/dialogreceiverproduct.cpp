@@ -16,7 +16,8 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     m_tabwidget->addTab(RealPathLossDialog(), tr("Real Path-Loss"));
     m_tabwidget->addTab(CellRange(),tr("Cellule range"));
     m_tabwidget->addTab(DopplerSpectrum(), tr("Doppler Spectrum"));
-
+    std::cout << "h_tdl: " << h_tdl.size() << endl;
+    std::cout << "h: " << h.size() << endl;
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
 
     QVBoxLayout *mainlayout = new QVBoxLayout;
@@ -280,7 +281,7 @@ QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
     impulse_plot->replot();
     impulse_plot->legend->setVisible(true);
     impulse_plot->plotLayout()->insertRow(0);
-    impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Physical impulse response and TDL", QFont("sans", 12, QFont::Bold)));
+    impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Physical impulse response (and TDL model under US assumption)", QFont("sans", 12, QFont::Bold)));
     QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
@@ -320,7 +321,7 @@ QWidget* DialogReceiverProduct::TDLImpulseResponse(){
     customplot->replot();
 
     customplot->plotLayout()->insertRow(0);
-    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "TDL impulse response", QFont("sans", 12, QFont::Bold)));
+    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "TDL model under US assumption", QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(customplot,0,0);
@@ -349,6 +350,9 @@ QWidget* DialogReceiverProduct::DopplerSpectrum(){
 
     widget->setLayout(firstLayout);
     return widget;
+}
+
+void DialogReceiverProduct::changeGraph(){
 }
 
 void DialogReceiverProduct::setEnable(bool enable){

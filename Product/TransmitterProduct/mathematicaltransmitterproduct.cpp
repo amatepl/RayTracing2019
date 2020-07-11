@@ -12,6 +12,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_kind = dipole;
     m_power = 2;
     m_orientation = 0;
+    m_pr_orientation = 0;
     lambda = c/m_frequency;
     epsilonWallRel = 5;
     active_pathloss = true;
@@ -98,15 +99,17 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         angle_prime = 270.0 + 180.0 - angle;
     }
     cout << angle << endl;
-    Efield = i * a * exp(-i * (2.0 * M_PI / lambda) * completeLength);
-    Efield *= totaleArrayFactor(angle_prime, 90,0);
-    if (amountSegment == 1) {
+
+    Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+    Efield *= totaleArrayFactor(angle_prime,90);
+    if(amountSegment==1){
         // Adding the ground component
         complex <double> groundEfield = this->computeEfieldGround(receiver); // Compute the electrical field from the ray reflected off the ground
         double dist = distance(receiver);
-        double thetaI = atan(antennaHeight / (dist / 2)) + M_PI / 2;
-        double thetat = 90 - atan(antennaHeight / (dist / 2)) * 180 / M_PI;
-        Efield += groundEfield*totaleArrayFactor(angle_prime, thetat, 0);//(cos(M_PI/2*cos(thetaI))/sin(thetaI));
+        double thetaI = atan(antennaHeight/(dist/2))+M_PI/2;
+        double thetat = 90-atan(antennaHeight/(dist/2))*180/M_PI;
+        Efield += groundEfield*totaleArrayFactor(angle_prime,thetat);//(cos(M_PI/2*cos(thetaI))/sin(thetaI));
+
     }
     QPointF p1 = rayLine->at(rayLine->size()-1)->p2();
     if (p1.x() - 1 != this->getPosX() && p1.y() != this->getPosY()) {
@@ -669,6 +672,11 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
         /*
          * The ray is a diffracted one.
          */
+
+
+        map<ProductObservable*,map<double,double>>::iterator it;
+        it = m_pathloss.begin();
+        m_pathloss.erase(it->first);
 
         complex<double>EMfield = computeDiffractedEfield(wholeRay);
         m_receiversField[receiver] += EMfield;
