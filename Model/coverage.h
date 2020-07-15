@@ -13,8 +13,8 @@ public:
     void setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents);
 
     // AlgorithmInterface
-    MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
-                                           vector<MathematicalBuildingProduct*> buildings) override;
+//    MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
+//                                           vector<MathematicalBuildingProduct*> buildings) override;
     MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
 
     void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;

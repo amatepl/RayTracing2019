@@ -15,7 +15,7 @@ public:
     virtual ~SceneFactory() {}
     virtual GraphicsProduct* createGraphicsProduct(int posX, int posY) = 0;
     virtual MathematicalProduct* createMathematicalProduct(int posX, int posY, bool linkgraphic) = 0;
-    virtual MathematicalProduct* createMathematicalProduct(MathematicalProduct* original, bool linkgraphic){};
+    virtual MathematicalProduct* createMathematicalProduct(MathematicalProduct* original, bool linkgraphic) {};
 
 };
 

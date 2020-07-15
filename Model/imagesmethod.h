@@ -14,7 +14,7 @@
 #include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
 #include "Product/TransmitterProduct/transmitterimage.h"
 #include "Product/TransmitterProduct/antenadiffraction.h"
-
+#include "Product/CarProduct/mathematicalcarproduct.h"
 #include <QGraphicsScene>
 
 class AbstractRayFactory;
@@ -45,6 +45,7 @@ public:
 protected:
     vector<MathematicalTransmitterProduct *> m_transmitters;
     vector<MathematicalBuildingProduct *> m_buildings;
+    vector<MathematicalCarProduct *> m_cars;
     vector<MathematicalTreeProduct *> m_trees;
 
     MathematicalReceiverProduct *m_receiver;

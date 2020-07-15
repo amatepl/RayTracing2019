@@ -12,6 +12,7 @@ class AntenaDiffraction: public QPointF, public ProductObserver, public Abstract
 public:
     AntenaDiffraction(const QPointF &pos, const QPointF &p1, QPointF &p2, AbstractAntena* parent, QRectF sceneBoundary);
     AntenaDiffraction(const QPointF &pos, const QPointF &p1, QPointF &p2, AbstractAntena* parent);
+    ~AntenaDiffraction();
     //QPolygonF getIlluminationZone(QPointF &p1, QPointF &p2);
     void setSceneBoundary(const QRectF &rect);
     void buildIlluminationZone(const QPointF &p1, const QPointF &p2);

@@ -13,7 +13,7 @@
 #include <QComboBox>
 #include <QTextEdit>
 
-#include "mathematicalbuildingproduct.h"
+//#include "mathematicalbuildingproduct.h"
 #include "graphicsbuildingproduct.h"
 #include "buildingproduct.h"
 

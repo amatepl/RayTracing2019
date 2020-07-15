@@ -5,15 +5,12 @@ Model::Model(WindowModelObservable* windowModelObservale)
     m_windowModelObservable = windowModelObservale;
 }
 
-Model::~Model()
-{
+Model::~Model() {
     delete [] this;
 }
 
-void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
-                     TreeFactory *treeFactory, CarFactory* carFactory,
-                     ReceiverFactory* receiverfactory)
-{
+void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory, CarFactory* carFactory,
+                     ReceiverFactory* receiverfactory) {
 
     /* This will have to change
      */
@@ -23,26 +20,15 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
     map->setScene(m_scene);
     map->setBuildingFactory(buildingFactory);
     map->setCarFactory(carFactory);
-    map->setTreeFactory(treeFactory);
-
     map->generateMap();
     m_receiverfactory = receiverfactory;
     //m_thread = thread((map->moveCars),ref(*map));
     //m_thread.join();
-    vector<MathematicalProduct *> mapProducts = map->getProducts();
-    for (int i = 0; i < mapProducts.size(); i++) {
-        string type = mapProducts.at(i)->getType();
-        m_mathematicalComponents[type].push_back(mapProducts.at(i));
-    }
-
-
-//    m_mathematicalComponents["Building"] = map->getProducts();
-
-//    m_windowModelObservable->modelNotify(map->getProducts());
+    m_mathematicalComponents["Building"] = map->getProducts();
+    //m_windowModelObservable->modelNotify(map->getProducts());
 }
 
-void Model::addMathematicalComponent(MathematicalProduct* mathematicalProduct)
-{
+void Model::addMathematicalComponent(MathematicalProduct* mathematicalProduct) {
 
     vector<MathematicalProduct*> tmp;
     string type = mathematicalProduct->getType();
@@ -51,16 +37,16 @@ void Model::addMathematicalComponent(MathematicalProduct* mathematicalProduct)
         tmp = m_mathematicalComponents[type];
         tmp.push_back(mathematicalProduct);
         m_mathematicalComponents[type] = tmp;
-    } else {
+    }
+    else {
         tmp.push_back(mathematicalProduct);
         m_mathematicalComponents[type] = tmp;
     }
 }
 
-void Model::setObservableProducts()
-{
-    for(unsigned i = 0; i < m_mathematicalComponents.count("Receiver"); i++) {
-        for(unsigned j = 0; j < m_mathematicalComponents.count("Transmitter"); j++) {
+void Model::setObservableProducts() {
+    for(int i = 0; i < m_mathematicalComponents.count("Receiver"); i++) {
+        for(int j = 0; j < m_mathematicalComponents.count("Transmitter"); j++) {
             dynamic_cast<ProductObservable*>(m_mathematicalComponents["Receiver"].at(i))->attachObserver(
                 dynamic_cast<ProductObserver*>(m_mathematicalComponents["Transmitter"].at(j)));
             dynamic_cast<ProductObserver*>(m_mathematicalComponents["Transmitter"].at(i))->attachObservable(
@@ -69,9 +55,8 @@ void Model::setObservableProducts()
     }
 }
 
-void Model::setModelObservers()
-{
-    for(unsigned i = 0; i < m_mathematicalComponents.count("Transmitter"); i++) {
+void Model::setModelObservers() {
+    for(int i = 0; i < m_mathematicalComponents.count("Transmitter"); i++) {
         //((ModelObserver*)m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
         dynamic_cast<ModelObserver*>(m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
 
@@ -79,8 +64,7 @@ void Model::setModelObservers()
     }
 }
 
-void Model::launchAlgorithm(AlgorithmInterface *algorithm)
-{
+void Model::launchAlgorithm(AlgorithmInterface *algorithm) {
 
     m_algorithm = algorithm;
 
@@ -106,15 +90,13 @@ void Model::launchAlgorithm(AlgorithmInterface *algorithm)
 
 }
 
-MathematicalTransmitterProduct* Model::selectTransmitter()
-{
+MathematicalTransmitterProduct* Model::selectTransmitter() {
     MathematicalTransmitterProduct* transmitter = (MathematicalTransmitterProduct*)
             m_mathematicalComponents["Transmitter"].at(0);
     return transmitter;
 }
 
-void Model::notify(MathematicalTransmitterProduct* transmitter)
-{
+void Model::notify(MathematicalTransmitterProduct* transmitter) {
     //cout<<"Notifies"<<endl;
 //    cout<<"Number of whole rays: "<< (transmitter->getRays()).size()<<endl;
 //    for(int i=0;i<transmitter->getRays().size();i++){

@@ -5,12 +5,14 @@ Coverage::Coverage(SceneFactory *receiverFactory):m_receiverFactory(receiverFact
 
 }
 
-MathematicalComponent* Coverage::compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
-                       vector<MathematicalBuildingProduct*> buildings){
+//MathematicalComponent* Coverage::compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
+//                       vector<MathematicalBuildingProduct*> buildings){
 
-}
+//}
 
 MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct *> > mathematicalComponents, ReceiverFactory* receiverfactory){
+
+
     setAttributs(mathematicalComponents);
     reflectionsNumber = 5;
 
@@ -47,7 +49,9 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
         }
     }
+    return nullptr;
 }
+
 
 void Coverage::sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver){
     // Send data is used to share some computed data from the transmitter to the receiver.
@@ -86,4 +90,6 @@ vector<QRectF> Coverage::buildCoverageZone(){
     for(unsigned int i=0; i<m_transmitters.size();i++){
 
     }
+    vector<QRectF> res;
+    return res;
 }

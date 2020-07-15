@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsLineItem>
 #include <iostream>
+#include <QException>
 
 #include "Product/graphicsproduct.h"
 

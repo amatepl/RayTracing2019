@@ -62,6 +62,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/mathematicalproduct.h \
     Product/sceneproduct.h \
     Share/line.h \
+    Share/reflectiveobstacle.h \
     Share/wall.h \
     applicationwindow.h \
     graphicsmap.h \
@@ -103,6 +104,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
     Product/TreeProduct/treeparams.cpp \
     Share/line.cpp \
+    Share/reflectiveobstacle.cpp \
     Share/wall.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \

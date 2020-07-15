@@ -12,7 +12,12 @@ GraphicsRayProduct::~GraphicsRayProduct(){
 }
 
 void GraphicsRayProduct::draw(){
-    m_scene->addItem(this);
+    try {
+        m_scene->addItem(this);
+    } catch (const QException &e) {
+
+    }
+
 }
 
 void GraphicsRayProduct::erase(){
