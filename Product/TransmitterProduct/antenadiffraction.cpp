@@ -1,6 +1,7 @@
 #include "antenadiffraction.h"
 
-AntenaDiffraction::AntenaDiffraction(const QPointF &pos, const QPointF &p1, QPointF &p2, AbstractAntena *parent, QRectF sceneBoundary)
+AntenaDiffraction::AntenaDiffraction(const QPointF &pos, const QPointF &p1, QPointF &p2,
+                                     AbstractAntena *parent, QRectF sceneBoundary)
     : QPointF(pos), m_parent(parent), m_sceneBoundary(sceneBoundary), m_radius(500)
 {
  buildIlluminationZone(p1, p2);
@@ -8,12 +9,17 @@ AntenaDiffraction::AntenaDiffraction(const QPointF &pos, const QPointF &p1, QPoi
 }
 
 
-AntenaDiffraction::AntenaDiffraction(const QPointF &pos, const QPointF &p1, QPointF &p2, AbstractAntena *parent)
+AntenaDiffraction::AntenaDiffraction(const QPointF &pos, const QPointF &p1,
+                                     QPointF &p2, AbstractAntena *parent)
     : QPointF(pos), m_parent(parent), m_radius(500)
 {
  buildIlluminationZone(p1, p2);
 }
 
+AntenaDiffraction::~AntenaDiffraction()
+{
+
+}
 
 void AntenaDiffraction::buildIlluminationZone(const QPointF &p1, const QPointF &p2)
 {
@@ -78,7 +84,8 @@ void AntenaDiffraction::setIlluminatedZone(const QPolygonF &zone)
 }
 
 
-void AntenaDiffraction::update(ProductObservable *productObservable, const float speed, const float direction)
+void AntenaDiffraction::update(ProductObservable *productObservable,
+                               const float speed, const float direction)
 {
     if (m_zone.containsPoint(*productObservable->getPos(), Qt::OddEvenFill)) {
         vector<MathematicalRayProduct *> *wholeRay = new vector<MathematicalRayProduct *>;
@@ -93,7 +100,9 @@ void AntenaDiffraction::update(ProductObservable *productObservable, const float
 }
 
 
-void AntenaDiffraction::notifyParent(ProductObservable *productObservable, const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct *> *wholeRay)
+void AntenaDiffraction::notifyParent(ProductObservable *productObservable,
+                                     const float speed, const float direction,
+                                     const QPointF &point, vector<MathematicalRayProduct *> *wholeRay)
 {
     QLineF line(*this, point);
     //ray newRay(*this,point);

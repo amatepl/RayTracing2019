@@ -1,10 +1,13 @@
 #include "mathematicalcarproduct.h"
 
-MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center): QPolygonF(rect),
+MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center): MathematicalBuildingProduct(rect),
     m_center(center)
 {
     //setRect(round(rect.topLeft().x()),round(rect.topLeft().y()),rect.width(),rect.height());
     m_type = "Car";
+    cout<<"Size of car: "<<this->size()<<endl;
+    cout<<"Number of walls: "<<m_walls.size()<<endl;
+    cout<<"First wall point: "<< m_walls.at(0)->p1().x()<<", "<< m_walls.at(0)->p1().y()<<endl;
 }
 
 MathematicalCarProduct::~MathematicalCarProduct(){
@@ -30,7 +33,8 @@ void MathematicalCarProduct::setRoad(QLineF &road){
 
 void MathematicalCarProduct::attachObservable(GraphicsProduct *graphic){
     m_graphic = graphic;
-    QObject::connect((QObject*)this,SIGNAL(&MathematicalCarProduct::positionChanged),(QObject*)m_graphic,SLOT(&GraphicsProduct::notifyToGraphicSig),Qt::QueuedConnection);
+//    QObject::connect(dynamic_cast<QObject*>(this),SIGNAL(&MathematicalCarProduct::positionChanged),
+//                     dynamic_cast<QObject*>(m_graphic),SLOT(&GraphicsProduct::notifyToGraphicSig),Qt::QueuedConnection);
 }
 
 double MathematicalCarProduct::getSpeed(){
@@ -69,10 +73,11 @@ void MathematicalCarProduct::setPosY(int posY){
 }
 
 void MathematicalCarProduct::update(QGraphicsItem *graphic){
-    QRectF rect = graphic->sceneBoundingRect();
-    QPolygonF polyRect = QPolygonF(rect);
-    swap(polyRect);
-    m_center = graphic->pos();
+    //QRectF rect = graphic->sceneBoundingRect();
+//    QPolygonF polyRect = QPolygonF(rect);
+//    swap(polyRect);
+//    m_extremities = polyRect;
+//    m_center = graphic->pos();
 }
 
 void MathematicalCarProduct::openDialog(){

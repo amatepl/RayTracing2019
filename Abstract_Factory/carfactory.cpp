@@ -18,7 +18,7 @@ GraphicsProduct* CarFactory::createGraphicsProduct(int posX, int posY){
 }
 
 MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic ){
-    QRectF rect(posX,posY,50,50);
+    QRectF rect(posX - 11, posY - 11,22,22);
     MathematicalCarProduct* mathematicalProduct = new MathematicalCarProduct(rect, QPointF(posX,posY));
     if (linkgraphic){
         GraphicsCarProduct* graphicsProduct = new GraphicsCarProduct(m_productmenu, m_scene);
@@ -28,4 +28,17 @@ MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, b
         mathematicalProduct->attachObservable(graphicsProduct);
     }
     return mathematicalProduct;
+}
+
+MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, QPolygonF poly, bool linkgraphic){
+
+    MathematicalBuildingProduct* mathematicalCarProduct = new MathematicalCarProduct(poly,QPointF(posX,posY));
+    if (linkgraphic){
+        GraphicsCarProduct* graphicsCarProduct = new GraphicsCarProduct(m_productmenu, m_scene);
+        graphicsCarProduct->attachObserver(mathematicalCarProduct);
+        graphicsCarProduct->setX(posX);
+        graphicsCarProduct->setY(posY);
+        mathematicalCarProduct->attachObservable(graphicsCarProduct);
+    }
+    return mathematicalCarProduct;
 }

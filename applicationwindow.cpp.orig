@@ -3,14 +3,13 @@
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
     createToolBox();
-    createToolInfo();
+    createTabWidget();
     createActions();
     createMenus();
     view = new QGraphicsView();
     m_map = new GraphicsMap(view,this,m_productmenu);
-    m_map->installEventFilter(this);
     view->setMouseTracking(true);
-    m_receiverFactory = new ReceiverFactory(m_productmenu,m_info_widget,m_map);
+    m_receiverFactory = new ReceiverFactory(m_productmenu,m_map);
     m_transmitterFactory = new TransmitterFactory(m_productmenu,m_map);
     m_buildingFactory = new BuildingFactory(m_productmenu,m_map);
     m_treeFactory = new TreeFactory(m_productmenu,m_map);
@@ -36,41 +35,35 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
     addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
-    //addToolBar(Qt::TopToolBarArea,m_toolbarlaunch);
-    addToolBar(Qt::TopToolBarArea,m_toolinfo);
+    addToolBar(Qt::TopToolBarArea,m_toolbarlaunch);
     setCentralWidget(view);
     setWindowState(Qt::WindowMaximized);
 
     m_graphicsmode = MoveItem;
 }
 
-ApplicationWindow::~ApplicationWindow()
-{
+ApplicationWindow::~ApplicationWindow(){
 
 }
 
-void ApplicationWindow::answer(GraphicsProduct* graphic)
-{
+void ApplicationWindow::answer(GraphicsProduct* graphic){
     m_graphicsmode = MoveItem;
     QList<QAbstractButton*> antennabuttons = m_antennagroup->buttons();
     QList<QAbstractButton*> obstaclebuttons = m_obstaclegroup->buttons();
-    for(QAbstractButton *button: antennabuttons) {
+    for(QAbstractButton *button: antennabuttons){
         button->setChecked(false);
     }
-    for(QAbstractButton *button: obstaclebuttons) {
+    for(QAbstractButton *button: obstaclebuttons){
         button->setChecked(false);
     }
     m_model->addMathematicalComponent(graphic->toMathematicalProduct());
+    //cout<<"Item added to model"<<endl;
 }
 
 void ApplicationWindow::moveMouse(QPointF mouse){
-    m_info_widget->changeScenePos(mouse.x(),mouse.y());
+    sceneposx->setText(QString::number(mouse.x()));
+    sceneposy->setText(QString::number(mouse.y()));
 }
-
-void ApplicationWindow::resetToolInfo(){
-    m_info_widget->reset();
-}
-
 /*
 void ApplicationWindow::attachObserver(WindowObserver *windowobserver){
     m_windowobserver.push_back(windowobserver);
@@ -97,93 +90,90 @@ void ApplicationWindow::notify(int mode){
 
 //    notify(int(m_mode));
 
-void ApplicationWindow::modelAnswer(vector<MathematicalProduct *> sceneproducts)
-{
-    for(unsigned i = 0; i< sceneproducts.size(); i++) {
+void ApplicationWindow::modelAnswer(vector<MathematicalProduct *> sceneproducts){
+    for(unsigned i = 0; i< sceneproducts.size();i++){
         m_map->addItem((QGraphicsItem*)sceneproducts.at(i)->toGraphicsProduct());
     }
 }
 
-void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts)
-{
-    for(unsigned i = 0; i< sceneproducts->size(); i++) {
-//        m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
-//        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
-//        QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
+void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts){
+    for(unsigned i = 0; i< sceneproducts->size();i++){
+        //m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
+        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
+        //QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
-//        m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
+        //m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
         m_map->addItem(gItem);
+        //cout<<"Item added to scene"<<endl;
     }
 }
 
-void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts)
-{
-    for(unsigned i = 0; i< sceneproducts.size(); i++) {
+void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts){
+    for(unsigned i = 0; i< sceneproducts.size();i++){
         //GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->toGraphicsProduct());
         m_map->addItem(gItem);
     }
 }
 
-void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproducts)
-{
-    for(unsigned i = 0; i< sceneproducts->size(); i++) {
-//        m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
-//        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
+void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproducts){
+    for(unsigned i = 0; i< sceneproducts->size();i++){
+        //m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
+        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
         //QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
-//        m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
+        //m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
         m_map->addItem(gItem);
+        //cout<<"Item added to scene"<<endl;
     }
 }
 
-void ApplicationWindow::modelNotify(vector<vector<MathematicalRayProduct*> *> sceneproducts)
-{
-    for(unsigned i = 0; i< sceneproducts.size(); i++) {
-        for(unsigned j=0; j<sceneproducts.at(i)->size(); j++) {
-//            QGraphicsLineItem* gComp =(QGraphicsLineItem*) sceneproducts.at(i)->at(j)->toGraphicsProduct();
-
-            QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->at(
-                                       j)->toGraphicsProduct());
-
+void ApplicationWindow::modelNotify(vector<vector<MathematicalRayProduct*> *> sceneproducts){
+    //cout<<"Number of WholeRays: "<<sceneproducts.size()<<endl;
+    for(unsigned i = 0; i< sceneproducts.size();i++){
+        //cout<<"Number of Rays in WholeRays: "<<sceneproducts.at(i)->size()<<endl;
+        for(unsigned j=0;j<sceneproducts.at(i)->size();j++){
+            QGraphicsLineItem* gComp =(QGraphicsLineItem*) sceneproducts.at(i)->at(j)->toGraphicsProduct();
+            //cout<<"before cast "<<sceneproducts.at(i)->size()<<endl;
+            QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->at(j)->toGraphicsProduct());
+            //cout<<"After cast "<<sceneproducts.at(i)->size()<<endl;
             m_map->addItem(gItem);
-
+            //cout<<"Item added to scene"<<endl;
         }
     }
 }
 
-QWidget* ApplicationWindow::createToolButton(const QString &text, int mode)
-{
+QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
     QWidget *widget = new QWidget;
     QToolButton *button = new QToolButton;
     button->setIconSize(QSize(50, 50));
     button->setCheckable(true);
     QIcon icon;
-    switch(mode) {
-    case int(InsertTransmitter):
-        icon = QIcon(GraphicsTransmitterProduct::getImage());
-        button->setIcon(icon);
-        m_antennagroup->addButton(button,mode);
+    switch(mode){
+        case int(InsertTransmitter):
+            icon = QIcon(GraphicsTransmitterProduct::getImage());
+            button->setIcon(icon);
+            m_antennagroup->addButton(button,mode);
+            break;
+        case int(InsertReceiver):
+            icon = QIcon(GraphicsReceiverProduct::getImage());
+            button->setIcon(icon);
+            m_antennagroup->addButton(button,mode);
+            break;
+        case int(InsertBuilding):
+            icon = QIcon(GraphicsBuildingProduct::getImage());
+            button->setIcon(icon);
+            m_obstaclegroup->addButton(button,mode);
+            break;
+        case int(InsertTree):
+            icon = QIcon(GraphicsTreeProduct::getImage());
+            button->setIcon(icon);
+            m_obstaclegroup->addButton(button,mode);
         break;
-    case int(InsertReceiver):
-        icon = QIcon(GraphicsReceiverProduct::getImage());
-        button->setIcon(icon);
-        m_antennagroup->addButton(button,mode);
-        break;
-    case int(InsertBuilding):
-        icon = QIcon(GraphicsBuildingProduct::getImage());
-        button->setIcon(icon);
-        m_obstaclegroup->addButton(button,mode);
-        break;
-    case int(InsertTree):
-        icon = QIcon(GraphicsTreeProduct::getImage());
-        button->setIcon(icon);
-        m_obstaclegroup->addButton(button,mode);
-        break;
-    case int(InsertCar):
-        icon = QIcon(GraphicsCarProduct::getImage());
-        button->setIcon(icon);
-        m_obstaclegroup->addButton(button,mode);
+        case int(InsertCar):
+            icon = QIcon(GraphicsCarProduct::getImage());
+            button->setIcon(icon);
+            m_obstaclegroup->addButton(button,mode);
         break;
 
     }
@@ -195,8 +185,62 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode)
     return widget;
 }
 
-void ApplicationWindow::createActions(){
+QWidget* ApplicationWindow::rayTracingWidget(){
+    QWidget *widget = new QWidget;
 
+    launch_raytracing = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch Ray-Tracing");
+    connect(launch_raytracing, SIGNAL(clicked()), this, SLOT(LaunchRayTracing()));
+    sceneposx = new QLineEdit;
+    QLabel *posX = new QLabel("x position: ");
+    sceneposy = new QLineEdit;
+    QLabel *posY = new QLabel("y position: ");
+    sceneposx->setText(QString::number(0));
+    sceneposy->setText(QString::number(0));
+    QHBoxLayout *positionx = new QHBoxLayout;
+    positionx->addWidget(posX);
+    positionx->addWidget(sceneposx);
+    QHBoxLayout *positiony = new QHBoxLayout;
+    positiony->addWidget(posY);
+    positiony->addWidget(sceneposy);
+
+    QHBoxLayout *raytracinglayout = new QHBoxLayout;
+    raytracinglayout->addWidget(launch_raytracing);
+    raytracinglayout->addLayout(positionx);
+    raytracinglayout->addLayout(positiony);
+
+    widget->setLayout(raytracinglayout);
+
+    return widget;
+}
+
+QWidget* ApplicationWindow::coverageWidget(){
+    QWidget *widget = new QWidget;
+
+    launch_coverage = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch coverage");
+    connect(launch_coverage, SIGNAL(clicked()), this, SLOT(launchCoverage()));
+    sceneposx = new QLineEdit;
+    QLabel *posX = new QLabel("x position: ");
+    sceneposy = new QLineEdit;
+    QLabel *posY = new QLabel("y position: ");
+    sceneposx->setText(QString::number(0));
+    sceneposy->setText(QString::number(0));
+    QHBoxLayout *positionx = new QHBoxLayout;
+    positionx->addWidget(posX);
+    positionx->addWidget(sceneposx);
+    QHBoxLayout *positiony = new QHBoxLayout;
+    positiony->addWidget(posY);
+    positiony->addWidget(sceneposy);
+
+    QHBoxLayout *coveragelayout = new QHBoxLayout;
+    coveragelayout->addWidget(launch_coverage);
+    coveragelayout->addLayout(positionx);
+    coveragelayout->addLayout(positiony);
+
+    widget->setLayout(coveragelayout);
+    return widget;
+}
+
+void ApplicationWindow::createActions(){
     objectminimize = m_toolbarobject->toggleViewAction();
     objectminimize->setText(tr("Object toolbar"));
     deleteaction = new QAction(QIcon(":/Images/Delete.png"), tr("&Delete"), this);
@@ -211,8 +255,7 @@ void ApplicationWindow::createActions(){
 
 }
 
-void ApplicationWindow::createMenus()
-{
+void ApplicationWindow::createMenus(){
     m_windowmenu = menuBar()->addMenu(tr("&Window"));
     m_windowmenu->addAction(objectminimize);
 
@@ -222,8 +265,7 @@ void ApplicationWindow::createMenus()
     m_productmenu->addAction(deleteaction);
 }
 
-void ApplicationWindow::createToolBox()
-{
+void ApplicationWindow::createToolBox(){
     /*
      * Creation of ths sidepannel butons
     */
@@ -276,122 +318,101 @@ void ApplicationWindow::createToolBox()
     m_toolbarobject->setMovable(false);
 }
 
-void ApplicationWindow::createToolInfo()
-{
-    m_toolinfo = new QToolBar;
-    m_info_widget = new InfoWidget(m_toolinfo);
-    m_toolinfo->addWidget(m_info_widget);
+void ApplicationWindow::createTabWidget(){
+    m_tabwidget = new QTabWidget;
+    m_tabwidget->addTab(rayTracingWidget(),"Ray-Tracing");
+    m_tabwidget->addTab(coverageWidget(),"Coverage");
 
-    connect(m_info_widget, &InfoWidget::rayTracing, this, &ApplicationWindow::LaunchRayTracing);
-    connect(m_info_widget, &InfoWidget::coverage, this, &ApplicationWindow::launchCoverage);
+    m_toolbarlaunch = new QToolBar;
+    m_toolbarlaunch->addWidget(m_tabwidget);
 }
 
-void ApplicationWindow::setGraphicsMode(GraphicsMode mode)
-{
+void ApplicationWindow::setGraphicsMode(GraphicsMode mode){
     m_graphicsmode = mode;
 }
 
-void ApplicationWindow::setActionMode(ActionMode mode)
-{
+void ApplicationWindow::setActionMode(ActionMode mode){
     m_actionmode = mode;
 }
 
-void ApplicationWindow::notifyMap()
-{
+void ApplicationWindow::notifyMap(){
     SceneFactory * factory;
     if (m_graphicsmode != MoveItem) {
         switch (m_graphicsmode) {
-        case int(InsertReceiver):
-            factory = m_receiverFactory;
-            m_map->setSceneFactory(factory);
-            break;
-        case int(InsertTransmitter):
-            factory = m_transmitterFactory;
-            m_map->setSceneFactory(factory);
-            break;
-        case int(InsertBuilding):
-            factory = m_buildingFactory;
-            m_map->setSceneFactory(factory);
-            break;
-        case int(InsertTree):
-            factory = m_treeFactory;
-            m_map->setSceneFactory(factory);
-            break;
-        case int(InsertCar):
-            factory = m_carFactory;
-            m_map->setSceneFactory(factory);
-            break;
-        default:
-            break;
+            case int(InsertReceiver):
+                factory = m_receiverFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertTransmitter):
+                factory = m_transmitterFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertBuilding):
+                factory = m_buildingFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertTree):
+                factory = m_treeFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            case int(InsertCar):
+                factory = m_carFactory;
+                m_map->setSceneFactory(factory);
+                break;
+            default:
+                break;
         }
     }
 }
 
-void ApplicationWindow::notifyModel()
-{
+void ApplicationWindow::notifyModel(){
     //cout<<"Model notified"<<endl;
     //m_model->launchAlgorithm(m_rayTracingAlgorithm);
     m_model->launchAlgorithm(m_coverageAlgorithm);
 }
 
-bool ApplicationWindow::eventFilter(QObject*, QEvent *event){
-    if (event->type() == QEvent::Leave)
-    {
-        m_info_widget->changeScenePos(0,0);
-    }
-    return false;
-}
-
 // SLOTS
 
-void ApplicationWindow::antennaGroupClicked(int mode)
-{
+void ApplicationWindow::antennaGroupClicked(int mode){
     QList <QAbstractButton*> buttons = m_antennagroup->buttons();
-    for (int i = 0; i < buttons.size(); i++) {
-        if (buttons.at(i) != m_antennagroup->checkedButton()) {
+    for (int i = 0; i < buttons.size(); i++){
+        if (buttons.at(i) != m_antennagroup->checkedButton()){
             buttons.at(i)->setChecked(false);
         }
     }
-    if (m_obstaclegroup->checkedButton() != 0) {
+    if (m_obstaclegroup->checkedButton() != 0)
         m_obstaclegroup->checkedButton()->setChecked(false);
-    }
     setGraphicsMode(GraphicsMode(mode));
     notifyMap();
 }
 
-void ApplicationWindow::obstacleGroupClicked(int mode)
-{
+void ApplicationWindow::obstacleGroupClicked(int mode){
     QList <QAbstractButton*> buttons = m_obstaclegroup->buttons();
-    for (int i = 0; i < buttons.size(); i++) {
-        if (buttons.at(i) != m_obstaclegroup->checkedButton()) {
+    for (int i = 0; i < buttons.size(); i++){
+        if (buttons.at(i) != m_obstaclegroup->checkedButton()){
             buttons.at(i)->setChecked(false);
         }
     }
-    if (m_antennagroup->checkedButton() != 0) {
+    if (m_antennagroup->checkedButton() != 0)
         m_antennagroup->checkedButton()->setChecked(false);
-    }
     setGraphicsMode(GraphicsMode(mode));
     notifyMap();
 }
 
-void ApplicationWindow::LaunchRayTracing()
-{
+void ApplicationWindow::LaunchRayTracing(){
     m_model->launchAlgorithm(m_rayTracingAlgorithm);
 //    notifyModel();
 }
 
-void ApplicationWindow::launchCoverage()
-{
+void ApplicationWindow::launchCoverage(){
     m_model->launchAlgorithm(m_coverageAlgorithm);
 //    notifyModel();
 }
 
-void ApplicationWindow::deleteProduct()
-{
+void ApplicationWindow::deleteProduct(){
 
 }
 
-void ApplicationWindow::openProduct()
-{
+void ApplicationWindow::openProduct(){
 
 }

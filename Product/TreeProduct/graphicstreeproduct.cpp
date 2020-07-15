@@ -3,13 +3,6 @@
 GraphicsTreeProduct::GraphicsTreeProduct(QMenu * productmenu, QGraphicsScene *scene):
     m_scene(scene),m_productmenu(productmenu)
 {
-    //QPixmap icon(":/Images/Tree.png");
-    //setPixmap(icon);
-    //setOffset(-icon.width()/2,-icon.height()/2);
-
-
-
-
     QColor illumination1;
     illumination1.setGreen(255);
     illumination1.setAlpha(100);
@@ -29,9 +22,11 @@ GraphicsTreeProduct::GraphicsTreeProduct(QMenu * productmenu, QGraphicsScene *sc
     //draw();
 }
 
+
 GraphicsTreeProduct::~GraphicsTreeProduct(){
 
 }
+
 
 QPixmap GraphicsTreeProduct::getImage(){
     QPixmap icon(":/Images/Tree.png");
@@ -39,20 +34,21 @@ QPixmap GraphicsTreeProduct::getImage(){
 }
 
 void GraphicsTreeProduct::draw() {
-
-
     m_scene->addItem(this);
 }
+
 
 bool GraphicsTreeProduct::graphicsSelected() {
     return isSelected();
 }
+
 
 void GraphicsTreeProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
 }
+
 
 QVariant GraphicsTreeProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
@@ -62,9 +58,11 @@ QVariant GraphicsTreeProduct::itemChange(GraphicsItemChange change, const QVaria
     return value;
 }
 
+
 void GraphicsTreeProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     m_observer->openDialog();
 }
+
 
 void GraphicsTreeProduct::notifyToGraphic(QPolygonF *poly, int centerx, int centery){
 
@@ -74,11 +72,5 @@ void GraphicsTreeProduct::notifyToGraphic(QPolygonF *poly, int centerx, int cent
 //    m_scene->addPolygon(*poly,QPen(),illumination1);
     setPolygon(*poly);
     //setPos(centerx,centery);
-    cout<<"Size of the polygon: "<<poly->size()<<endl;
-    for(int i =0;i<poly->size();i++){
-        cout<<poly->at(i).x()<<", "<<poly->at(i).y()<<endl;
-    }
     draw();
 }
-
-

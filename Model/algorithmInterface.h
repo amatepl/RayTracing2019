@@ -19,8 +19,8 @@ using namespace std;
 class AlgorithmInterface
 {
 public:
-    virtual MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
-                                           vector<MathematicalBuildingProduct*> buildings) =0;
+//    virtual MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
+//                                           vector<MathematicalBuildingProduct*> buildings) =0;
     virtual MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> m_mathematicalComponents, ReceiverFactory* receiverfactory) =0;
 
     // Method used in the mediator design pattern where the algorithminterface is the mediator.

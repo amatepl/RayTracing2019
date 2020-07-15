@@ -25,12 +25,15 @@
 
 using namespace std;
 
-class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct, public ProductObserver, public ModelObserver,
-        public AbstractAntena, public TransmitterProduct
+class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct,
+                                       public ProductObserver, public ModelObserver,
+                                       public AbstractAntena, public TransmitterProduct
 {
 public:
     MathematicalTransmitterProduct(int posX, int posY);
     ~MathematicalTransmitterProduct() override;
+
+    void appendTree(MathematicalTreeProduct *tree);
 
     void drawRays();
     QPolygonF buildCoverage();
@@ -40,18 +43,22 @@ public:
     complex <double> computeEfieldGround(ProductObservable *receiver, double direction);
     complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver);
     double distance(ProductObservable *receiver);
-    complex<double> computeDiffractedEfield(vector<MathematicalRayProduct*> *rayLine);
+    complex<double> computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine);
     complex<double> computeDiffractedTreeEfield(vector<QLineF>rayLine);
-    vector<vector<QLineF>> buildTreeRays(QPointF* Rx,MathematicalTreeProduct* tree);
-    void computeRayThroughTree(QPointF* Rx,MathematicalTreeProduct* tree);
+    vector<vector<QLineF>> buildTreeRays(QPointF *Rx,MathematicalTreeProduct *tree);
+    void computeRayThroughTree(QPointF *Rx,MathematicalTreeProduct *tree);
 
     double computePrx(complex <double> totalEfield);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR);
     double computeReflexionPar(double thetaI, double epsilonR);
 
-    double computeElevationScaterringAngle(float heightRx, float heightTx, float heightConopy, float distanceRxTree);
-    map<string,double> computeIncidenceDepartureAngles(float angleIncidenceConopy, float angleAzimuth, float angleElevation);
+    double computeElevationScaterringAngle(float heightRx, float heightTx,
+                                           float heightConopy, float distanceRxTree);
+
+    map<string,double> computeIncidenceDepartureAngles(float angleIncidenceConopy,
+                                                        float angleAzimuth,
+                                                        float angleElevation);
 
 
     vector<vector<MathematicalRayProduct *> *> getRays();
@@ -60,14 +67,24 @@ public:
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
     void setSceneBoundary(const QRectF &rect);
     // The path loss must take the direct ray and compute the different power on this ray.
-    void computePathLoss(QLineF direct_ray, ProductObservable* true_receiver);
-    void activePathLoss(bool active) {active_pathloss = active;}
-    void computePathLoss(bool compute) {compute_pathloss = compute;}
-    void erasePathLoss(ProductObservable* receiver){m_pathloss.erase(receiver);}
+    void computePathLoss(QLineF direct_ray, ProductObservable *true_receiver);
+    void activePathLoss(bool active) {
+        active_pathloss = active;
+    }
+    void computePathLoss(bool compute) {
+        compute_pathloss = compute;
+    }
+    void erasePathLoss(ProductObservable *receiver) {
+        m_pathloss.erase(receiver);
+    }
 
     // Vector to receive all the physical informations to share
-    map<vector<double>,double> impulseAttenuation(ProductObservable *receiver) {return m_attenuation[receiver];}
-    map<vector<double>,double> impulseRayLength(ProductObservable *receiver) {return m_raylength[receiver];}
+    map<vector<double>,double> impulseAttenuation(ProductObservable *receiver) {
+        return m_attenuation[receiver];
+    }
+    map<vector<double>,double> impulseRayLength(ProductObservable *receiver) {
+        return m_raylength[receiver];
+    }
 
     map<double,double> pathLoss(ProductObservable* receiver){return m_pathloss[receiver];}
     double receiverDistance(ProductObservable* receiver) {return receiver_distance[receiver];};
@@ -76,34 +93,74 @@ public:
     // ProductObserver
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
     void update(ProductObservable *receiver, const float speed, const float direction) override;
-    void drawRays(ProductObservable* productObservable, bool draw) override;
+    void drawRays(ProductObservable *productObservable, bool draw) override;
 
     //ModelObserver
-    void attachObservable(ModelObservable* modelObserver) override;
+    void attachObservable(ModelObservable *modelObserver) override;
     void attachObservable(ProductObservable *productObservable) override;
 
     // From TransmitterProduct
-    int getPosX() override {return x();}
-    int getPosY() override {return y();}
-    double getOrientation() override {return m_orientation;}
-    char principalOrientation() override {return m_pr_orientation;}
-    Kind getKind() override {return m_kind;}
-    double getPower() override {return m_power;}
-    int getRow() override {return m_row;}
-    int getColumn() override {return m_column;}
-    unsigned long getFrequency() override {return m_frequency;}
-    unsigned long getBandwidth() override{return m_bandwidth;}
+    int getPosX() override {
+        return x();
+    }
+    int getPosY() override {
+        return y();
+    }
+    double getOrientation() override {
+        return m_orientation;
+    }
+    char principalOrientation() override {
+        return m_pr_orientation;
+    }
+    Kind getKind() override {
+        return m_kind;
+    }
+    double getPower() override {
+        return m_power;
+    }
+    int getRow() override {
+        return m_row;
+    }
+    int getColumn() override {
+        return m_column;
+    }
+    unsigned long getFrequency() override {
+        return m_frequency;
+    }
+    unsigned long getBandwidth() override {
+        return m_bandwidth;
+    }
 
-    void setPosX(int posX) override {setX(posX);}
-    void setPosY(int posY) override {setY(posY);}
-    void setOrientation(double orientation) override {m_orientation = orientation;}
-    void setPrincipalOrientation(char orientation) override {m_pr_orientation = orientation;}
-    void setPower(double power) override {m_power = power;}
-    void setFrequency(unsigned long frequency) override {m_frequency = frequency;}
-    void setBandwidth(unsigned long bandwidth) override {m_bandwidth = bandwidth;}
-    void setRow(int row) override {m_row = row;}
-    void setColumn(int column) override {m_column = column;}
-    void setKind(Kind kind) override {m_kind = kind;}
+    void setPosX(int posX) override {
+        setX(posX);
+    }
+    void setPosY(int posY) override {
+        setY(posY);
+    }
+    void setOrientation(double orientation) override {
+        m_orientation = orientation;
+    }
+    void setPrincipalOrientation(char orientation) override {
+        m_pr_orientation = orientation;
+    }
+    void setPower(double power) override {
+        m_power = power;
+    }
+    void setFrequency(unsigned long frequency) override {
+        m_frequency = frequency;
+    }
+    void setBandwidth(unsigned long bandwidth) override {
+        m_bandwidth = bandwidth;
+    }
+    void setRow(int row) override {
+        m_row = row;
+    }
+    void setColumn(int column) override {
+        m_column = column;
+    }
+    void setKind(Kind kind) override {
+        m_kind = kind;
+    }
     void newProperties() override;
 
     // From MathematicalProduct
@@ -122,7 +179,10 @@ public:
 //    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
 
     //AbstractAntenna
-    void notifyParent(ProductObservable *productObservable,const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
+    void notifyParent(ProductObservable *productObservable,
+                      const float speed, const float direction,
+                      const QPointF &point,
+                      vector<MathematicalRayProduct *> *wholeRay) override;
 
     QPointF getPosition()const override;
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
@@ -133,24 +193,27 @@ public:
 
 
 private:
-    double px_to_meter;
-    double m_power;
-    bool active_pathloss;
-    bool compute_pathloss;
-    Kind m_kind;
+
+    double px_to_meter         { 1 };
+    double m_power             { 2 };
+    bool active_pathloss    { true };
+    bool compute_pathloss   { true };
+    Kind m_kind           { dipole };
+    int m_radius             { 500 };
 
     double m_powerAtReceiver;
-    ModelObservable* m_model;
-    vector<ProductObservable*> m_productObservable;
+    ModelObservable *m_model;
+    vector<ProductObservable *> m_productObservable;
     //map<const QPointF*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
 
-    map<ProductObservable*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
-    map<ProductObservable*,complex<double>> m_receiversField;
-    map<ProductObservable*,vector<double>> m_receiversPowers;
+    map<ProductObservable *,vector<vector<MathematicalRayProduct *>*>> m_receiversRays;
+    map<ProductObservable *,complex<double>> m_receiversField;
+    map<ProductObservable *,vector<double>> m_receiversPowers;
+    vector<MathematicalTreeProduct *> m_trees;
 
     // Attenuation for impulse response and TDL
-    map<ProductObservable*,map<vector<double>,double>> m_attenuation;
-    map<ProductObservable*,map<vector<double>,double>> m_raylength;
+    map<ProductObservable *,map<vector<double>,double>> m_attenuation;
+    map<ProductObservable *,map<vector<double>,double>> m_raylength;
 
     // Path loss computation
     map<ProductObservable*,map<double,double>> m_pathloss;
@@ -160,14 +223,13 @@ private:
     map<ProductObservable*,double> m_los_factor;
     map<ProductObservable*,double> m_nlos_factor;
 
-    int m_radius;
 
     QRectF m_sceneBoundary;
 
 
     //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;
-    vector<vector<MathematicalRayProduct*>*> m_wholeRays;
+    vector<vector<MathematicalRayProduct *>*> m_wholeRays;
 
     complex<double> m_EMfield;
 };

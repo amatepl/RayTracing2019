@@ -30,7 +30,9 @@ public:
     MathematicalTransmitterProduct* selectTransmitter();
     void notify(MathematicalTransmitterProduct* transmitter) override;
 
-    void setScene(QGraphicsScene*scene, BuildingFactory *buildingFactory, CarFactory *carFactory, ReceiverFactory* receiverfactory);           // For tests only
+    void setScene(QGraphicsScene*scene, BuildingFactory *buildingFactory,
+                  TreeFactory *treeFactory = nullptr, CarFactory *carFactory = nullptr,
+                  ReceiverFactory* receiverfactory = nullptr);           // For tests only
 
 private:
     map<string,vector<MathematicalProduct*>> m_mathematicalComponents;

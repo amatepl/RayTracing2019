@@ -7,11 +7,12 @@
 
 #include "carproduct.h"
 #include "Product/mathematicalproduct.h"
+#include "Product/BuildingProduct/mathematicalbuildingproduct.h"
 #include "dialogcarproduct.h"
 
 using namespace std;
 
-class MathematicalCarProduct:public QObject, public QPolygonF,  public MathematicalProduct, public CarProduct
+class MathematicalCarProduct:/*public QObject,*/ public MathematicalBuildingProduct,/*  public MathematicalProduct,*/ public CarProduct
 {
 //    Q_OBJECT
 
@@ -42,9 +43,9 @@ private:
     double m_orientation, m_speed;
     QLineF m_street;
 
-signals:
-    void positionChanged(QPolygonF* poly,int x, int y, double orientation);
-    void signal();
+//signals:
+//    void positionChanged(QPolygonF* poly,int x, int y, double orientation);
+//    void signal();
 };
 
 #endif // MATHEMATICALCARPRODUCT_H

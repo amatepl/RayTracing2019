@@ -116,6 +116,7 @@ public:
         else if (getKind() == arrayreflector){
             return dipolefactor*arrayfactor*reflectorfactor;
         }
+        return 0;
     }
 
     virtual double electricalGain(double theta, double phi){
@@ -138,20 +139,22 @@ public:
         else if (getKind() == arrayreflector){
             return 16.0/(3.0*M_PI)*pow(abs(dipolefactor),2)*pow(abs(arrayfactor),2)*pow(abs(reflectorfactor),2);
         }
+
+        return 0;
     }
 
 protected:
     // --> Global variables (electrical constants)
 
-    double  epsilonAir = 8.864e-12; // A²S⁴kg⁻1m⁻3
-    double  Zvoid = 120*M_PI;
-    double  muAir = 4*M_PI*1e-7;    // Tm/A
-    double  c = 2.998e+8;           // m/s
-    double  kb = 1.379e-23;         // Boltzmann's constant
-    double  T0 = 290;               // K; reference temperature T_0
-    double  BW = 100e+6;            // Hz
-    double  antennaHeight = 1.8;    //m
-    double  Ra = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
+    double  epsilonAir      = 8.864e-12;    // A²S⁴kg⁻1m⁻3
+    double  Zvoid           = 120*M_PI;
+    double  muAir           = 4*M_PI*1e-7;  // Tm/A
+    double  c               = 2.998e+8;     // m/s
+    double  kb              = 1.379e-23;    // Boltzmann's constant
+    double  T0              = 290;          // K; reference temperature T_0
+    double  BW              = 100e+6;       // Hz
+    double  antennaHeight   = 1.8;          //m
+    double  Ra              = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
 
     double epsilonWallRel;
     unsigned long long m_frequency;           // Hz
