@@ -7,7 +7,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_bandwidth         = 100e6;
     m_row               = 1;
     m_column            = 1;
-    m_orientation       = 0;
+    TransmitterProduct::m_orientation       = 0;
     m_pr_orientation    = 0;
     lambda              = c / m_frequency;
     epsilonWallRel      = 5;
@@ -578,7 +578,7 @@ MathematicalTransmitterProduct::computeIncidenceDepartureAngles(float angleIncid
 
 void MathematicalTransmitterProduct::newProperties()
 {
-    m_graphic->notifyToGraphic(this, m_orientation);
+    m_graphic->notifyToGraphic(this, TransmitterProduct::m_orientation);
 }
 
 

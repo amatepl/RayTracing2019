@@ -446,6 +446,13 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                 //Creation of the trasmitter image
                 TransmitterImage *image = new TransmitterImage(Line(zone.at(i), zone.at(i+1)), parent);
                 image->setBuilding(walls.at(j)->getBuilding());
+
+                if (walls.at(i)->getWallType() != Wall::wall) {
+                    image->setWallType(walls.at(i)->getWallType());
+                    image->setSpeed(walls.at(i)->getSpeed());
+                    image->setOrientation(walls.at(i)->getOrientation());
+                }
+
                 //image->setSceneBoundary(itemsBoundingRect());
                 image->setRayFactory(m_rayFactory);
 //                m_receiver->attachObserver(image);

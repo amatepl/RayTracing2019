@@ -107,7 +107,7 @@ public:
         return y();
     }
     double getOrientation() override {
-        return m_orientation;
+        return TransmitterProduct::m_orientation;
     }
     char principalOrientation() override {
         return m_pr_orientation;
@@ -138,7 +138,7 @@ public:
         setY(posY);
     }
     void setOrientation(double orientation) override {
-        m_orientation = orientation;
+        TransmitterProduct::m_orientation = orientation;
     }
     void setPrincipalOrientation(char orientation) override {
         m_pr_orientation = orientation;
