@@ -10,6 +10,7 @@
 #include "Observer/productobservable.h"
 #include "receiverproduct.h"
 #include "dialogreceiverproduct.h"
+#include "Widget/infowidget.h"
 
 const double kb = 1.379e-23;
 const double To = 290.0;
@@ -28,6 +29,12 @@ public:
     void clearData();
     double inputNoise();
     void computeMinPrx();
+    void setInfoWidget(InfoWidget* info) {m_info_widget = info;}
+    void setTransmitterDistance(double distance) {m_transmitter_distance = distance;}
+    void computeSnr();
+    void computeDelaySpread();
+    void riceFactor(double rice);
+    void coherenceBandwidth();
 
     // 1. Path Loss Computation:
     std::map<double,double> pathLoss(){return m_pathloss;}
@@ -46,6 +53,7 @@ public:
 
     // 3. Cell Range Computation:
     void cellRange();
+
 
     // From ReceiverProduct:
     int getPosX() override;
@@ -72,6 +80,7 @@ public:
     void update(QGraphicsItem *graphic) override;
     void attachObservable(GraphicsProduct* graphic) override;
     void openDialog() override;
+    void updateInformation() override;
 
 
     // From ProductObservable
@@ -91,6 +100,7 @@ private:
     int m_noise_figure;
     int m_interferencemargin;
     DialogReceiverProduct *m_dialog = nullptr;
+    InfoWidget *m_info_widget;
 
     // 1. For ProductOBserves
     vector<ProductObserver*> m_observers;
@@ -99,6 +109,11 @@ private:
     // 2. For E Field And Power Computation
     complex <double> m_e_field;
     double m_power=0;
+    double m_transmitter_distance;
+    double snr_received;
+    double delay_spread;
+    double rice_factor;
+    double coherence_bandwidth;
 
     // 3. For Path Loss Computation
     std::map<double,double> m_pathloss;

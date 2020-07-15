@@ -21,6 +21,8 @@
 #include "Abstract_Factory/buildingfactory.h"
 #include "Abstract_Factory/treefactory.h"
 #include "Abstract_Factory/carfactory.h"
+#include "Widget/infowidget.h"
+
 //#include "Abstract_Factory/raytracingalgorithmfactory.h"
 
 #include "Model/model.h"
@@ -42,6 +44,7 @@ public:
     ~ApplicationWindow() override;
     void answer(GraphicsProduct* graphic) override;
     void moveMouse(QPointF mouse) override;
+    void resetToolInfo() override;
     //void attachObserver(WindowObserver *windowobserver) override;
     //void detachObserver(WindowObserver *windowobserver) override;
     //void notify(int mode) override;
@@ -60,13 +63,15 @@ public:
     void createActions();
     void createMenus();
     void createToolBox();
-    void createTabWidget();
+    void createToolInfo();
 
     void setGraphicsMode(GraphicsMode mode);
     void setActionMode(ActionMode mode);
     void notifyMap();
     void notifyModel();
 
+
+    bool eventFilter(QObject *watched, QEvent *event) override;
 private:
     QGraphicsView *view;
     GraphicsMap *m_map;
@@ -85,17 +90,11 @@ private:
     QButtonGroup *m_antennagroup;
     QButtonGroup *m_obstaclegroup;
 
-    QButtonGroup *m_raytracinggroup;
-    QPushButton *launch_raytracing;
-    QPushButton *launch_coverage;
-
-
     QToolBox *m_toolbox;
     QToolBar *m_toolbarobject;
 
-    QToolBar *m_toolbarlaunch;
-    QTabWidget* m_tabwidget;
-    QLineEdit *sceneposx,*sceneposy;
+    QToolBar* m_toolinfo;
+    InfoWidget* m_info_widget;
 
     QAction *deleteaction;
     QAction *propertiesaction;

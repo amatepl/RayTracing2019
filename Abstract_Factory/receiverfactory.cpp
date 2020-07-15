@@ -1,9 +1,10 @@
 #include "receiverfactory.h"
 
-ReceiverFactory::ReceiverFactory(QMenu* productmenu, QGraphicsScene* scene)
+ReceiverFactory::ReceiverFactory(QMenu* productmenu, InfoWidget *info, QGraphicsScene* scene)
 {
     m_productmenu = productmenu;
     m_scene = scene;
+    info_widget = info;
 }
 
 
@@ -12,6 +13,7 @@ ReceiverFactory::ReceiverFactory(QMenu* productmenu, QGraphicsScene* scene)
 GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
     GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(true,m_productmenu, m_scene);
     MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(posX, posY);
+    mathematicalReceiverProduct->setInfoWidget(info_widget);
     graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
     graphicsReceiverProduct->setX(posX);
     graphicsReceiverProduct->setY(posY);
@@ -21,6 +23,7 @@ GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
 
 MathematicalProduct* ReceiverFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
     MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(posX,posY);
+    mathematicalReceiverProduct->setInfoWidget(info_widget);
     if (linkgraphic){
         GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(false,m_productmenu, m_scene);
         graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
@@ -33,6 +36,7 @@ MathematicalProduct* ReceiverFactory::createMathematicalProduct(int posX, int po
 
 MathematicalProduct* ReceiverFactory::createMathematicalProduct(MathematicalProduct *original, bool linkgraphic){
     MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(dynamic_cast<MathematicalReceiverProduct*>(original));
+    mathematicalReceiverProduct->setInfoWidget(info_widget);
     if (linkgraphic){
         GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(false,m_productmenu, m_scene);
         graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);

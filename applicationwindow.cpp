@@ -3,13 +3,14 @@
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
     createToolBox();
-    createTabWidget();
+    createToolInfo();
     createActions();
     createMenus();
     view = new QGraphicsView();
     m_map = new GraphicsMap(view,this,m_productmenu);
+    m_map->installEventFilter(this);
     view->setMouseTracking(true);
-    m_receiverFactory = new ReceiverFactory(m_productmenu,m_map);
+    m_receiverFactory = new ReceiverFactory(m_productmenu,m_info_widget,m_map);
     m_transmitterFactory = new TransmitterFactory(m_productmenu,m_map);
     m_buildingFactory = new BuildingFactory(m_productmenu,m_map);
     m_treeFactory = new TreeFactory(m_productmenu,m_map);
@@ -32,7 +33,8 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
     //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
     addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
-    addToolBar(Qt::TopToolBarArea,m_toolbarlaunch);
+    //addToolBar(Qt::TopToolBarArea,m_toolbarlaunch);
+    addToolBar(Qt::TopToolBarArea,m_toolinfo);
     setCentralWidget(view);
     setWindowState(Qt::WindowMaximized);
 
@@ -58,9 +60,13 @@ void ApplicationWindow::answer(GraphicsProduct* graphic){
 }
 
 void ApplicationWindow::moveMouse(QPointF mouse){
-    sceneposx->setText(QString::number(mouse.x()));
-    sceneposy->setText(QString::number(mouse.y()));
+    m_info_widget->changeScenePos(mouse.x(),mouse.y());
 }
+
+void ApplicationWindow::resetToolInfo(){
+    m_info_widget->reset();
+}
+
 /*
 void ApplicationWindow::attachObserver(WindowObserver *windowobserver){
     m_windowobserver.push_back(windowobserver);
@@ -182,61 +188,6 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode){
     return widget;
 }
 
-QWidget* ApplicationWindow::rayTracingWidget(){
-    QWidget *widget = new QWidget;
-
-    launch_raytracing = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch Ray-Tracing");
-    connect(launch_raytracing, SIGNAL(clicked()), this, SLOT(LaunchRayTracing()));
-    sceneposx = new QLineEdit;
-    QLabel *posX = new QLabel("x position: ");
-    sceneposy = new QLineEdit;
-    QLabel *posY = new QLabel("y position: ");
-    sceneposx->setText(QString::number(0));
-    sceneposy->setText(QString::number(0));
-    QHBoxLayout *positionx = new QHBoxLayout;
-    positionx->addWidget(posX);
-    positionx->addWidget(sceneposx);
-    QHBoxLayout *positiony = new QHBoxLayout;
-    positiony->addWidget(posY);
-    positiony->addWidget(sceneposy);
-
-    QHBoxLayout *raytracinglayout = new QHBoxLayout;
-    raytracinglayout->addWidget(launch_raytracing);
-    raytracinglayout->addLayout(positionx);
-    raytracinglayout->addLayout(positiony);
-
-    widget->setLayout(raytracinglayout);
-
-    return widget;
-}
-
-QWidget* ApplicationWindow::coverageWidget(){
-    QWidget *widget = new QWidget;
-
-    launch_coverage = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch coverage");
-    connect(launch_coverage, SIGNAL(clicked()), this, SLOT(launchCoverage()));
-    sceneposx = new QLineEdit;
-    QLabel *posX = new QLabel("x position: ");
-    sceneposy = new QLineEdit;
-    QLabel *posY = new QLabel("y position: ");
-    sceneposx->setText(QString::number(0));
-    sceneposy->setText(QString::number(0));
-    QHBoxLayout *positionx = new QHBoxLayout;
-    positionx->addWidget(posX);
-    positionx->addWidget(sceneposx);
-    QHBoxLayout *positiony = new QHBoxLayout;
-    positiony->addWidget(posY);
-    positiony->addWidget(sceneposy);
-
-    QHBoxLayout *coveragelayout = new QHBoxLayout;
-    coveragelayout->addWidget(launch_coverage);
-    coveragelayout->addLayout(positionx);
-    coveragelayout->addLayout(positiony);
-
-    widget->setLayout(coveragelayout);
-    return widget;
-}
-
 void ApplicationWindow::createActions(){
     objectminimize = m_toolbarobject->toggleViewAction();
     objectminimize->setText(tr("Object toolbar"));
@@ -315,13 +266,14 @@ void ApplicationWindow::createToolBox(){
     m_toolbarobject->setMovable(false);
 }
 
-void ApplicationWindow::createTabWidget(){
-    m_tabwidget = new QTabWidget;
-    m_tabwidget->addTab(rayTracingWidget(),"Ray-Tracing");
-    m_tabwidget->addTab(coverageWidget(),"Coverage");
+void ApplicationWindow::createToolInfo()
+{
+    m_toolinfo = new QToolBar;
+    m_info_widget = new InfoWidget(m_toolinfo);
+    m_toolinfo->addWidget(m_info_widget);
 
-    m_toolbarlaunch = new QToolBar;
-    m_toolbarlaunch->addWidget(m_tabwidget);
+    connect(m_info_widget, &InfoWidget::rayTracing, this, &ApplicationWindow::LaunchRayTracing);
+    connect(m_info_widget, &InfoWidget::coverage, this, &ApplicationWindow::launchCoverage);
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode){
@@ -366,6 +318,14 @@ void ApplicationWindow::notifyModel(){
     //cout<<"Model notified"<<endl;
     //m_model->launchAlgorithm(m_rayTracingAlgorithm);
     m_model->launchAlgorithm(m_coverageAlgorithm);
+}
+
+bool ApplicationWindow::eventFilter(QObject*, QEvent *event){
+    if (event->type() == QEvent::Leave)
+    {
+        m_info_widget->changeScenePos(0,0);
+    }
+    return false;
 }
 
 // SLOTS

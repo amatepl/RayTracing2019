@@ -4,11 +4,12 @@
 #include "scenefactory.h"
 #include "Product/ReceiverProduct/graphicsreceiverproduct.h"
 #include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
+#include "Widget/infowidget.h"
 
 class ReceiverFactory: public SceneFactory
 {
 public:
-    ReceiverFactory(QMenu *productmenu, QGraphicsScene* scene);
+    ReceiverFactory(QMenu *productmenu, InfoWidget *info, QGraphicsScene* scene);
 
     // Overrides
     GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
@@ -18,6 +19,7 @@ public:
 private:
     QMenu *m_productmenu;
     QGraphicsScene *m_scene;
+    InfoWidget *info_widget;
 
 };
 

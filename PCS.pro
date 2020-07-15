@@ -63,6 +63,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/sceneproduct.h \
     Share/line.h \
     Share/wall.h \
+    Widget/infowidget.h \
     applicationwindow.h \
     graphicsmap.h \
     qcustomplot.h
@@ -104,6 +105,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/treeparams.cpp \
     Share/line.cpp \
     Share/wall.cpp \
+    Widget/infowidget.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \
     main.cpp \

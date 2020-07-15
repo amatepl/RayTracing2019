@@ -15,6 +15,7 @@ public:
 
     virtual void answer(GraphicsProduct* graphic) = 0;
     virtual void moveMouse(QPointF mouse) = 0;
+    virtual void resetToolInfo() = 0;
 };
 
 #endif //  APPINTERFACE_H

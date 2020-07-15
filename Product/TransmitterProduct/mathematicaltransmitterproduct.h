@@ -37,7 +37,7 @@ public:
 
     //virtual void setModel(Model model) override;
 
-    complex <double> computeEfieldGround(ProductObservable *receiver);
+    complex <double> computeEfieldGround(ProductObservable *receiver, double direction);
     complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver);
     double distance(ProductObservable *receiver);
     complex<double> computeDiffractedEfield(vector<MathematicalRayProduct*> *rayLine);
@@ -70,6 +70,8 @@ public:
     map<vector<double>,double> impulseRayLength(ProductObservable *receiver) {return m_raylength[receiver];}
 
     map<double,double> pathLoss(ProductObservable* receiver){return m_pathloss[receiver];}
+    double receiverDistance(ProductObservable* receiver) {return receiver_distance[receiver];};
+    double riceFactor(ProductObservable* receiver) {return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);}
 
     // ProductObserver
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
@@ -152,6 +154,11 @@ private:
 
     // Path loss computation
     map<ProductObservable*,map<double,double>> m_pathloss;
+    map<ProductObservable*,double> receiver_distance;
+
+    // Rice facor
+    map<ProductObservable*,double> m_los_factor;
+    map<ProductObservable*,double> m_nlos_factor;
 
     int m_radius;
 

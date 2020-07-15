@@ -98,18 +98,18 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     } else if (angle > 90.0 && angle < 360.0) {
         angle_prime = 270.0 + 180.0 - angle;
     }
-    cout << angle << endl;
 
     Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
     Efield *= totaleArrayFactor(angle_prime,90);
     if(amountSegment==1){
         // Adding the ground component
-        complex <double> groundEfield = this->computeEfieldGround(receiver); // Compute the electrical field from the ray reflected off the ground
-        double dist = distance(receiver);
-        double thetaI = atan(antennaHeight/(dist/2))+M_PI/2;
-        double thetat = 90-atan(antennaHeight/(dist/2))*180/M_PI;
-        Efield += groundEfield*totaleArrayFactor(angle_prime,thetat);//(cos(M_PI/2*cos(thetaI))/sin(thetaI));
+        complex <double> groundEfield = this->computeEfieldGround(receiver,angle_prime); // Compute the electrical field from the ray reflected off the ground
+        Efield += groundEfield;
+        m_los_factor[receiver] = pow(a,2);
 
+    }
+    else{
+        m_nlos_factor[receiver] += pow(a,2);
     }
     QPointF p1 = rayLine->at(rayLine->size()-1)->p2();
     if (p1.x() - 1 != this->getPosX() && p1.y() != this->getPosY()) {
@@ -150,7 +150,7 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     return Efield;
 }
 
-complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObservable *receiver)
+complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObservable *receiver, double direction)
 {
     // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
     // To Do: check if there is a wall between the TX and RX
@@ -158,17 +158,18 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
     double thetaG = atan((distance / 2) / antennaHeight);
     double thetaI = M_PI - thetaG;
     double R = computeReflexionPar(thetaG, epsilonWallRel);
-    double completeLength = distance / sin(thetaG);
+    double completeLength = sqrt(4*pow(antennaHeight,2)+pow(distance,2)); //distance / sin(thetaG);
     //if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2 * m_power / Ra); // Ia could be changed for Beamforming application
-    double a = R * ((Zvoid * Ia) / (2*M_PI)) * (cos(M_PI/2 * cos(thetaI)) / sin(thetaI)) / completeLength;
-    complex <double> Efield = i * a * exp(-i*(2.0*M_PI/lambda)*completeLength);
+    double a = R * ((Zvoid * Ia) / (2*M_PI));
+    complex <double> Efield = i * a * totaleArrayFactor(direction,thetaI*180.0/M_PI)* exp(-i*(2.0*M_PI/lambda)*completeLength) / completeLength;
     vector<double> point(2);
     point[0] = 0;
     point[1] = 0;
     m_attenuation[receiver][point] = R/completeLength;
     m_raylength[receiver][point] = completeLength;
+    m_nlos_factor[receiver] += pow(a,2);
 //    this->NLOS += pow(a,2);
 
 //    // Store ray parameter for Physical impulse response
@@ -585,9 +586,12 @@ void MathematicalTransmitterProduct::update(ProductObservable* receiver, const f
     // Clear data corresponding to the receiver calling the update
 
     m_receiversField[receiver] = 0;
+    m_los_factor[receiver] = 0.0;
+    m_nlos_factor[receiver] = 0.0;
     m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(), m_receiversPowers[receiver].end());
     m_attenuation.erase(receiver);
     m_raylength.erase(receiver);
+    receiver_distance.erase(receiver);
 
     if (m_receiversRays.count(receiver)) {
         for (unsigned int i =0; i < m_receiversRays[receiver].size(); i++) {
@@ -687,6 +691,7 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
 
         double powerDBm = dBm(totalPower);
 
+        receiver_distance[receiver] = distance(receiver);
         m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
         receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
     }
@@ -709,6 +714,7 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
             m_pathloss[receiver][line.length()*px_to_meter] = powerDBm;
         }
         else {
+            receiver_distance[receiver] = distance(receiver);
             m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
             receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
         }

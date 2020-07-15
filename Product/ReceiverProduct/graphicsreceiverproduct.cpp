@@ -107,3 +107,22 @@ void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, double power){
     //draw();
 //    brush->setColor(color);
 }
+
+void GraphicsReceiverProduct::sendInformation(){
+    m_observer->updateInformation();
+}
+
+void GraphicsReceiverProduct::mousePressEvent(QGraphicsSceneMouseEvent* event){
+    if (event->button() != Qt::LeftButton){
+        return;
+    }
+    else{
+        sendInformation();
+    }
+    QGraphicsItem::mousePressEvent(event);
+}
+
+void GraphicsReceiverProduct::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+    sendInformation();
+    QGraphicsItem::mouseMoveEvent(event);
+}

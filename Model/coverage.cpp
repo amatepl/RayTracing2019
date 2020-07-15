@@ -2,7 +2,6 @@
 
 Coverage::Coverage(SceneFactory *receiverFactory):m_receiverFactory(receiverFactory)
 {
-
 }
 
 MathematicalComponent* Coverage::compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
@@ -44,7 +43,6 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 //            dynamic_cast<MathematicalReceiverProduct*>(receiver)->notifyObservers();
             dynamic_cast<MathematicalReceiverProduct*>(receiver)->setPosX(j);
             MathematicalProduct* newReceiver = m_receiverFactory->createMathematicalProduct(receiver,true);
-
         }
     }
 }
