@@ -43,7 +43,8 @@ public:
 private:
     //MathematicalFactory* m_mathematicalfactory;
     QPointF m_center;
-    double m_orientation, m_speed;
+    double m_orientation{0};
+    double m_speed{0};
     QLineF m_movement;
     QLineF m_street;
 

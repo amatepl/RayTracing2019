@@ -27,6 +27,10 @@ public:
     void notifyToGraphic(QPointF *) override;
     void notifyToGraphic(QPointF *, double) override;
 
+    void sendInformation() override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

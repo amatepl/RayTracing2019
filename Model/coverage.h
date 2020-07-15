@@ -5,6 +5,7 @@
 #include "Model/imagesmethod.h"
 #include "Abstract_Factory/rayfactory.h"
 #include "Abstract_Factory/scenefactory.h"
+#include "Widget/infowidget.h"
 
 class Coverage: public AlgorithmInterface, public ImagesMethod
 {

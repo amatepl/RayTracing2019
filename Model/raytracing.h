@@ -8,6 +8,7 @@
 #include "Model/algorithmInterface.h"
 #include "Model/imagesmethod.h"
 #include "Abstract_Factory/receiverfactory.h"
+#include "Widget/infowidget.h"
 
 class RayTracing: public AlgorithmInterface, public ImagesMethod
 {

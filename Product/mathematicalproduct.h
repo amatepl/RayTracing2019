@@ -17,6 +17,7 @@ public:
     //MathematicalProduct act as an observer of GraphicsProduct
     virtual void attachObservable(GraphicsProduct* graphic) {m_graphic = graphic;}
     virtual void update(QGraphicsItem* graphic) = 0;
+    virtual void updateInformation() {};
     GraphicsProduct* toGraphicsProduct() {return m_graphic;}
 
     // Method for mediator pattern. MathematicalProduct have a pointer to AlgorithmInterface that we can set at a good time

@@ -31,6 +31,7 @@ void GraphicsMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_app->answer(graphicsproduct);
         m_mode = MoveItem;
     }
+    m_app->resetToolInfo();
     QGraphicsScene::mousePressEvent(event);
 }
 

@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<<<<<<< HEAD
-<!-- Written by QtCreator 4.12.0, 2020-07-15T08:45:31. -->
-=======
-<<<<<<< HEAD
-<!-- Written by QtCreator 4.12.4, 2020-07-14T22:43:53. -->
-=======
-<!-- Written by QtCreator 4.12.0, 2020-07-15T00:18:59. -->
->>>>>>> 8bea8960701ec2838e3c6b256a053c1b10ca7a46
->>>>>>> 5274036fb1f60bba9ce8da03fe206df03a24538f
+<!-- Written by QtCreator 4.12.0, 2020-06-27T10:24:41. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -64,7 +56,7 @@
   <variable>ProjectExplorer.Project.PluginSettings</variable>
   <valuemap type="QVariantMap">
    <valuelist type="QVariantList" key="ClangCodeModel.CustomCommandLineKey"/>
-   <value type="bool" key="ClangCodeModel.UseGlobalConfig">false</value>
+   <value type="bool" key="ClangCodeModel.UseGlobalConfig">true</value>
    <value type="QString" key="ClangCodeModel.WarningConfigId">Builtin.Questionable</value>
    <valuemap type="QVariantMap" key="ClangTools">
     <value type="bool" key="ClangTools.BuildBeforeAnalysis">true</value>
@@ -89,8 +81,8 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
     <value type="bool">true</value>
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_x86_darwin_generic_mach_o_64bit-Debug</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_x86_darwin_generic_mach_o_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_x86_darwin_generic_mach_o_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_x86_darwin_generic_mach_o_64bit-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -140,8 +132,8 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
     <value type="bool">true</value>
     <value type="int" key="EnableQmlDebugging">2</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_x86_darwin_generic_mach_o_64bit-Release</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_x86_darwin_generic_mach_o_64bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_x86_darwin_generic_mach_o_64bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_x86_darwin_generic_mach_o_64bit-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -191,8 +183,8 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.2">
     <value type="bool">true</value>
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_x86_darwin_generic_mach_o_64bit-Profile</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_x86_darwin_generic_mach_o_64bit-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_x86_darwin_generic_mach_o_64bit-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_x86_darwin_generic_mach_o_64bit-Profile</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -314,8 +306,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/amate/Documents/Polytech/Thesis/RayTracing2019/PCS.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/Users/amate/Documents/Polytech/Thesis/RayTracing2019/PCS.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/amate/Documents/Polytech/Thesis/RayTracing2019/Telecom0_1.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/Users/amate/Documents/Polytech/Thesis/RayTracing2019/Telecom0_1.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -327,7 +319,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_x86_darwin_generic_mach_o_64bit-Debug/PCS.app/Contents/MacOS</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_x86_darwin_generic_mach_o_64bit-Debug/Telecom0_1.app/Contents/MacOS</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
@@ -344,8 +336,8 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
     <value type="bool">true</value>
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_Qt_5_12_8_clang_64bit-Debug</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_Qt_5_12_8_clang_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_Qt_5_12_8_clang_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_Qt_5_12_8_clang_64bit-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -395,8 +387,8 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
     <value type="bool">true</value>
     <value type="int" key="EnableQmlDebugging">2</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_Qt_5_12_8_clang_64bit-Release</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_Qt_5_12_8_clang_64bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_Qt_5_12_8_clang_64bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_Qt_5_12_8_clang_64bit-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -446,8 +438,8 @@
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.2">
     <value type="bool">true</value>
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_Qt_5_12_8_clang_64bit-Profile</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-PCS-Desktop_Qt_5_12_8_clang_64bit-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_Qt_5_12_8_clang_64bit-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/Users/amate/Documents/Polytech/Thesis/build-Telecom0_1-Desktop_Qt_5_12_8_clang_64bit-Profile</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>

@@ -102,6 +102,8 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
     true_receiver->setImpulseRayLength(true_transmitter->impulseRayLength(true_receiver));
     true_receiver->setImpulseAttenuation(true_transmitter->impulseAttenuation(true_receiver));
     true_receiver->setPathLoss(true_transmitter->pathLoss(copy_receiver));
+    true_receiver->setTransmitterDistance(true_transmitter->receiverDistance(true_receiver));
+    true_receiver->riceFactor(true_transmitter->riceFactor(true_receiver));
     true_receiver->computeMinPrx();
 }
 

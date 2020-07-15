@@ -5,6 +5,9 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY): QP
     m_type = "Receiver";
     m_power = 0.0;
     m_e_field = 0.0;
+    m_transmitter_distance = 0.0;
+    snr_received = 0.0;
+    delay_spread = 0.0;
     // Enable the setters of position. Can mathematical product move ?
     enable = true;
     m_target_snr = 8; // [dB]
@@ -43,6 +46,49 @@ double MathematicalReceiverProduct::inputNoise(){
 void MathematicalReceiverProduct::computeMinPrx(){
     min_prx = m_target_snr + m_noise_figure + inputNoise() + m_interferencemargin + 30; // [dBm]
 }
+
+void MathematicalReceiverProduct::computeSnr(){
+    if (m_power != 0.0){
+        snr_received = (m_power-30) - m_noise_figure - inputNoise(); // [dB]
+    }
+}
+
+void MathematicalReceiverProduct::computeDelaySpread(){
+    double min_length, max_length, l;
+    int i = 0;
+    for (const auto &length: m_raylength){
+        l = length.second;
+        if (i == 0){
+            min_length = l;
+            max_length = l;
+        }
+        else {
+            if(l<min_length){
+                min_length = l;
+            }
+            else if(l>max_length){
+                max_length = l;
+            }
+        }
+        i++;
+    }
+    delay_spread = abs(max_length-min_length)/c*1e9;
+    if (delay_spread < 1e-20){
+        delay_spread = 0.0;
+    }
+}
+
+void MathematicalReceiverProduct::coherenceBandwidth(){
+    coherence_bandwidth = 1e3/delay_spread; //MHz
+}
+
+void MathematicalReceiverProduct::riceFactor(double rice){
+    rice_factor = rice;
+    if (isnan(rice_factor) || isinf(rice_factor)){
+        rice_factor = 0.0;
+    }
+}
+
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 1. Path Loss Computation:
 void MathematicalReceiverProduct::setPathLoss(std::map<double, double> pathloss){
@@ -161,6 +207,8 @@ void MathematicalReceiverProduct::setImpulseAttenuation(std::map<std::vector<dou
     }
     m_attenuation = attenuation;
     computeImpulseTDL();
+    computeDelaySpread();
+    coherenceBandwidth();
     if (m_dialog != nullptr){
         m_dialog->changeGraph();
     }
@@ -286,6 +334,15 @@ void MathematicalReceiverProduct::attachObservable(GraphicsProduct *graphic){
     m_graphic->notifyToGraphic(this,m_power);
 }
 
+void MathematicalReceiverProduct::updateInformation(){
+    m_info_widget->changePower(m_power);
+    m_info_widget->changeDistance(m_transmitter_distance);
+    m_info_widget->changeSnr(snr_received);
+    m_info_widget->changeDelaySpread(delay_spread);
+    m_info_widget->changeRiceFactor(rice_factor);
+    m_info_widget->changeCoherenceBandwidth(coherence_bandwidth);
+}
+
 // From ProductObservable
 void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserver){
     //cout<<"Observevr attached"<<endl;
@@ -326,6 +383,7 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double &powe
         m_graphic->notifyToGraphic(this,m_power);
         m_transmitter = observer;
         m_transmitter->drawRays(this, true);
+        computeSnr();
     }
 //    if(m_power < power - 20 && observer != m_transmitter){
 //        m_power = power;

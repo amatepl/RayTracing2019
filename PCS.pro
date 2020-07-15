@@ -64,6 +64,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Share/line.h \
     Share/reflectiveobstacle.h \
     Share/wall.h \
+    Widget/infowidget.h \
     applicationwindow.h \
     graphicsmap.h \
     qcustomplot.h
@@ -106,6 +107,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Share/line.cpp \
     Share/reflectiveobstacle.cpp \
     Share/wall.cpp \
+    Widget/infowidget.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \
     main.cpp \
