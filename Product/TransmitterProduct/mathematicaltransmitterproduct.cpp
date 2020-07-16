@@ -75,13 +75,12 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     complex <double> i(0.0, 1.0);
     int amountSegment = rayLine->size();
     double completeLength = 0.0;
-    double theta = 0.0;
     double R = 1;
     complex <double> Efield = 0.0;
     MathematicalRayProduct *currentRay;
     for (int i = 0; i < amountSegment; i++) {
         currentRay = rayLine->at(i);
-        theta = currentRay->getTheta();
+        // Take angle between the ray and the x axis > 0
         if (i != amountSegment - 1) {
 
             //  The last segment, the one that reach the receptor does not have a rebound
@@ -94,38 +93,34 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
 
     }
     double Ia = sqrt(2.0 * m_power / Ra); // Ia could be changed for Beamforming application (add exp)
-    double a = R * ((Zvoid * Ia) / (2.0 * M_PI)) / completeLength;
+    std::complex<double> a = R * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
     // Angle in degrees
-    double angle_prime = 0.0;
-    double angle = rayLine->back()->angle();
-    if (angle >= 0.0 && angle <= 90.0) {
-        angle_prime = 90.0 - angle;
-
-    } else if (angle > 90.0 && angle < 360.0) {
-        angle_prime = 270.0 + 180.0 - angle;
-    }
-
-    Efield = i * a * exp(-i * (2.0 * M_PI / lambda) * completeLength);
-    Efield *= totaleArrayFactor(angle_prime, 90);
+    double angle_receiver = rayLine->front()->angle();
+    double angle_transmitter = rayLine->back()->angle();
+    double shift = (angle_receiver + m_receiver_orientation) * M_PI/180.0;
+    Efield = i * ((Zvoid * Ia) * a / (2.0 * M_PI));
+    Efield *= totaleArrayFactor(angle_transmitter, 90);
     if (amountSegment == 1) {
 
         // Adding the ground component
-        complex <double> groundEfield = this->computeEfieldGround(receiver,angle_prime); // Compute the electrical field from the ray reflected off the ground
+        complex <double> groundEfield = this->computeEfieldGround(receiver,angle_transmitter); // Compute the electrical field from the ray reflected off the ground
         Efield += groundEfield;
-        m_los_factor[receiver] = pow(a,2);
+        m_los_factor[receiver] = pow(abs(a),2);
 
     }
     else{
-        m_nlos_factor[receiver] += pow(a,2);
+        m_nlos_factor[receiver] += pow(abs(a),2);
     }
     QPointF p1 = rayLine->at(rayLine->size()-1)->p2();
-    if (p1.x() - 1 != this->getPosX() && p1.y() != this->getPosY()) {
+    //if (p1.x() - 1 != this->getPosX() && p1.y() != this->getPosY()) {
         vector<double> point(2);
         point[0] = p1.x();
         point[1] = p1.y();
-        m_attenuation[receiver][point] = R / completeLength;
-        m_raylength[receiver][point] = completeLength;
-    }
+        double tau = completeLength/c;
+        m_attenuation[receiver][point] = a*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
+        m_tau[receiver][point] = tau;
+        m_dopplershift[receiver][point] = -2.0*M_PI * m_receiver_speed * cos(shift) / lambda;
+    //}
 //    if(amountSegment==1){
 //        this->minLength = completeLength; // for delay spread computation
 //        this->LOS = pow(a,2);
@@ -169,14 +164,17 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
     //if(completeLength > this->maxLength) this->maxLength = completeLength; // for delay spread computation
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2 * m_power / Ra); // Ia could be changed for Beamforming application
-    double a = R * ((Zvoid * Ia) / (2*M_PI));
-    complex <double> Efield = i * a * totaleArrayFactor(direction,thetaI*180.0/M_PI)* exp(-i*(2.0*M_PI/lambda)*completeLength) / completeLength;
+    std::complex<double> a = R * exp(-i*(2.0*M_PI/lambda)*completeLength)  / completeLength;
+    complex <double> Efield = i * a * (Zvoid * Ia) * totaleArrayFactor(direction,thetaI*180.0/M_PI) / (2*M_PI);
     vector<double> point(2);
     point[0] = 0;
     point[1] = 0;
-    m_attenuation[receiver][point] = R / completeLength;
-    m_raylength[receiver][point] = completeLength;
-    m_nlos_factor[receiver] += pow(a,2);
+    double tau = completeLength/c;
+    double shift = (direction + m_receiver_orientation) * M_PI/180.0;
+    m_attenuation[receiver][point] = a*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
+    m_tau[receiver][point] = tau;
+    m_nlos_factor[receiver] += pow(abs(a),2);
+    m_dopplershift[receiver][point] = -2.0*M_PI * m_receiver_speed * cos(shift) * cos(M_PI/2-thetaG) / lambda;
 //    this->NLOS += pow(a,2);
 
 //    // Store ray parameter for Physical impulse response
@@ -621,8 +619,11 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
     m_nlos_factor[receiver] = 0.0;
     m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(), m_receiversPowers[receiver].end());
     m_attenuation.erase(receiver);
-    m_raylength.erase(receiver);
+    m_tau.erase(receiver);
+    m_dopplershift.erase(receiver);
     receiver_distance.erase(receiver);
+    m_receiver_speed = speed/3.6;
+    m_receiver_orientation = direction;
 
     if (m_receiversRays.count(receiver)) {
         for (unsigned int i = 0; i < m_receiversRays[receiver].size(); i++) {

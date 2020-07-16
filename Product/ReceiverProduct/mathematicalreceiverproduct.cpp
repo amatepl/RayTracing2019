@@ -13,6 +13,8 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY): QP
     m_target_snr = 8; // [dB]
     m_noise_figure = 10; // [dB]
     m_interferencemargin = 6; // [dB]
+    m_speed = 0.0;
+    m_orientation = 0.0;
     computeMinPrx();
 }
 
@@ -27,6 +29,8 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     m_noise_figure = receiver->noiseFigure(); // [dB]
     m_interferencemargin = receiver->interFerenceMargin(); // [dB]
     m_observers = receiver->m_observers;
+    m_speed = receiver->getSpeed();
+    m_orientation = receiver->getOrientation();
     computeMinPrx();
 }
 
@@ -54,25 +58,25 @@ void MathematicalReceiverProduct::computeSnr(){
 }
 
 void MathematicalReceiverProduct::computeDelaySpread(){
-    double min_length, max_length, l;
+    double min_tau, max_tau, t;
     int i = 0;
-    for (const auto &length: m_raylength){
-        l = length.second;
+    for (const auto &tau: m_tau){
+        t = tau.second;
         if (i == 0){
-            min_length = l;
-            max_length = l;
+            min_tau = t;
+            max_tau = t;
         }
         else {
-            if(l<min_length){
-                min_length = l;
+            if(t<min_tau){
+                min_tau = t;
             }
-            else if(l>max_length){
-                max_length = l;
+            else if(t>max_tau){
+                max_tau = t;
             }
         }
         i++;
     }
-    delay_spread = abs(max_length-min_length)/c*1e9;
+    delay_spread = abs(max_tau-min_tau)*1e9;
     if (delay_spread < 1e-20){
         delay_spread = 0.0;
     }
@@ -200,7 +204,7 @@ void MathematicalReceiverProduct::modelPathLoss(){
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 2. Impulse Resoonse and TDL Computation:
-void MathematicalReceiverProduct::setImpulseAttenuation(std::map<std::vector<double>, double> attenuation){
+void MathematicalReceiverProduct::setImpulseAttenuation(std::map<std::vector<double>, std::complex<double>> attenuation){
     for (int i = 0; i< h_tdl.size(); i++){
         tau_tdl.removeAt(i);
         h_tdl.removeAt(i);
@@ -230,14 +234,14 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
     // loop over all rays
     double tau_check;
     int i = 0;
-    map<vector<double>,double>::iterator it;
+    map<vector<double>,std::complex<double>>::iterator it;
     it = m_attenuation.begin();
-    for(const auto &imp : m_raylength){
+    for(const auto &imp : m_tau){
         // Compute attenuation factor
         h[i] = 10*log10(abs(it->second));
         // Compute time of arrival in ns
-        tau[i] = imp.second/c*1e9; // tau
-        tau_check = imp.second/c;
+        tau[i] = imp.second*1e9; // tau
+        tau_check = imp.second;
 
         int l = 0;
         while(!(l*deltaTau<=tau_check && tau_check<l*deltaTau+deltaTau)){
@@ -284,6 +288,21 @@ void MathematicalReceiverProduct::cellRange(){
     }
 }
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 4. Doppler:
+void MathematicalReceiverProduct::setDopplerShift(map<vector<double>, double> dopplershift)
+{
+    for (int i = 0; i< doppler_shift.size(); i++){
+        doppler_shift.removeAt(i);
+    }
+    m_doppler_shift = dopplershift;
+    doppler_shift.resize(m_doppler_shift.size());
+    int i = 0;
+    for(const auto &dop : m_doppler_shift){
+        doppler_shift[i] = dop.second;
+        i++;
+    }
+}
 // From ReceiverProduct
 int MathematicalReceiverProduct::getPosX(){return x();}
 int MathematicalReceiverProduct::getPosY(){return y();}
@@ -314,7 +333,7 @@ void MathematicalReceiverProduct::setEnable(bool enable) {this->enable = enable;
 void MathematicalReceiverProduct::newProperties(){
     computeMinPrx();
     if (m_graphic != nullptr){
-        m_graphic->notifyToGraphic(this);
+        m_graphic->notifyToGraphic(this,m_orientation);
     }
 }
 

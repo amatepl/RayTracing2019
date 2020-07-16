@@ -12,6 +12,8 @@ class ReceiverProduct
 public:
     virtual ~ReceiverProduct() {}
 
+    virtual float getSpeed() = 0;
+    virtual float getOrientation() = 0;
     virtual int getPosX() = 0;
     virtual int getPosY() = 0;
     virtual bool getEnable() = 0;
@@ -21,6 +23,8 @@ public:
     virtual int noiseFigure() = 0;
     virtual int interFerenceMargin() = 0;
 
+    virtual void  setSpeed(float speed) = 0;
+    virtual void setOrientation(float orientation) = 0;
     virtual void setPosX(int posX) = 0;
     virtual void setPosY(int posY) = 0;
     virtual void setEnable(bool enable) = 0;
@@ -32,29 +36,32 @@ public:
 
     // Physical Result and parameters
     // 1. Path Loss Results:
-    QVector<double> powerPathLoss() {return Prx;}
-    QVector<double> distancePathLoss() {return D;}
-    QVector<double> linearPathLoss() {return path_loss;}
-    QVector<double> powerPathLossModel() {return Prx_model;}
-    QVector<double> distancePathLossModel() {return D_model;}
-    QVector<double> linearPathLossModel() {return path_loss_model;}
-    double pathLossExponent() {return m/10;}
-    double fadingVariability() {return fading_variability;}
-    double minPower() {return min_prx;}
+    virtual QVector<double> powerPathLoss() {return Prx;}
+    virtual QVector<double> distancePathLoss() {return D;}
+    virtual QVector<double> linearPathLoss() {return path_loss;}
+    virtual QVector<double> powerPathLossModel() {return Prx_model;}
+    virtual QVector<double> distancePathLossModel() {return D_model;}
+    virtual QVector<double> linearPathLossModel() {return path_loss_model;}
+    virtual double pathLossExponent() {return m/10;}
+    virtual double fadingVariability() {return fading_variability;}
+    virtual double minPower() {return min_prx;}
 
     // 2. Impulse and TDL Results:
-    QVector<double> impulse(){return h;}
-    QVector<double> impulseTDL(){return h_tdl;}
-    QVector<double> impulseTau() {return tau;}
-    QVector<double> impulseTauTDL() {return tau_tdl;}
+    virtual QVector<double> impulse(){return h;}
+    virtual QVector<double> impulseTDL(){return h_tdl;}
+    virtual QVector<double> impulseTau() {return tau;}
+    virtual QVector<double> impulseTauTDL() {return tau_tdl;}
 
     // 3. Cell Range Results:
-    QVector<double> probabilityConnection() {return probability;}
-    QVector<double> cellRangeConnection() {return cell_range;}
-    unsigned long frequency() {return m_transmitterfrequency;}
-    unsigned long bandwidth() {return m_transmitterbandwidth;}
-    void setFrequency(unsigned long frequency){m_transmitterfrequency = frequency;}
-    void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
+    virtual QVector<double> probabilityConnection() {return probability;}
+    virtual QVector<double> cellRangeConnection() {return cell_range;}
+    virtual unsigned long frequency() {return m_transmitterfrequency;}
+    virtual unsigned long bandwidth() {return m_transmitterbandwidth;}
+    virtual void setFrequency(unsigned long frequency){m_transmitterfrequency = frequency;}
+    virtual void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
+
+    // 4. Doppler
+    virtual QVector<double> dopplerShift() {return doppler_shift;}
 
     virtual void newProperties() = 0;
 
@@ -69,6 +76,9 @@ protected:
 
     // 3. Cell Range
     QVector<double> cell_range, probability;
+
+    // 4. Doppler
+    QVector<double> doppler_shift;
 
     unsigned long m_transmitterfrequency;
     unsigned long m_transmitterbandwidth;

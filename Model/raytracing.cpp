@@ -56,7 +56,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     setAttributs(mathematicalComponents);
 
     m_receiverfactory = receiverfactory;
-    reflectionsNumber = 3;
+    reflectionsNumber = 1;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
@@ -99,11 +99,12 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
 
     true_receiver->setFrequency(true_transmitter->getFrequency());
     true_receiver->setBandwidth(true_transmitter->getBandwidth());
-    true_receiver->setImpulseRayLength(true_transmitter->impulseRayLength(true_receiver));
+    true_receiver->setImpulseTau(true_transmitter->impulseTau(true_receiver));
     true_receiver->setImpulseAttenuation(true_transmitter->impulseAttenuation(true_receiver));
     true_receiver->setPathLoss(true_transmitter->pathLoss(copy_receiver));
     true_receiver->setTransmitterDistance(true_transmitter->receiverDistance(true_receiver));
     true_receiver->riceFactor(true_transmitter->riceFactor(true_receiver));
+    true_receiver->setDopplerShift(true_transmitter->dopplerShift(true_receiver));
     true_receiver->computeMinPrx();
 }
 
@@ -114,8 +115,7 @@ void RayTracing::pathLossComputation(std::vector<QPointF> points,
     MathematicalReceiverProduct* original_receiver = dynamic_cast<MathematicalReceiverProduct *>
             (true_receiver);
 
-    copy_receiver = (MathematicalReceiverProduct*)m_receiverfactory->createMathematicalProduct(
-                        original_receiver,false);
+    copy_receiver = (MathematicalReceiverProduct*)m_receiverfactory->createMathematicalProduct(original_receiver,false);
 
     MathematicalTransmitterProduct* original_transmitter = (MathematicalTransmitterProduct *)
             true_transmitter;

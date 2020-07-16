@@ -48,7 +48,7 @@ public:
         double k = 2.0*M_PI/lambda;
         double alpha  = phi*M_PI/180;
         double principal_angle = m_pr_orientation*M_PI/12; // -5 -4 -3 ... 0 ... 3 4 5
-        double beta = (theta-m_orientation)*M_PI/180;
+        double beta = (theta+m_orientation)*M_PI/180;
         double alphaprime = M_PI/2;
         double betaprime = principal_angle;
         double A = sin(alpha)*sin(beta);
@@ -91,7 +91,7 @@ public:
         double d = lambda/4.0;
         double k = 2.0*M_PI/lambda;
         complex <double> i(0.0,1.0);
-        double thetaprime = theta - m_orientation;
+        double thetaprime = theta + m_orientation;
         if (thetaprime < 0.0){
             thetaprime = 360 + thetaprime;
         }
