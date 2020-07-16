@@ -105,11 +105,61 @@ void MapGenerator::addCars()
 
         line.setLength(random);
         carPosition = line.p2();
+        QLineF tmpLine(line);
+        tmpLine.setLength(tmpLine.length() - 11);
+        QPointF tmpPoint = tmpLine.p2();
+        tmpLine.setLength(tmpLine.length() + 22);
+        tmpLine.setP1(tmpPoint);
+
+        QLineF normal = tmpLine.normalVector();
+        normal.setLength(11);
+
+        QPolygonF carContour;
+
+        carContour << normal.p2();
+
+//        cout <<"First point: "<< normal.p2().x()<< ", "<< normal.p2().y() <<endl;
+
+        normal.translate(normal.p1() - normal.p2());
+
+        carContour << normal.p1();
+
+//        cout <<"2 point: "<< normal.p1().x()<< ", "<< normal.p1().y() <<endl;
+
+        normal.translate(tmpLine.p2() - tmpLine.p1());
+
+        carContour << normal.p1();
+
+//        cout <<"3 point: "<< normal.p1().x()<< ", "<< normal.p1().y() <<endl;
+
+        normal.translate(normal.p2() - normal.p1());
+
+        carContour << normal.p2();
+
+//        cout <<"4t: "<< normal.p2().x()<< ", "<< normal.p2().y() <<endl;
+
+        carContour<< carContour.at(0);
+
+//        cout <<"4: "<< normal.p2().x()<< ", "<< normal.p2().y() <<endl;
+
         QRectF carRect(line.p2().x(), line.p2().x(), 22, 22);
-        QPolygonF carContour(carRect);
+        ;
+
 //        carContour
+//        MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPosition.x(),
+//                                                                           carPosition.y());
+
+        //          1 --- 4
+        //          |     |
+        //          |     |
+        //          2 --- 3
+
         MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPosition.x(),
-                                                                           carPosition.y());
+                                                                           carPosition.y(),
+                                                                           carContour,
+                                                                           true);
+        dynamic_cast<MathematicalCarProduct *>(car)->setMovement(tmpLine);
+
         m_products.push_back(car);
         m_cars.push_back((MathematicalCarProduct *)car);
         ((MathematicalCarProduct *)car)->setRoad(line);
@@ -121,8 +171,44 @@ void MapGenerator::addCars()
         QLineF line = *m_verticalStreets.at(j);
         line.setLength(random);
         carPosition = line.p2();
+
+        QLineF tmpLine(line);
+        tmpLine.setLength(tmpLine.length() - 11);
+        QPointF tmpPoint = tmpLine.p2();
+        tmpLine.setLength(tmpLine.length() + 22);
+        tmpLine.setP1(tmpPoint);
+
+        QLineF normal = tmpLine.normalVector();
+        normal.setLength(11);
+
+        QPolygonF carContour;
+
+        carContour << normal.p2();
+
+        normal.translate(normal.p1() - normal.p2());
+
+        carContour << normal.p1();
+
+        normal.translate(tmpLine.p2() - tmpLine.p1());
+
+        carContour << normal.p1();
+
+        normal.translate(normal.p2() - normal.p1());
+
+        carContour << normal.p2();
+
+        carContour<< carContour.at(0);
+
+//        MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPosition.x(),
+//                                                                           carPosition.y());
+
         MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPosition.x(),
-                                                                           carPosition.y());
+                                                                           carPosition.y(),
+                                                                           carContour,
+                                                                           true);
+
+        dynamic_cast<MathematicalCarProduct *>(car)->setMovement(tmpLine);
+
         m_products.push_back(car);
         m_cars.push_back((MathematicalCarProduct *) car);
         ((MathematicalCarProduct *) car)->setRoad(line);

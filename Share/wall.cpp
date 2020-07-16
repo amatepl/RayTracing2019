@@ -11,12 +11,19 @@ Wall::Wall(double x01, double y01, double x02, double y02, double thickness, dou
 
 }
 
+
 Wall::Wall(const QPointF &p1, const QPointF &p2, double thickness, double relEps, double sig, int listInd):
     Line(p1,p2),thick(thickness),epsilon(relEps),sigma(sig),indWall(listInd)
 {
 
 }
-Wall::~Wall(void){}
+
+
+Wall::~Wall(void)
+{
+
+}
+
 
 QPointF Wall::symetricalPoint(const QPointF &point){
     QLineF normal = normalVector();
@@ -30,6 +37,43 @@ QPointF Wall::symetricalPoint(const QPointF &point){
     return finalVector.p2();
 }
 
+
+double Wall::getSpeed() const
+{
+    return m_speed;
+}
+
+
+double Wall::getOrientation() const
+{
+    return m_speed;
+}
+
+
+int Wall::getWallType() const
+{
+    return m_wallType;
+}
+
+
+void Wall::setWallType(int type)
+{
+    m_wallType = type;
+}
+
+
+void Wall::setSpeed(double speed)
+{
+    m_speed = speed;
+}
+
+
+void Wall::setOrientation(double orientation)
+{
+    m_orientation = orientation;
+}
+
+
 QPointF Wall::otherPoint(const QPointF &point) const{
     QPointF res;
     if(point == p1()){
@@ -40,6 +84,7 @@ QPointF Wall::otherPoint(const QPointF &point) const{
     }
     return res;
 }
+
 
 QPointF Wall::farestExtrem(const QPointF &point) const{
     QLineF line1(point,this->p1()),line2(point,this->p2());

@@ -122,12 +122,32 @@ void TransmitterImage::update(ProductObservable *productObservable, const float 
         QLineF line(*this,*productObservable->getPos());
         QPointF reflectionPoint;
         m_wall.intersect(line,&reflectionPoint);
-        //MathematicalRayProduct newRay(reflectionPoint,pos,line.angleTo(m_wall));
-        MathematicalRayProduct ray(*m_rayFactory->createRay(reflectionPoint,*productObservable->getPos(),line.angleTo(m_wall)));
 
-//        cout<<"Reflected ray: "<<ray.p1().x()<<", "<<ray.p1().y()<<" and p2 = "<<ray.p2().x()<<", "<<ray.p2().y()<<endl;
-        wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,*productObservable->getPos(),line.angleTo(m_wall)));
-        m_parent->notifyParent(productObservable,speed,direction, reflectionPoint,wholeRay);
+//        MathematicalRayProduct newRay(reflectionPoint,pos,line.angleTo(m_wall));
+        MathematicalRayProduct ray(*m_rayFactory->createRay(reflectionPoint,
+                                                            *productObservable->getPos(),
+                                                            line.angleTo(m_wall)));
+
+//        cout<<"Reflected ray: "<<ray.p1().x()<<", "<<ray.p1().y()
+//             <<" and p2 = "<<ray.p2().x()<<", "<<ray.p2().y()<<endl;
+
+        wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,
+                                                    *productObservable->getPos(),
+                                                    line.angleTo(m_wall)));
+
+        double res_speed {0};
+        double res_orientation {0};
+
+        if (m_wallType == Wall::front) {
+
+            res_speed = speed + m_speed;
+
+        } else if (m_wallType == Wall::back) {
+            res_speed = speed - m_speed;
+        }
+
+
+        m_parent->notifyParent(productObservable,res_speed,res_orientation, reflectionPoint,wholeRay);
     }
 }
 
@@ -135,14 +155,29 @@ void TransmitterImage::attachObservable(ProductObservable* productObservable){
     m_observable.push_back(productObservable);
 }
 
-void TransmitterImage::notifyParent(ProductObservable *productObservable, const float speed, const float direction, const QPointF &point, vector<MathematicalRayProduct*> *wholeRay){
+void TransmitterImage::notifyParent(ProductObservable *productObservable, const float speed,
+                                    const float direction, const QPointF &point,
+                                    vector<MathematicalRayProduct*> *wholeRay)
+{
     QLineF line(*this,point);
     QPointF reflectionPoint;
     m_wall.intersect(line,&reflectionPoint);
 //    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
 //    wholeRay->push_back(newRay);
     wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
-    m_parent->notifyParent(productObservable,speed,direction ,reflectionPoint,wholeRay);
+
+    double res_speed {0};
+    double res_orientation {0};
+
+    if (m_wallType == Wall::front) {
+
+        res_speed = speed + m_speed;
+
+    } else if (m_wallType == Wall::back) {
+        res_speed = speed - m_speed;
+    }
+
+    m_parent->notifyParent(productObservable,res_speed,res_orientation ,reflectionPoint,wholeRay);
 }
 
 QPointF TransmitterImage::getPosition() const {
