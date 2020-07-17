@@ -35,7 +35,9 @@ public:
     virtual void setKind(Kind kind) = 0;
     virtual void newProperties() = 0;
 
-    virtual complex <double> arrayFactor(double theta, double phi) {
+
+    virtual complex <double> arrayFactor(double theta, double phi)
+    {
         complex <double> xarray(0.0,0.0);
         complex <double> yarray(0.0,0.0);
         complex <double> arrayfactor(0.0,0.0);
@@ -77,7 +79,9 @@ public:
         return arrayfactor;
     }
 
-    virtual complex <double> dipoleFactor(double theta, double phi) {
+
+    virtual complex <double> dipoleFactor(double theta, double phi)
+    {
         complex <double> dipolefactor(0.0,0.0);
         if (phi == 0.0 || phi == 180.0) dipolefactor = 0.0;
         else dipolefactor = cos(0.5*M_PI*cos(phi*M_PI/180))/sin(phi*M_PI/180);

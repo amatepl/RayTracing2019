@@ -48,6 +48,7 @@ public:
     vector<vector<QLineF>> buildTreeRays(QPointF *Rx,MathematicalTreeProduct *tree);
     void computeRayThroughTree(QPointF *Rx,MathematicalTreeProduct *tree);
 
+    void chooseBeam(ProductObservable * receiver);
     double computePrx(complex <double> totalEfield);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR);
@@ -63,8 +64,8 @@ public:
 
     vector<vector<MathematicalRayProduct *> *> getRays();
     void notifyObservables();
-    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
-    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
+    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line) const;
+    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone) const;
     void setSceneBoundary(const QRectF &rect);
     // The path loss must take the direct ray and compute the different power on this ray.
     void computePathLoss(QLineF direct_ray, ProductObservable *true_receiver);
@@ -216,12 +217,12 @@ private:
     map<ProductObservable *,map<vector<double>,double>> m_raylength;
 
     // Path loss computation
-    map<ProductObservable*,map<double,double>> m_pathloss;
-    map<ProductObservable*,double> receiver_distance;
+    map<ProductObservable *,map<double,double>> m_pathloss;
+    map<ProductObservable *,double> receiver_distance;
 
     // Rice facor
-    map<ProductObservable*,double> m_los_factor;
-    map<ProductObservable*,double> m_nlos_factor;
+    map<ProductObservable *,double> m_los_factor;
+    map<ProductObservable *,double> m_nlos_factor;
 
 
     QRectF m_sceneBoundary;
