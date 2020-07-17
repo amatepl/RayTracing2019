@@ -44,6 +44,13 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     m_posx->setAccelerated(true);
     m_posy->setRange(0,5000);
     m_posy->setAccelerated(true);
+    m_orientation = new QDoubleSpinBox(this);
+    m_orientation->setRange(0,360.0);
+    m_orientation->setAccelerated(true);
+    m_speed = new QDoubleSpinBox(this);
+    m_speed->setRange(0,90.0);
+    m_speed->setAccelerated(true);
+
 
     m_target_snr = new QSpinBox(this);
     m_noise_figure = new QSpinBox(this);
@@ -59,6 +66,8 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     QFormLayout *geoProperties = new QFormLayout(this);
     geoProperties->addRow("X center: ",m_posx);
     geoProperties->addRow("Y center: ",m_posy);
+    geoProperties->addRow("Orientation [°]: ", m_orientation);
+    geoProperties->addRow("Speed [km/h]: ", m_speed);
 
     QGroupBox *geo = new QGroupBox("Geometry properties");
     geo->setLayout(geoProperties);
@@ -79,6 +88,8 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
 
     widget->setLayout(firstLayout);
 
+    setOrientation(m_mathematicalproduct->getOrientation());
+    setSpeed(m_mathematicalproduct->getSpeed());
     setPosX(m_mathematicalproduct->getPosX());
     setPosY(m_mathematicalproduct->getPosY());
     setPower(m_mathematicalproduct->getPower());
@@ -334,8 +345,24 @@ QWidget* DialogReceiverProduct::DopplerSpectrum(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
 
+    doppler_shift = m_mathematicalproduct->dopplerShift();
+
+    for(int i = 0; i < h.size(); i++){
+        QCPItemLine *line_doppler = new QCPItemLine(customplot);
+        line_doppler->start->setCoords(doppler_shift[i], h[i]);  // location of point 1 in plot coordinate
+        line_doppler->end->setCoords(doppler_shift[i], -130);  // location of point 2 in plot coordinate
+        line_doppler->setPen(QPen(Qt::blue));
+    }
+
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::red));
+    customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    customplot->graph(0)->setData(doppler_shift, h);
+    customplot->graph(0)->setName("Doppler spectrum");
+
     customplot->xAxis->setLabel("\u03C9[rad/s]");
-    customplot->yAxis->setLabel("Prx[dBm]");
+    customplot->yAxis->setLabel("h[dB]");
     customplot->yAxis->grid()->setSubGridVisible(true);
     customplot->xAxis->grid()->setSubGridVisible(true);
     customplot->rescaleAxes();
@@ -362,6 +389,8 @@ void DialogReceiverProduct::setEnable(bool enable){
 }
 
 void DialogReceiverProduct::newProperties(){
+    m_mathematicalproduct->setOrientation(getOrientation());
+    m_mathematicalproduct->setSpeed(getSpeed());
     m_mathematicalproduct->setPosX(getPosX());
     m_mathematicalproduct->setPosY(getPosY());
     m_mathematicalproduct->setTargetSNR(targetSNR());

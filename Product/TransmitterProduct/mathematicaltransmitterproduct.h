@@ -80,11 +80,15 @@ public:
     }
 
     // Vector to receive all the physical informations to share
-    map<vector<double>,double> impulseAttenuation(ProductObservable *receiver) {
+    map<vector<double>,std::complex<double>> impulseAttenuation(ProductObservable *receiver) {
         return m_attenuation[receiver];
     }
-    map<vector<double>,double> impulseRayLength(ProductObservable *receiver) {
-        return m_raylength[receiver];
+    map<vector<double>,double> impulseTau(ProductObservable *receiver) {
+        return m_tau[receiver];
+    }
+    map<vector<double>,double> dopplerShift(ProductObservable *receiver)
+    {
+        return m_dopplershift[receiver];
     }
 
     map<double,double> pathLoss(ProductObservable* receiver){return m_pathloss[receiver];}
@@ -195,12 +199,16 @@ public:
 
 private:
 
-    double px_to_meter         { 1 };
+    double px_to_meter       { 0.1 };
     double m_power             { 2 };
-    bool active_pathloss    { true };
-    bool compute_pathloss   { true };
+    bool active_pathloss   { false };
+    bool compute_pathloss  { false };
     Kind m_kind           { dipole };
     int m_radius             { 500 };
+
+    // Provisory variable:
+    float m_receiver_speed;
+    float m_receiver_orientation;
 
     double m_powerAtReceiver;
     ModelObservable *m_model;
@@ -213,8 +221,8 @@ private:
     vector<MathematicalTreeProduct *> m_trees;
 
     // Attenuation for impulse response and TDL
-    map<ProductObservable *,map<vector<double>,double>> m_attenuation;
-    map<ProductObservable *,map<vector<double>,double>> m_raylength;
+    map<ProductObservable *,map<vector<double>,std::complex<double>>> m_attenuation;
+    map<ProductObservable *,map<vector<double>,double>> m_tau;
 
     // Path loss computation
     map<ProductObservable *,map<double,double>> m_pathloss;
@@ -223,6 +231,9 @@ private:
     // Rice facor
     map<ProductObservable *,double> m_los_factor;
     map<ProductObservable *,double> m_nlos_factor;
+
+    // Doppler spectrum
+    map<ProductObservable *,map<vector<double>,double>> m_dopplershift;
 
 
     QRectF m_sceneBoundary;

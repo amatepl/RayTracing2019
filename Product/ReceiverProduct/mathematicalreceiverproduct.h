@@ -45,17 +45,28 @@ public:
     void modelPathLoss();
 
     // 2. Impulse Response and TDL Computation:
-    std::map<std::vector<double>,double> impulseRayLength() {return m_raylength;}
-    std::map<std::vector<double>,double> impulseAttenuation() {return m_attenuation;}
-    void setImpulseRayLength(std::map<std::vector<double>,double> raylength){m_raylength = raylength;}
-    void setImpulseAttenuation(std::map<std::vector<double>,double> attenuation);
+    std::map<std::vector<double>,double> getimpulseTau() {return m_tau;}
+    std::map<std::vector<double>,std::complex<double>> impulseAttenuation() {return m_attenuation;}
+    void setImpulseTau(std::map<std::vector<double>,double> raylength){m_tau = raylength;}
+    void setImpulseAttenuation(std::map<std::vector<double>,std::complex<double>> attenuation);
     void computeImpulseTDL();
 
     // 3. Cell Range Computation:
     void cellRange();
 
+    // 4. Doppler
+    void setDopplerShift(map<vector<double>,double> dopplershift);
+
 
     // From ReceiverProduct:
+    float getSpeed() override
+    {
+        return m_speed;
+    }
+    float getOrientation() override
+    {
+        return m_orientation;
+    }
     int getPosX() override;
     int getPosY() override;
     double getPower() override;
@@ -65,6 +76,14 @@ public:
     int noiseFigure() override {return m_noise_figure;}
     int interFerenceMargin() override {return m_interferencemargin;}
 
+    void setSpeed(float speed) override
+    {
+        m_speed = speed;
+    }
+    void setOrientation(float orientation) override
+    {
+        m_orientation = orientation;
+    }
     void setPosX(int posX) override;
     void setPosY(int posY) override;
     void setPower(double p) override;
@@ -120,8 +139,11 @@ private:
     QVector<double> logD, fading, logD_model;
 
     // 4. For Impulse Response and TDL
-    std::map<std::vector<double>,double> m_raylength;
-    std::map<std::vector<double>,double> m_attenuation;
+    std::map<std::vector<double>,double> m_tau;
+    std::map<std::vector<double>,std::complex<double>> m_attenuation;
+
+    // 5. Doppler
+    std::map<std::vector<double>,double> m_doppler_shift;
 };
 
 #endif // MATHEMATICALRECEIVERPRODUCT_H

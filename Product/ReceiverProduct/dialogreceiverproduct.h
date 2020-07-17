@@ -33,6 +33,14 @@ public:
     QWidget* DopplerSpectrum();
     void changeGraph();
 
+    float getSpeed() override
+    {
+        return m_speed->value();
+    }
+    float getOrientation() override
+    {
+        return m_orientation->value();
+    }
     int getPosX() override {return m_posx->value();}
     int getPosY() override {return m_posy->value();}
     double getPower() override {return m_power->text().toDouble();}
@@ -42,6 +50,14 @@ public:
     int noiseFigure() override {return m_noise_figure->value();}
     int interFerenceMargin() override {return m_interferencemargin->value();}
 
+    void setSpeed(float speed) override
+    {
+        m_speed->setValue(speed);
+    }
+    void setOrientation(float orientation) override
+    {
+        m_orientation->setValue(orientation);
+    }
     void setPosX(int posX) override {m_posx->setValue(posX);}
     void setPosY(int posY) override {m_posy->setValue(posY);}
     void setPower(double p) override {m_power->insert(QString::number(p));}
@@ -55,6 +71,7 @@ public:
 private:
     ReceiverProduct *m_mathematicalproduct;
     QSpinBox *m_posx,*m_posy, *m_target_snr, *m_noise_figure,* m_interferencemargin;
+    QDoubleSpinBox *m_speed, *m_orientation;
     QLineEdit *m_power;
     QLineEdit *m_e_field;
     QTabWidget* m_tabwidget;

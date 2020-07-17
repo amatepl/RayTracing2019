@@ -82,8 +82,9 @@ void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *e
     m_productmenu->exec(event->screenPos());
 }
 
-void GraphicsReceiverProduct::notifyToGraphic(QPointF *point){
+void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, float orientation){
     setPos(*point);
+    setRotation(orientation);
 }
 
 void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, double power){

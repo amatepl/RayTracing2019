@@ -24,7 +24,7 @@ public:
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
-    void notifyToGraphic(QPointF *) override;
+    void notifyToGraphic(QPointF *, float) override;
     void notifyToGraphic(QPointF *, double) override;
 
     void sendInformation() override;
