@@ -56,7 +56,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     setAttributs(mathematicalComponents);
 
     m_receiverfactory = receiverfactory;
-    reflectionsNumber = 1;
+    reflectionsNumber = 2;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
@@ -79,7 +79,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
         }
     }
 
-    for(unsigned i = 0; i < m_receivers.size(); i++) {
+    for (unsigned i = 0; i < m_receivers.size(); i++) {
         //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
         m_receivers.at(i)->notifyObservers();
     }
@@ -157,13 +157,13 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
         for(unsigned i=0; i<m_mathematicalComponents["Receiver"].size(); i++) {
             m_receiver = static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(
                              0)) ;
-            m_receivers.push_back(static_cast<MathematicalReceiverProduct*>
+            m_receivers.push_back(static_cast<MathematicalReceiverProduct *>
                                   (m_mathematicalComponents["Receiver"].at(i)));
         }
     }
     if(m_mathematicalComponents.count("Building")) {
         for(unsigned i=0; i<m_mathematicalComponents["Building"].size(); i++) {
-            m_buildings.push_back(static_cast<MathematicalBuildingProduct*>
+            m_buildings.push_back(static_cast<MathematicalBuildingProduct *>
                                   (m_mathematicalComponents["Building"].at(i)) );
         }
     }
@@ -171,7 +171,7 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
         for(unsigned i=0; i<m_mathematicalComponents["Car"].size(); i++) {
             m_cars.push_back(static_cast<MathematicalCarProduct *>
                                   (m_mathematicalComponents["Car"].at(i)) );
-            m_buildings.push_back(static_cast<MathematicalBuildingProduct*>
+            m_buildings.push_back(static_cast<MathematicalBuildingProduct *>
                                   (m_mathematicalComponents["Car"].at(i)) );
         }
     }

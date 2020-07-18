@@ -99,6 +99,9 @@ void MapGenerator::generateMap()
 void MapGenerator::addCars()
 {
     QPointF carPosition;
+
+    int numberOfCars = 0;       // For test
+
     for (unsigned i = 0; i < m_horizontalStreets.size(); i++) {
         int random = rand() % (int) m_horizontalStreets.at(i)->length();
         QLineF line = *m_horizontalStreets.at(i);
@@ -143,11 +146,6 @@ void MapGenerator::addCars()
 //        cout <<"4: "<< normal.p2().x()<< ", "<< normal.p2().y() <<endl;
 
         QRectF carRect(line.p2().x(), line.p2().x(), 22, 22);
-        ;
-
-//        carContour
-//        MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPosition.x(),
-//                                                                           carPosition.y());
 
         //          1 --- 4
         //          |     |
@@ -163,6 +161,12 @@ void MapGenerator::addCars()
         m_products.push_back(car);
         m_cars.push_back((MathematicalCarProduct *)car);
         ((MathematicalCarProduct *)car)->setRoad(line);
+
+        thread *thread_obj = new thread (&MapGenerator::moveCar,
+                                        ref(*(MathematicalCarProduct*)car),
+                                        ref(*m_horizontalStreets.at(i)));
+
+        numberOfCars+=1;
 
     }
 
@@ -213,13 +217,16 @@ void MapGenerator::addCars()
         m_cars.push_back((MathematicalCarProduct *) car);
         ((MathematicalCarProduct *) car)->setRoad(line);
 
-//        thread *thread_obj = new thread (&MapGenerator::moveCar,
-//                                        ref(*(MathematicalCarProduct*)car),
-//                                        ref(*m_verticalStreets.at(j)));
+        thread *thread_obj = new thread (&MapGenerator::moveCar,
+                                        ref(*(MathematicalCarProduct*)car),
+                                        ref(*m_verticalStreets.at(j)));
+        numberOfCars+=1;
 //        thread_obj->join();
-//        thread_obj.detach();
+//        thread_obj->detach();
 
     }
+    cout<< "Number of horizontal and vertical streets: "<< (m_horizontalStreets.size() + m_verticalStreets.size() )<<endl;
+    cout<<"Number of cars: " << numberOfCars << endl;
 }
 
 
@@ -257,10 +264,28 @@ void MapGenerator::addTrees()
 
 void MapGenerator::moveCar(MathematicalCarProduct &car, QLineF &street)
 {
-    while (true) {
-        car.setPosX(car.getPosX() + street.dx()/street.length());
-        car.setPosY(car.getPosY() + street.dy()/street.length());
-        this_thread::sleep_for(std::chrono::milliseconds(10));
+    bool run = true;
+    QLineF normal = street.unitVector();
+
+    while (run) {
+        if (car.getPosX()>100 && car.getPosX()<4900
+            && car.getPosY()>100 && car.getPosY()<4900){
+
+            normal.translate(QPointF(car.getPosX(), car.getPosY()) - normal.p1());
+            normal.setLength(10);
+            car.setPosX(normal.p2().x());
+            car.setPosY(normal.p2().y());
+//            car.setPosX(car.getPosX() + 2 * street.dx()/street.length());
+//            car.setPosY(car.getPosY() + 2 *street.dy()/street.length());
+//            car.newProperties();
+        } else {
+            run = false;
+        }
+
+
+//        cout<<"Car pos: "<<car.getPosX()<<", "<<car.getPosY()<<endl;
+
+        this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
@@ -272,7 +297,7 @@ void MapGenerator::moveCars(MapGenerator &mapGenerator)
         for (unsigned i = 0; i < cars.size(); i++) {
             cars.at(i)->moveCar();
         }
-        this_thread::sleep_for(std::chrono::milliseconds(1000));
+        this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 

@@ -35,6 +35,7 @@ public:
     void computeDelaySpread();
     void riceFactor(double rice);
     void coherenceBandwidth();
+    void attachTransmitter(ProductObserver *transmitter);
 
     // 1. Path Loss Computation:
     std::map<double,double> pathLoss(){return m_pathloss;}
@@ -122,12 +123,13 @@ private:
     InfoWidget *m_info_widget;
 
     // 1. For ProductOBserves
-    vector<ProductObserver*> m_observers;
+    vector<ProductObserver *> m_observers;
+    vector<ProductObserver *> m_transmitters;
     ProductObserver *m_transmitter = nullptr;
 
     // 2. For E Field And Power Computation
     complex <double> m_e_field;
-    double m_power=0;
+    double m_power = 0;
     double m_transmitter_distance;
     double snr_received;
     double delay_spread;

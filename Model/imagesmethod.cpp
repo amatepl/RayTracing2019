@@ -16,11 +16,12 @@ void ImagesMethod::illuminationZones()
 
     foreach (MathematicalTransmitterProduct *transmitter, m_transmitters) {
         for (unsigned i = 0; i < m_receivers.size(); i++) {
-            m_receivers.at(i)->attachObserver(transmitter);
+//            m_receivers.at(i)->attachObserver(transmitter);
+            m_receivers.at(i)->attachTransmitter(transmitter);
             transmitter->attachObservable(m_receivers.at(i));
         }
 //        m_receiver->attachObserver(transmitter);
-        transmitter->attachObservable(m_receiver);
+//        transmitter->attachObservable(m_receiver);
         m_currentTransmitterRange = transmitter->getIlluminationZone();
         forImage data = transmitterIllumination(transmitter);
 
@@ -453,7 +454,6 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                     image->setOrientation(walls.at(j)->getOrientation());
                 }
 
-                //image->setSceneBoundary(itemsBoundingRect());
                 image->setRayFactory(m_rayFactory);
 //                m_receiver->attachObserver(image);
                 for (unsigned int numberReceivers = 0; numberReceivers < m_receivers.size(); numberReceivers++) {

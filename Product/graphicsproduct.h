@@ -11,7 +11,7 @@ using namespace std;
 
 class QPixmap;
 
-class GraphicsProduct: public QObject
+class GraphicsProduct /*public QObject*/
 {
 //    Q_OBJECT
 
@@ -40,8 +40,8 @@ protected:
     MathematicalProduct* m_observer;
     std::string m_type;
 
-public slots:
-    virtual void notifyToGraphicSig(QPolygonF*,int,int,double) {};
+//public slots:
+//    virtual void notifyToGraphicSig(QPolygonF*,int,int,double) {};
 };
 
 #endif // GRAPHICSPRODUCT_H

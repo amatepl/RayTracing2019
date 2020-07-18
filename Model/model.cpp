@@ -20,13 +20,13 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
 
     m_scene = scene;
     MapGenerator* map = new MapGenerator(m_scene->sceneRect());
-    /*
+
     map->setScene(m_scene);
     map->setBuildingFactory(buildingFactory);
     map->setCarFactory(carFactory);
     map->setTreeFactory(treeFactory);
 
-    map->generateMap();*/
+    map->generateMap();
     m_receiverfactory = receiverfactory;
     //m_thread = thread((map->moveCars),ref(*map));
     //m_thread.join();

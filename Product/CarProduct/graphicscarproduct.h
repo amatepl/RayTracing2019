@@ -6,8 +6,9 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsScene>
 #include "Product/graphicsproduct.h"
+#include "Share/moveablegraphics.h"
 
-class GraphicsCarProduct:public GraphicsProduct, public QGraphicsPixmapItem
+class GraphicsCarProduct:public MoveableGraphics, public GraphicsProduct, public QGraphicsPixmapItem
 {
 public:
     GraphicsCarProduct(QMenu *productmenu, QGraphicsScene *scene);
