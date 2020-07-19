@@ -62,6 +62,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/mathematicalproduct.h \
     Product/sceneproduct.h \
     Share/line.h \
+    Share/moveablegraphics.h \
     Share/reflectiveobstacle.h \
     Share/wall.h \
     Widget/infowidget.h \

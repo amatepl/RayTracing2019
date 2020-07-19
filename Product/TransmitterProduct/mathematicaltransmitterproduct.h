@@ -99,6 +99,7 @@ public:
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
     void update(ProductObservable *receiver, QLineF const movement) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
+    void compute(ProductObservable *productObservable) override;
 
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;

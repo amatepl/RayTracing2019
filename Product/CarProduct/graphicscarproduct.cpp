@@ -47,7 +47,7 @@ void GraphicsCarProduct::draw(){
 
 
 void GraphicsCarProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
-    //m_graphicsfactory->clearSelection();
+//    m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
 }
@@ -73,4 +73,6 @@ void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int ce
     //setX(centerx);
     //setY(centery);
     //setRotation(orientation);
+//    cout<<"Center position: "<<centerx<<", "<<centery<<endl;
+    setPos(centerx - 11, centery - 11);
 }

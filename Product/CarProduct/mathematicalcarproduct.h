@@ -9,18 +9,20 @@
 #include "Product/mathematicalproduct.h"
 #include "Product/BuildingProduct/mathematicalbuildingproduct.h"
 #include "dialogcarproduct.h"
+#include "Share/moveablegraphics.h"
 
 using namespace std;
 
-class MathematicalCarProduct:/*public QObject,*/ public MathematicalBuildingProduct,/*  public MathematicalProduct,*/ public CarProduct
+class MathematicalCarProduct:public QObject, public MathematicalBuildingProduct,/*  public MathematicalProduct,*/ public CarProduct
 {
-//    Q_OBJECT
+    Q_OBJECT
 
 public:
     MathematicalCarProduct(QPolygonF rect, QPointF center);
     ~MathematicalCarProduct() override;
 
-    void moveCar();
+    void runCar();
+    static void moveCar();
     void setRoad(QLineF &road);
 
     void setMovement(QLineF &road);
@@ -48,9 +50,9 @@ private:
     QLineF m_movement;
     QLineF m_street;
 
-//signals:
-//    void positionChanged(QPolygonF* poly,int x, int y, double orientation);
-//    void signal();
+signals:
+    void positionChanged(QPolygonF* poly,int x, int y, double orientation);
+    void signal();
 };
 
 #endif // MATHEMATICALCARPRODUCT_H

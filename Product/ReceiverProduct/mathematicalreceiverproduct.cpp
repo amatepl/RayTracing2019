@@ -47,44 +47,60 @@ double MathematicalReceiverProduct::inputNoise(){
     return 10*log10(kb*To*m_transmitterbandwidth);
 }
 
-void MathematicalReceiverProduct::computeMinPrx(){
+void MathematicalReceiverProduct::computeMinPrx()
+{
     min_prx = m_target_snr + m_noise_figure + inputNoise() + m_interferencemargin + 30; // [dBm]
 }
 
-void MathematicalReceiverProduct::computeSnr(){
+
+void MathematicalReceiverProduct::computeSnr()
+{
     if (m_power != 0.0){
         snr_received = (m_power-30) - m_noise_figure - inputNoise(); // [dB]
     }
 }
 
-void MathematicalReceiverProduct::computeDelaySpread(){
+
+void MathematicalReceiverProduct::computeDelaySpread()
+{
     double min_tau, max_tau, t;
     int i = 0;
-    for (const auto &tau: m_tau){
+    for (const auto &tau: m_tau) {
         t = tau.second;
-        if (i == 0){
+        if (i == 0) {
             min_tau = t;
             max_tau = t;
         }
         else {
-            if(t<min_tau){
+            if(t < min_tau){
                 min_tau = t;
             }
-            else if(t>max_tau){
+            else if (t > max_tau) {
                 max_tau = t;
             }
         }
         i++;
     }
+
     delay_spread = abs(max_tau-min_tau)*1e9;
+
     if (delay_spread < 1e-20){
         delay_spread = 0.0;
     }
 }
 
-void MathematicalReceiverProduct::coherenceBandwidth(){
+
+void MathematicalReceiverProduct::coherenceBandwidth()
+{
     coherence_bandwidth = 1e3/delay_spread; //MHz
 }
+
+
+void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter)
+{
+    m_transmitters.push_back(transmitter);
+}
+
 
 void MathematicalReceiverProduct::riceFactor(double rice){
     rice_factor = rice;
@@ -92,6 +108,7 @@ void MathematicalReceiverProduct::riceFactor(double rice){
         rice_factor = 0.0;
     }
 }
+
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 1. Path Loss Computation:
@@ -384,23 +401,20 @@ void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserve
     m_observers.push_back(productObserver);
 }
 
-void MathematicalReceiverProduct::notifyObservers(){
+void MathematicalReceiverProduct::notifyObservers() {
 
-//    foreach(ProductObserver* observer, m_observers){
-//        observer->notify(this,m_speed,m_orientation);
-//    }
+    for (unsigned i = 0; i < m_transmitters.size(); i++) {
+        m_transmitters.at(i)->update(this, m_movement);
+        }
 
-//    cout<< "MathRec number of observers: "<< m_observers.size()<<endl;
-    for(unsigned int i = 0;i<m_observers.size();i++){
+    for (unsigned int i = 0; i < m_observers.size(); i++) {
 //        cout<< "MathRec position: "<<x()<<", "<<y()<<endl;
         m_observers.at(i)->update(this,m_movement);
     }
 
-//    for(int i = m_observers.size()-1;i>=0;i--){
-//        cout<<"Observer notified 1"<<endl;
-//        m_observers.at(i)->notify(*this);
-//        cout<<"Observer notified 2"<<endl;
-//    }
+    for (unsigned i = 0; i < m_transmitters.size(); i++) {
+        m_transmitters.at(i)->compute(this);
+    }
 }
 
 void MathematicalReceiverProduct::notify(){
@@ -416,9 +430,11 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double &powe
     m_power = power;
     if (m_graphic != nullptr){
         m_graphic->notifyToGraphic(this,m_power);
+
         m_transmitter = observer;
-        m_transmitter->drawRays(this, true);
+        m_transmitters.at(0)->drawRays(this, true);
         computeSnr();
+
     }
 //    if(m_power < power - 20 && observer != m_transmitter){
 //        m_power = power;
