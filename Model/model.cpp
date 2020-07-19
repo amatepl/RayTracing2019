@@ -27,8 +27,7 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
 
     map->generateMap();
     m_receiverfactory = receiverfactory;
-    //m_thread = thread((map->moveCars),ref(*map));
-    //m_thread.join();
+
     vector<MathematicalProduct *> mapProducts = map->getProducts();
     for (int i = 0; i < mapProducts.size(); i++) {
         string type = mapProducts.at(i)->getType();

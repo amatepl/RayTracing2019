@@ -74,5 +74,5 @@ void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int ce
     //setY(centery);
     //setRotation(orientation);
 //    cout<<"Center position: "<<centerx<<", "<<centery<<endl;
-    setPos(centerx - 11, centery - 11);
+    setPos(centerx, centery);
 }

@@ -1,9 +1,21 @@
 #ifndef MATHEMATICALRECEIVERPRODUCT_H
 #define MATHEMATICALRECEIVERPRODUCT_H
 
+#include <stdio.h>  /* defines FILENAME_MAX */
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
+
+
 #include <QPointF>
 #include <iostream>
 #include <vector>
+#include <fstream>
+
 
 #include "Product/mathematicalproduct.h"
 #include "Product/graphicsproduct.h"
@@ -11,6 +23,7 @@
 #include "receiverproduct.h"
 #include "dialogreceiverproduct.h"
 #include "Widget/infowidget.h"
+
 
 const double kb = 1.379e-23;
 const double To = 290.0;
@@ -36,6 +49,7 @@ public:
     void riceFactor(double rice);
     void coherenceBandwidth();
     void attachTransmitter(ProductObserver *transmitter);
+    void save();
 
     // 1. Path Loss Computation:
     std::map<double,double> pathLoss(){return m_pathloss;}
@@ -128,7 +142,7 @@ private:
     double coherence_bandwidth;
 
     // 3. For Path Loss Computation
-    std::map<double,double> m_pathloss;
+    std::map<double, double> m_pathloss;
     QVector<double> logD, fading, logD_model;
 
     // 4. For Impulse Response and TDL

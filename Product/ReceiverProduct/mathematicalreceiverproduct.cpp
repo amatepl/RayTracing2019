@@ -29,6 +29,7 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     m_noise_figure = receiver->noiseFigure(); // [dB]
     m_interferencemargin = receiver->interFerenceMargin(); // [dB]
     m_observers = receiver->m_observers;
+    m_transmitters = receiver->m_transmitters;
     //m_speed = receiver->getSpeed();
     //m_orientation = receiver->getOrientation();
     computeMinPrx();
@@ -99,6 +100,31 @@ void MathematicalReceiverProduct::coherenceBandwidth()
 void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter)
 {
     m_transmitters.push_back(transmitter);
+}
+
+
+void MathematicalReceiverProduct::save()
+{
+
+    cout<<"Saving"<<endl;
+//    std::ofstream outfile ("test.txt");
+
+    char buff[FILENAME_MAX];
+    GetCurrentDir( buff, FILENAME_MAX );
+    std::string current_working_dir(buff);
+
+    cout<<current_working_dir<<endl;
+
+    std::ofstream ofs (current_working_dir + "/testYAYA.txt");
+
+    int vsize = path_loss.size();
+    for (int n=0; n<vsize; n++)
+    {
+        ofs << path_loss[n] << endl;
+        cout<<"Path los: "<<path_loss[n];
+    }
+    ofs.close();
+
 }
 
 
