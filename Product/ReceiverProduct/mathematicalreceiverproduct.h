@@ -59,14 +59,9 @@ public:
 
 
     // From ReceiverProduct:
-    float getSpeed() override
-    {
-        return m_speed;
-    }
-    float getOrientation() override
-    {
-        return m_orientation;
-    }
+    float getSpeed() override;
+    float getOrientation() override;
+    QLineF movement() const;
     int getPosX() override;
     int getPosY() override;
     double getPower() override;
@@ -76,14 +71,9 @@ public:
     int noiseFigure() override {return m_noise_figure;}
     int interFerenceMargin() override {return m_interferencemargin;}
 
-    void setSpeed(float speed) override
-    {
-        m_speed = speed;
-    }
-    void setOrientation(float orientation) override
-    {
-        m_orientation = orientation;
-    }
+    void setSpeed(float speed) override;
+    void setOrientation(float orientation) override;
+    void setMovement(QLineF const movement);
     void setPosX(int posX) override;
     void setPosY(int posY) override;
     void setPower(double p) override;
@@ -113,8 +103,9 @@ public:
 private:
     // 0. Intrisic parameters
     bool enable;
-    float m_speed;
-    float m_orientation;
+    //float m_speed;
+    //float m_orientation;
+    QLineF m_movement;
     int m_target_snr;
     int m_noise_figure;
     int m_interferencemargin;

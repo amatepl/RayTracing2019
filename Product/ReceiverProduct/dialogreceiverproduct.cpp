@@ -389,8 +389,8 @@ void DialogReceiverProduct::setEnable(bool enable){
 }
 
 void DialogReceiverProduct::newProperties(){
-    m_mathematicalproduct->setOrientation(getOrientation());
     m_mathematicalproduct->setSpeed(getSpeed());
+    m_mathematicalproduct->setOrientation(getOrientation());
     m_mathematicalproduct->setPosX(getPosX());
     m_mathematicalproduct->setPosY(getPosY());
     m_mathematicalproduct->setTargetSNR(targetSNR());

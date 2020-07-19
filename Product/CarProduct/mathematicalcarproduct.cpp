@@ -6,12 +6,10 @@ MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center): 
     //setRect(round(rect.topLeft().x()),round(rect.topLeft().y()),rect.width(),rect.height());
     m_type = "Car";
     m_walls.at(0)->setWallType(Wall::back);
-    m_walls.at(0)->setSpeed(m_speed);
-    m_walls.at(0)->setOrientation(m_orientation);
+    m_walls.at(0)->setMovement(m_movement);
 
     m_walls.at(2)->setWallType(Wall::front);
-    m_walls.at(2)->setSpeed(m_speed);
-    m_walls.at(2)->setOrientation(m_orientation);
+    m_walls.at(2)->setMovement(m_movement);
 //    cout<<"Size of car: "<<this->size()<<endl;
 //    cout<<"Number of walls: "<<m_walls.size()<<endl;
 //    cout<<"First wall point: "<< m_walls.at(0)->p1().x()<<", "<< m_walls.at(0)->p1().y()<<endl;
@@ -43,13 +41,10 @@ void MathematicalCarProduct::setRoad(QLineF &road){
 void MathematicalCarProduct::setMovement(QLineF( &vect))
 {
     m_movement = vect;
-    m_speed = vect.length();
-    m_orientation = vect.angle();
-    m_walls.at(0)->setSpeed(m_speed);
-    m_walls.at(0)->setOrientation(m_orientation);
+    m_walls.at(0)->setMovement(m_movement);
 
-    m_walls.at(2)->setSpeed(m_speed);
-    m_walls.at(2)->setOrientation(m_orientation);
+    m_walls.at(2)->setMovement(m_movement);
+    newProperties();
 }
 
 
@@ -69,18 +64,18 @@ void MathematicalCarProduct::attachObservable(GraphicsProduct *graphic){
 
 
 double MathematicalCarProduct::getSpeed(){
-    return m_speed;
+    return m_movement.length();
 }
 
 
 double MathematicalCarProduct::getOrientation(){
-    return m_orientation;
+    return m_movement.angle();
 
 }
 
 
 void MathematicalCarProduct::setSpeed(double speed){
-    m_speed = speed;
+    m_movement.setLength(speed);
 }
 
 
@@ -95,7 +90,7 @@ int MathematicalCarProduct::getPosY(){
 
 
 void MathematicalCarProduct::setOrientation(double orientation){
-    m_orientation = orientation;
+    m_movement.setAngle(orientation);
 }
 
 

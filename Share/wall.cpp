@@ -40,13 +40,13 @@ QPointF Wall::symetricalPoint(const QPointF &point){
 
 double Wall::getSpeed() const
 {
-    return m_speed;
+    return m_movement.length();
 }
 
 
 double Wall::getOrientation() const
 {
-    return m_speed;
+    return m_movement.angle();
 }
 
 
@@ -55,6 +55,9 @@ int Wall::getWallType() const
     return m_wallType;
 }
 
+QLineF Wall::movement() const{
+    return m_movement;
+}
 
 void Wall::setWallType(int type)
 {
@@ -64,15 +67,18 @@ void Wall::setWallType(int type)
 
 void Wall::setSpeed(double speed)
 {
-    m_speed = speed;
+    m_movement.setLength(speed);
 }
 
 
 void Wall::setOrientation(double orientation)
 {
-    m_orientation = orientation;
+    m_movement.setAngle(orientation);
 }
 
+void Wall::setMovement(const QLineF movement){
+    m_movement = movement;
+}
 
 QPointF Wall::otherPoint(const QPointF &point) const{
     QPointF res;

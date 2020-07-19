@@ -13,8 +13,8 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY): QP
     m_target_snr = 8; // [dB]
     m_noise_figure = 10; // [dB]
     m_interferencemargin = 6; // [dB]
-    m_speed = 0.0;
-    m_orientation = 0.0;
+    //m_speed = 0.0;
+    //m_orientation = 0.0;
     computeMinPrx();
 }
 
@@ -29,8 +29,8 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     m_noise_figure = receiver->noiseFigure(); // [dB]
     m_interferencemargin = receiver->interFerenceMargin(); // [dB]
     m_observers = receiver->m_observers;
-    m_speed = receiver->getSpeed();
-    m_orientation = receiver->getOrientation();
+    //m_speed = receiver->getSpeed();
+    //m_orientation = receiver->getOrientation();
     computeMinPrx();
 }
 
@@ -304,11 +304,27 @@ void MathematicalReceiverProduct::setDopplerShift(map<vector<double>, double> do
     }
 }
 // From ReceiverProduct
+float MathematicalReceiverProduct::getSpeed(){return m_movement.length();}
+float MathematicalReceiverProduct::getOrientation(){return m_movement.angle();}
+QLineF MathematicalReceiverProduct::movement() const {return m_movement;}
 int MathematicalReceiverProduct::getPosX(){return x();}
 int MathematicalReceiverProduct::getPosY(){return y();}
 double MathematicalReceiverProduct::getPower() {return m_power;}
 complex <double> MathematicalReceiverProduct::getEField() {return m_e_field;}
 bool MathematicalReceiverProduct::getEnable() {return enable;}
+
+void MathematicalReceiverProduct::setSpeed(float speed){
+    if (m_movement.length() == 0.0){m_movement = QLineF(0,0,0,50);}
+    m_movement.setLength(speed);
+}
+
+void MathematicalReceiverProduct::setOrientation(float orientation){
+    m_movement.setAngle(orientation);
+}
+
+void MathematicalReceiverProduct::setMovement(const QLineF movement){
+    m_movement = movement;
+}
 
 void MathematicalReceiverProduct::setPosX(int posX) {
     clearData();
@@ -333,7 +349,7 @@ void MathematicalReceiverProduct::setEnable(bool enable) {this->enable = enable;
 void MathematicalReceiverProduct::newProperties(){
     computeMinPrx();
     if (m_graphic != nullptr){
-        m_graphic->notifyToGraphic(this,m_orientation);
+        m_graphic->notifyToGraphic(this,getOrientation());
     }
 }
 
@@ -377,7 +393,7 @@ void MathematicalReceiverProduct::notifyObservers(){
 //    cout<< "MathRec number of observers: "<< m_observers.size()<<endl;
     for(unsigned int i = 0;i<m_observers.size();i++){
 //        cout<< "MathRec position: "<<x()<<", "<<y()<<endl;
-        m_observers.at(i)->update(this,m_speed,m_orientation);
+        m_observers.at(i)->update(this,m_movement);
     }
 
 //    for(int i = m_observers.size()-1;i>=0;i--){

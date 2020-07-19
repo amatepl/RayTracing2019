@@ -16,7 +16,7 @@ class ProductObservable;
 class AbstractAntena
 {
 public:
-    virtual void notifyParent(ProductObservable *receiver,const float speed, const float direction,
+    virtual void notifyParent(ProductObservable *receiver,QLineF const movement,
                               const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) = 0;
 
     enum typeWall {wall, front, back};
@@ -34,16 +34,8 @@ public:
         m_wallType = type;
     }
 
-    virtual void setSpeed(double speed)
-    {
-        m_speed = speed;
-    }
-
-    virtual void setOrientation(double orientation)
-    {
-        m_orientation = orientation;
-    }
-
+    virtual QLineF movement() const {return m_movement;}
+    virtual void setMovement(QLineF const movement) {m_movement = movement;}
 
 
     //virtual QPolygonF getIluminationZone(const QRectF &rect)const = 0;
@@ -53,8 +45,9 @@ protected:
     MathematicalBuildingProduct *m_building;
     QPolygonF m_zone;
     AbstractRayFactory *m_rayFactory;
-    double m_speed {0};
-    double m_orientation{0};
+    QLineF m_movement;
+    //double m_speed {0};
+    //double m_orientation{0};
     int m_wallType{wall};
 
 };

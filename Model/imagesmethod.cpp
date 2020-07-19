@@ -449,8 +449,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
 
                 if (walls.at(j)->getWallType() != Wall::wall) {
                     image->setWallType(walls.at(j)->getWallType());
-                    image->setSpeed(walls.at(j)->getSpeed());
-                    image->setOrientation(walls.at(j)->getOrientation());
+                    image->setMovement(walls.at(j)->movement());
                 }
 
                 //image->setSceneBoundary(itemsBoundingRect());

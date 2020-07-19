@@ -114,7 +114,7 @@ QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect)const {
     return zone;
 }
 
-void TransmitterImage::update(ProductObservable *productObservable, const float speed, const float direction){
+void TransmitterImage::update(ProductObservable *productObservable, QLineF const movement){
 
 
     if(m_zone.containsPoint(*productObservable->getPos(),Qt::OddEvenFill)){
@@ -135,19 +135,17 @@ void TransmitterImage::update(ProductObservable *productObservable, const float 
                                                     *productObservable->getPos(),
                                                     line.angleTo(m_wall)));
 
-        double res_speed {0};
-        double res_orientation {0};
-
+        QPointF p0 = m_movement.p1();
+        QPointF p1 = m_movement.p2();
+        QPointF p0_prime = movement.p1();
+        QPointF p1_prime = movement.p2();
         if (m_wallType == Wall::front) {
-
-            res_speed = speed + m_speed;
-
+            m_movement = QLineF(p0,p1_prime+p1);
         } else if (m_wallType == Wall::back) {
-            res_speed = speed - m_speed;
+            //res_speed = speed - m_speed;
         }
 
-
-        m_parent->notifyParent(productObservable,res_speed,res_orientation, reflectionPoint,wholeRay);
+        m_parent->notifyParent(productObservable,m_movement, reflectionPoint,wholeRay);
     }
 }
 
@@ -155,8 +153,8 @@ void TransmitterImage::attachObservable(ProductObservable* productObservable){
     m_observable.push_back(productObservable);
 }
 
-void TransmitterImage::notifyParent(ProductObservable *productObservable, const float speed,
-                                    const float direction, const QPointF &point,
+void TransmitterImage::notifyParent(ProductObservable *productObservable,
+                                    QLineF const movement, const QPointF &point,
                                     vector<MathematicalRayProduct*> *wholeRay)
 {
     QLineF line(*this,point);
@@ -165,19 +163,17 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable, const 
 //    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
 //    wholeRay->push_back(newRay);
     wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
-
-    double res_speed {0};
-    double res_orientation {0};
-
+    QPointF p0 = m_movement.p1();
+    QPointF p1 = m_movement.p2();
+    QPointF p0_prime = movement.p1();
+    QPointF p1_prime = movement.p2();
     if (m_wallType == Wall::front) {
-
-        res_speed = speed + m_speed;
-
+        m_movement = QLineF(p0,p1_prime+p1);
     } else if (m_wallType == Wall::back) {
-        res_speed = speed - m_speed;
+        //res_speed = speed - m_speed;
     }
 
-    m_parent->notifyParent(productObservable,res_speed,res_orientation ,reflectionPoint,wholeRay);
+    m_parent->notifyParent(productObservable,m_movement ,reflectionPoint,wholeRay);
 }
 
 QPointF TransmitterImage::getPosition() const {

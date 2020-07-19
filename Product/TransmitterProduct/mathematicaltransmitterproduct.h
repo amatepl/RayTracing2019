@@ -97,7 +97,7 @@ public:
 
     // ProductObserver
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
-    void update(ProductObservable *receiver, const float speed, const float direction) override;
+    void update(ProductObservable *receiver, QLineF const movement) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
 
     //ModelObserver
@@ -112,7 +112,7 @@ public:
         return y();
     }
     double getOrientation() override {
-        return TransmitterProduct::m_orientation;
+        return m_orientation;
     }
     char principalOrientation() override {
         return m_pr_orientation;
@@ -185,7 +185,7 @@ public:
 
     //AbstractAntenna
     void notifyParent(ProductObservable *productObservable,
-                      const float speed, const float direction,
+                      QLineF const movement,
                       const QPointF &point,
                       vector<MathematicalRayProduct *> *wholeRay) override;
 

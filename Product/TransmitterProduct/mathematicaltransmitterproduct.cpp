@@ -673,8 +673,7 @@ void MathematicalTransmitterProduct::openDialog()
 
 
 void MathematicalTransmitterProduct::update(ProductObservable *receiver,
-                                            const float speed,
-                                            const float direction)
+                                            const QLineF movement)
 {
     //
     //      The trasnmitter is updated every time an receiver moves
@@ -690,8 +689,8 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
     m_tau.erase(receiver);
     m_dopplershift.erase(receiver);
     receiver_distance.erase(receiver);
-    m_receiver_speed = speed/3.6;
-    m_receiver_orientation = direction;
+    m_receiver_speed = 0.0;
+    m_receiver_orientation = 0.0;
 
     if (m_receiversRays.count(receiver)) {
         for (unsigned int i = 0; i < m_receiversRays[receiver].size(); i++) {
@@ -765,8 +764,7 @@ void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObse
 // ---------------------------------------------------- AbstractAntenna -------------------------------------------------------------------
 
 
-void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, const float speed,
-                                                  const float direction, const QPointF &point,
+void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, QLineF const movement, const QPointF &point,
                                                   vector<MathematicalRayProduct *> *wholeRay)
 {
 
@@ -777,7 +775,8 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, c
     MathematicalRayProduct *newRay = m_rayFactory->createRay(*this, point);
     wholeRay->push_back(newRay);
     m_receiversRays[receiver].push_back(wholeRay);
-
+    m_receiver_speed = movement.length();
+    m_receiver_orientation = movement.angle();
     if (wholeRay->at(0)->getDiffracted()) {
 
         /*

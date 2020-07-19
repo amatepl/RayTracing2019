@@ -1,13 +1,15 @@
 #ifndef GRAPHICSCARPRODUCT_H
 #define GRAPHICSCARPRODUCT_H
 
-#include <QGraphicsPixmapItem>
+#include <QGraphicsPolygonItem>
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsScene>
 #include "Product/graphicsproduct.h"
 
-class GraphicsCarProduct:public GraphicsProduct, public QGraphicsPixmapItem
+class GraphicsCarProduct:public GraphicsProduct, public QGraphicsPolygonItem
 {
 public:
     GraphicsCarProduct(QMenu *productmenu, QGraphicsScene *scene);

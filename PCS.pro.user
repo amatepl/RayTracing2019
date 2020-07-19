@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<<<<<<< HEAD
-<!-- Written by QtCreator 4.12.0, 2020-07-17T00:34:29. -->
-=======
-<<<<<<< HEAD
-<!-- Written by QtCreator 4.12.4, 2020-07-15T23:50:35. -->
-=======
-<<<<<<< HEAD
-<!-- Written by QtCreator 4.12.0, 2020-07-15T08:45:31. -->
-=======
-<<<<<<< HEAD
-<!-- Written by QtCreator 4.12.4, 2020-07-14T22:43:53. -->
-=======
-<!-- Written by QtCreator 4.12.0, 2020-07-15T00:18:59. -->
->>>>>>> 8bea8960701ec2838e3c6b256a053c1b10ca7a46
->>>>>>> 5274036fb1f60bba9ce8da03fe206df03a24538f
->>>>>>> 19852e8b99168c6fa009f9df7b3ee0d038c9b6a0
->>>>>>> eb1512b1e5a84ab325f899def717ecef0b81ddb3
+<!-- Written by QtCreator 4.12.4, 2020-07-19T11:26:20. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -79,9 +63,7 @@
     <value type="QString" key="ClangTools.DiagnosticConfig">Builtin.DefaultTidyAndClazy</value>
     <value type="int" key="ClangTools.ParallelJobs">2</value>
     <valuelist type="QVariantList" key="ClangTools.SelectedDirs"/>
-    <valuelist type="QVariantList" key="ClangTools.SelectedFiles">
-     <value type="QString">/Users/amate/Documents/Polytech/Thesis/RayTracing2019/Product/TransmitterProduct/mathematicaltransmitterproduct.cpp</value>
-    </valuelist>
+    <valuelist type="QVariantList" key="ClangTools.SelectedFiles"/>
     <valuelist type="QVariantList" key="ClangTools.SuppressedDiagnostics"/>
     <value type="bool" key="ClangTools.UseGlobalSettings">true</value>
    </valuemap>
@@ -324,8 +306,9 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/cyprien/Documents/RayTracing2019/PCS.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/cyprien/Documents/RayTracing2019/PCS.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">PCS2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/cyprien/Bureau/PCS/RayTracing2019/PCS.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/cyprien/Bureau/PCS/RayTracing2019/PCS.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>

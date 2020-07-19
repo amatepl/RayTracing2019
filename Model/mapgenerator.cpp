@@ -34,7 +34,7 @@ void MapGenerator::generateMap()
     }
 
     int streetWidth = 30;
-
+    /*
     for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
         for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
             QPointF intersectionPoint1;
@@ -91,9 +91,9 @@ void MapGenerator::generateMap()
 
         }
 
-    }
+    }*/
     addCars();
-    addTrees();
+    //addTrees();
 }
 
 void MapGenerator::addCars()

@@ -20,12 +20,14 @@ public:
     double getSpeed() const;
     double getOrientation() const;
     int getWallType() const;
+    QLineF movement() const;
 
     void setWallType(int type);
     void setSpeed(double speed);
     void setOrientation(double orientation);
     void setBuilding(MathematicalBuildingProduct *building) {m_building = building;}
     MathematicalBuildingProduct* getBuilding()const {return m_building;}
+    void setMovement(QLineF const movement);
 
     QPointF symetricalPoint(const QPointF &point);
     QPointF otherPoint(const QPointF &point)const;
@@ -37,8 +39,9 @@ private:
     double sigma;
     int indWall;
     MathematicalBuildingProduct *m_building;
-    double m_speed {0};
-    double m_orientation{0};
+    QLineF m_movement;
+    //double m_speed {0};
+    //double m_orientation{0};
     int m_wallType{wall};
 };
 

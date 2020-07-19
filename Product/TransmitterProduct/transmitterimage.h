@@ -28,7 +28,7 @@ public:
     QPolygonF buildCoverage();
 
     //AbstractAntena
-    void notifyParent(ProductObservable *productObservable, const float speed, const float direction,
+    void notifyParent(ProductObservable *productObservable, QLineF const movement,
                       const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
     QPolygonF getIlluminationZone() const override;
     QPolygonF getIlluminationZone(const QRectF &rect) const override;
@@ -36,7 +36,7 @@ public:
 
 
     //ProductObserver
-    void update(ProductObservable *productObservable, const float speed, const float direction) override;
+    void update(ProductObservable *productObservable, QLineF const movement) override;
     void attachObservable(ProductObservable *productObservable) override;
 
 private:
