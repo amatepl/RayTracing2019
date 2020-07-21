@@ -28,6 +28,7 @@ public:
     void setBuilding(MathematicalBuildingProduct *building) {m_building = building;}
     MathematicalBuildingProduct* getBuilding()const {return m_building;}
     void setMovement(QLineF const movement);
+    void setPoints(const QPointF &p0, const QPointF &p1);
 
     QPointF symetricalPoint(const QPointF &point);
     QPointF otherPoint(const QPointF &point)const;

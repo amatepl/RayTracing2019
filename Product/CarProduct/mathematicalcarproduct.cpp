@@ -97,7 +97,33 @@ int MathematicalCarProduct::getPosY(){
 
 
 void MathematicalCarProduct::setOrientation(double orientation){
+    QLineF tmpLine(QPointF(0.0,0.0),QPointF(22.0,0.0));
+    tmpLine.setAngle(orientation);
+    tmpLine.translate(m_center-tmpLine.center());
     m_movement.setAngle(orientation);
+    QLineF normal = tmpLine.normalVector();
+    normal.setLength(11);
+
+    QPolygonF carContour;
+    carContour << normal.p2();
+    normal.translate(normal.p1() - normal.p2());
+    carContour << normal.p1();
+    normal.translate(tmpLine.p2() - tmpLine.p1());
+    carContour << normal.p1();
+    normal.translate(normal.p2() - normal.p1());
+    carContour << normal.p2();
+    carContour<< carContour.at(0);
+
+    swap(carContour);
+    for(int i =0; i<size()-1;i++){
+        m_walls.at(i)->setPoints(this->at(i),this->at(i+1));
+    }
+    m_walls.at(0)->setWallType(Wall::back);
+    m_walls.at(0)->setMovement(m_movement);
+
+    m_walls.at(2)->setWallType(Wall::front);
+    m_walls.at(2)->setMovement(m_movement);
+    emit positionChanged(this,getPosX(),getPosY(),getOrientation());
 }
 
 
@@ -105,6 +131,7 @@ void MathematicalCarProduct::setPosX(int posX){
     QPointF offset = QPointF(posX,getPosY()) - m_center;
     m_center.setX(posX);
     translate(offset);
+    moveWalls(offset);
     emit positionChanged(this,getPosX(),getPosY(),getOrientation());
 }
 
@@ -113,16 +140,20 @@ void MathematicalCarProduct::setPosY(int posY){
     QPointF offset = QPointF(getPosX(),posY) - m_center;
     m_center.setY(posY);
     translate(offset);
+    moveWalls(offset);
     emit positionChanged(this,getPosX(),getPosY(),getOrientation());
 }
 
 
 void MathematicalCarProduct::update(QGraphicsItem *graphic){
+    QPointF offset = graphic->scenePos() - m_center;
+    translate(offset);
+    moveWalls(offset);
     //QRectF rect = graphic->sceneBoundingRect();
 //    QPolygonF polyRect = QPolygonF(rect);
 //    swap(polyRect);
 //    m_extremities = polyRect;
-//    m_center = graphic->pos();
+    m_center = graphic->scenePos();
 }
 
 
@@ -132,8 +163,5 @@ void MathematicalCarProduct::openDialog(){
 
 
 void MathematicalCarProduct::newProperties(){
-
-//    dynamic_cast<MoveableGraphics *>(m_graphic)->notifyToGraphicSig(this, getPosX(),
-//                                                                    getPosY(),
-//                                                                    getOrientation());
+    //m_graphic->notifyToGraphic(this, getPosX(), getPosY(), getOrientation());
 }

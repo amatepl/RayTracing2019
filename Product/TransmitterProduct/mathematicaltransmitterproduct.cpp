@@ -82,7 +82,10 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     // Angle in degrees
     double angle_receiver = rayLine->front()->angle();
     double angle_transmitter = rayLine->back()->angle();
-    double shift = (angle_receiver + m_receiver_orientation) * M_PI/180.0;
+    double shift = (angle_receiver - m_ray_speed.angle()) * M_PI/180.0;
+    //double shift = (angle_receiver + m_receiver_speed.angle()) * M_PI/180.0;
+    std::cout << "Receiver Angle: " << angle_receiver << endl;
+    std::cout << "Movement Angle: " << m_ray_speed.angle() << endl;
     Efield = i * ((Zvoid * Ia) * a / (2.0 * M_PI));
     Efield *= totaleArrayFactor(angle_transmitter, 90);
 
@@ -107,7 +110,8 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         double tau = completeLength/c;
         m_attenuation[receiver][point] = a*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
         m_tau[receiver][point] = tau;
-        m_dopplershift[receiver][point] = -2.0*M_PI * m_receiver_speed * cos(shift) / lambda;
+        m_dopplershift[receiver][point] = -2.0*M_PI * -m_ray_speed.length() * cos(shift) / lambda;
+//        m_dopplershift[receiver][point] = -2.0*M_PI * m_receiver_speed.length() * cos(shift) / lambda;
     //}
 //    if(amountSegment==1){
 //        this->minLength = completeLength; // for delay spread computation
@@ -158,11 +162,11 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
     point[0] = 0;
     point[1] = 0;
     double tau = completeLength/c;
-    double shift = (direction + m_receiver_orientation) * M_PI/180.0;
+    double shift = (direction + m_receiver_speed.angle()) * M_PI/180.0;
     m_attenuation[receiver][point] = a*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
     m_tau[receiver][point] = tau;
     m_nlos_factor[receiver] += pow(abs(a),2);
-    m_dopplershift[receiver][point] = -2.0*M_PI * m_receiver_speed * cos(shift) * cos(M_PI/2-thetaG) / lambda;
+    m_dopplershift[receiver][point] = -2.0*M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
 //    this->NLOS += pow(a,2);
 
 //    // Store ray parameter for Physical impulse response
@@ -436,9 +440,9 @@ void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
                  * The ray is a diffracted one.
                  */
 
-                map<ProductObservable *, map<double, double>>::iterator it;
-                it = m_pathloss.begin();
-                m_pathloss.erase(it->first);
+//                map<ProductObservable *, map<double, double>>::iterator it;
+//                it = m_pathloss.begin();
+//                m_pathloss.erase(it->first);
 
                 complex<double>EMfield = computeDiffractedEfield(wholeRay);
                 emField += EMfield;
@@ -670,12 +674,16 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
     m_los_factor[receiver] = 0.0;
     m_nlos_factor[receiver] = 0.0;
     m_receiversPowers[receiver].erase(m_receiversPowers[receiver].begin(), m_receiversPowers[receiver].end());
+    ray_speeds.erase(ray_speeds.begin(), ray_speeds.end());
     m_attenuation.erase(receiver);
     m_tau.erase(receiver);
     m_dopplershift.erase(receiver);
     receiver_distance.erase(receiver);
-    m_receiver_speed = 0.0;
-    m_receiver_orientation = 0.0;
+    m_receiver_speed = movement;
+    m_receiver_speed.setLength(m_receiver_speed.length()/3.6);
+    m_ray_speed = QLineF(QPointF(0.0,0.0),QPointF(0.0,0.0));
+    //m_receiver_speed = 0.0;
+    //m_receiver_orientation = 0.0;
 
     if (m_receiversRays.count(receiver)) {
         for (unsigned int i = 0; i < m_receiversRays[receiver].size(); i++) {
@@ -698,6 +706,7 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
         QPointF m_pos(int(this->x()), int(this->y()));
         wholeRay->push_back(m_rayFactory->createRay(*this, *pos));
         m_receiversRays[receiver].push_back(wholeRay);
+        ray_speeds[wholeRay] = movement;
 //        QPointF p1 = wholeRay->at(0)->p1();
 //        QPointF p2 = wholeRay->at(0)->p2();
 //        QLineF direct_ray = QLineF(p1, p2);
@@ -756,7 +765,6 @@ void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservab
 void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
 {
     bool diffracted = false;
-
     for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++) {
 
         vector<MathematicalRayProduct *> *wholeRay = m_receiversRays[receiver].at(i);
@@ -785,16 +793,15 @@ void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
                 //
                 //      The ray was reflected.
                 //
-
+                m_ray_speed = ray_speeds[wholeRay];
+                m_ray_speed.setLength(m_ray_speed.length()/3.6);
                 complex<double> EMfield = computeEMfield(wholeRay, receiver);
                 m_receiversField[receiver] += EMfield;
                 double power = computePrx(EMfield);
                 m_receiversPowers[receiver].push_back(power);
-
             }
         }
     }
-
     double totalPower = computePrx(m_receiversField[receiver]);
 
     double powerDBm = dBm(totalPower);
@@ -850,8 +857,9 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, Q
     MathematicalRayProduct *newRay = m_rayFactory->createRay(*this, point);
     wholeRay->push_back(newRay);
     m_receiversRays[receiver].push_back(wholeRay);
-    m_receiver_speed = movement.length();
-    m_receiver_orientation = movement.angle();
+    ray_speeds[wholeRay] = movement;
+    //m_receiver_speed = movement.length();
+    //m_receiver_orientation = movement.angle();
 
 //    if (wholeRay->at(0)->getDiffracted()) {
 

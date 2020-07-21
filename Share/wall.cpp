@@ -80,6 +80,11 @@ void Wall::setMovement(const QLineF movement){
     m_movement = movement;
 }
 
+void Wall::setPoints(const QPointF &p0, const QPointF &p1){
+    setP1(p0);
+    setP2(p1);
+}
+
 QPointF Wall::otherPoint(const QPointF &point) const{
     QPointF res;
     if(point == p1()){

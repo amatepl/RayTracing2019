@@ -135,16 +135,6 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
                                                     *productObservable->getPos(),
                                                     line.angleTo(m_wall)));
 
-        QPointF p0 = m_movement.p1();
-        QPointF p1 = m_movement.p2();
-        QPointF p0_prime = movement.p1();
-        QPointF p1_prime = movement.p2();
-        if (m_wallType == Wall::front) {
-            m_movement = QLineF(p0,p1_prime+p1);
-        } else if (m_wallType == Wall::back) {
-            //res_speed = speed - m_speed;
-        }
-
         m_parent->notifyParent(productObservable,m_movement, reflectionPoint,wholeRay);
     }
 }
@@ -168,9 +158,9 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
     QPointF p0_prime = movement.p1();
     QPointF p1_prime = movement.p2();
     if (m_wallType == Wall::front) {
-        m_movement = QLineF(p0,p1_prime+p1);
+        m_movement = QLineF(p0,p1_prime-p1);
     } else if (m_wallType == Wall::back) {
-        //res_speed = speed - m_speed;
+        m_movement = QLineF(p0,p1_prime+p1);
     }
 
     m_parent->notifyParent(productObservable,m_movement ,reflectionPoint,wholeRay);

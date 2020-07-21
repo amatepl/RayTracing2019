@@ -33,6 +33,7 @@ public:
     virtual void notifyToGraphic(QPointF*, double) {};
     virtual void notifyToGraphic(QRect*, double) {};
     virtual void notifyToGraphic(QPolygonF*,int,int) {};
+    virtual void notifyToGraphic(QPolygonF*,int,int,double) {};
     virtual void sendInformation() {};
 
 

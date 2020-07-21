@@ -202,14 +202,14 @@ private:
 
     double px_to_meter       { 0.1 };
     double m_power             { 2 };
-    bool active_pathloss   { false };
-    bool compute_pathloss  { false };
+    bool active_pathloss    { true };
+    bool compute_pathloss   { true };
     Kind m_kind           { dipole };
     int m_radius             { 500 };
 
     // Provisory variable:
-    float m_receiver_speed;
-    float m_receiver_orientation;
+    QLineF m_receiver_speed;
+    QLineF m_ray_speed;
 
     double m_powerAtReceiver;
     ModelObservable *m_model;
@@ -234,6 +234,7 @@ private:
     map<ProductObservable *,double> m_nlos_factor;
 
     // Doppler spectrum
+    map<vector<MathematicalRayProduct *> *,QLineF> ray_speeds;
     map<ProductObservable *,map<vector<double>,double>> m_dopplershift;
 
 

@@ -29,6 +29,7 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     m_noise_figure = receiver->noiseFigure(); // [dB]
     m_interferencemargin = receiver->interFerenceMargin(); // [dB]
     m_observers = receiver->m_observers;
+    m_transmitters = receiver->m_transmitters;
     //m_speed = receiver->getSpeed();
     //m_orientation = receiver->getOrientation();
     computeMinPrx();

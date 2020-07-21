@@ -14,6 +14,7 @@ class GraphicsCarProduct:public MoveableGraphics, public GraphicsProduct, public
 {
 public:
     GraphicsCarProduct(QMenu *productmenu, QGraphicsScene *scene);
+    GraphicsCarProduct(const QPolygonF &poly,QMenu *productmenu, QGraphicsScene *scene);
     ~GraphicsCarProduct() override;
 
     static QPixmap getImage();
@@ -22,7 +23,7 @@ public:
     void draw() override;
 
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
-
+    void notifyToGraphic(QPolygonF *, int, int, double) override;
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
