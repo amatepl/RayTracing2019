@@ -167,7 +167,7 @@ void MapGenerator::addCars()
 //                                        ref(*(MathematicalCarProduct*)car),
 //                                        ref(*m_horizontalStreets.at(i)));
 
-        numberOfCars+=1;
+//        numberOfCars+=1;
 
     }
 
@@ -221,7 +221,7 @@ void MapGenerator::addCars()
 //        thread *thread_obj = new thread (&MapGenerator::moveCar,
 //                                        ref(*(MathematicalCarProduct*)car),
 //                                        ref(*m_verticalStreets.at(j)));
-        numberOfCars+=1;
+//        numberOfCars+=1;
 //        thread_obj->join();
 //        thread_obj->detach();
 

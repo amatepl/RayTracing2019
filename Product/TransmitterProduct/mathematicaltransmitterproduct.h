@@ -65,8 +65,7 @@ public:
     vector<vector<MathematicalRayProduct *> *> getRays();
     void notifyObservables();
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line) const;
-    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone) const;
-    void setSceneBoundary(const QRectF &rect);
+
     // The path loss must take the direct ray and compute the different power on this ray.
     void computePathLoss(QLineF direct_ray, ProductObservable *true_receiver);
     void activePathLoss(bool active) {
@@ -236,10 +235,6 @@ private:
     // Doppler spectrum
     map<vector<MathematicalRayProduct *> *,QLineF> ray_speeds;
     map<ProductObservable *,map<vector<double>,double>> m_dopplershift;
-
-
-    QRectF m_sceneBoundary;
-
 
     //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;

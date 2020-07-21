@@ -10,9 +10,7 @@ MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center): 
 
     m_walls.at(2)->setWallType(Wall::front);
     m_walls.at(2)->setMovement(m_movement);
-//    cout<<"Size of car: "<<this->size()<<endl;
-//    cout<<"Number of walls: "<<m_walls.size()<<endl;
-//    cout<<"First wall point: "<< m_walls.at(0)->p1().x()<<", "<< m_walls.at(0)->p1().y()<<endl;
+
 }
 
 MathematicalCarProduct::~MathematicalCarProduct(){

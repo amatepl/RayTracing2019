@@ -103,6 +103,31 @@ void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter
 }
 
 
+void MathematicalReceiverProduct::save()
+{
+
+    cout<<"Saving"<<endl;
+//    std::ofstream outfile ("test.txt");
+
+    char buff[FILENAME_MAX];
+    GetCurrentDir( buff, FILENAME_MAX );
+    std::string current_working_dir(buff);
+
+    cout<<current_working_dir<<endl;
+
+    std::ofstream ofs (current_working_dir + "/testYAYA.txt");
+
+    int vsize = path_loss.size();
+    for (int n=0; n<vsize; n++)
+    {
+        ofs << path_loss[n] << endl;
+        cout<<"Path los: "<<path_loss[n];
+    }
+    ofs.close();
+
+}
+
+
 void MathematicalReceiverProduct::riceFactor(double rice){
     rice_factor = rice;
     if (isnan(rice_factor) || isinf(rice_factor)){
