@@ -16,9 +16,11 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     m_tabwidget->addTab(RealPathLossDialog(), tr("Real Path-Loss"));
     m_tabwidget->addTab(CellRange(),tr("Cellule range"));
     m_tabwidget->addTab(DopplerSpectrum(), tr("Doppler Spectrum"));
-    std::cout << "h_tdl: " << h_tdl.size() << endl;
-    std::cout << "h: " << h.size() << endl;
-    m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
+//    std::cout << "h_tdl: " << h_tdl.size() << endl;
+//    std::cout << "h: " << h.size() << endl;
+    m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                       | QDialogButtonBox::Cancel
+                                       | QDialogButtonBox::Save);
 
     QVBoxLayout *mainlayout = new QVBoxLayout;
     mainlayout->addWidget(m_tabwidget);
@@ -26,10 +28,24 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     setLayout(mainlayout);
 
     setAttribute(Qt::WA_DeleteOnClose,true);
-    connect(m_buttonbox, SIGNAL(rejected()), this, SLOT(close()));
-    connect(m_buttonbox, SIGNAL(accepted()), this, SLOT(saveProperties()));
+    connect(m_buttonbox, &QDialogButtonBox::rejected, this, &DialogReceiverProduct::close);
+//    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogReceiverProduct::saveProperties);
+//    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogReceiverProduct::saveToDisk);
+    connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogReceiverProduct::buttonBoxClicked);
+
     open();
 }
+
+
+//void DialogReceiverProduct::handleButtonClick(self, button)
+//{
+//    sb = self.buttonBox.standardButton(button)
+//    if sb == QtGui.QDialogButtonBox.Apply:
+//    print('Apply Clicked')
+//        elif sb == QtGui.QDialogButtonBox.Reset:
+//    print('Reset Clicked')
+//}
+
 
 DialogReceiverProduct::~DialogReceiverProduct(){
 
@@ -400,8 +416,31 @@ void DialogReceiverProduct::newProperties(){
     close();
 }
 
+
+void DialogReceiverProduct::buttonBoxClicked(QAbstractButton *button)
+{
+    if (button->text() == "OK") {
+
+        saveProperties();
+
+    } else if (button->text() == "Save") {
+
+        saveToDisk();
+
+    }
+}
+
+
 void DialogReceiverProduct::saveProperties(){
     newProperties();
+}
+
+void DialogReceiverProduct::saveToDisk()
+{
+
+    QString fichier = QFileDialog::getSaveFileName(this, "Save file", QString(), "Table (*.csv)");
+    emit save(fichier.toStdString());
+
 }
 
 void DialogReceiverProduct::showTDL(){

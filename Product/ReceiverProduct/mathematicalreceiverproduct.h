@@ -1,14 +1,14 @@
 #ifndef MATHEMATICALRECEIVERPRODUCT_H
 #define MATHEMATICALRECEIVERPRODUCT_H
 
-#include <stdio.h>  /* defines FILENAME_MAX */
-#ifdef WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define GetCurrentDir getcwd
-#endif
+//#include <stdio.h>  /* defines FILENAME_MAX */
+//#ifdef WINDOWS
+//#include <direct.h>
+//#define GetCurrentDir _getcwd
+//#else
+//#include <unistd.h>
+//#define GetCurrentDir getcwd
+//#endif
 
 
 #include <QPointF>
@@ -31,8 +31,9 @@ const double c = 2.998e+8;
 
 using namespace std;
 
-class MathematicalReceiverProduct: public QPointF, public MathematicalProduct, public ProductObservable,
-        public ReceiverProduct
+class MathematicalReceiverProduct: public QPointF, public MathematicalProduct,
+                                   public ProductObservable, public ReceiverProduct,
+                                    public QObject
 {
 public:
     MathematicalReceiverProduct(int posX, int posY);
@@ -49,7 +50,7 @@ public:
     void riceFactor(double rice);
     void coherenceBandwidth();
     void attachTransmitter(ProductObserver *transmitter);
-    void save();
+
 
     // 1. Path Loss Computation:
     std::map<double,double> pathLoss(){return m_pathloss;}
@@ -151,6 +152,9 @@ private:
 
     // 5. Doppler
     std::map<std::vector<double>,double> m_doppler_shift;
+
+public slots:
+    void save(string path);
 };
 
 #endif // MATHEMATICALRECEIVERPRODUCT_H

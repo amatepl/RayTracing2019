@@ -81,8 +81,13 @@ private:
     bool show_tdl;
     bool enable;
 
+signals:
+    void save(string path);
+
 public slots:
+    void buttonBoxClicked(QAbstractButton *button);
     void saveProperties();
+    void saveToDisk();
     void showTDL();
 };
 

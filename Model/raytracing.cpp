@@ -107,7 +107,7 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
     true_receiver->setDopplerShift(true_transmitter->dopplerShift(true_receiver));
     true_receiver->computeMinPrx();
 
-    true_receiver->save();
+//    true_receiver->save();
 }
 
 
