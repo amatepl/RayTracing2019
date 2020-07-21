@@ -34,10 +34,9 @@ MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, Q
 
     MathematicalBuildingProduct* mathematicalCarProduct = new MathematicalCarProduct(poly,QPointF(posX,posY));
     if (linkgraphic){
-        GraphicsCarProduct* graphicsCarProduct = new GraphicsCarProduct(m_productmenu, m_scene);
+        GraphicsCarProduct* graphicsCarProduct = new GraphicsCarProduct(poly,m_productmenu, m_scene);
         graphicsCarProduct->attachObserver(mathematicalCarProduct);
-        graphicsCarProduct->setX(posX);
-        graphicsCarProduct->setY(posY);
+        graphicsCarProduct->setPos(QPointF(posX,posY));
         mathematicalCarProduct->attachObservable(graphicsCarProduct);
     }
     return mathematicalCarProduct;

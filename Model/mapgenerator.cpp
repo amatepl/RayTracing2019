@@ -92,8 +92,9 @@ void MapGenerator::generateMap()
 //        }
 
 //    }
-//    addCars();
-//    addTrees();
+
+    addCars();
+    //addTrees();
 }
 
 void MapGenerator::addCars()
@@ -221,7 +222,6 @@ void MapGenerator::addCars()
 //                                        ref(*(MathematicalCarProduct*)car),
 //                                        ref(*m_verticalStreets.at(j)));
 //        numberOfCars+=1;
-
 //        thread_obj->join();
 //        thread_obj->detach();
 

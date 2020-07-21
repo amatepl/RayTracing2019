@@ -18,7 +18,32 @@ GraphicsCarProduct::GraphicsCarProduct(QMenu *productmenu,QGraphicsScene *scene)
     linearGrad.setColorAt(1, Qt::white);
     //QColor color = QColor(255,0,0);
     setBrush(linearGrad);
-    setTransformOriginPoint(QPointF(11.0,11.0));
+    setTransformOriginPoint(QPointF(0.0,0.0));
+    setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+
+    m_type = "car";
+    draw();
+}
+
+GraphicsCarProduct::GraphicsCarProduct(const QPolygonF &poly, QMenu *productmenu, QGraphicsScene *scene):
+    m_scene(scene),m_productmenu(productmenu)
+{
+    QPolygonF graphic = poly;
+    QPointF p0 = graphic.at(0);
+    for (int i = 0; i < graphic.size()-1; i++){
+        if(p0.manhattanLength() > graphic.at(i+1).manhattanLength()){
+            p0 = graphic.at(i+1);
+        }
+    }
+    graphic.translate(-p0-QPointF(11.0,11.0));
+    setPolygon(graphic);
+    QLinearGradient linearGrad(graphic.at(0),graphic.at(3));
+    linearGrad.setColorAt(0, Qt::white);
+    linearGrad.setColorAt(0.5, Qt::blue);
+    linearGrad.setColorAt(1, Qt::darkBlue);
+    setBrush(linearGrad);
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
@@ -45,6 +70,13 @@ void GraphicsCarProduct::draw(){
     m_scene->addItem(this);
 }
 
+void GraphicsCarProduct::notifyToGraphic(QPolygonF * rect, int centerx, int centery, double orientation){
+    QPolygonF graphic = *rect;
+    graphic.translate(-rect->at(0)-QPointF(11,11));
+    setPolygon(graphic);
+    setRotation(orientation);
+    setPos(centerx, centery);
+}
 
 void GraphicsCarProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
 //    m_graphicsfactory->clearSelection();
@@ -67,12 +99,28 @@ void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int centery, double orientation){
-    cout<<"Center position: "<<centerx<<", "<<centery<<endl;
-    setPolygon(polygon());
-    //setPos(centerx,centery);
-    //setX(centerx);
-    //setY(centery);
-    //setRotation(orientation);
-//    cout<<"Center position: "<<centerx<<", "<<centery<<endl;
+    QPolygonF graphic = *rect;
+    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
+    std::cout << "Center Position: " << centerx << " and " << centery << endl;
+    QPointF p0 = graphic.at(0);
+    for (int i = 0; i < graphic.size()-1; i++){
+        if(p0.manhattanLength() > graphic.at(i+1).manhattanLength()){
+            p0 = graphic.at(i+1);
+        }
+    }
+    graphic.translate(-p0-QPointF(11.0,11.0));
+    p0 = graphic.at(0);
+    QPointF p1 = graphic.at(2);
+    QLineF diag(p0,p1);
+    QPointF center = diag.center();
+    graphic.translate(-center);
+    //graphic.translate(scenePos()-QPointF(centerx,centery));
+    QLinearGradient linearGrad(graphic.at(0),graphic.at(3));
+    linearGrad.setColorAt(0, Qt::white);
+    linearGrad.setColorAt(0.5, Qt::blue);
+    linearGrad.setColorAt(1, Qt::darkBlue);
+    setBrush(linearGrad);
+    setPolygon(graphic);
+    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
     setPos(centerx, centery);
 }
