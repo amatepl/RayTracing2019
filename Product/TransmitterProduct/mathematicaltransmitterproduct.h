@@ -135,13 +135,8 @@ public:
     unsigned long getBandwidth() override {
         return m_bandwidth;
     }
-
-    void setPosX(int posX) override {
-        setX(posX);
-    }
-    void setPosY(int posY) override {
-        setY(posY);
-    }
+    void setPosX(int posX) override;
+    void setPosY(int posY) override;
     void setOrientation(double orientation) override {
         TransmitterProduct::m_orientation = orientation;
     }
@@ -166,7 +161,7 @@ public:
     void setKind(Kind kind) override {
         m_kind = kind;
     }
-    void newProperties() override;
+    void newProperties(QPointF new_position, double orientation) override;
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
@@ -199,12 +194,12 @@ public:
 
 private:
 
-    double px_to_meter       { 0.1 };
-    double m_power             { 2 };
-    bool active_pathloss    { true };
-    bool compute_pathloss   { true };
-    Kind m_kind           { dipole };
-    int m_radius             { 500 };
+    double px_to_meter           { 0.1 };
+    double m_power                 { 2 };
+    bool active_pathloss        { true };
+    bool compute_pathloss       { true };
+    Kind m_kind               { dipole };
+    int m_radius                 { 500 };
 
     // Provisory variable:
     QLineF m_receiver_speed;

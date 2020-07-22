@@ -82,10 +82,11 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     // Angle in degrees
     double angle_receiver = rayLine->front()->angle();
     double angle_transmitter = rayLine->back()->angle();
-    double shift = (angle_receiver - m_ray_speed.angle()) * M_PI/180.0;
-    //double shift = (angle_receiver + m_receiver_speed.angle()) * M_PI/180.0;
-    std::cout << "Receiver Angle: " << angle_receiver << endl;
-    std::cout << "Movement Angle: " << m_ray_speed.angle() << endl;
+    m_receiver_speed.translate(-m_receiver_speed.p1());
+    m_ray_speed.translate(-m_ray_speed.p1());
+    QLineF resultant_speed(QPointF(0.0,0.0),m_receiver_speed.p2()-m_ray_speed.p2());
+    double shift = (angle_receiver - resultant_speed.angle()) * M_PI/180.0;
+    cout << "Angle m_movement: " << m_receiver_speed.angle()  << endl;
     Efield = i * ((Zvoid * Ia) * a / (2.0 * M_PI));
     Efield *= totaleArrayFactor(angle_transmitter, 90);
 
@@ -110,8 +111,7 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         double tau = completeLength/c;
         m_attenuation[receiver][point] = a*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
         m_tau[receiver][point] = tau;
-        m_dopplershift[receiver][point] = -2.0*M_PI * -m_ray_speed.length() * cos(shift) / lambda;
-//        m_dopplershift[receiver][point] = -2.0*M_PI * m_receiver_speed.length() * cos(shift) / lambda;
+        m_dopplershift[receiver][point] = -2.0*M_PI * resultant_speed.length() * cos(shift) / lambda;
     return Efield;
 }
 
@@ -548,14 +548,19 @@ MathematicalTransmitterProduct::computeIncidenceDepartureAngles(float angleIncid
 // ---------------------------------------------------- TransmitterProduct -------------------------------------------------------------------
 
 
-void MathematicalTransmitterProduct::newProperties()
+void MathematicalTransmitterProduct::newProperties(QPointF new_position, double orientation)
 {
-    m_graphic->notifyToGraphic(this, TransmitterProduct::m_orientation);
+    m_graphic->notifyToGraphic(&new_position, orientation);
 }
 
 
 // ---------------------------------------------------- MathematicalProduct -------------------------------------------------------------------
-
+void MathematicalTransmitterProduct::setPosX(int posX) {
+    setX(posX);
+}
+void MathematicalTransmitterProduct::setPosY(int posY) {
+    setY(posY);
+}
 
 void MathematicalTransmitterProduct::update(QGraphicsItem *graphic)
 {
@@ -563,6 +568,7 @@ void MathematicalTransmitterProduct::update(QGraphicsItem *graphic)
     m_zone.translate(direction);
     setX(graphic->scenePos().x());
     setY(graphic->scenePos().y());
+    setOrientation(graphic->rotation());
     notifyObservables();
 
 }
@@ -620,7 +626,6 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
         QPointF m_pos(int(this->x()), int(this->y()));
         wholeRay->push_back(m_rayFactory->createRay(*this, *pos));
         m_receiversRays[receiver].push_back(wholeRay);
-        ray_speeds[wholeRay] = movement;
     }
 }
 

@@ -45,7 +45,7 @@ void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent
 
 QVariant GraphicsTransmitterProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == QGraphicsItem::ItemPositionHasChanged) {
+    if (change == QGraphicsItem::ItemPositionHasChanged || change == QGraphicsItem::ItemRotationChange) {
         m_observer->update(this);
     }
     return value;
@@ -56,6 +56,7 @@ void GraphicsTransmitterProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
 }
 
 void GraphicsTransmitterProduct::notifyToGraphic(QPointF *point, double orientation){
+    setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setPos(*point);
     setRotation(orientation);
 }

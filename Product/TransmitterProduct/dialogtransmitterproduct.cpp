@@ -240,14 +240,11 @@ void DialogTransmitterProduct::newProperties(){
     m_mathematicalproduct->setRow(getRow());
     m_mathematicalproduct->setColumn(getColumn());
     m_mathematicalproduct->setKind(getKind());
-    m_mathematicalproduct->setPosX(getPosX());
-    m_mathematicalproduct->setPosY(getPosY());
     m_mathematicalproduct->setFrequency(getFrequency());
     m_mathematicalproduct->setBandwidth(getBandwidth());
     m_mathematicalproduct->setPower(getPower());
-    m_mathematicalproduct->setOrientation(getOrientation());
     m_mathematicalproduct->setPrincipalOrientation(principalOrientation());
-    m_mathematicalproduct->newProperties();
+    m_mathematicalproduct->newProperties(QPointF(getPosX(),getPosY()),getOrientation());
 }
 
 void DialogTransmitterProduct::saveProperties(){

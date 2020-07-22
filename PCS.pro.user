@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<<<<<<< HEAD
-<!-- Written by QtCreator 4.12.4, 2020-07-20T23:52:30. -->
-=======
-<!-- Written by QtCreator 4.12.0, 2020-07-19T14:46:22. -->
->>>>>>> cd9e1902fa94e4d28388ac76ccca31b8903de6ae
+<!-- Written by QtCreator 4.12.4, 2020-07-21T19:04:51. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -310,14 +306,9 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-<<<<<<< HEAD
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">PCS2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/cyprien/Bureau/PCS/RayTracing2019/PCS.pro</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/cyprien/Bureau/PCS/RayTracing2019/PCS.pro</value>
-=======
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/amate/Documents/Polytech/Thesis/RayTracing2019/PCS.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/Users/amate/Documents/Polytech/Thesis/RayTracing2019/PCS.pro</value>
->>>>>>> cd9e1902fa94e4d28388ac76ccca31b8903de6ae
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
