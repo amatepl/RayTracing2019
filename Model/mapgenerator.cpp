@@ -223,7 +223,7 @@ void MapGenerator::addCars()
 //                                        ref(*m_verticalStreets.at(j)));
 //        numberOfCars+=1;
 //        thread_obj->join();
-//        thread_obj->detach();
+//        //thread_obj->detach();
 
     }
     cout<< "Number of horizontal and vertical streets: "<< (m_horizontalStreets.size() + m_verticalStreets.size() )<<endl;

@@ -41,7 +41,17 @@ void DialogCarProduct::createDialog(){
     QFormLayout *geoProperties = new QFormLayout(this);
     geoProperties->addRow("X center: ",m_posx);
     geoProperties->addRow("Y center: ",m_posy);
-    geoProperties->addRow("Orientation: ",m_orientation);
+
+    QGridLayout *orientation = new QGridLayout(this);
+    QLabel *myimage = new QLabel();
+    QPixmap pix(":/Images/anti-clockwize.png");
+    QPixmap newpix = pix.scaled(12,12);
+    myimage->setPixmap(newpix);
+    orientation->addWidget(myimage,0,1);
+    orientation->addWidget(m_orientation,0,0);
+    orientation->setColumnStretch(0,20);
+
+    geoProperties->addRow("Orientation: ",orientation);
     QGroupBox *geo = new QGroupBox("Geometry properties");
     geo->setLayout(geoProperties);
 

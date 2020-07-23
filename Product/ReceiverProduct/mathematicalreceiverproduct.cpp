@@ -1,6 +1,7 @@
 #include "mathematicalreceiverproduct.h"
 
-MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY): QPointF(posX,posY)
+MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY):
+    QPointF(posX,posY)
 {
     m_type = "Receiver";
     m_power = 0.0;
@@ -15,10 +16,12 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY): QP
     m_interferencemargin = 6; // [dB]
     //m_speed = 0.0;
     //m_orientation = 0.0;
+
     computeMinPrx();
 }
 
-MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverProduct* receiver): QPointF(receiver->getPosX(),receiver->getPosY())
+MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverProduct* receiver):
+    QPointF(receiver->getPosX(),receiver->getPosY())
 {
     m_type = "Receiver";
     m_power = receiver->getPower();
@@ -30,6 +33,7 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     m_interferencemargin = receiver->interFerenceMargin(); // [dB]
     m_observers = receiver->m_observers;
     m_transmitters = receiver->m_transmitters;
+    m_movement = receiver->m_movement;
     //m_speed = receiver->getSpeed();
     //m_orientation = receiver->getOrientation();
     computeMinPrx();
@@ -103,25 +107,82 @@ void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter
 }
 
 
-void MathematicalReceiverProduct::save()
+void MathematicalReceiverProduct::save(string path)
 {
+    std::ofstream ofs (path);
 
-    cout<<"Saving"<<endl;
-//    std::ofstream outfile ("test.txt");
+//    int vsize = path_loss.size();
+//    delay_spread;
 
-    char buff[FILENAME_MAX];
-    GetCurrentDir( buff, FILENAME_MAX );
-    std::string current_working_dir(buff);
+    vector<unsigned> vectorSizes;
 
-    cout<<current_working_dir<<endl;
+    vectorSizes.push_back(path_loss.size());
+    vectorSizes.push_back(h.size());
+    vectorSizes.push_back(h_tdl.size());
+    vectorSizes.push_back(logD.size());
+    vectorSizes.push_back(fading.size());
+    vectorSizes.push_back(logD_model.size());
+    vectorSizes.push_back(doppler_shift.size());
 
-    std::ofstream ofs (current_working_dir + "/testYAYA.txt");
+    sort(vectorSizes.begin(), vectorSizes.end());
 
-    int vsize = path_loss.size();
-    for (int n=0; n<vsize; n++)
+
+    ofs << "Path loss"
+        <<";Impulse reponse"
+        <<";h_tdl"
+        <<";logD"
+        <<";fading"
+        <<";logD_model"
+        <<";Doppler shift"
+        << endl;
+
+    int vsize = vectorSizes.back();
+    for (int n = 0; n < vsize; n++)
     {
-        ofs << path_loss[n] << endl;
-        cout<<"Path los: "<<path_loss[n];
+        if (n < path_loss.size()) {
+            ofs << path_loss[n]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < h.size()) {
+            ofs << h[n]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < h_tdl.size()) {
+            ofs << h_tdl[n]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < logD.size()) {
+            ofs << logD[n]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < fading.size()) {
+            ofs << fading[n]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < logD_model.size()) {
+            ofs << logD_model[n];
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < doppler_shift.size()) {
+            ofs << doppler_shift[n];
+        } else {
+            ofs << ";" ;
+        }
+
+        ofs << endl;
+
     }
     ofs.close();
 
@@ -399,6 +460,9 @@ void MathematicalReceiverProduct::newProperties(){
 // From MathematicalProduct
 void MathematicalReceiverProduct::openDialog(){
     m_dialog = new DialogReceiverProduct(this);
+    connect(m_dialog, &DialogReceiverProduct::save,
+            this, &MathematicalReceiverProduct::save);
+
 }
 
 void MathematicalReceiverProduct::update(QGraphicsItem* graphic){

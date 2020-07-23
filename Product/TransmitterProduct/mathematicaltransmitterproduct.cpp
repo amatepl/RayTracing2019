@@ -86,7 +86,11 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     m_ray_speed.translate(-m_ray_speed.p1());
     QLineF resultant_speed(QPointF(0.0,0.0),m_receiver_speed.p2()-m_ray_speed.p2());
     double shift = (angle_receiver - resultant_speed.angle()) * M_PI/180.0;
-    cout << "Angle m_movement: " << m_receiver_speed.angle()  << endl;
+//    cout << "Angle received: " << angle_receiver << endl;
+//    cout << "Angle Receiver: " << m_receiver_speed.angle() << endl;
+//    cout << "Angle Ray: " << m_ray_speed.angle() << endl;
+//    cout << "Speed resultant: " << m_ray_speed.length()*3.6 << endl;
+//    cout << "Shift: " << angle_receiver - resultant_speed.angle() << endl;
     Efield = i * ((Zvoid * Ia) * a / (2.0 * M_PI));
     Efield *= totaleArrayFactor(angle_transmitter, 90);
 
@@ -133,7 +137,7 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
     point[0] = 0;
     point[1] = 0;
     double tau = completeLength/c;
-    double shift = (direction + m_receiver_speed.angle()) * M_PI/180.0;
+    double shift = (direction - m_receiver_speed.angle()) * M_PI/180.0;
     m_attenuation[receiver][point] = a*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
     m_tau[receiver][point] = tau;
     m_nlos_factor[receiver] += pow(abs(a),2);

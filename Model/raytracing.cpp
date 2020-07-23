@@ -56,7 +56,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     setAttributs(mathematicalComponents);
 
     m_receiverfactory = receiverfactory;
-    reflectionsNumber = 2;
+    reflectionsNumber = 7;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
@@ -107,7 +107,7 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
     true_receiver->setDopplerShift(true_transmitter->dopplerShift(true_receiver));
     true_receiver->computeMinPrx();
 
-    true_receiver->save();
+//    true_receiver->save();
 }
 
 

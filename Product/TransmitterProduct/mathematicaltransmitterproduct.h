@@ -196,8 +196,8 @@ private:
 
     double px_to_meter           { 0.1 };
     double m_power                 { 2 };
-    bool active_pathloss        { true };
-    bool compute_pathloss       { true };
+    bool active_pathloss        { false };
+    bool compute_pathloss       { false };
     Kind m_kind               { dipole };
     int m_radius                 { 500 };
 
