@@ -16,6 +16,7 @@ class ProductObservable;
 class AbstractAntena
 {
 public:
+    virtual ~AbstractAntena(){};
     virtual void notifyParent(ProductObservable *receiver,QLineF const movement,
                               const QPointF &point, vector<MathematicalRayProduct*> *wholeRay) = 0;
 
@@ -46,8 +47,6 @@ protected:
     QPolygonF m_zone;
     AbstractRayFactory *m_rayFactory;
     QLineF m_movement {QLineF(.0,.0,.0,.0)};
-    //double m_speed {0};
-    //double m_orientation{0};
     int m_wallType{wall};
 
 };

@@ -20,7 +20,8 @@ GraphicsTransmitterProduct::GraphicsTransmitterProduct(QMenu* productmenu, QGrap
 }
 
 GraphicsTransmitterProduct::~GraphicsTransmitterProduct(){
-
+    cout << "Graphics Transmitter Product Deleted." << endl;
+    delete m_observer;
 }
 
 QPixmap GraphicsTransmitterProduct::getImage(){

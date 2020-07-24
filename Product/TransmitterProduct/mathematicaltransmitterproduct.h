@@ -78,6 +78,8 @@ public:
         m_pathloss.erase(receiver);
     }
 
+    void clearAll();
+
     // Vector to receive all the physical informations to share
     map<vector<double>,std::complex<double>> impulseAttenuation(ProductObservable *receiver) {
         return m_attenuation[receiver];
@@ -201,7 +203,7 @@ private:
     Kind m_kind               { dipole };
     int m_radius                 { 500 };
 
-    // Provisory variable:
+    // Doppler variable:
     QLineF m_receiver_speed;
     QLineF m_ray_speed;
 

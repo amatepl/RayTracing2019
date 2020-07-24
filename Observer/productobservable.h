@@ -10,6 +10,7 @@
 class ProductObservable{
 public:
     virtual void attachObserver(ProductObserver* productObserver) = 0;
+    virtual void detachObservers() = 0;
     virtual void notify() =0;
     virtual void notify(double &power, std::vector<double>* powers, std::complex <double> &EMfiled)=0;
     virtual void answer(ProductObserver* observer,double &power, std::vector<double>* powers, std::complex <double> &EMfiled) = 0;

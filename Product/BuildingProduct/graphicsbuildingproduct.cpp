@@ -34,7 +34,8 @@ GraphicsBuildingProduct::GraphicsBuildingProduct(QPolygonF poly,QMenu* productme
 }
 
 GraphicsBuildingProduct::~GraphicsBuildingProduct(){
-
+    cout << "Graphics Building Product Deleted." << endl;
+    delete m_observer;
 }
 
 QPixmap GraphicsBuildingProduct::getImage(){

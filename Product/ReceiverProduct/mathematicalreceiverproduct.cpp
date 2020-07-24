@@ -34,13 +34,12 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     m_observers = receiver->m_observers;
     m_transmitters = receiver->m_transmitters;
     m_movement = receiver->m_movement;
-    //m_speed = receiver->getSpeed();
-    //m_orientation = receiver->getOrientation();
     computeMinPrx();
 }
 
 MathematicalReceiverProduct::~MathematicalReceiverProduct(){
-
+    cout << "Mathematical Receiver Product Deleted." << endl;
+    delete m_dialog;
 }
 
 void MathematicalReceiverProduct::clearData(){
@@ -505,6 +504,14 @@ void MathematicalReceiverProduct::notifyObservers() {
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         m_transmitters.at(i)->compute(this);
     }
+}
+
+void MathematicalReceiverProduct::detachObservers() {
+    for (unsigned int i = 0; i < m_observers.size(); i++) {
+        delete m_observers.at(i);
+    }
+    m_observers.clear();
+    m_transmitters.clear();
 }
 
 void MathematicalReceiverProduct::notify(){

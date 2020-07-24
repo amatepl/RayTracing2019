@@ -26,6 +26,7 @@ public:
     ~GraphicsMap();
 
     void setSceneFactory(SceneFactory *sceneFactory);
+    void deleteItem();
 
     // Overdrives
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

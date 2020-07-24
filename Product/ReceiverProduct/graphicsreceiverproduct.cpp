@@ -12,7 +12,8 @@ GraphicsReceiverProduct::GraphicsReceiverProduct(bool enable, QMenu *menuproduct
 }
 
 GraphicsReceiverProduct::~GraphicsReceiverProduct(){
-
+    cout << "Graphics Receiver Product Deleted." << endl;
+    delete m_observer;
 }
 
 void GraphicsReceiverProduct::enableReceiver(bool enable){

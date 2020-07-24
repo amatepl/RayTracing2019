@@ -14,7 +14,7 @@ MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center): 
 }
 
 MathematicalCarProduct::~MathematicalCarProduct(){
-
+    cout << "Mathematical Car Product Deleted." << endl;
 }
 
 

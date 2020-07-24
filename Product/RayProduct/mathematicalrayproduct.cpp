@@ -13,7 +13,7 @@ MathematicalRayProduct::~MathematicalRayProduct()
 {
     //cout<<"Math ray nearly deleted"<<endl;
     delete m_graphic;
-    //cout<<"Math ray deleted"<<endl;
+    cout<<"Mathematical Ray Product Deleted." << endl;
 }
 
 /*

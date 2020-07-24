@@ -43,6 +43,7 @@ public:
     ApplicationWindow(QWidget *parent = nullptr);
     ~ApplicationWindow() override;
     void answer(GraphicsProduct* graphic) override;
+    void deleteAnswer(GraphicsProduct *graphic) override;
     void moveMouse(QPointF mouse) override;
     void resetToolInfo() override;
     //void attachObserver(WindowObserver *windowobserver) override;
@@ -112,6 +113,7 @@ public slots:
     void launchCoverage();
     void deleteProduct();
     void openProduct();
+    void clearWorkspace();
 };
 
 #endif // APPLICATIONWINDOW_H

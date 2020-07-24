@@ -110,6 +110,7 @@ public:
 
     // From ProductObservable
     void attachObserver(ProductObserver *productObserver) override;
+    void detachObservers() override;
     void notifyObservers();
     void notify() override;
     void notify(double &power, std::vector<double> *powers, std::complex<double> &EMfiled) override;

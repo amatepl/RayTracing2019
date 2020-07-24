@@ -15,7 +15,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct()
 {
-
+    cout << "Mathematical Transmitter Product Deleted." << endl;
 }
 
 
@@ -548,6 +548,22 @@ MathematicalTransmitterProduct::computeIncidenceDepartureAngles(float angleIncid
     return  anglesScttering;
 }
 
+void MathematicalTransmitterProduct::clearAll(){
+    //map<ProductObservable *,vector<vector<MathematicalRayProduct *>*>>::iterator rays;
+    vector<vector<MathematicalRayProduct*>*> whole_rays;
+    vector<MathematicalRayProduct*>* tmp;
+    for (const auto  &rays: m_receiversRays){
+        whole_rays = rays.second;
+        for (unsigned i = 0; i<whole_rays.size(); i++){
+            tmp = whole_rays.at(i);
+            for (unsigned j = 0; j<tmp->size();j++){
+                delete tmp->at(j);
+            }
+            delete whole_rays.at(i);
+        }
+    }
+    m_receiversRays.clear();
+}
 
 // ---------------------------------------------------- TransmitterProduct -------------------------------------------------------------------
 

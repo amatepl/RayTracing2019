@@ -137,6 +137,19 @@ void RayTracing::pathLossComputation(std::vector<QPointF> points,
 
 }
 
+void RayTracing::clearWorkspace()
+{
+    for(unsigned i=0; i<m_transmitters.size(); i++) {
+        m_transmitters.at(i)->clearAll();
+    }
+    for(unsigned i=0; i<m_receivers.size(); i++) {
+        m_receivers.at(i)->detachObservers();
+    }
+    m_transmitters.clear();
+    m_receivers.clear();
+}
+
+
 
 void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
                               m_mathematicalComponents)

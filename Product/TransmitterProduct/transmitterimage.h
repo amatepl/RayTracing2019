@@ -21,6 +21,7 @@ class TransmitterImage: public QPointF, public ProductObserver, public AbstractA
 {
 public:
     TransmitterImage(const Line &wall, AbstractAntena *parent);
+    ~TransmitterImage() override;
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF  &line) const;
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone) const;
     //void setBuilding(MathematicalBuildingProduct *building);

@@ -7,6 +7,9 @@ TransmitterImage::TransmitterImage(const Line &wall, AbstractAntena *parent):
     setX(pos.x()); setY(pos.y());
     m_zone = buildCoverage();
 }
+TransmitterImage::~TransmitterImage(){
+    cout << "Transmitter Image Deleted." << endl;
+}
 
 QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF  &line)const{
     /*
