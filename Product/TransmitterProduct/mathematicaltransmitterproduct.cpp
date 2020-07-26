@@ -10,7 +10,12 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     TransmitterProduct::m_orientation       = 0;
     m_pr_orientation    = 0;
     lambda              = c / m_frequency;
-    epsilonWallRel      = 5;
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!                                      !!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!! Relative Permittivity is on the wall !!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!                                      !!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    epsilonWallRel      = 4.5;
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct()
@@ -40,6 +45,35 @@ QPolygonF MathematicalTransmitterProduct::buildCoverage()
     return coverage;
 }
 
+complex<double>
+MathematicalTransmitterProduct::computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line)
+{
+    complex <double> i(0.0, 1.0);
+    int amountSegment = ray_line->size();
+    double completeLength = 0.0;
+    double R = 1;
+    MathematicalRayProduct *current_ray;
+
+    for (int i = 0; i < amountSegment; i++) {
+        current_ray = ray_line->at(i);
+        if (i != amountSegment - 1) {
+            double thetaI = abs(current_ray->getTetai());
+            R *= computeReflexionPer(thetaI, epsilonWallRel);
+        }
+        completeLength += current_ray->getMeterLength();
+    }
+    double a = R / completeLength;
+
+    // Angle in degrees
+    double angle_transmitter = ray_line->back()->angle();
+    complex<double> array_factor = totaleArrayFactor(angle_transmitter, 90);
+    double tau = completeLength/c;
+
+    complex<double> impulse_r = a * array_factor
+                                * exp(-i * (2.0 * M_PI / lambda) * completeLength)
+                                * exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
+    return impulse_r;
+}
 
 complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct *> *rayLine,
                                                                ProductObservable *receiver)
@@ -77,7 +111,7 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     }
 
     double Ia = sqrt(2.0 * m_power / Ra); // Ia could be changed for Beamforming application (add exp)
-    std::complex<double> a = R * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
+    double a = R / completeLength;
 
     // Angle in degrees
     double angle_receiver = rayLine->front()->angle();
@@ -91,8 +125,9 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
 //    cout << "Angle Ray: " << m_ray_speed.angle() << endl;
 //    cout << "Speed resultant: " << m_ray_speed.length()*3.6 << endl;
 //    cout << "Shift: " << angle_receiver - resultant_speed.angle() << endl;
-    Efield = i * ((Zvoid * Ia) * a / (2.0 * M_PI));
-    Efield *= totaleArrayFactor(angle_transmitter, 90);
+    Efield = i * ((Zvoid * Ia) * a * exp(-i * (2.0 * M_PI / lambda) * completeLength) / (2.0 * M_PI));
+    complex<double> array_factor = totaleArrayFactor(angle_transmitter, 90);
+    Efield *= array_factor;
 
     if (amountSegment == 1) {
 
@@ -113,10 +148,28 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         point[0] = p1.x();
         point[1] = p1.y();
         double tau = completeLength/c;
-        m_attenuation[receiver][point] = a*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
+        m_attenuation[receiver][point] = a*array_factor*exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
         m_tau[receiver][point] = tau;
         m_dopplershift[receiver][point] = -2.0*M_PI * resultant_speed.length() * cos(shift) / lambda;
     return Efield;
+}
+
+complex <double>
+MathematicalTransmitterProduct::computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction)
+{
+    double distance = this->distance(copy_receiver);
+    double thetaG = atan((distance / 2) / antennaHeight);
+    double thetaI = M_PI - thetaG;
+    double R = computeReflexionPar(thetaG, epsilonWallRel);
+    double completeLength = sqrt(4*pow(antennaHeight,2)+pow(distance,2));
+    complex <double> i(0.0, 1.0);
+    double a = R  / completeLength;
+    complex<double> array_factor = totaleArrayFactor(direction,thetaI*180.0/M_PI);
+    double tau = completeLength/c;
+    complex<double> impulse_r = a * array_factor
+                                * exp(-i * (2.0 * M_PI / lambda) * completeLength)
+                                * exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
+    return impulse_r;
 }
 
 complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObservable *receiver, double direction)
@@ -131,8 +184,9 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
 
     complex <double> i(0.0, 1.0);
     double Ia = sqrt(2 * m_power / Ra); // Ia could be changed for Beamforming application
-    std::complex<double> a = R * exp(-i*(2.0*M_PI/lambda)*completeLength)  / completeLength;
-    complex <double> Efield = i * a * (Zvoid * Ia) * totaleArrayFactor(direction,thetaI*180.0/M_PI) / (2*M_PI);
+    double a = R  / completeLength;
+    complex<double> array_factor = totaleArrayFactor(direction,thetaI*180.0/M_PI);
+    complex <double> Efield = i * a * (Zvoid * Ia) * array_factor * exp(-i*(2.0*M_PI/lambda)*completeLength) / (2*M_PI);
     vector<double> point(2);
     point[0] = 0;
     point[1] = 0;
@@ -163,6 +217,39 @@ double MathematicalTransmitterProduct::distance(ProductObservable *receiver)
     return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2)) * px_to_meter; // conversion (1px == 1dm)
 }
 
+complex<double>
+MathematicalTransmitterProduct::computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line)
+{
+    double direct_dist = sqrt(pow(ray_line->at(1)->p1().x() - ray_line->at(0)->p2().x(), 2)
+                              + pow(ray_line->at(1)->p1().y() - ray_line->at(0)->p2().y(), 2)); //convertir px to cm?
+    complex<double> F = 0.0;
+    complex <double> i(0.0, 1.0);
+
+    // The length defference between the path going through the tip of the obstacle, and the direct path.
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!                                     !!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!! CONVERSION POW(10, -1.0) HARD CODED !!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!                                     !!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    double delta_r = (ray_line->at(0)->length() + ray_line->at(1)->length() - direct_dist) * pow(10, -1.0);
+    double nu = sqrt(2 * 2 * M_PI / lambda * delta_r / M_PI);
+
+    // The ITU's approximation for |F(nu)|^2
+    double absF = pow(10, -6.9 / 40) / sqrt((sqrt(pow(nu - 0.1, 2) + 1) + nu - 0.1));
+    double argF = -M_PI / 4 - pow(nu, 2) * M_PI / 2;
+    F = absF * exp(i * argF);
+
+    Line *directRay = new Line(ray_line->at(0)->p2(), ray_line->at(1)->p1());
+    double angle = ray_line->at(1)->angle();
+    double tau = (ray_line->at(0)->getMeterLength()+ray_line->at(1)->getMeterLength())/c;
+    complex<double> array_factor = totaleArrayFactor(angle,90);
+
+    complex<double> impulse_r = array_factor*F
+                                *exp(-i*(2.0*M_PI / lambda)*directRay->getMeterLength())
+                                *exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau))
+                                /directRay->getMeterLength();
+    return impulse_r;
+}
 
 complex<double>
 MathematicalTransmitterProduct::computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine)
@@ -191,9 +278,11 @@ MathematicalTransmitterProduct::computeDiffractedEfield(vector<MathematicalRayPr
     F = absF * exp(i * argF);
 
     Line *directRay = new Line(rayLine->at(0)->p2(), rayLine->at(1)->p1());
-
+    double angle = rayLine->at(1)->angle();
+    complex<double> array_factor = totaleArrayFactor(angle,90);
+    cout << "Angle diffraction: " << angle << endl;
     double Ia = sqrt(2 * m_power / Ra); // Ia could be changed for Beamforming application (add exp)
-    Efield = -i  * ((Zvoid * Ia) / (2 * M_PI))
+    Efield = -i  * ((Zvoid * Ia) / (2 * M_PI)) * array_factor
              * (exp(-i * (2.0 * M_PI / lambda) * directRay->getMeterLength())
                 / directRay->getMeterLength());
     Efield = F * Efield;
@@ -749,6 +838,33 @@ void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
     }
 
 
+}
+
+complex<double> MathematicalTransmitterProduct::computeInterference(ProductObservable* copy_receiver)
+{
+    complex<double> impulse_r = 0;
+    vector<vector<MathematicalRayProduct *>*> wholeRays = m_receiversRays[copy_receiver];
+
+    for (unsigned j = 0; j < wholeRays.size(); j++)
+    {
+        vector<MathematicalRayProduct *> *wholeRay  = wholeRays.at(j);
+
+        if (wholeRay->at(0)->getDiffracted())
+        {
+            impulse_r += computeImpulseDiffraction(wholeRay);
+        }
+        else
+        {
+            int amountSegment = wholeRay->size();
+            if (amountSegment == 1)
+            {
+                double angle_transmitter = wholeRay->back()->angle();
+                impulse_r += computeImpulseGroundReflection(copy_receiver, angle_transmitter);
+            }
+            impulse_r += computeImpulseReflection(wholeRay);
+        }
+    }
+    return impulse_r;
 }
 
 // ---------------------------------------------------- ModelObserver -------------------------------------------------------------------

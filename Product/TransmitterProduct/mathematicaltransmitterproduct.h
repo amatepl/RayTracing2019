@@ -39,10 +39,12 @@ public:
     QPolygonF buildCoverage();
 
     //virtual void setModel(Model model) override;
-
+    complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction);
     complex <double> computeEfieldGround(ProductObservable *receiver, double direction);
+    complex<double>computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line);
     complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver);
     double distance(ProductObservable *receiver);
+    complex<double> computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line);
     complex<double> computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine);
     complex<double> computeDiffractedTreeEfield(vector<QLineF>rayLine);
     vector<vector<QLineF>> buildTreeRays(QPointF *Rx,MathematicalTreeProduct *tree);
@@ -101,6 +103,7 @@ public:
     void update(ProductObservable *receiver, QLineF const movement) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
     void compute(ProductObservable *productObservable) override;
+    std::complex<double> computeInterference(ProductObservable *) override;
 
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;

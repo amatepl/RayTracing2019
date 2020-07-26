@@ -12,10 +12,14 @@
 #include <QPushButton>
 #include <QTabWidget>
 #include <QDialogButtonBox>
+#include <QtDataVisualization>
 
 #include "receiverproduct.h"
 #include "Product/ReceiverProduct/graphicsreceiverproduct.h"
 #include "qcustomplot.h"
+#include "Graphics/interfererencepattern.h"
+
+using namespace QtDataVisualization;
 
 class DialogReceiverProduct : public QDialog, public ReceiverProduct
 {
@@ -31,7 +35,10 @@ public:
     QWidget* ModelPathLossDialog();
     QWidget* CellRange();
     QWidget* DopplerSpectrum();
+    QWidget* InterferencePattern();
+
     void changeGraph();
+    void setInterferencePattern(vector<double> impulse_r, double min, double max);
 
     float getSpeed() override
     {
@@ -80,9 +87,11 @@ private:
     QCustomPlot *impulse_plot;
     bool show_tdl;
     bool enable;
+    InterfererencePattern *m_interferencepattern;
 
 signals:
     void save(string path);
+    void interferenceActivated();
 
 public slots:
     void buttonBoxClicked(QAbstractButton *button);

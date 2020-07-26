@@ -73,7 +73,6 @@ public:
     // 4. Doppler
     void setDopplerShift(map<vector<double>,double> dopplershift);
 
-
     // From ReceiverProduct:
     float getSpeed() override;
     float getOrientation() override;
@@ -112,6 +111,7 @@ public:
     void attachObserver(ProductObserver *productObserver) override;
     void detachObservers() override;
     void notifyObservers();
+    complex<double> notifyObserversInterference(ProductObservable *copy_receiver);
     void notify() override;
     void notify(double &power, std::vector<double> *powers, std::complex<double> &EMfiled) override;
     void answer(ProductObserver *observer, double &power, std::vector<double> *powers, std::complex<double> &EMfield) override;
@@ -156,6 +156,7 @@ private:
 
 public slots:
     void save(string path);
+    void sendInterferencePattern();
 };
 
 #endif // MATHEMATICALRECEIVERPRODUCT_H

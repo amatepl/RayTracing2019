@@ -406,6 +406,37 @@ void MathematicalReceiverProduct::setDopplerShift(map<vector<double>, double> do
         i++;
     }
 }
+
+void MathematicalReceiverProduct::sendInterferencePattern(){
+    MathematicalReceiverProduct *copy_receiver = new MathematicalReceiverProduct(this);
+    vector<double> impulse_r(60*60);
+    double lambda = c/frequency();
+    int k = 0;
+    double min = -0.0;
+    double max = -150.0;
+    double impulse_db = 0.0;
+    for (int i = -30; i<30; i++)
+    {
+        copy_receiver->setX(this->x()-i*lambda);
+        for (int j = -30; j<30; j++)
+        {
+            copy_receiver->setY(this->y()-j*lambda);
+            complex<double> impulse = notifyObserversInterference(copy_receiver);
+            impulse_db = 20*log(abs(impulse));
+            impulse_r[k] = impulse_db;
+            if(impulse_db < min)
+            {
+                min = impulse_db;
+            }
+            if(impulse_db>max){
+                max = impulse_db;
+            }
+            k++;
+        }
+    }
+    m_dialog->setInterferencePattern(impulse_r,min,max);
+}
+
 // From ReceiverProduct
 float MathematicalReceiverProduct::getSpeed(){return m_movement.length();}
 float MathematicalReceiverProduct::getOrientation(){return m_movement.angle();}
@@ -461,7 +492,7 @@ void MathematicalReceiverProduct::openDialog(){
     m_dialog = new DialogReceiverProduct(this);
     connect(m_dialog, &DialogReceiverProduct::save,
             this, &MathematicalReceiverProduct::save);
-
+    connect(m_dialog,&DialogReceiverProduct::interferenceActivated,this,&MathematicalReceiverProduct::sendInterferencePattern);
 }
 
 void MathematicalReceiverProduct::update(QGraphicsItem* graphic){
@@ -504,6 +535,24 @@ void MathematicalReceiverProduct::notifyObservers() {
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         m_transmitters.at(i)->compute(this);
     }
+}
+
+complex<double> MathematicalReceiverProduct::notifyObserversInterference(ProductObservable *copy_receiver)
+{
+    complex<double> impulse_r;
+    for (unsigned i = 0; i < m_transmitters.size(); i++)
+    {
+        m_transmitters.at(i)->update(copy_receiver, m_movement);
+    }
+    for (unsigned int i = 0; i < m_observers.size(); i++)
+    {
+        m_observers.at(i)->update(copy_receiver,m_movement);
+    }
+    for (unsigned i = 0; i < m_transmitters.size(); i++)
+    {
+        impulse_r += m_transmitters.at(i)->computeInterference(copy_receiver);
+    }
+    return impulse_r;
 }
 
 void MathematicalReceiverProduct::detachObservers() {
