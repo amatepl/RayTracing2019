@@ -1,7 +1,7 @@
 #include "mathematicalcarproduct.h"
 
-MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center): MathematicalBuildingProduct(rect),
-    m_center(center)
+MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center):
+    MathematicalBuildingProduct(rect), m_center(center)
 {
     //setRect(round(rect.topLeft().x()),round(rect.topLeft().y()),rect.width(),rect.height());
     m_type = "Car";
@@ -57,6 +57,19 @@ QLineF MathematicalCarProduct::getMovement()
     return m_movement;
 }
 
+void MathematicalCarProduct::setPos(QPointF pos)
+{
+    QPointF offset = pos - m_center;
+    m_center = pos;
+    translate(offset);
+    moveWalls(offset);
+    emit positionChanged(this,getPosX(),getPosY(),getOrientation());
+}
+
+QPointF MathematicalCarProduct::getPos() const
+{
+    return m_center;
+}
 
 void MathematicalCarProduct::attachObservable(GraphicsProduct *graphic)
 {

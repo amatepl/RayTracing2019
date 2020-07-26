@@ -16,10 +16,12 @@ AntenaDiffraction::AntenaDiffraction(const QPointF &pos, const QPointF &p1,
  buildIlluminationZone(p1, p2);
 }
 
+
 AntenaDiffraction::~AntenaDiffraction()
 {
 
 }
+
 
 void AntenaDiffraction::buildIlluminationZone(const QPointF &p1, const QPointF &p2)
 {
@@ -98,6 +100,25 @@ void AntenaDiffraction::update(ProductObservable *productObservable, QLineF cons
     }
 }
 
+//void AntenaDiffraction::updateCarPos(ProductObservable *productObservable)
+//{
+//    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
+
+//    int idx = 0;
+//    if (carInIlluminatedCars(car, &idx)) {
+
+//        if (!m_zone.intersects(*car)) {
+//            m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+//        }
+
+//    } else {
+
+//        if (m_zone.intersects(*car)) {
+//            m_illuminatedCars.push_back(car);
+//        }
+//    }
+//}
+
 
 void AntenaDiffraction::notifyParent(ProductObservable *productObservable,
                                      QLineF const movement,
@@ -121,4 +142,10 @@ QPointF AntenaDiffraction::getPosition() const
 void AntenaDiffraction::attachObservable(ProductObservable *productObservable)
 {
     m_observable.push_back(productObservable);
+}
+
+
+void AntenaDiffraction::carMoved(MathematicalCarProduct *car, int x, int y, double orientation)
+{
+
 }

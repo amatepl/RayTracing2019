@@ -21,14 +21,18 @@
 #include <Product/RayProduct/mathematicalrayproduct.h>
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include <Product/abstractantena.h>
+#include "Product/CarProduct/mathematicalcarproduct.h"
 
 
 using namespace std;
 
-class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct,
+class MathematicalTransmitterProduct : public QPointF,
                                        public ProductObserver, public ModelObserver,
-                                       public AbstractAntena, public TransmitterProduct
+                                       public AbstractAntena, public TransmitterProduct,
+                                       public MathematicalProduct
 {
+
+
 public:
     MathematicalTransmitterProduct(int posX, int posY);
     ~MathematicalTransmitterProduct() override;
@@ -41,7 +45,8 @@ public:
     //virtual void setModel(Model model) override;
 
     complex <double> computeEfieldGround(ProductObservable *receiver, double direction);
-    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver);
+    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,
+                                   ProductObservable* receiver);
     double distance(ProductObservable *receiver);
     complex<double> computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine);
     complex<double> computeDiffractedTreeEfield(vector<QLineF>rayLine);
@@ -49,6 +54,9 @@ public:
     void computeRayThroughTree(QPointF *Rx,MathematicalTreeProduct *tree);
 
     void chooseBeam(ProductObservable * receiver);
+    void comput4FixedBeam(ProductObservable * receiver);
+    void dontChoseBeam(ProductObservable * receiver);
+    void freazeBeams();
     double computePrx(complex <double> totalEfield);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR);
@@ -92,19 +100,35 @@ public:
 
     map<double,double> pathLoss(ProductObservable* receiver){return m_pathloss[receiver];}
     double receiverDistance(ProductObservable* receiver) {return receiver_distance[receiver];};
-    double riceFactor(ProductObservable* receiver) {return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);}
+    double riceFactor(ProductObservable* receiver)
+    {
+        return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);
+    }
 
-    // ProductObserver
+
+    /*
+     * ProductObserver
+     *
+     *****************/
+
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
     void update(ProductObservable *receiver, QLineF const movement) override;
+//    void updateCarPos(ProductObservable *productObservable) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
     void compute(ProductObservable *productObservable) override;
 
+    void  attachObservable(ProductObservable *productObservable) override;
+
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;
-    void attachObservable(ProductObservable *productObservable) override;
 
-    // From TransmitterProduct
+
+
+    /*
+     * TransmitterProduct
+     *
+     *****************/
+
     int getPosX() override {
         return x();
     }
@@ -183,11 +207,17 @@ public:
 //    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
 //    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
 
-    //AbstractAntenna
+    /*
+     * AbstractAntenna
+     *
+     *****************/
+
     void notifyParent(ProductObservable *productObservable,
                       QLineF const movement,
                       const QPointF &point,
                       vector<MathematicalRayProduct *> *wholeRay) override;
+
+    void notifyCarDetected() override;
 
     QPointF getPosition()const override;
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
@@ -201,10 +231,13 @@ private:
 
     double px_to_meter       { 0.1 };
     double m_power             { 2 };
-    bool active_pathloss    { true };
-    bool compute_pathloss   { true };
+    bool active_pathloss    { false };
+    bool compute_pathloss   { false };
     Kind m_kind           { dipole };
     int m_radius             { 500 };
+    bool m_beamsFrozen = false;
+
+    map<ProductObservable *, bool> m_chosenBeams;
 
     // Provisory variable:
     QLineF m_receiver_speed;
@@ -241,6 +274,11 @@ private:
     vector<vector<MathematicalRayProduct *>*> m_wholeRays;
 
     complex<double> m_EMfield;
+
+public slots:
+    void carMoved(MathematicalCarProduct *car, int x, int y, double orientation) override;
+
+
 };
 
 #endif // MATHEMATICALTRANSMITTERPRODUCT_H

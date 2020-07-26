@@ -7,14 +7,14 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     createActions();
     createMenus();
     view = new QGraphicsView();
-    m_map = new GraphicsMap(view,this,m_productmenu);
+    m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     view->setMouseTracking(true);
-    m_receiverFactory = new ReceiverFactory(m_productmenu,m_info_widget,m_map);
-    m_transmitterFactory = new TransmitterFactory(m_productmenu,m_map);
-    m_buildingFactory = new BuildingFactory(m_productmenu,m_map);
-    m_treeFactory = new TreeFactory(m_productmenu,m_map);
-    m_carFactory = new CarFactory(m_productmenu,m_map);
+    m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map);
+    m_transmitterFactory = new TransmitterFactory(m_productmenu, m_map);
+    m_buildingFactory = new BuildingFactory(m_productmenu, m_map);
+    m_treeFactory = new TreeFactory(m_productmenu, m_map);
+    m_carFactory = new CarFactory(m_productmenu, m_map);
 
     m_model = new Model(this);
     m_model->setScene(m_map,(BuildingFactory*) m_buildingFactory,

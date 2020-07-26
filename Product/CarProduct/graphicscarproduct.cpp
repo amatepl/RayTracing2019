@@ -86,10 +86,10 @@ void GraphicsCarProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == QGraphicsItem::ItemPositionHasChanged ||
-        change == QGraphicsItem::ItemTransformHasChanged ||
-        change == QGraphicsItem::ItemRotationHasChanged) {
-        m_observer->update(this);
+    if (change == QGraphicsItem::ItemPositionHasChanged
+        || change == QGraphicsItem::ItemTransformHasChanged
+        || change == QGraphicsItem::ItemRotationHasChanged) {
+//        m_observer->update(this);
     }
     return value;
 }
@@ -98,13 +98,15 @@ void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     m_observer->openDialog();
 }
 
-void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int centery, double orientation){
+void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int centery, double orientation)
+{
     QPolygonF graphic = *rect;
-    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
-    std::cout << "Center Position: " << centerx << " and " << centery << endl;
+//    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
+//    std::cout << "Center Position: " << centerx << " and " << centery << endl;
     QPointF p0 = graphic.at(0);
-    for (int i = 0; i < graphic.size()-1; i++){
-        if(p0.manhattanLength() > graphic.at(i+1).manhattanLength()){
+
+    for (int i = 0; i < graphic.size()-1; i++) {
+        if (p0.manhattanLength() > graphic.at(i+1).manhattanLength()) {
             p0 = graphic.at(i+1);
         }
     }
@@ -121,6 +123,6 @@ void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int ce
     linearGrad.setColorAt(1, Qt::darkBlue);
     setBrush(linearGrad);
     setPolygon(graphic);
-    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
+//    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
     setPos(centerx, centery);
 }

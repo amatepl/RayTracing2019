@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <QPolygonF>
+#include <map>
 
 #include "Share/line.h"
 #include "Share/wall.h"
@@ -23,22 +24,35 @@ using namespace std;
 
 struct forImage;
 
-class ImagesMethod
+class ImagesMethod: public QObject
 {
 public:
     void createImages();
+    void setObservers();
+    void connectToCars(AbstractAntena *ant);
+    void disconnectCars(AbstractAntena * ant);
+    void discnnectAllCars();
+    void clearImages(MathematicalTransmitterProduct *tx);
+    void clearAllImages();
+
+
     void setDiffraction(vector<Wall *> walls, const QPolygonF &zone, AbstractAntena *parent);
     forImage transmitterIllumination(MathematicalTransmitterProduct *transmitter);
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
-    vector <Line> illuminatedWalls(vector <Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+    vector <Line> illuminatedWalls(vector <Wall *> walls, const QPolygonF zone,
+                                  int nbReflections, AbstractAntena *parent);
     void setRayFactory(AbstractRayFactory* rayFactory){m_rayFactory = rayFactory;};
-    void buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls, int nbReflections, AbstractAntena *parent);
+    void buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> illuminatedWalls,
+                                int nbReflections, AbstractAntena *parent);
 
 
     void illuminationZones();
+    void launchAlgorithm();
     QPolygonF buildIlluminationZone(AbstractAntena *ant);
-    vector <Line> createImages(vector<Wall *> walls, const QPolygonF zone, int nbReflections, AbstractAntena *parent);
+    vector <Line> createImages(vector<Wall *> walls, const QPolygonF zone,
+                              int nbReflections, AbstractAntena *parent);
 
+    void connectTxsCars();
 
     void setScene(QGraphicsScene *scene) {m_scene = scene;};
 
@@ -51,13 +65,20 @@ protected:
     MathematicalReceiverProduct *m_receiver;
     vector<MathematicalReceiverProduct *> m_receivers;
     int reflectionsNumber;
+    MathematicalTransmitterProduct *m_currentTx;
     AbstractRayFactory *m_rayFactory;
+    map<MathematicalTransmitterProduct *, vector<AbstractAntena *>> m_images;
 
 
     QGraphicsScene *m_scene;
 
     QPolygonF m_currentTransmitterRange;
     QPolygonF m_totalIlluminationZone;            // For tests
+
+
+public slots:
+
+    void recomputeImages(AbstractAntena *tx);
 
 };
 

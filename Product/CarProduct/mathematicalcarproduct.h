@@ -13,7 +13,8 @@
 
 using namespace std;
 
-class MathematicalCarProduct:public QObject, public MathematicalBuildingProduct,/*  public MathematicalProduct,*/ public CarProduct
+class MathematicalCarProduct:public QObject, public MathematicalBuildingProduct,
+                               /*  public MathematicalProduct,*/ public CarProduct
 {
     Q_OBJECT
 
@@ -27,6 +28,8 @@ public:
 
     void setMovement(QLineF &road);
     QLineF getMovement();
+    void setPos(QPointF pos);
+    QPointF getPos() const;
 
     void attachObservable(GraphicsProduct* graphic)override;
     double getSpeed() override;
@@ -51,7 +54,7 @@ private:
     QLineF m_street;
 
 signals:
-    void positionChanged(QPolygonF* poly,int x, int y, double orientation);
+    void positionChanged(MathematicalCarProduct* poly,int x, int y, double orientation);
     void signal();
 };
 

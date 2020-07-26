@@ -26,6 +26,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Model/raytracing.h \
     Observer/modelobservable.h \
     Observer/modelobserver.h \
+    Observer/movingobstacle.h \
     Observer/productobservable.h \
     Observer/productobserver.h \
     Observer/sceneobservable.h \
@@ -105,6 +106,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/graphicstreeproduct.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
     Product/TreeProduct/treeparams.cpp \
+    Product/abstractantena.cpp \
     Share/line.cpp \
     Share/reflectiveobstacle.cpp \
     Share/wall.cpp \

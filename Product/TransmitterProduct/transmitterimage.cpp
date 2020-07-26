@@ -8,10 +8,18 @@ TransmitterImage::TransmitterImage(const Line &wall, AbstractAntena *parent):
     m_zone = buildCoverage();
 }
 
-QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF  &line)const{
+
+TransmitterImage::~TransmitterImage()
+{
+
+}
+
+
+QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF  &line) const
+{
     /*
-     * This function takes a bounding ray (line) of the illumination zone and gives its intersection
-     * with the scene boundaries.
+     * This function takes a bounding ray (line) of the illumination zone and gives
+     * its intersection with the scene boundaries.
      */
 
     QLineF boundary1(rect.topLeft(),rect.bottomLeft()),
@@ -28,9 +36,13 @@ QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF
     return intersectionPoint;
 }
 
-vector <QPointF> TransmitterImage::boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const{
+
+vector <QPointF> TransmitterImage::boundaryCorners(const QRectF &rect,
+                                                  const QPolygonF &unboundedZone) const
+{
     /*
-     * Gives the corners of the scene bounding rectangle that lie in the ubounded illumination zone.
+     * Gives the corners of the scene bounding rectangle that lie in the ubounded
+     * illumination zone.
      * It is used to complete the bounded illumination zone polygone.
      */
 
@@ -58,6 +70,7 @@ void TransmitterImage::setSceneBoundary(const QRectF &rect){
     m_sceneBoundary = rect;
 }
 
+
 QPolygonF TransmitterImage::buildCoverage(){
     QPolygonF coverage;
     QLineF line = m_wall;
@@ -67,10 +80,12 @@ QPolygonF TransmitterImage::buildCoverage(){
 //    }
 
     for(int i=0;i<16;i++){
-        coverage<<QPointF(line.p2().x()+m_radius*cos(M_PI*i/8),line.p2().y()+m_radius*sin(M_PI*i/8));
+        coverage<<QPointF(line.p2().x()+m_radius*cos(M_PI*i/8),
+                          line.p2().y()+m_radius*sin(M_PI*i/8));
     }
     return coverage;
 }
+
 
 QPolygonF TransmitterImage::getIlluminationZone() const
 {
@@ -85,7 +100,8 @@ QPolygonF TransmitterImage::getIlluminationZone() const
     //return m_zone;
 }
 
-QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect)const {
+
+QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect) const {
     /*
      * For the moment it's exactly the same as the one above.
      */
@@ -114,6 +130,7 @@ QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect)const {
     return zone;
 }
 
+
 void TransmitterImage::update(ProductObservable *productObservable, QLineF const movement){
 
 
@@ -139,9 +156,31 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
     }
 }
 
+
+//void TransmitterImage::updateCarPos(ProductObservable *productObservable)
+//{
+//    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
+
+//    int idx = 0;
+//    if (carInIlluminatedCars(car, &idx)) {
+
+//        if (!m_zone.intersects(*car)) {
+//            m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+//        }
+
+//    } else {
+
+//        if (m_zone.intersects(*car)) {
+//            m_illuminatedCars.push_back(car);
+//        }
+//    }
+//}
+
+
 void TransmitterImage::attachObservable(ProductObservable* productObservable){
     m_observable.push_back(productObservable);
 }
+
 
 void TransmitterImage::notifyParent(ProductObservable *productObservable,
                                     QLineF const movement, const QPointF &point,
@@ -166,6 +205,41 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
     m_parent->notifyParent(productObservable,m_movement ,reflectionPoint,wholeRay);
 }
 
+
 QPointF TransmitterImage::getPosition() const {
     return *this;
+}
+
+
+void TransmitterImage::notifyCarDetected()
+{
+    m_parent->notifyCarDetected();
+}
+
+
+bool TransmitterImage::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+{
+    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
+        if (m_illuminatedCars.at(i) == car) {
+            *idx = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+
+void TransmitterImage::carMoved(MathematicalCarProduct *car, int x, int y, double orientation)
+{
+    int idx = 0;
+    if (m_zone.intersects(*car)) {
+
+        m_illuminatedCars.push_back(car);
+        m_parent->notifyCarDetected();
+
+    } else if (inIlluminatedCars(car, &idx)) {
+
+        m_parent->notifyCarDetected();
+        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+    }
 }

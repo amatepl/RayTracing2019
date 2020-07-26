@@ -56,7 +56,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     setAttributs(mathematicalComponents);
 
     m_receiverfactory = receiverfactory;
-    reflectionsNumber = 2;
+    reflectionsNumber = 3;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene);
     m_rayFactory = rayFactory;
@@ -155,24 +155,28 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
             m_transmitters.at(i)->setMediator(this);
         }
     }
+
     if(m_mathematicalComponents.count("Receiver")) {
-        for(unsigned i=0; i<m_mathematicalComponents["Receiver"].size(); i++) {
+        for(unsigned i = 0; i<m_mathematicalComponents["Receiver"].size(); i++) {
             m_receiver = static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(
                              0)) ;
             m_receivers.push_back(static_cast<MathematicalReceiverProduct *>
                                   (m_mathematicalComponents["Receiver"].at(i)));
         }
     }
+
     if(m_mathematicalComponents.count("Building")) {
-        for(unsigned i=0; i<m_mathematicalComponents["Building"].size(); i++) {
+        for(unsigned i = 0; i<m_mathematicalComponents["Building"].size(); i++) {
             m_buildings.push_back(static_cast<MathematicalBuildingProduct *>
                                   (m_mathematicalComponents["Building"].at(i)) );
         }
     }
+
     if(m_mathematicalComponents.count("Car")) {
-        for(unsigned i=0; i<m_mathematicalComponents["Car"].size(); i++) {
+        for(unsigned i = 0; i<m_mathematicalComponents["Car"].size(); i++) {
             m_cars.push_back(static_cast<MathematicalCarProduct *>
                                   (m_mathematicalComponents["Car"].at(i)) );
+
             m_buildings.push_back(static_cast<MathematicalBuildingProduct *>
                                   (m_mathematicalComponents["Car"].at(i)) );
         }

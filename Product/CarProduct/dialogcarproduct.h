@@ -36,6 +36,7 @@ private:
 
 public slots:
     void saveProperties();
+
 };
 
 #endif // DIALOGCARPRODUCT_H
