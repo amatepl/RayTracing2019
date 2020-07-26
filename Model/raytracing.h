@@ -23,7 +23,7 @@ public:
 
     void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;
     void pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter) override;
-
+    void clearWorkspace() override;
     void setAttributs(map<string,vector<MathematicalProduct*>> mathematicalComponents);
 
 private:

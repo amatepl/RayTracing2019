@@ -14,7 +14,7 @@ MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center):
 }
 
 MathematicalCarProduct::~MathematicalCarProduct(){
-
+    cout << "Mathematical Car Product Deleted." << endl;
 }
 
 
@@ -94,6 +94,7 @@ double MathematicalCarProduct::getOrientation(){
 
 void MathematicalCarProduct::setSpeed(double speed){
     m_movement.setLength(speed);
+    setMovement(m_movement);
 }
 
 

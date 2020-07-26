@@ -17,7 +17,14 @@ void GraphicsMap::setSceneFactory(SceneFactory *sceneFactory){
     m_mode = InsertItem;
 }
 
-
+void GraphicsMap::deleteItem(){
+    QList<QGraphicsItem *> items = selectedItems();
+    foreach (QGraphicsItem* item, items) {
+        removeItem(item);
+        m_app->deleteAnswer(dynamic_cast<GraphicsProduct*>(item));
+        delete item;
+    }
+}
 
 // Overrides
 

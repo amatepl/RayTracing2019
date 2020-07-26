@@ -15,6 +15,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/transmitterfactory.h \
     Abstract_Factory/treefactory.h \
     Graphics/abstractpattern.h \
+    Graphics/interfererencepattern.h \
     Graphics/patternwindow.h \
     Graphics/surface3d.h \
     Model/algorithmInterface.h \
@@ -79,6 +80,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Abstract_Factory/receiverfactory.cpp \
     Abstract_Factory/transmitterfactory.cpp \
     Abstract_Factory/treefactory.cpp \
+    Graphics/interfererencepattern.cpp \
     Graphics/patternwindow.cpp \
     Graphics/surface3d.cpp \
     Model/coverage.cpp \

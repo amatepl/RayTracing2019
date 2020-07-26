@@ -53,7 +53,8 @@ GraphicsCarProduct::GraphicsCarProduct(const QPolygonF &poly, QMenu *productmenu
 }
 
 GraphicsCarProduct::~GraphicsCarProduct(){
-
+    cout << "Graphics Car Product Deleted." << endl;
+    delete m_observer;
 }
 
 QPixmap GraphicsCarProduct::getImage(){

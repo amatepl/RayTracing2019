@@ -22,6 +22,7 @@ class AbstractAntena: public QObject
     Q_OBJECT
 
 public:
+    virtual ~AbstractAntena(){};
     virtual void notifyParent(ProductObservable *receiver,QLineF const movement,
                               const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) = 0;
     virtual void notifyCarDetected() = 0;
@@ -52,9 +53,7 @@ protected:
     QPolygonF m_tmpZone;        // Maybe to throw
     vector<MathematicalCarProduct *> m_illuminatedCars;
     AbstractRayFactory *m_rayFactory;
-    QLineF m_movement;
-    //double m_speed {0};
-    //double m_orientation{0};
+    QLineF m_movement {QLineF(.0,.0,.0,.0)};
     int m_wallType{wall};
 
 

@@ -12,7 +12,8 @@ GraphicsReceiverProduct::GraphicsReceiverProduct(bool enable, QMenu *menuproduct
 }
 
 GraphicsReceiverProduct::~GraphicsReceiverProduct(){
-
+    cout << "Graphics Receiver Product Deleted." << endl;
+    delete m_observer;
 }
 
 void GraphicsReceiverProduct::enableReceiver(bool enable){
@@ -84,7 +85,7 @@ void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *e
 
 void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, float orientation){
     setPos(*point);
-    setRotation(orientation);
+    setRotation(360-orientation);
 }
 
 void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, double power){

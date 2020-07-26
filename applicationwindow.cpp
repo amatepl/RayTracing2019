@@ -63,6 +63,10 @@ void ApplicationWindow::answer(GraphicsProduct* graphic)
     m_model->addMathematicalComponent(graphic->toMathematicalProduct());
 }
 
+void ApplicationWindow::deleteAnswer(GraphicsProduct *graphic){
+    m_model->removeMathematicalComponent(graphic->toMathematicalProduct());
+}
+
 void ApplicationWindow::moveMouse(QPointF mouse){
     m_info_widget->changeScenePos(mouse.x(),mouse.y());
 }
@@ -284,6 +288,7 @@ void ApplicationWindow::createToolInfo()
 
     connect(m_info_widget, &InfoWidget::rayTracing, this, &ApplicationWindow::LaunchRayTracing);
     connect(m_info_widget, &InfoWidget::coverage, this, &ApplicationWindow::launchCoverage);
+    connect(m_info_widget,&InfoWidget::clear, this, &ApplicationWindow::clearWorkspace);
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode)
@@ -388,10 +393,15 @@ void ApplicationWindow::launchCoverage()
 
 void ApplicationWindow::deleteProduct()
 {
-
+    m_map->deleteItem();
 }
 
 void ApplicationWindow::openProduct()
 {
 
+}
+
+void ApplicationWindow::clearWorkspace()
+{
+    m_rayTracingAlgorithm->clearWorkspace();
 }

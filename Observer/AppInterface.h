@@ -14,6 +14,7 @@ public:
     virtual ~AppInterface(){}
 
     virtual void answer(GraphicsProduct* graphic) = 0;
+    virtual void deleteAnswer(GraphicsProduct *graphic) = 0;
     virtual void moveMouse(QPointF mouse) = 0;
     virtual void resetToolInfo() = 0;
 };

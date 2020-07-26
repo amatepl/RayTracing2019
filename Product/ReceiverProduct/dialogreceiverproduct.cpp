@@ -5,7 +5,7 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
 {
     setWindowTitle("Receiver properties: ");
     setWindowIcon(QIcon(GraphicsReceiverProduct::getImage()));
-    setMinimumSize(1000,500);
+    setMinimumSize(1000,900);
     show_tdl = true;
 
     m_tabwidget = new QTabWidget;
@@ -16,8 +16,7 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     m_tabwidget->addTab(RealPathLossDialog(), tr("Real Path-Loss"));
     m_tabwidget->addTab(CellRange(),tr("Cellule range"));
     m_tabwidget->addTab(DopplerSpectrum(), tr("Doppler Spectrum"));
-//    std::cout << "h_tdl: " << h_tdl.size() << endl;
-//    std::cout << "h: " << h.size() << endl;
+    m_tabwidget->addTab(InterferencePattern(),tr("Interference Pattern"));
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
                                        | QDialogButtonBox::Save);
@@ -29,7 +28,7 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
 
     setAttribute(Qt::WA_DeleteOnClose,true);
     connect(m_buttonbox, &QDialogButtonBox::rejected, this, &DialogReceiverProduct::close);
-//    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogReceiverProduct::saveProperties);
+    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogReceiverProduct::saveProperties);
 //    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogReceiverProduct::saveToDisk);
     connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogReceiverProduct::buttonBoxClicked);
 
@@ -82,7 +81,17 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     QFormLayout *geoProperties = new QFormLayout(this);
     geoProperties->addRow("X center: ",m_posx);
     geoProperties->addRow("Y center: ",m_posy);
-    geoProperties->addRow("Orientation [°]: ", m_orientation);
+
+    QGridLayout *orientation = new QGridLayout(this);
+    QLabel *myimage = new QLabel();
+    QPixmap pix(":/Images/anti-clockwize.png");
+    QPixmap newpix = pix.scaled(12,12);
+    myimage->setPixmap(newpix);
+    orientation->addWidget(myimage,0,1);
+    orientation->addWidget(m_orientation,0,0);
+    orientation->setColumnStretch(0,20);
+
+    geoProperties->addRow("Orientation [°]: ", orientation);
     geoProperties->addRow("Speed [km/h]: ", m_speed);
 
     QGroupBox *geo = new QGroupBox("Geometry properties");
@@ -395,7 +404,127 @@ QWidget* DialogReceiverProduct::DopplerSpectrum(){
     return widget;
 }
 
+QWidget* DialogReceiverProduct::InterferencePattern()
+{
+    Q3DSurface *graph = new Q3DSurface();
+    QWidget *container = QWidget::createWindowContainer(graph);
+
+    if (!graph->hasContext()) {
+        QMessageBox msgBox;
+        msgBox.setText("Couldn't initialize the OpenGL context.");
+        msgBox.exec();
+        return container;
+    }
+
+    QSize screenSize = graph->screen()->size();
+    container->setMinimumSize(QSize(screenSize.width() / 2, screenSize.height() / 1.6));
+    container->setMaximumSize(screenSize);
+    container->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    container->setFocusPolicy(Qt::StrongFocus);
+
+    QWidget *widget = new QWidget;
+    QHBoxLayout *hLayout = new QHBoxLayout(widget);
+    QVBoxLayout *graph_layout = new QVBoxLayout();
+    QLabel *label = new QLabel("Experimental Interference Pattern In A Local Area");
+    QFont font;
+    font.setPointSize(30);
+    label->setFont(font);
+    label->setAlignment(Qt::AlignHCenter);
+    graph_layout->addWidget(label);
+    graph_layout->addWidget(container);
+    QVBoxLayout *vLayout = new QVBoxLayout();
+    hLayout->addLayout(graph_layout);
+    hLayout->addLayout(vLayout);
+    vLayout->setAlignment(Qt::AlignTop);
+
+    QGroupBox *selectionGroupBox = new QGroupBox(QStringLiteral("Selection Mode"));
+
+    QRadioButton *modeNoneRB = new QRadioButton(widget);
+    modeNoneRB->setText(QStringLiteral("No selection"));
+    modeNoneRB->setChecked(false);
+
+    QRadioButton *modeItemRB = new QRadioButton(widget);
+    modeItemRB->setText(QStringLiteral("Item"));
+    modeItemRB->setChecked(false);
+
+    QRadioButton *modeSliceRowRB = new QRadioButton(widget);
+    modeSliceRowRB->setText(QStringLiteral("Row Slice"));
+    modeSliceRowRB->setChecked(false);
+
+    QRadioButton *modeSliceColumnRB = new QRadioButton(widget);
+    modeSliceColumnRB->setText(QStringLiteral("Column Slice"));
+    modeSliceColumnRB->setChecked(false);
+
+    QVBoxLayout *selectionVBox = new QVBoxLayout;
+    selectionVBox->addWidget(modeNoneRB);
+    selectionVBox->addWidget(modeItemRB);
+    selectionVBox->addWidget(modeSliceRowRB);
+    selectionVBox->addWidget(modeSliceColumnRB);
+    selectionGroupBox->setLayout(selectionVBox);
+
+    QSlider *axisMinSliderX = new QSlider(Qt::Horizontal, widget);
+    axisMinSliderX->setMinimum(0);
+    axisMinSliderX->setTickInterval(1);
+    axisMinSliderX->setEnabled(true);
+    QSlider *axisMaxSliderX = new QSlider(Qt::Horizontal, widget);
+    axisMaxSliderX->setMinimum(1);
+    axisMaxSliderX->setTickInterval(1);
+    axisMaxSliderX->setEnabled(true);
+    QSlider *axisMinSliderZ = new QSlider(Qt::Horizontal, widget);
+    axisMinSliderZ->setMinimum(0);
+    axisMinSliderZ->setTickInterval(1);
+    axisMinSliderZ->setEnabled(true);
+    QSlider *axisMaxSliderZ = new QSlider(Qt::Horizontal, widget);
+    axisMaxSliderZ->setMinimum(1);
+    axisMaxSliderZ->setTickInterval(1);
+    axisMaxSliderZ->setEnabled(true);
+
+    QPushButton *send_data = new QPushButton("Draw Interference",widget);
+    connect(send_data,&QPushButton::clicked,this,&DialogReceiverProduct::interferenceActivated);
+
+    vLayout->addWidget(send_data);
+    vLayout->addWidget(selectionGroupBox);
+    vLayout->addWidget(new QLabel(QStringLiteral("Column range")));
+    vLayout->addWidget(axisMinSliderX);
+    vLayout->addWidget(axisMaxSliderX);
+    vLayout->addWidget(new QLabel(QStringLiteral("Row range")));
+    vLayout->addWidget(axisMinSliderZ);
+    vLayout->addWidget(axisMaxSliderZ);
+
+    m_interferencepattern = new InterfererencePattern(graph);
+
+    QObject::connect(modeNoneRB, &QRadioButton::toggled,
+                     m_interferencepattern, &InterfererencePattern::toggleModeNone);
+    QObject::connect(modeItemRB,  &QRadioButton::toggled,
+                     m_interferencepattern, &InterfererencePattern::toggleModeItem);
+    QObject::connect(modeSliceRowRB,  &QRadioButton::toggled,
+                     m_interferencepattern, &InterfererencePattern::toggleModeSliceRow);
+    QObject::connect(modeSliceColumnRB,  &QRadioButton::toggled,
+                     m_interferencepattern, &InterfererencePattern::toggleModeSliceColumn);
+    QObject::connect(axisMinSliderX, &QSlider::valueChanged,
+                     m_interferencepattern, &InterfererencePattern::adjustXMin);
+    QObject::connect(axisMaxSliderX, &QSlider::valueChanged,
+                     m_interferencepattern, &InterfererencePattern::adjustXMax);
+    QObject::connect(axisMinSliderZ, &QSlider::valueChanged,
+                     m_interferencepattern, &InterfererencePattern::adjustZMin);
+    QObject::connect(axisMaxSliderZ, &QSlider::valueChanged,
+                     m_interferencepattern, &InterfererencePattern::adjustZMax);
+
+    m_interferencepattern->setAxisMinSliderX(axisMinSliderX);
+    m_interferencepattern->setAxisMaxSliderX(axisMaxSliderX);
+    m_interferencepattern->setAxisMinSliderZ(axisMinSliderZ);
+    m_interferencepattern->setAxisMaxSliderZ(axisMaxSliderZ);
+
+    return widget;
+}
+
 void DialogReceiverProduct::changeGraph(){
+}
+
+void
+DialogReceiverProduct::setInterferencePattern(vector<double> impulse_r, double min, double max)
+{
+    m_interferencepattern->enableImpulseInterference(impulse_r, min, max);
 }
 
 void DialogReceiverProduct::setEnable(bool enable){

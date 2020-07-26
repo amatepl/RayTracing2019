@@ -224,6 +224,7 @@ void MapGenerator::addCars()
 //                                        ref(*(MathematicalCarProduct*)car),
 //                                        ref(*m_verticalStreets.at(j)));
 
+
     }
 //    cout<< "Number of horizontal and vertical streets: "<< (m_horizontalStreets.size() + m_verticalStreets.size() )<<endl;
 //    cout<<"Number of cars: " << numberOfCars << endl;

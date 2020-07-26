@@ -9,5 +9,7 @@
         <file>Images/playB.png</file>
         <file>Images/playBsmall.png</file>
         <file>Images/playButton.png</file>
+        <file>Images/anti-clockwize.png</file>
+        <file>Images/clockwize.png</file>
     </qresource>
 </RCC>

@@ -105,8 +105,13 @@ void Coverage::pathLossComputation(std::vector<QPointF> points,
 }
 
 
-void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents)
+void Coverage::clearWorkspace()
 {
+
+}
+
+void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){
+
     if(m_mathematicalComponents.count("Transmitter")){
         for(unsigned int i=0;i<m_mathematicalComponents["Transmitter"].size();i++){
             m_transmitters.push_back(static_cast<MathematicalTransmitterProduct*>

@@ -64,10 +64,12 @@ private:
 signals:
     void rayTracing();
     void coverage();
+    void clear();
 
 public slots:
     void sendLaunchRayTracing();
     void sendLaunchCoverage();
+    void sendClear();
 };
 
 #endif // INFOWIDGET_H

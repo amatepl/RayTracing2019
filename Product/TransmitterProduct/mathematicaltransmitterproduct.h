@@ -43,11 +43,16 @@ public:
     QPolygonF buildCoverage();
 
     //virtual void setModel(Model model) override;
-
+    complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction);
     complex <double> computeEfieldGround(ProductObservable *receiver, double direction);
+
     complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,
                                    ProductObservable* receiver);
+
+    complex<double>computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line);
+
     double distance(ProductObservable *receiver);
+    complex<double> computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line);
     complex<double> computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine);
     complex<double> computeDiffractedTreeEfield(vector<QLineF>rayLine);
     vector<vector<QLineF>> buildTreeRays(QPointF *Rx,MathematicalTreeProduct *tree);
@@ -86,6 +91,8 @@ public:
         m_pathloss.erase(receiver);
     }
 
+    void clearAll();
+
     // Vector to receive all the physical informations to share
     map<vector<double>,std::complex<double>> impulseAttenuation(ProductObservable *receiver) {
         return m_attenuation[receiver];
@@ -116,6 +123,7 @@ public:
 //    void updateCarPos(ProductObservable *productObservable) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
     void compute(ProductObservable *productObservable) override;
+    std::complex<double> computeInterference(ProductObservable *) override;
 
     void  attachObservable(ProductObservable *productObservable) override;
 
@@ -159,13 +167,8 @@ public:
     unsigned long getBandwidth() override {
         return m_bandwidth;
     }
-
-    void setPosX(int posX) override {
-        setX(posX);
-    }
-    void setPosY(int posY) override {
-        setY(posY);
-    }
+    void setPosX(int posX) override;
+    void setPosY(int posY) override;
     void setOrientation(double orientation) override {
         TransmitterProduct::m_orientation = orientation;
     }
@@ -190,7 +193,7 @@ public:
     void setKind(Kind kind) override {
         m_kind = kind;
     }
-    void newProperties() override;
+    void newProperties(QPointF new_position, double orientation) override;
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
@@ -239,7 +242,8 @@ private:
 
     map<ProductObservable *, bool> m_chosenBeams;
 
-    // Provisory variable:
+
+    // Doppler variable:
     QLineF m_receiver_speed;
     QLineF m_ray_speed;
 

@@ -76,6 +76,7 @@ void InfoWidget::createEditGeneral(){
     all_same = new QCheckBox("Same Properties For all", edit_group);
     generate_map = new QPushButton("Generate Map", edit_group);
     clear_workspace = new QPushButton("Clear Workspace", edit_group);
+    connect(clear_workspace,&QPushButton::clicked,this,&InfoWidget::sendClear);
 
     edit_layout->addLayout(f_layout,0,0);
     edit_layout->addLayout(b_layout,0,1);
@@ -155,4 +156,10 @@ void InfoWidget::sendLaunchCoverage(){
     coverage();
     launch_raytracing->setEnabled(false);
     launch_coverage->setEnabled(false);
+}
+
+void InfoWidget::sendClear(){
+    clear();
+    launch_raytracing->setEnabled(true);
+    launch_coverage->setEnabled(true);
 }

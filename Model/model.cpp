@@ -56,6 +56,24 @@ void Model::addMathematicalComponent(MathematicalProduct* mathematicalProduct)
     }
 }
 
+void Model::removeMathematicalComponent(MathematicalProduct *mathematicalProduct){
+    vector<MathematicalProduct*> tmp;
+    string type = mathematicalProduct->getType();
+    if(m_mathematicalComponents.count(type)>0) {
+        tmp = m_mathematicalComponents[type];
+        vector<MathematicalProduct*>::iterator it;
+        int i = 0;
+        for (it = tmp.begin() ; it <= tmp.end(); it++){
+            if (tmp.at(i) == mathematicalProduct){
+                tmp.erase(it);
+                i--;
+            }
+            i++;
+        }
+        m_mathematicalComponents[type] = tmp;
+    }
+}
+
 void Model::setObservableProducts()
 {
     for(unsigned i = 0; i < m_mathematicalComponents.count("Receiver"); i++) {
@@ -70,11 +88,12 @@ void Model::setObservableProducts()
 
 void Model::setModelObservers()
 {
-    for(unsigned i = 0; i < m_mathematicalComponents.count("Transmitter"); i++) {
-        //((ModelObserver*)m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
-        dynamic_cast<ModelObserver*>(m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
+    if (m_mathematicalComponents["Transmitter"].size() > 0){
+        for(unsigned i = 0; i < m_mathematicalComponents.count("Transmitter"); i++) {
+            //((ModelObserver*)m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
+            dynamic_cast<ModelObserver*>(m_mathematicalComponents["Transmitter"].at(i))->attachObservable(this);
 
-
+        }
     }
 }
 

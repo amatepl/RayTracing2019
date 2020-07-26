@@ -40,7 +40,7 @@ private:
     double sigma;
     int indWall;
     MathematicalBuildingProduct *m_building;
-    QLineF m_movement;
+    QLineF m_movement       {QLineF(.0,.0,.0,.0)};
     //double m_speed {0};
     //double m_orientation{0};
     int m_wallType{wall};

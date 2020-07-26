@@ -5,6 +5,7 @@
 #include "complex.h"
 #include <vector>
 #include <iostream>
+#include <QPointF>
 
 using namespace std;
 class TransmitterProduct{
@@ -33,7 +34,8 @@ public:
     virtual void setRow(int row) = 0;
     virtual void setColumn(int column) = 0;
     virtual void setKind(Kind kind) = 0;
-    virtual void newProperties() = 0;
+    virtual void newProperties() {};
+    virtual void newProperties(QPointF, double){};
 
 
     virtual complex <double> arrayFactor(double theta, double phi)

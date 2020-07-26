@@ -46,10 +46,7 @@ public:
     void newProperties() override;
 
 private:
-    //MathematicalFactory* m_mathematicalfactory;
     QPointF m_center;
-//    double m_orientation{0};
-//    double m_speed{0};
     QLineF m_movement;
     QLineF m_street;
 

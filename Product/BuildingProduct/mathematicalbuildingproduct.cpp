@@ -14,7 +14,8 @@ MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points
 }
 
 MathematicalBuildingProduct::~MathematicalBuildingProduct(){
-    for(int i=0;i<size();i++){
+    cout << "Mathematical Building Product Deleted." << endl;
+    for(int i=0;i<size()-1;i++){
         delete m_walls.at(i);
     }
 }

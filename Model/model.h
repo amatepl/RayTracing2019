@@ -24,6 +24,7 @@ public:
     Model(WindowModelObservable* windowModelObservable);
     ~Model();
     void addMathematicalComponent(MathematicalProduct* mathematicalProduct);
+    void removeMathematicalComponent(MathematicalProduct* mathematicalProduct);
     void setObservableProducts();
     void setModelObservers();
     void launchAlgorithm(AlgorithmInterface* algorithm);

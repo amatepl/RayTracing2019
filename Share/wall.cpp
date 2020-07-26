@@ -21,7 +21,7 @@ Wall::Wall(const QPointF &p1, const QPointF &p2, double thickness, double relEps
 
 Wall::~Wall(void)
 {
-
+    std::cout << "Wall Deleted." << std::endl;
 }
 
 

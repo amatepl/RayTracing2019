@@ -7,11 +7,8 @@ TransmitterImage::TransmitterImage(const Line &wall, AbstractAntena *parent):
     setX(pos.x()); setY(pos.y());
     m_zone = buildCoverage();
 }
-
-
-TransmitterImage::~TransmitterImage()
-{
-
+TransmitterImage::~TransmitterImage(){
+//    cout << "Transmitter Image Deleted." << endl;
 }
 
 
@@ -192,14 +189,24 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
 //    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
 //    wholeRay->push_back(newRay);
     wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
+    QLineF new_movement = movement;
+    m_movement.translate(-m_movement.p1());
+    new_movement.translate(-movement.p1());
     QPointF p0 = m_movement.p1();
     QPointF p1 = m_movement.p2();
-    QPointF p0_prime = movement.p1();
-    QPointF p1_prime = movement.p2();
+    QPointF p1_prime = new_movement.p2();
     if (m_wallType == Wall::front) {
-        m_movement = QLineF(p0,p1_prime-p1);
-    } else if (m_wallType == Wall::back) {
+        if (abs(m_movement.angle()-movement.angle()) <= 90){
+            cout << "Movement received: " << movement.length() << endl;
+            cout << "Movement had: " << m_movement.length() << endl;
+            m_movement = QLineF(p0,p1_prime+p1);
+        }
+    }
+    else if (m_wallType == Wall::back) {
         m_movement = QLineF(p0,p1_prime+p1);
+    }
+    else {
+        m_movement = new_movement;
     }
 
     m_parent->notifyParent(productObservable,m_movement ,reflectionPoint,wholeRay);

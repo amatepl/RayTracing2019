@@ -62,7 +62,7 @@ float MathematicalTreeProduct::getRadius() const{
 void MathematicalTreeProduct::setRadius(float radius){a = radius;}
 
 MathematicalTreeProduct::~MathematicalTreeProduct(){
-
+    cout << "Matheatical Tree Product Deleted." << endl;
 }
 
 

@@ -7,7 +7,7 @@ GraphicsRayProduct::GraphicsRayProduct(const QPointF &p1, const QPointF &p2, QGr
 }
 
 GraphicsRayProduct::~GraphicsRayProduct(){
-    //cout<<"Graphics ray deleted"<<endl;
+    //cout << "Graphics Ray Product Deleted." << endl;
 
 }
 

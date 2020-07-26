@@ -24,7 +24,8 @@ GraphicsTreeProduct::GraphicsTreeProduct(QMenu * productmenu, QGraphicsScene *sc
 
 
 GraphicsTreeProduct::~GraphicsTreeProduct(){
-
+    cout << "Graphics Tree Product Deleted." << endl;
+    delete m_observer;
 }
 
 
