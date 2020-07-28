@@ -7,7 +7,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_bandwidth         = 100e6;
     m_row               = 1;
     m_column            = 1;
-    TransmitterProduct::m_orientation       = 0;
+    m_orientation       = 0;
     m_pr_orientation    = 0;
     lambda              = c / m_frequency;
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -116,6 +116,7 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     // Angle in degrees
     double angle_receiver = rayLine->front()->angle();
     double angle_transmitter = rayLine->back()->angle();
+
     m_receiver_speed.translate(-m_receiver_speed.p1());
     m_ray_speed.translate(-m_ray_speed.p1());
     QLineF resultant_speed(QPointF(0.0,0.0),m_receiver_speed.p2()-m_ray_speed.p2());
@@ -513,10 +514,65 @@ void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
             m_receiversPowers[receiver] = receiverPowers;
 
         }
-
     }
 
     m_pr_orientation = chosenBeam;
+    m_chosenBeams[receiver] = true;
+}
+
+
+void MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
+{
+    bool diffracted = false;
+
+    for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++) {
+
+        vector<MathematicalRayProduct *> *wholeRay = m_receiversRays[receiver].at(i);
+
+        for (unsigned j = 0; j < m_receiversRays[receiver].at(i)->size(); j++) {
+
+            if (wholeRay->at(0)->getDiffracted()) {
+
+                //
+                //      The ray is a diffracted one.
+                //
+
+                map<ProductObservable *, map<double, double>>::iterator it;
+
+                complex<double>EMfield = computeDiffractedEfield(wholeRay);
+                m_receiversField[receiver] += EMfield;
+                double power = computePrx(EMfield);
+                m_receiversPowers[receiver].push_back(power);
+
+                diffracted = true;
+
+            } else {
+
+
+                //
+                //      The ray was reflected.
+                //
+
+                complex<double> EMfield = computeEMfield(wholeRay, receiver);
+                m_receiversField[receiver] += EMfield;
+                double power = computePrx(EMfield);
+                m_receiversPowers[receiver].push_back(power);
+
+            }
+        }
+    }
+}
+
+
+void MathematicalTransmitterProduct::dontChoseBeam(ProductObservable *receiver)
+{
+    m_chosenBeams[receiver] = true;
+}
+
+
+void MathematicalTransmitterProduct::freazeBeams()
+{
+    m_beamsFrozen = true;
 }
 
 
@@ -538,9 +594,11 @@ double MathematicalTransmitterProduct::dBm(double power)
 
 double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR)
 {
-    //double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))/(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
+//    double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))
+//               /(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
 
-    //  Now in the code thatai is the angle between the ray and the wall and not between the ray and the normal to the wall.
+    //  Now in the code thatai is the angle between the ray and the wall and not between
+    //  the ray and the normal to the wall.
     //  Basicly thetai = pi/2 - thetai.
     //  Because of that cos and sin are inverted and we take their absolute value because of the angles given by Qt.
 
@@ -690,6 +748,8 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
     m_receiver_speed.setLength(m_receiver_speed.length()/3.6);
     m_ray_speed = QLineF(QPointF(0.0,0.0),QPointF(0.0,0.0));
 
+    m_chosenBeams[receiver] = false;
+
     if (m_receiversRays.count(receiver)) {
         for (unsigned int i = 0; i < m_receiversRays[receiver].size(); i++) {
             for (unsigned int j = 0; j < m_receiversRays[receiver].at(i)->size(); j++) {
@@ -715,9 +775,30 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
 }
 
 
+//void MathematicalTransmitterProduct::updateCarPos(ProductObservable *productObservable)
+//{
+//    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
+
+//    int idx = 0;
+//    if (carInIlluminatedCars(car, &idx)) {
+
+//        if (!m_zone.intersects(*car)) {
+//            m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+//        }
+
+//    } else {
+
+//        if (m_zone.intersects(*car)) {
+//            m_illuminatedCars.push_back(car);
+//        }
+//    }
+//}
+
+
 void MathematicalTransmitterProduct::attachObservable(ProductObservable *productObservable)
 {
     m_productObservable.push_back(productObservable);
+    m_chosenBeams[productObservable] = false;
 }
 
 
@@ -741,7 +822,55 @@ void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservab
 
 void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
 {
-    chooseBeam(receiver);
+//    bool diffracted = false;
+
+//    for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++) {
+
+//        vector<MathematicalRayProduct *> *wholeRay = m_receiversRays[receiver].at(i);
+
+//        for (unsigned j = 0; j < m_receiversRays[receiver].at(i)->size(); j++) {
+
+//            if (wholeRay->at(0)->getDiffracted()) {
+
+//                //
+//                //      The ray is a diffracted one.
+//                //
+
+//                map<ProductObservable *, map<double, double>>::iterator it;
+//                it = m_pathloss.begin();
+//                m_pathloss.erase(it->first);
+
+//                complex<double>EMfield = computeDiffractedEfield(wholeRay);
+//                m_receiversField[receiver] += EMfield;
+//                double power = computePrx(EMfield);
+//                m_receiversPowers[receiver].push_back(power);
+
+//                diffracted = true;
+
+//            } else {
+
+
+//                //
+//                //      The ray was reflected.
+//                //
+
+//                complex<double> EMfield = computeEMfield(wholeRay, receiver);
+//                m_receiversField[receiver] += EMfield;
+//                double power = computePrx(EMfield);
+//                m_receiversPowers[receiver].push_back(power);
+
+//            }
+//        }
+//    }
+
+    if (!m_beamsFrozen && !m_chosenBeams[receiver]) {
+
+        chooseBeam(receiver);
+
+    } else {
+
+        comput4FixedBeam(receiver);
+    }
 
     double totalPower = computePrx(m_receiversField[receiver]);
 
@@ -827,10 +956,12 @@ void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObse
 }
 
 
-// ---------------------------------------------------- AbstractAntenna -------------------------------------------------------------------
+// ---------------------------------------------------- AbstractAntenna ---------------------------
 
 
-void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, QLineF const movement, const QPointF &point,
+void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver,
+                                                  QLineF const movement,
+                                                  const QPointF &point,
                                                   vector<MathematicalRayProduct *> *wholeRay)
 {
 
@@ -845,6 +976,12 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver, Q
     //m_receiver_speed = movement.length();
     //m_receiver_orientation = movement.angle();
 
+}
+
+
+void MathematicalTransmitterProduct::notifyCarDetected()
+{
+    emit detectsCar(this);
 }
 
 
@@ -875,4 +1012,15 @@ QPolygonF MathematicalTransmitterProduct::getIlluminatedZone() const
 void MathematicalTransmitterProduct::setIlluminatedZone(const QPolygonF &zone)
 {
     m_zone = zone;
+}
+
+
+void MathematicalTransmitterProduct::carMoved(MathematicalCarProduct *car,
+                                              int x, int y,
+                                              double orientation)
+{
+    if (m_zone.intersects(*car)) {
+
+        emit detectsCar(this);
+    }
 }

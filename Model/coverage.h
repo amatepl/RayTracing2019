@@ -13,6 +13,8 @@ public:
     Coverage(SceneFactory* receiverFactory,const float scale);
     void setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents);
 
+    void choseBeams();
+
     // AlgorithmInterface
 //    MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
 //                                           vector<MathematicalBuildingProduct*> buildings) override;

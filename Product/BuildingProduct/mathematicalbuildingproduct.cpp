@@ -3,7 +3,6 @@
 MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points) : QPolygonF(points),
     m_posx(0),m_posy(0)
 {
-    //m_mathematicalfactory = mathematicalFactory;
     m_extremities = points;
     setModel("concrete");
     m_type = "Building";
@@ -93,16 +92,8 @@ vector <Wall*>MathematicalBuildingProduct::nearestWalls(const QPointF &point)
 {
     vector<Wall*> walls;
 
-
-//    cout<<"Size of car: "<<this->size()<<endl;
-
     for (int i = 0; i < this->size() - 1; i++) {
-//        cout <<"i: "<<i<<endl;
-//        cout<<"Car number of walls: "<<m_walls.size()<<endl;
-//        cout<<"P1: "<<m_walls.at(i)->p1().x()<<", "<<m_walls.at(i)->p1().y()<<endl;
-//        cout<<"P2: "<<m_walls.at(i)->p2().x()<<", "<<m_walls.at(i)->p2().y()<<endl;
         if (point == m_walls.at(i)->p1() || point == m_walls.at(i)->p2()) {
-//            cout<<"Oupsi"<<endl;
             walls.push_back(m_walls.at(i));
         }
     }

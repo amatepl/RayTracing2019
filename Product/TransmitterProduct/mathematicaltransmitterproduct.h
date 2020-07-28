@@ -21,14 +21,18 @@
 #include <Product/RayProduct/mathematicalrayproduct.h>
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include <Product/abstractantena.h>
+#include "Product/CarProduct/mathematicalcarproduct.h"
 
 
 using namespace std;
 
-class MathematicalTransmitterProduct : public QPointF, public MathematicalProduct,
+class MathematicalTransmitterProduct : public QPointF,
                                        public ProductObserver, public ModelObserver,
-                                       public AbstractAntena, public TransmitterProduct
+                                       public AbstractAntena, public TransmitterProduct,
+                                       public MathematicalProduct
 {
+
+
 public:
     MathematicalTransmitterProduct(int posX, int posY);
     ~MathematicalTransmitterProduct() override;
@@ -41,8 +45,12 @@ public:
     //virtual void setModel(Model model) override;
     complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction);
     complex <double> computeEfieldGround(ProductObservable *receiver, double direction);
+
+    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,
+                                   ProductObservable* receiver);
+
     complex<double>computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line);
-    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,ProductObservable* receiver);
+
     double distance(ProductObservable *receiver);
     complex<double> computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line);
     complex<double> computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine);
@@ -51,6 +59,9 @@ public:
     void computeRayThroughTree(QPointF *Rx,MathematicalTreeProduct *tree);
 
     void chooseBeam(ProductObservable * receiver);
+    void comput4FixedBeam(ProductObservable * receiver);
+    void dontChoseBeam(ProductObservable * receiver);
+    void freazeBeams();
     double computePrx(complex <double> totalEfield);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR);
@@ -82,22 +93,38 @@ public:
         return m_dopplershift[receiver];
     }
 
-    double riceFactor(ProductObservable* receiver) {return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);}
+    double riceFactor(ProductObservable* receiver)
+    {
+        return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);
+    }
 
-    // ProductObserver
+
+    /*
+     * ProductObserver
+     *
+     *****************/
+
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
     void update(ProductObservable *receiver, QLineF const movement) override;
+//    void updateCarPos(ProductObservable *productObservable) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
     void compute(ProductObservable *productObservable) override;
     std::vector<QPointF> pointsForPathLoss(ProductObservable *true_receiver) override;
     double computePathLossPower(ProductObservable* copy_receiver) override;
     std::complex<double> computeInterference(ProductObservable *) override;
 
+    void  attachObservable(ProductObservable *productObservable) override;
+
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;
-    void attachObservable(ProductObservable *productObservable) override;
 
-    // From TransmitterProduct
+
+
+    /*
+     * TransmitterProduct
+     *
+     *****************/
+
     int getPosX() override {
         return x();
     }
@@ -160,11 +187,27 @@ public:
     void update(QGraphicsItem *graphic) override;
     void openDialog() override;
 
-    //AbstractAntenna
+//    // From ProductObserver
+//    void notify(const QPointF &pos) override;
+//    void attachObservable(ProductObservable *productObservable) override;
+
+//    // From ModelObserver
+//    void attachObservable(ModelObservable* modelObserver) override;
+
+
+//    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
+//    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
+
+    /*
+     * AbstractAntenna
+     *
+     *****************/
     void notifyParent(ProductObservable *productObservable,
                       QLineF const movement,
                       const QPointF &point,
                       vector<MathematicalRayProduct *> *wholeRay) override;
+
+    void notifyCarDetected() override;
 
     QPointF getPosition()const override;
     QPolygonF getIlluminationZone(const QRectF &rect)const override;
@@ -178,6 +221,10 @@ private:
     double m_power                 { 2 };
     Kind m_kind               { dipole };
     int m_radius                 { 500 };
+    bool m_beamsFrozen = false;
+
+    map<ProductObservable *, bool> m_chosenBeams;
+
 
     // Doppler variable:
     QLineF m_receiver_speed;
@@ -210,6 +257,11 @@ private:
     vector<vector<MathematicalRayProduct *>*> m_wholeRays;
 
     complex<double> m_EMfield;
+
+public slots:
+    void carMoved(MathematicalCarProduct *car, int x, int y, double orientation) override;
+
+
 };
 
 #endif // MATHEMATICALTRANSMITTERPRODUCT_H

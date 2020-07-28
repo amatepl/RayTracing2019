@@ -21,7 +21,8 @@ public:
     virtual void updateInformation() {};
     GraphicsProduct* toGraphicsProduct() {return m_graphic;}
 
-    // Method for mediator pattern. MathematicalProduct have a pointer to AlgorithmInterface that we can set at a good time
+    // Method for mediator pattern. MathematicalProduct have a pointer to
+    // AlgorithmInterface that we can set at a good time
     void setMediator(AlgorithmInterface* algorithm) {m_algorithm = algorithm;}
 
 protected:

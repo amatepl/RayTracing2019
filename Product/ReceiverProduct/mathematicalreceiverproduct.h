@@ -40,6 +40,7 @@ public:
     MathematicalReceiverProduct(MathematicalReceiverProduct *receiver);
     ~MathematicalReceiverProduct() override;
 
+    void clearObeservers();
     void clearData();
     double inputNoise();
     void computeMinPrx();
@@ -127,9 +128,10 @@ private:
     InfoWidget *m_info_widget;
 
     // 1. For ProductOBserves
-    vector<ProductObserver *> m_observers;
+
     vector<ProductObserver *> m_transmitters;
     ProductObserver *m_transmitter = nullptr;
+//    map<ProductObserver *, vector<ProductObserver *>> m_txImages;
 
     // 2. For E Field And Power Computation
     complex <double> m_e_field;

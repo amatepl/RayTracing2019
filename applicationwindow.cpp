@@ -9,7 +9,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     createActions();
     createMenus();
     view = new QGraphicsView();
-    m_map = new GraphicsMap(view,this,m_productmenu);
+    m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     view->setMouseTracking(true);
     m_receiverFactory = new ReceiverFactory(m_productmenu,m_info_widget,m_map,px_to_meter);

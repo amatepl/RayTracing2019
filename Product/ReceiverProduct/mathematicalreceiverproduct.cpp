@@ -42,6 +42,13 @@ MathematicalReceiverProduct::~MathematicalReceiverProduct(){
     delete m_dialog;
 }
 
+
+void MathematicalReceiverProduct::clearObeservers()
+{
+    m_observers.erase(m_observers.begin(), m_observers.end());
+}
+
+
 void MathematicalReceiverProduct::clearData(){
     m_power = 0;
     m_e_field = 0;
@@ -109,9 +116,6 @@ void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter
 void MathematicalReceiverProduct::save(string path)
 {
     std::ofstream ofs (path);
-
-//    int vsize = path_loss.size();
-//    delay_spread;
 
     vector<unsigned> vectorSizes;
 
@@ -184,7 +188,6 @@ void MathematicalReceiverProduct::save(string path)
 
     }
     ofs.close();
-
 }
 
 
@@ -515,8 +518,8 @@ void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserve
     m_observers.push_back(productObserver);
 }
 
-void MathematicalReceiverProduct::notifyObservers() {
-
+void MathematicalReceiverProduct::notifyObservers()
+{
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         m_transmitters.at(i)->update(this, m_movement);
         }
@@ -589,11 +592,18 @@ void MathematicalReceiverProduct::notify(){
     notifyObservers();
 }
 
-void MathematicalReceiverProduct::notify(double &power, std::vector<double> *powers, std::complex<double> &EMfiled){
+
+void MathematicalReceiverProduct::notify(double &power,
+                                         std::vector<double> *powers,
+                                         std::complex<double> &EMfiled)
+{
 
 }
 
-void MathematicalReceiverProduct::answer(ProductObserver *observer, double &power, std::vector<double> *powers, std::complex<double> &EMfield){
+
+void MathematicalReceiverProduct::answer(ProductObserver *observer, double &power,
+                                         std::vector<double> *powers, std::complex<double> &EMfield)
+{
     m_e_field += EMfield;
     m_power = power;
     if (m_graphic != nullptr){
@@ -625,6 +635,7 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double &powe
 //    }
 
 }
+
 
 QPointF* MathematicalReceiverProduct::getPos(){
     return this;
