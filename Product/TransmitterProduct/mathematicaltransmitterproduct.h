@@ -68,18 +68,6 @@ public:
     void notifyObservables();
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line) const;
 
-    // The path loss must take the direct ray and compute the different power on this ray.
-    void computePathLoss(QLineF direct_ray, ProductObservable *true_receiver);
-    void activePathLoss(bool active) {
-        active_pathloss = active;
-    }
-    void computePathLoss(bool compute) {
-        compute_pathloss = compute;
-    }
-    void erasePathLoss(ProductObservable *receiver) {
-        m_pathloss.erase(receiver);
-    }
-
     void clearAll();
 
     // Vector to receive all the physical informations to share
@@ -94,8 +82,6 @@ public:
         return m_dopplershift[receiver];
     }
 
-    map<double,double> pathLoss(ProductObservable* receiver){return m_pathloss[receiver];}
-    double receiverDistance(ProductObservable* receiver) {return receiver_distance[receiver];};
     double riceFactor(ProductObservable* receiver) {return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);}
 
     // ProductObserver
@@ -103,6 +89,8 @@ public:
     void update(ProductObservable *receiver, QLineF const movement) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
     void compute(ProductObservable *productObservable) override;
+    std::vector<QPointF> pointsForPathLoss(ProductObservable *true_receiver) override;
+    double computePathLossPower(ProductObservable* copy_receiver) override;
     std::complex<double> computeInterference(ProductObservable *) override;
 
     //ModelObserver
@@ -172,17 +160,6 @@ public:
     void update(QGraphicsItem *graphic) override;
     void openDialog() override;
 
-//    // From ProductObserver
-//    void notify(const QPointF &pos) override;
-//    void attachObservable(ProductObservable *productObservable) override;
-
-//    // From ModelObserver
-//    void attachObservable(ModelObservable* modelObserver) override;
-
-
-//    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)const;
-//    vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone)const;
-
     //AbstractAntenna
     void notifyParent(ProductObservable *productObservable,
                       QLineF const movement,
@@ -198,11 +175,7 @@ public:
 
 
 private:
-
-    double px_to_meter           { 0.1 };
     double m_power                 { 2 };
-    bool active_pathloss        { false };
-    bool compute_pathloss       { false };
     Kind m_kind               { dipole };
     int m_radius                 { 500 };
 
@@ -223,10 +196,6 @@ private:
     // Attenuation for impulse response and TDL
     map<ProductObservable *,map<vector<double>,std::complex<double>>> m_attenuation;
     map<ProductObservable *,map<vector<double>,double>> m_tau;
-
-    // Path loss computation
-    map<ProductObservable *,map<double,double>> m_pathloss;
-    map<ProductObservable *,double> receiver_distance;
 
     // Rice facor
     map<ProductObservable *,double> m_los_factor;

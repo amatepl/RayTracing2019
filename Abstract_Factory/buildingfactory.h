@@ -8,7 +8,7 @@
 class BuildingFactory: public SceneFactory
 {
 public:
-    BuildingFactory(QMenu *productmenu, QGraphicsScene* scene);
+    BuildingFactory(QMenu *productmenu, QGraphicsScene* scene,const float scale);
     GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
     MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic = true) override;
     MathematicalProduct * createMathematicalProduct(QPolygonF polygone, bool linkgraphic = true);
@@ -16,6 +16,7 @@ public:
 private:
     QMenu *m_productmenu;
     QGraphicsScene *m_scene;
+    float px_to_meter;
 };
 
 #endif // BUILDINGFACTORY_H

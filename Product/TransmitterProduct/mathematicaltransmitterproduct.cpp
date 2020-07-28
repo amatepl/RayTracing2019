@@ -226,12 +226,7 @@ MathematicalTransmitterProduct::computeImpulseDiffraction(vector<MathematicalRay
     complex <double> i(0.0, 1.0);
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!                                     !!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!! CONVERSION POW(10, -1.0) HARD CODED !!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!                                     !!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    double delta_r = (ray_line->at(0)->length() + ray_line->at(1)->length() - direct_dist) * pow(10, -1.0);
+    double delta_r = (ray_line->at(0)->length() + ray_line->at(1)->length() - direct_dist) * px_to_meter;
     double nu = sqrt(2 * 2 * M_PI / lambda * delta_r / M_PI);
 
     // The ITU's approximation for |F(nu)|^2
@@ -268,7 +263,7 @@ MathematicalTransmitterProduct::computeDiffractedEfield(vector<MathematicalRayPr
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
 
-    double delta_r = (rayLine->at(0)->length() + rayLine->at(1)->length() - direct_dist) * pow(10, -1.0);
+    double delta_r = (rayLine->at(0)->length() + rayLine->at(1)->length() - direct_dist) * px_to_meter;
 
     double nu = sqrt(2 * 2 * M_PI / lambda * delta_r / M_PI);
     // The ITU's approximation for |F(nu)|^2
@@ -598,22 +593,6 @@ QPointF MathematicalTransmitterProduct::sceneRectIntersection(const QRectF &rect
     return intersectionPoint;
 }
 
-
-void MathematicalTransmitterProduct::computePathLoss(QLineF direct_ray, ProductObservable *true_receiver)
-{
-    map<ProductObservable *, map<double, double>>::iterator it;
-    it = m_pathloss.begin();
-    m_pathloss.erase(it->first);
-    std::vector<QPointF> points;
-
-    int number_points = 50;
-
-    for (int i = 1; i <= number_points; i++) {
-        points.push_back(direct_ray.pointAt(double(i) / number_points));
-    }
-    m_algorithm->pathLossComputation(points, true_receiver, this);
-}
-
 // Tree transmition
 
 
@@ -707,12 +686,9 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
     m_attenuation.erase(receiver);
     m_tau.erase(receiver);
     m_dopplershift.erase(receiver);
-    receiver_distance.erase(receiver);
     m_receiver_speed = movement;
     m_receiver_speed.setLength(m_receiver_speed.length()/3.6);
     m_ray_speed = QLineF(QPointF(0.0,0.0),QPointF(0.0,0.0));
-    //m_receiver_speed = 0.0;
-    //m_receiver_orientation = 0.0;
 
     if (m_receiversRays.count(receiver)) {
         for (unsigned int i = 0; i < m_receiversRays[receiver].size(); i++) {
@@ -765,79 +741,54 @@ void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservab
 
 void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
 {
-//    bool diffracted = false;
-
-//    for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++) {
-
-//        vector<MathematicalRayProduct *> *wholeRay = m_receiversRays[receiver].at(i);
-
-//        for (unsigned j = 0; j < m_receiversRays[receiver].at(i)->size(); j++) {
-
-//            if (wholeRay->at(0)->getDiffracted()) {
-
-//                //
-//                //      The ray is a diffracted one.
-//                //
-
-//                map<ProductObservable *, map<double, double>>::iterator it;
-//                it = m_pathloss.begin();
-//                m_pathloss.erase(it->first);
-
-//                complex<double>EMfield = computeDiffractedEfield(wholeRay);
-//                m_receiversField[receiver] += EMfield;
-//                double power = computePrx(EMfield);
-//                m_receiversPowers[receiver].push_back(power);
-
-//                diffracted = true;
-
-//            } else {
-
-
-//                //
-//                //      The ray was reflected.
-//                //
-
-//                complex<double> EMfield = computeEMfield(wholeRay, receiver);
-//                m_receiversField[receiver] += EMfield;
-//                double power = computePrx(EMfield);
-//                m_receiversPowers[receiver].push_back(power);
-
-//            }
-//        }
-//    }
-
     chooseBeam(receiver);
 
     double totalPower = computePrx(m_receiversField[receiver]);
 
     double powerDBm = dBm(totalPower);
 
-    receiver_distance[receiver] = distance(receiver);
     m_algorithm->sendData(this, dynamic_cast<MathematicalProduct *>(receiver));
     receiver->answer(this, powerDBm, &m_receiversPowers[receiver], m_receiversField[receiver]);
+}
 
-    if (m_receiversRays[receiver] .size() != 0 && m_receiversRays[receiver].at(0)->size() == 1) {
+std::vector<QPointF>
+MathematicalTransmitterProduct::pointsForPathLoss(ProductObservable *true_receiver)
+{
+    map<ProductObservable *, map<double, double>>::iterator it;
+    std::vector<QPointF> points;
+    int number_points = 50;
+    MathematicalRayProduct *direct_ray;
 
-        if (active_pathloss) {
-            computePathLoss(*m_receiversRays[receiver].at(0)->at(0), receiver);
-        }
-
-        if (compute_pathloss) {
-
-            QPointF *point_receiver = dynamic_cast<QPointF *>(receiver);
-            QLineF line = QLineF(*this, *point_receiver);
-            m_pathloss[receiver][line.length() * px_to_meter] = powerDBm;
-
-        } else {
-
-            receiver_distance[receiver] = distance(receiver);
-            m_algorithm->sendData(this,dynamic_cast<MathematicalProduct*>(receiver));
-            receiver->answer(this,powerDBm,&m_receiversPowers[receiver],m_receiversField[receiver]);
-
+    if (m_receiversRays[true_receiver] .size() != 0 && m_receiversRays[true_receiver].at(0)->size() == 1)
+    {
+        direct_ray = m_receiversRays[true_receiver].at(0)->at(0);
+        for (int i = 0; i <= number_points; i++)
+        {
+            points.push_back(direct_ray->pointAt(double(i) / number_points));
         }
     }
+    return points;
+}
 
+double
+MathematicalTransmitterProduct::computePathLossPower(ProductObservable* copy_receiver)
+{
+    double powerAtReceiver = 0;
+    complex<double> emField = 0;
 
+    vector<vector<MathematicalRayProduct *>*> wholeRays = m_receiversRays[copy_receiver];
+
+    for (unsigned j = 0; j < wholeRays.size(); j++)
+    {
+        vector<MathematicalRayProduct *> *wholeRay  = wholeRays.at(j);
+        complex<double> EMfield = computeEMfield(wholeRay, copy_receiver);
+        emField += EMfield;
+    }
+    double totalPower = computePrx(emField);
+
+    powerAtReceiver = dBm(totalPower);
+
+    return powerAtReceiver;
 }
 
 complex<double> MathematicalTransmitterProduct::computeInterference(ProductObservable* copy_receiver)

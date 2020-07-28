@@ -157,6 +157,7 @@ void MapGenerator::addCars()
                                                                            carPosition.y(),
                                                                            carContour,
                                                                            true);
+
         dynamic_cast<MathematicalCarProduct *>(car)->setMovement(tmpLine);
 
         m_products.push_back(car);

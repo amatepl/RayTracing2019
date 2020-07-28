@@ -9,7 +9,7 @@
 class ReceiverFactory: public SceneFactory
 {
 public:
-    ReceiverFactory(QMenu *productmenu, InfoWidget *info, QGraphicsScene* scene);
+    ReceiverFactory(QMenu *productmenu, InfoWidget *info, QGraphicsScene* scene, const float scale);
 
     // Overrides
     GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
@@ -20,7 +20,7 @@ private:
     QMenu *m_productmenu;
     QGraphicsScene *m_scene;
     InfoWidget *info_widget;
-
+    float px_to_meter;
 };
 
 #endif // RECEIVERFACTORY_H

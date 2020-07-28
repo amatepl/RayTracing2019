@@ -198,15 +198,6 @@ void MathematicalReceiverProduct::riceFactor(double rice){
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 1. Path Loss Computation:
-void MathematicalReceiverProduct::setPathLoss(std::map<double, double> pathloss){
-    m_pathloss = pathloss;
-    computePathLossFading();
-    modelPathLoss();
-    cellRange();
-    if (m_dialog != nullptr){
-        m_dialog->changeGraph();
-    }
-}
 
 void MathematicalReceiverProduct::computePathLossFading(){
     path_loss.resize(m_pathloss.size());
@@ -489,6 +480,9 @@ void MathematicalReceiverProduct::newProperties(){
 
 // From MathematicalProduct
 void MathematicalReceiverProduct::openDialog(){
+    for (unsigned i = 0; i < m_transmitters.size(); i++) {
+        notifyObserversPathLoss(m_transmitters.at(i));
+    }
     m_dialog = new DialogReceiverProduct(this);
     connect(m_dialog, &DialogReceiverProduct::save,
             this, &MathematicalReceiverProduct::save);
@@ -535,6 +529,34 @@ void MathematicalReceiverProduct::notifyObservers() {
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         m_transmitters.at(i)->compute(this);
     }
+}
+
+void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
+{
+    std::vector<QPointF> path_loss_points = transmitter->pointsForPathLoss(this);
+    MathematicalReceiverProduct* copy_receiver = new MathematicalReceiverProduct(this);
+    QLineF line;
+    m_pathloss.clear();
+    if (path_loss_points.size() > 0){
+        line.setP1(path_loss_points.at(0));
+        m_pathloss.clear();
+        for (unsigned long i = 1; i<path_loss_points.size(); i++)
+        {
+            copy_receiver->setX(path_loss_points.at(i).x());
+            copy_receiver->setY(path_loss_points.at(i).y());
+            line.setP2(path_loss_points.at(i));
+            transmitter->update(copy_receiver, m_movement);
+            for (unsigned int i = 0; i < m_observers.size(); i++)
+            {
+                m_observers.at(i)->update(copy_receiver,m_movement);
+            }
+            m_pathloss[line.length()*px_to_meter] = transmitter->computePathLossPower(copy_receiver);
+        }
+    }
+    computePathLossFading();
+    modelPathLoss();
+    cellRange();
+    delete copy_receiver;
 }
 
 complex<double> MathematicalReceiverProduct::notifyObserversInterference(ProductObservable *copy_receiver)
