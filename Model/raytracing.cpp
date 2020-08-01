@@ -1,18 +1,18 @@
 #include "raytracing.h"
 
 RayTracing::RayTracing(MathematicalTransmitterProduct *transmitter,
-                       MathematicalReceiverProduct *receiver)
+                       MathematicalReceiverProduct *receiver,const float scale)
 {
-    RayFactory* rayFactory = new RayFactory(true, m_scene);
+    RayFactory* rayFactory = new RayFactory(true, m_scene,scale);
     m_rayFactory = rayFactory;
     transmitter->setRayFactory(rayFactory);
-
+    px_to_meter = scale;
 }
 
 
-RayTracing::RayTracing()
+RayTracing::RayTracing(const float scale)
 {
-
+    px_to_meter = scale;
 }
 
 
@@ -59,7 +59,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
     reflectionsNumber = 3;
 
-    RayFactory* rayFactory = new RayFactory(true, m_scene);
+    RayFactory* rayFactory = new RayFactory(true, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
 
 
@@ -102,8 +102,6 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
     true_receiver->setBandwidth(true_transmitter->getBandwidth());
     true_receiver->setImpulseTau(true_transmitter->impulseTau(true_receiver));
     true_receiver->setImpulseAttenuation(true_transmitter->impulseAttenuation(true_receiver));
-    true_receiver->setPathLoss(true_transmitter->pathLoss(copy_receiver));
-    true_receiver->setTransmitterDistance(true_transmitter->receiverDistance(true_receiver));
     true_receiver->riceFactor(true_transmitter->riceFactor(true_receiver));
     true_receiver->setDopplerShift(true_transmitter->dopplerShift(true_receiver));
     true_receiver->computeMinPrx();
@@ -111,32 +109,6 @@ void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct 
 //    true_receiver->save();
 }
 
-
-void RayTracing::pathLossComputation(std::vector<QPointF> points,
-                                     ProductObservable *true_receiver, ProductObserver* true_transmitter)
-{
-    MathematicalReceiverProduct* original_receiver = dynamic_cast<MathematicalReceiverProduct *>
-            (true_receiver);
-
-    copy_receiver = (MathematicalReceiverProduct*)m_receiverfactory->createMathematicalProduct(original_receiver,false);
-
-    MathematicalTransmitterProduct* original_transmitter = (MathematicalTransmitterProduct *)
-            true_transmitter;
-
-    original_transmitter->erasePathLoss(original_receiver);
-    original_transmitter->activePathLoss(false);
-    original_transmitter->computePathLoss(true);
-
-    for (unsigned long i = 0; i<points.size()-1; i++) {
-        copy_receiver->setPosX(points.at(i).x());
-        copy_receiver->setPosY(points.at(i).y());
-    }
-    original_transmitter->activePathLoss(true);
-    original_transmitter->computePathLoss(false);
-
-    delete copy_receiver;
-
-}
 
 void RayTracing::clearWorkspace()
 {

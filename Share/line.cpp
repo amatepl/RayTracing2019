@@ -94,5 +94,5 @@ bool Line::onLine(const QPointF &point)
 
 double Line::getMeterLength() const
 {
-    return length()*0.1;
+    return length()*px_to_meter;
 }

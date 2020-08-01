@@ -13,8 +13,8 @@
 class RayTracing: public AlgorithmInterface, public ImagesMethod
 {
 public:
-    RayTracing(MathematicalTransmitterProduct* transmitter, MathematicalReceiverProduct* receiver);
-    RayTracing();
+    RayTracing(MathematicalTransmitterProduct* transmitter, MathematicalReceiverProduct* receiver,const float scale);
+    RayTracing(const float scale);
 
     //AlgorithmInterface
 //    MathematicalComponent* compute(vector<MathematicalTransmitterProduct *> transmitters, MathematicalReceiverProduct* receiver,
@@ -22,13 +22,13 @@ public:
     MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
 
     void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;
-    void pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter) override;
     void clearWorkspace() override;
     void setAttributs(map<string,vector<MathematicalProduct*>> mathematicalComponents);
 
 private:
     ReceiverFactory* m_receiverfactory;
     MathematicalReceiverProduct* copy_receiver;
+    float px_to_meter;
 
 };
 

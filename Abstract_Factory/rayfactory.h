@@ -10,12 +10,13 @@
 class RayFactory: public AbstractRayFactory
 {
 public:
-    RayFactory(bool visible,QGraphicsScene *scene);
+    RayFactory(bool visible,QGraphicsScene *scene,const float scale);
     MathematicalRayProduct* createRay(const QPointF &p1, const QPointF &p2,double Tetai=0,int indWall=0) override;
 
 private:
     bool m_visibleRays;
     QGraphicsScene *m_scene;
+    float px_to_meter;
 };
 
 #endif // RAYFACTORY_H

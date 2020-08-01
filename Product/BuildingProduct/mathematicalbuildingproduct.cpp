@@ -9,6 +9,7 @@ MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points
     for(int i =0; i<size()-1;i++){
         Wall *wall = new Wall(this->at(i),this->at((i+1)%(size())),0.0,m_conductivity,m_permittivity,i);
         wall->setBuilding(this);
+        wall->setScale(px_to_meter);
         m_walls.push_back(wall);
     }
 }
@@ -93,7 +94,6 @@ vector <Wall*>MathematicalBuildingProduct::nearestWalls(const QPointF &point)
 
     for (int i = 0; i < this->size() - 1; i++) {
         if (point == m_walls.at(i)->p1() || point == m_walls.at(i)->p2()) {
-
             walls.push_back(m_walls.at(i));
         }
     }

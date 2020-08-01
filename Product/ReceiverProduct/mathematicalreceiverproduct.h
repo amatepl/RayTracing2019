@@ -54,8 +54,6 @@ public:
 
 
     // 1. Path Loss Computation:
-    std::map<double,double> pathLoss(){return m_pathloss;}
-    void setPathLoss(std::map<double,double> pathloss);
     void linearRegressionPathLoss();
     void computePathLossFading();
     double standardDeviation();
@@ -112,6 +110,7 @@ public:
     void attachObserver(ProductObserver *productObserver) override;
     void detachObservers() override;
     void notifyObservers();
+    void notifyObserversPathLoss(ProductObserver* transmitter);
     complex<double> notifyObserversInterference(ProductObservable *copy_receiver);
     void notify() override;
     void notify(double &power, std::vector<double> *powers, std::complex<double> &EMfiled) override;
@@ -121,8 +120,6 @@ public:
 private:
     // 0. Intrisic parameters
     bool enable;
-    //float m_speed;
-    //float m_orientation;
     QLineF m_movement;
     int m_target_snr;
     int m_noise_figure;

@@ -10,7 +10,7 @@
 class Coverage: public AlgorithmInterface, public ImagesMethod
 {
 public:
-    Coverage(SceneFactory* receiverFactory);
+    Coverage(SceneFactory* receiverFactory,const float scale);
     void setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents);
 
     void choseBeams();
@@ -21,13 +21,13 @@ public:
     MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
 
     void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;
-    void pathLossComputation(std::vector<QPointF> points, ProductObservable *true_receiver, ProductObserver* true_transmitter) override;
     void clearWorkspace() override;
 
     vector<QRectF> buildCoverageZone();
 
 protected:
     SceneFactory* m_receiverFactory;
+    float px_to_meter;
     //QPolygonF totalIlluminationZone;
 };
 

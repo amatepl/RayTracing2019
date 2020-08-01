@@ -1,10 +1,11 @@
 #include "receiverfactory.h"
 
-ReceiverFactory::ReceiverFactory(QMenu* productmenu, InfoWidget *info, QGraphicsScene* scene)
+ReceiverFactory::ReceiverFactory(QMenu* productmenu, InfoWidget *info, QGraphicsScene* scene,const float scale)
 {
     m_productmenu = productmenu;
     m_scene = scene;
     info_widget = info;
+    px_to_meter = scale;
 }
 
 
@@ -13,6 +14,7 @@ ReceiverFactory::ReceiverFactory(QMenu* productmenu, InfoWidget *info, QGraphics
 GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
     GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(true,m_productmenu, m_scene);
     MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(posX, posY);
+    mathematicalReceiverProduct->setScale(px_to_meter);
     mathematicalReceiverProduct->setInfoWidget(info_widget);
     graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
     graphicsReceiverProduct->setX(posX);
@@ -23,6 +25,7 @@ GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
 
 MathematicalProduct* ReceiverFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
     MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(posX,posY);
+    mathematicalReceiverProduct->setScale(px_to_meter);
     mathematicalReceiverProduct->setInfoWidget(info_widget);
     if (linkgraphic){
         GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(false,m_productmenu, m_scene);
@@ -37,6 +40,7 @@ MathematicalProduct* ReceiverFactory::createMathematicalProduct(int posX, int po
 MathematicalProduct* ReceiverFactory::createMathematicalProduct(MathematicalProduct *original, bool linkgraphic){
     MathematicalReceiverProduct* mathematicalReceiverProduct = new MathematicalReceiverProduct(dynamic_cast<MathematicalReceiverProduct*>(original));
     mathematicalReceiverProduct->setInfoWidget(info_widget);
+    mathematicalReceiverProduct->setScale(px_to_meter);
     if (linkgraphic){
         GraphicsReceiverProduct* graphicsReceiverProduct = new GraphicsReceiverProduct(false,m_productmenu, m_scene);
         graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);

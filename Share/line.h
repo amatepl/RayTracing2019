@@ -16,6 +16,10 @@ public:
     QPointF symetricalPoint(const double x, const double y);
     bool onLine(const QPointF &point);
     double getMeterLength()const;
+    void setScale(float scale) {px_to_meter = scale;}
+
+private:
+    float px_to_meter;
 
 };
 

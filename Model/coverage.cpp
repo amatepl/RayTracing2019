@@ -1,7 +1,8 @@
 #include "coverage.h"
 
-Coverage::Coverage(SceneFactory *receiverFactory):m_receiverFactory(receiverFactory)
+Coverage::Coverage(SceneFactory *receiverFactory,const float scale):m_receiverFactory(receiverFactory)
 {
+    px_to_meter = scale;
 }
 
 //MathematicalComponent* Coverage::compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
@@ -15,7 +16,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
     setAttributs(mathematicalComponents);
     reflectionsNumber = 5;
 
-    RayFactory* rayFactory = new RayFactory(false, m_scene);
+    RayFactory* rayFactory = new RayFactory(false, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
 
     for(unsigned int i =0;i<m_transmitters.size();i++){
@@ -93,17 +94,6 @@ void Coverage::sendData(MathematicalProduct *transmitter, MathematicalProduct *r
     MathematicalTransmitterProduct* true_transmitter = static_cast<MathematicalTransmitterProduct*>(transmitter);
     MathematicalReceiverProduct* true_receiver = static_cast<MathematicalReceiverProduct*>(receiver);
 }
-
-
-void Coverage::pathLossComputation(std::vector<QPointF> points,
-                                   ProductObservable *true_receiver,
-                                   ProductObserver* true_transmitter)
-{
-    MathematicalTransmitterProduct* original_transmitter = (MathematicalTransmitterProduct*) true_transmitter;
-    original_transmitter->activePathLoss(false);
-    original_transmitter->computePathLoss(false);
-}
-
 
 void Coverage::clearWorkspace()
 {

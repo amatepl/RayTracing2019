@@ -1,5 +1,7 @@
 #include "applicationwindow.h"
 
+float px_to_meter = 0.1;
+
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
     createToolBox();
@@ -10,11 +12,11 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     view->setMouseTracking(true);
-    m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map);
-    m_transmitterFactory = new TransmitterFactory(m_productmenu, m_map);
-    m_buildingFactory = new BuildingFactory(m_productmenu, m_map);
-    m_treeFactory = new TreeFactory(m_productmenu, m_map);
-    m_carFactory = new CarFactory(m_productmenu, m_map);
+    m_receiverFactory = new ReceiverFactory(m_productmenu,m_info_widget,m_map,px_to_meter);
+    m_transmitterFactory = new TransmitterFactory(m_productmenu,m_map,px_to_meter);
+    m_buildingFactory = new BuildingFactory(m_productmenu,m_map,px_to_meter);
+    m_treeFactory = new TreeFactory(m_productmenu,m_map,px_to_meter);
+    m_carFactory = new CarFactory(m_productmenu,m_map,px_to_meter);
 
     m_model = new Model(this);
     m_model->setScene(m_map,(BuildingFactory*) m_buildingFactory,
@@ -22,10 +24,10 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
                       (CarFactory*) m_carFactory,
                       (ReceiverFactory*) m_receiverFactory);
 
-    m_rayTracingAlgorithm = new RayTracing();
+    m_rayTracingAlgorithm = new RayTracing(px_to_meter);
     m_rayTracingAlgorithm->setScene(m_map);
 
-    m_coverageAlgorithm = new Coverage(m_receiverFactory);
+    m_coverageAlgorithm = new Coverage(m_receiverFactory,px_to_meter);
     m_coverageAlgorithm->setScene(m_map);
 
 //    MapGenerator* map = new MapGenerator(m_map->sceneRect());
