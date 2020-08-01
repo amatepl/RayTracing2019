@@ -20,6 +20,11 @@ void ImagesMethod::illuminationZones()
 
 void ImagesMethod::launchAlgorithm()
 {
+
+    QColor illumination1;
+    illumination1.setGreen(255);
+    illumination1.setAlpha(100);
+
     int recursionDepth = reflectionsNumber;
 
 //    for (unsigned i = 0; i < m_receivers.size(); i++) {
@@ -31,11 +36,10 @@ void ImagesMethod::launchAlgorithm()
         m_currentTx = transmitter;
 
         m_currentTransmitterRange = transmitter->getIlluminationZone();
-        forImage data = transmitterIllumination(transmitter);
 
-//        QColor illumination1;
-//        illumination1.setGreen(255);
-//        illumination1.setAlpha(100);
+//        m_scene->addPolygon(m_currentTransmitterRange, QPen(), illumination1);
+
+        forImage data = transmitterIllumination(transmitter);
 
 //        m_scene->addPolygon(data.zone, QPen(), illumination1);
 
@@ -54,7 +58,7 @@ void ImagesMethod::recomputeImages(AbstractAntena *tx)
 {
 //    clearImages(tx);
 
-    discnnectAllCars();
+    disconnectAllCars();
 
     clearAllImages();
 
@@ -99,7 +103,7 @@ void ImagesMethod::disconnectCars(AbstractAntena *ant)
 }
 
 
-void ImagesMethod::discnnectAllCars()
+void ImagesMethod::disconnectAllCars()
 {
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         for (unsigned j = 0; j < m_images[m_transmitters.at(i)].size(); j++) {
@@ -268,7 +272,7 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 
 //            m_scene->addPolygon(corner->getIlluminationZone(),QPen(),illumination1);
             if (p1 == p2) {
-                cout<< "Illumintion zone is a line!"<<endl;
+//                cout<< "Illumintion zone is a line!"<<endl;
             }
 
 //            m_scene->addPolygon(corner->getIlluminationZone(), QPen(), illumination1);
@@ -284,9 +288,11 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
             } else {
                 for (unsigned int numberReceivers = 0; numberReceivers < m_receivers.size(); numberReceivers++) {
                     m_receivers.at(numberReceivers)->attachObserver(corner);
+//                    m_scene->addPolygon(corner->getIlluminationZone(), QPen(), illumination1);
                 }
 
-//                m_images[m_currentTx].push_back(corner);
+                connectToCars(corner);
+                m_images[m_currentTx].push_back(corner);
 
 
 //                m_receiver->attachObserver(corner);
@@ -378,6 +384,10 @@ forImage ImagesMethod::transmitterIllumination(MathematicalTransmitterProduct *t
     illumination.setBlue(255);
     illumination.setAlpha(100);
 
+    QColor illumination2;
+    illumination2.setRed(255);
+    illumination2.setAlpha(50);
+
 
 //    vector <MathematicalBuildingProduct *> illuminatedBuldings; // Buildings lying in the initial illumination zone.
 //    QPolygonF illuminationZone = Transmitter->getIluminationZone(itemsBoundingRect());
@@ -391,6 +401,8 @@ forImage ImagesMethod::transmitterIllumination(MathematicalTransmitterProduct *t
         if (p_building.intersects(illuminationZone)) {
 //            illuminatedBuldings.push_back(building);
             illuminationZone = illuminationZone.subtracted(building->shadow(transmitter->getPosition()));
+
+//            m_scene->addPolygon(building->shadow(transmitter->getPosition()),QPen(),illumination2);
 
             // Closest point of the building to the transmitter
             QPointF corner = building->closestPoint(transmitter->getPosition());
@@ -576,8 +588,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
 
                 m_images[m_currentTx].push_back(image);
 
-//                connect(image, &TransmitterImage::detectsCar,
-//                                 this, &ImagesMethod::launchAlgorithm);
+//                m_scene->addEllipse(image->getPosition().x(), image->getPosition().y(), 5, 5, redPen);
 
                 connectToCars(image);
 

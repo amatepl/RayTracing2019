@@ -1118,7 +1118,7 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver,
 
 void MathematicalTransmitterProduct::notifyCarDetected()
 {
-    emit detectsCar(this);
+//    emit detectsCar(this);
 }
 
 

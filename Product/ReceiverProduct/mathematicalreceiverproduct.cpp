@@ -432,8 +432,8 @@ void MathematicalReceiverProduct::sendInterferencePattern(){
     {
         rice_distribution.push_back(imp.first/pow(sigma,2)
                                     * exp(-pow(imp.first,2)/(2*pow(sigma,2)))
-                                    * exp(-pow(10,rice_factor/10))
-                                    * cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma));
+                                    * exp(-pow(10,rice_factor/10)));
+                                    //* cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma));
     }
     m_dialog->setDistributionInterference(distribution,rice_distribution);
 }

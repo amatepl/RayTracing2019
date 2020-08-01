@@ -4,9 +4,9 @@
 
 int main(int argv, char *args[])
 {
-
     QApplication app(argv, args);
     ApplicationWindow mainWindow;
+
     mainWindow.setGeometry(100, 100, 800, 500);
     mainWindow.show();
 

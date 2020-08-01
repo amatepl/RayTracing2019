@@ -24,7 +24,11 @@ MathematicalProduct* TransmitterFactory::createMathematicalProduct(int posX, int
     mathematicalProduct->setScale(px_to_meter);
     if (linkgraphic){
         GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(m_productmenu, m_scene);
+
         graphicsProduct->attachObserver(mathematicalProduct);
+//        graphicsProduct->setX(posX);
+//        graphicsProduct->setY(posY);
+//        mathematicalProduct->MathematicalProduct::attachObservable(graphicsProduct);
     }
     return mathematicalProduct;
 }
