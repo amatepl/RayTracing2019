@@ -65,6 +65,17 @@ bool AbstractAntena::carInIlluminatedCars(MathematicalCarProduct *car, int *idx)
     return false;
 }
 
+bool AbstractAntena::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+{
+    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
+        if (m_illuminatedCars.at(i) == car) {
+            *idx = i;
+            return true;
+        }
+    }
+    return false;
+}
+
 //void AbstractAntena::carMoved(QPolygonF *car,int x, int y, double orientation)
 //{
 //    if (m_zone.intersects(*car)) {

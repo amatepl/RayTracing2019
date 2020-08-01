@@ -45,7 +45,9 @@ MathematicalReceiverProduct::~MathematicalReceiverProduct(){
 
 void MathematicalReceiverProduct::clearObeservers()
 {
-    m_observers.erase(m_observers.begin(), m_observers.end());
+    m_observers.clear();
+//    m_observers.erase(m_observers.begin(), m_observers.end());
+//    m_observers.shrink_to_fit();
 }
 
 
@@ -349,12 +351,14 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 3. Cell Range Computation:
-void MathematicalReceiverProduct::cellRange(){
+void MathematicalReceiverProduct::cellRange()
+{
     // minPrx = <Prx> - L_fading
     // <Prx> = mx + b; where x = log10(d)
     // Pr[L_fading<gamma] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)))
 
-    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma => Compute R such that minPrx> = <Prx(R)> - gamma
+    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma
+    // => Compute R such that minPrx> = <Prx(R)> - gamma
     int lengthData = 100;
     double step = (3*fading_variability)/lengthData;
     double gamma;
@@ -364,7 +368,8 @@ void MathematicalReceiverProduct::cellRange(){
         gamma = i*step;
         probability[i] = 1 - 0.5*erfc(gamma/(fading_variability * sqrt(2)));// Pr[L_fading<gamma]
 
-        // minPrx = mx + b - gamma[dBm] => x = (minPrx + gamma - b)/m => log10(d) = (-102 + gamma - b)/m => d = 10((minPrx + gamma - b)/m)
+        // minPrx = mx + b - gamma[dBm] => x = (minPrx + gamma - b)/m
+        // => log10(d) = (-102 + gamma - b)/m => d = 10((minPrx + gamma - b)/m)
         cell_range[i] = pow(10,(min_prx + gamma - b)/m);
     }
 }
@@ -521,7 +526,7 @@ void MathematicalReceiverProduct::updateInformation(){
 
 // From ProductObservable
 void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserver){
-    //cout<<"Observevr attached"<<endl;
+//    cout<<"Observevr attached"<<endl;
     m_observers.push_back(productObserver);
 }
 
@@ -534,7 +539,6 @@ void MathematicalReceiverProduct::notifyObservers()
         }
 
     for (unsigned int i = 0; i < m_observers.size(); i++) {
-//        cout<< "MathRec position: "<<x()<<", "<<y()<<endl;
         m_observers.at(i)->update(this,m_movement);
     }
 

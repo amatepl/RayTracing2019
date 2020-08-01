@@ -150,28 +150,28 @@ void AntenaDiffraction::attachObservable(ProductObservable *productObservable)
 
 void AntenaDiffraction::carMoved(MathematicalCarProduct *car, int x, int y, double orientation)
 {
-//    int idx = 0;
-//    if (m_zone.intersects(*car)) {
+    int idx = 0;
+    if (m_zone.intersects(*car)) {
 
-//        m_illuminatedCars.push_back(car);
+        m_illuminatedCars.push_back(car);
 
-//        m_zone = m_tmpZone.subtracted(*car);
+        m_zone = m_tmpZone.subtracted(car->shadow(*this));
 
-//    } else if (inIlluminatedCars(car, &idx)) {
+    } else if (inIlluminatedCars(car, &idx)) {
 
-//        m_zone = m_tmpZone;
+        m_zone = m_tmpZone;
 
-//        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
-//    }
-}
-
-bool AntenaDiffraction::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
-{
-    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
-        if (m_illuminatedCars.at(i) == car) {
-            *idx = i;
-            return true;
-        }
+        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
     }
-    return false;
 }
+
+//bool AntenaDiffraction::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+//{
+//    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
+//        if (m_illuminatedCars.at(i) == car) {
+//            *idx = i;
+//            return true;
+//        }
+//    }
+//    return false;
+//}

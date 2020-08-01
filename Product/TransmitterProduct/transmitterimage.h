@@ -26,7 +26,7 @@ public:
     //void setBuilding(MathematicalBuildingProduct *building);
     void setSceneBoundary(const QRectF &rect);
     QPolygonF buildCoverage();
-    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
+//    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
 
     //AbstractAntena
     void notifyParent(ProductObservable *productObservable, QLineF const movement,

@@ -147,9 +147,9 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         QLineF resultant_speed(QPointF(0.0,0.0),m_receiver_speed.p2()-m_ray_speed.p2());
         QLineF beta(QPointF(.0,.0),QPointF(2.0*M_PI/lambda,0.0));
         beta.setAngle(angle_receiver);
-        cout << "Angle Beta: " << beta.angle() << endl;
-        cout << "Angle Receiver: " << m_receiver_speed.angle() << endl;
-        cout << "Norm Beta: " << beta.length() << endl;
+//        cout << "Angle Beta: " << beta.angle() << endl;
+//        cout << "Angle Receiver: " << m_receiver_speed.angle() << endl;
+//        cout << "Norm Beta: " << beta.length() << endl;
         //    cout << "Angle Ray: " << m_ray_speed.angle() << endl;
         //    cout << "Speed resultant: " << m_ray_speed.length()*3.6 << endl;
         //    cout << "Shift: " << angle_receiver - resultant_speed.angle() << endl;
@@ -1118,7 +1118,7 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver,
 
 void MathematicalTransmitterProduct::notifyCarDetected()
 {
-//    emit detectsCar(this);
+    emit detectsCar(this);
 }
 
 
@@ -1156,8 +1156,16 @@ void MathematicalTransmitterProduct::carMoved(MathematicalCarProduct *car,
                                               int x, int y,
                                               double orientation)
 {
+    int idx = 0;
     if (m_zone.intersects(*car)) {
 
+        m_illuminatedCars.push_back(car);
+        emit detectsCar(this);
+    }
+
+    else if (inIlluminatedCars(car, &idx)) {
+
+        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
         emit detectsCar(this);
     }
 }

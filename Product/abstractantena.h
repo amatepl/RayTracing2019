@@ -42,6 +42,7 @@ public:
     virtual QLineF movement() const;
     virtual void setMovement(QLineF const movement);
     bool carInIlluminatedCars(MathematicalCarProduct *car, int *idx);
+    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
 
 
     //virtual QPolygonF getIluminationZone(const QRectF &rect)const = 0;
