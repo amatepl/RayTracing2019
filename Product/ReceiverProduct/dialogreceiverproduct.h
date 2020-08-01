@@ -36,9 +36,11 @@ public:
     QWidget* CellRange();
     QWidget* DopplerSpectrum();
     QWidget* InterferencePattern();
+    QWidget* DistributionInterference();
 
     void changeGraph();
     void setInterferencePattern(vector<double> impulse_r, double min, double max);
+    void setDistributionInterference(map<double,double> impulse, QVector<double> rice_distribution);
 
     float getSpeed() override
     {
@@ -88,6 +90,7 @@ private:
     bool show_tdl;
     bool enable;
     InterfererencePattern *m_interferencepattern;
+    QCustomPlot *m_distribution;
 
 signals:
     void save(string path);

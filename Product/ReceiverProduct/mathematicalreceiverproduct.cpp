@@ -76,8 +76,8 @@ void MathematicalReceiverProduct::computeDelaySpread()
 {
     double min_tau, max_tau, t;
     int i = 0;
-    for (const auto &tau: m_tau) {
-        t = tau.second;
+    for (const auto &imp: m_impulse) {
+        t = imp.first;
         if (i == 0) {
             min_tau = t;
             max_tau = t;
@@ -93,7 +93,7 @@ void MathematicalReceiverProduct::computeDelaySpread()
         i++;
     }
 
-    delay_spread = abs(max_tau-min_tau)*1e9;
+    delay_spread = abs(max_tau-min_tau);
 
     if (delay_spread < 1e-20){
         delay_spread = 0.0;
@@ -125,7 +125,7 @@ void MathematicalReceiverProduct::save(string path)
     vectorSizes.push_back(logD.size());
     vectorSizes.push_back(fading.size());
     vectorSizes.push_back(logD_model.size());
-    vectorSizes.push_back(doppler_shift.size());
+    vectorSizes.push_back(doppler.size());
 
     sort(vectorSizes.begin(), vectorSizes.end());
 
@@ -178,8 +178,8 @@ void MathematicalReceiverProduct::save(string path)
             ofs << ";" ;
         }
 
-        if (n < doppler_shift.size()) {
-            ofs << doppler_shift[n];
+        if (n < doppler.size()) {
+            ofs << doppler[n];
         } else {
             ofs << ";" ;
         }
@@ -194,7 +194,7 @@ void MathematicalReceiverProduct::save(string path)
 void MathematicalReceiverProduct::riceFactor(double rice){
     rice_factor = rice;
     if (isnan(rice_factor) || isinf(rice_factor)){
-        rice_factor = 0.0;
+        rice_factor = 1e-300;
     }
 }
 
@@ -301,63 +301,47 @@ void MathematicalReceiverProduct::modelPathLoss(){
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 2. Impulse Resoonse and TDL Computation:
-void MathematicalReceiverProduct::setImpulseAttenuation(std::map<std::vector<double>, std::complex<double>> attenuation){
-    for (int i = 0; i< h_tdl.size(); i++){
-        tau_tdl.removeAt(i);
-        h_tdl.removeAt(i);
-    }
-    m_attenuation = attenuation;
-    computeImpulseTDL();
-    computeDelaySpread();
-    coherenceBandwidth();
-    if (m_dialog != nullptr){
-        m_dialog->changeGraph();
-    }
-}
-
 void MathematicalReceiverProduct::computeImpulseTDL(){
    // Number of rays = Number of powers received:
-    unsigned long rayNumber = m_attenuation.size();
+    unsigned long indepentant_rays = m_impulse.size();
     // Creation of two vectors (impusle) and time of each impulse
-    h.resize(rayNumber);
-    tau.resize(rayNumber);
+    h.clear();
+    tau.clear();
+    h.resize(indepentant_rays);
+    tau.resize(indepentant_rays);
 
     // Creation of TDL delay
-    double deltaTau = 1.0/(2.0*double(m_transmitterbandwidth));
-    std::vector<double> x(rayNumber);
-    std::vector <std::complex <double>> y(rayNumber);
-    complex <double> k(0.0, 1.0);
+    double deltaTau = 1.0e9/(2.0*double(m_transmitterbandwidth)); // [ns]
+    std::vector<double> x(indepentant_rays);
+    std::vector <std::complex <double>> y(indepentant_rays);
 
     // loop over all rays
-    double tau_check;
     int i = 0;
-    map<vector<double>,std::complex<double>>::iterator it;
-    it = m_attenuation.begin();
-    for(const auto &imp : m_tau){
+    for(const auto &imp : m_impulse){
         // Compute attenuation factor
-        h[i] = 10*log10(abs(it->second));
+        h[i] = 20*log10(abs(imp.second));
         // Compute time of arrival in ns
-        tau[i] = imp.second*1e9; // tau
-        tau_check = imp.second;
+        tau[i] = imp.first; // tau
 
         int l = 0;
-        while(!(l*deltaTau<=tau_check && tau_check<l*deltaTau+deltaTau)){
+        while(!(l*deltaTau<=tau[i] && tau[i]<l*deltaTau+deltaTau)){
             l++;
          }
-        x[i] = (l+1)*deltaTau*1e9;
-        y[i] = it->second * exp(-k * 2.0*M_PI * std::complex<double>(m_transmitterfrequency * tau_check));
+        x[i] = (l+1)*deltaTau;
+        y[i] = imp.second;
         i++;
-        it++;
     }
     std::map<double,std::complex<double>> map_tau_tdl;
-    for (unsigned long i=0; i<rayNumber; ++i){
+    for (unsigned long i=0; i<indepentant_rays; ++i){
         map_tau_tdl[x.at(i)] += y[i];
     }
+    h_tdl.clear();
+    tau_tdl.clear();
     h_tdl.resize(map_tau_tdl.size());
     tau_tdl.resize(map_tau_tdl.size());
     i = 0;
     for (const auto &tdl : map_tau_tdl){
-        h_tdl[i] = 10*log10(abs(tdl.second));
+        h_tdl[i] = 20*log10(abs(tdl.second));
         tau_tdl[i] = tdl.first;
         i++;
     }
@@ -387,48 +371,71 @@ void MathematicalReceiverProduct::cellRange(){
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 4. Doppler:
-void MathematicalReceiverProduct::setDopplerShift(map<vector<double>, double> dopplershift)
+void MathematicalReceiverProduct::dopplerSpectrum()
 {
-    for (int i = 0; i< doppler_shift.size(); i++){
-        doppler_shift.removeAt(i);
-    }
-    m_doppler_shift = dopplershift;
-    doppler_shift.resize(m_doppler_shift.size());
+    omega.clear();
+    doppler.clear();
+    omega.resize(m_doppler.size());
+    doppler.resize(m_doppler.size());
     int i = 0;
-    for(const auto &dop : m_doppler_shift){
-        doppler_shift[i] = dop.second;
+    for(const auto &dop : m_doppler){
+        omega[i] = dop.first;
+        doppler[i] = 20*log10(abs(dop.second));
         i++;
     }
 }
 
 void MathematicalReceiverProduct::sendInterferencePattern(){
-    MathematicalReceiverProduct *copy_receiver = new MathematicalReceiverProduct(this);
-    vector<double> impulse_r(60*60);
+    vector<double> impulse_r(80*80);
+    vector<double> tmp_vect_h(80*80);
+    QVector<double> rice_distribution;
     double lambda = c/frequency();
     int k = 0;
     double min = -0.0;
     double max = -150.0;
+    double max_h = -150.0;
     double impulse_db = 0.0;
-    for (int i = -30; i<30; i++)
+    QLineF local_region(QPointF(.0,.0),QPointF(.1,.1));
+    for (int i = -40; i<40; i++)
     {
-        copy_receiver->setX(this->x()-i*lambda);
-        for (int j = -30; j<30; j++)
+        for (int j = -40; j<40; j++)
         {
-            copy_receiver->setY(this->y()-j*lambda);
-            complex<double> impulse = notifyObserversInterference(copy_receiver);
+            local_region.setP2(QPointF(-i*0.05*lambda,-j*0.05*lambda));
+            complex<double> impulse = notifyObserversInterference(local_region);
             impulse_db = 20*log(abs(impulse));
             impulse_r[k] = impulse_db;
+            tmp_vect_h[k] = abs(impulse);
             if(impulse_db < min)
             {
                 min = impulse_db;
             }
             if(impulse_db>max){
                 max = impulse_db;
+                max_h = abs(impulse);
             }
             k++;
         }
     }
     m_dialog->setInterferencePattern(impulse_r,min,max);
+    map <double,double> distribution;
+    double sigma = 0.0;
+    for (int i = 0; i < 80*80; i++)
+    {
+        tmp_vect_h[i] = round(tmp_vect_h[i]/max_h * 1e2) / 1e2;
+        distribution[tmp_vect_h[i]] += 1.0/(80.0*80.0);
+        if (sigma < tmp_vect_h[i])
+        {
+            sigma = tmp_vect_h[i];
+        }
+    }
+    for (auto const &imp: distribution)
+    {
+        rice_distribution.push_back(imp.first/pow(sigma,2)
+                                    * exp(-pow(imp.first,2)/(2*pow(sigma,2)))
+                                    * exp(-pow(10,rice_factor/10))
+                                    * cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma));
+    }
+    m_dialog->setDistributionInterference(distribution,rice_distribution);
 }
 
 // From ReceiverProduct
@@ -520,6 +527,8 @@ void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserve
 
 void MathematicalReceiverProduct::notifyObservers()
 {
+    m_impulse.clear();
+    m_doppler.clear();
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         m_transmitters.at(i)->update(this, m_movement);
         }
@@ -531,7 +540,14 @@ void MathematicalReceiverProduct::notifyObservers()
 
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         m_transmitters.at(i)->compute(this);
+        m_impulse = m_transmitters.at(i)->receiverImpulse(this);
+        m_doppler = m_transmitters.at(i)->receiverDoppler(this);
+        riceFactor(m_transmitters.at(i)->riceFactor(this));
     }
+    computeImpulseTDL();
+    computeDelaySpread();
+    coherenceBandwidth();
+    dopplerSpectrum();
 }
 
 void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
@@ -559,23 +575,16 @@ void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* trans
     computePathLossFading();
     modelPathLoss();
     cellRange();
+    computeMinPrx();
     delete copy_receiver;
 }
 
-complex<double> MathematicalReceiverProduct::notifyObserversInterference(ProductObservable *copy_receiver)
+complex<double> MathematicalReceiverProduct::notifyObserversInterference(QLineF local_region)
 {
     complex<double> impulse_r;
     for (unsigned i = 0; i < m_transmitters.size(); i++)
     {
-        m_transmitters.at(i)->update(copy_receiver, m_movement);
-    }
-    for (unsigned int i = 0; i < m_observers.size(); i++)
-    {
-        m_observers.at(i)->update(copy_receiver,m_movement);
-    }
-    for (unsigned i = 0; i < m_transmitters.size(); i++)
-    {
-        impulse_r += m_transmitters.at(i)->computeInterference(copy_receiver);
+        impulse_r = m_transmitters.at(i)->computeInterference(this, local_region);
     }
     return impulse_r;
 }
@@ -601,11 +610,14 @@ void MathematicalReceiverProduct::notify(double &power,
 }
 
 
-void MathematicalReceiverProduct::answer(ProductObserver *observer, double &power,
-                                         std::vector<double> *powers, std::complex<double> &EMfield)
+void MathematicalReceiverProduct::answer(ProductObserver *observer, double frequency,
+                                         double bandwidth, double &power,
+                                         std::complex<double> &EMfield)
 {
     m_e_field += EMfield;
     m_power = power;
+    m_transmitterbandwidth = bandwidth;
+    m_transmitterfrequency = frequency;
     if (m_graphic != nullptr){
         m_graphic->notifyToGraphic(this,m_power);
 

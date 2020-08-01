@@ -17,6 +17,7 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     m_tabwidget->addTab(CellRange(),tr("Cellule range"));
     m_tabwidget->addTab(DopplerSpectrum(), tr("Doppler Spectrum"));
     m_tabwidget->addTab(InterferencePattern(),tr("Interference Pattern"));
+    m_tabwidget->addTab(DistributionInterference(),tr("Interference Distribution"));
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
                                        | QDialogButtonBox::Save);
@@ -370,12 +371,13 @@ QWidget* DialogReceiverProduct::DopplerSpectrum(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
 
-    doppler_shift = m_mathematicalproduct->dopplerShift();
+    doppler = m_mathematicalproduct->getDoppler();
+    omega = m_mathematicalproduct->getOmega();
 
-    for(int i = 0; i < h.size(); i++){
+    for(int i = 0; i < doppler.size(); i++){
         QCPItemLine *line_doppler = new QCPItemLine(customplot);
-        line_doppler->start->setCoords(doppler_shift[i], h[i]);  // location of point 1 in plot coordinate
-        line_doppler->end->setCoords(doppler_shift[i], -130);  // location of point 2 in plot coordinate
+        line_doppler->start->setCoords(omega[i], doppler[i]);  // location of point 1 in plot coordinate
+        line_doppler->end->setCoords(omega[i], -130);  // location of point 2 in plot coordinate
         line_doppler->setPen(QPen(Qt::blue));
     }
 
@@ -383,7 +385,7 @@ QWidget* DialogReceiverProduct::DopplerSpectrum(){
     customplot->graph(0)->setPen(QPen(Qt::red));
     customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
     customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    customplot->graph(0)->setData(doppler_shift, h);
+    customplot->graph(0)->setData(omega, doppler);
     customplot->graph(0)->setName("Doppler spectrum");
 
     customplot->xAxis->setLabel("\u03C9[rad/s]");
@@ -518,6 +520,32 @@ QWidget* DialogReceiverProduct::InterferencePattern()
     return widget;
 }
 
+QWidget*
+DialogReceiverProduct::DistributionInterference()
+{
+    QWidget *widget = new QWidget;
+    m_distribution = new QCustomPlot;
+
+    m_distribution->xAxis->setLabel("|h|");
+    m_distribution->yAxis->setLabel("PDF");
+    m_distribution->xAxis->setRange(0, 1);
+    m_distribution->yAxis->setRange(0, 0.03);
+    m_distribution->yAxis->grid()->setSubGridVisible(true);
+    m_distribution->xAxis->grid()->setSubGridVisible(true);
+    m_distribution->rescaleAxes();
+    m_distribution->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    m_distribution->legend->setVisible(true);
+
+    m_distribution->plotLayout()->insertRow(0);
+    m_distribution->plotLayout()->addElement(0, 0, new QCPTextElement(m_distribution, "Histogram of |h| and Rice distribution fitting", QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(m_distribution,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
+}
+
 void DialogReceiverProduct::changeGraph(){
 }
 
@@ -525,6 +553,37 @@ void
 DialogReceiverProduct::setInterferencePattern(vector<double> impulse_r, double min, double max)
 {
     m_interferencepattern->enableImpulseInterference(impulse_r, min, max);
+}
+
+void
+DialogReceiverProduct::setDistributionInterference(map<double,double> impulse,QVector<double> rice_distribution)
+{
+    QVector<double> impulse_value;
+    QVector<double> probability;
+    for(auto const &imp: impulse)
+    {
+        impulse_value.push_back(imp.first);
+        probability.push_back(imp.second);
+    }
+    // create empty bar chart objects:
+    QCPBars *distribution = new QCPBars(m_distribution->xAxis, m_distribution->yAxis);
+    QCPGraph *rice = new QCPGraph(m_distribution->xAxis, m_distribution->yAxis);
+    distribution->setWidth(0.01);
+    // set names and colors:
+    distribution->setName("|h| histogram");
+    distribution->setPen(QPen(QColor(0, 0, 0)));
+    distribution->setBrush(QBrush(QColor(255,0,0)));
+
+    rice->setPen(QColor(Qt::black));
+    rice->setName("Rice Distribution");
+    rice->setLineStyle(QCPGraph::lsLine);
+    rice->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 5));
+    rice->setData(probability, impulse_value);
+
+    // Add data:
+    distribution->setData(impulse_value, probability);
+    rice->setData(impulse_value,rice_distribution);
+    m_distribution->replot();
 }
 
 void DialogReceiverProduct::setEnable(bool enable){

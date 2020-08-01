@@ -1,9 +1,9 @@
 #include "interfererencepattern.h"
 
-const int sampleCountX = 60;
-const int sampleCountZ = 60;
-const float sampleMin = -30.0;
-const float sampleMax = 30.0f;
+const int sampleCountX = 80;
+const int sampleCountZ = 80;
+const float sampleMin = -2.0;
+const float sampleMax = 2.0f;
 
 InterfererencePattern::InterfererencePattern(Q3DSurface *surface)
     : m_graph(surface)
@@ -12,7 +12,7 @@ InterfererencePattern::InterfererencePattern(Q3DSurface *surface)
     font.setPointSize(50);
     m_graph->setAxisX(new QValue3DAxis);
     m_graph->axisX()->setTitleVisible(true);
-    QString x_axe = QString("x/") + QChar(0x03BB);
+    QString x_axe = QString("X/") + QChar(0x03BB);
     m_graph->axisX()->setTitle(x_axe);
     m_graph->setAxisY(new QValue3DAxis);
     m_graph->axisY()->setTitleVisible(true);
@@ -20,7 +20,7 @@ InterfererencePattern::InterfererencePattern(Q3DSurface *surface)
     m_graph->axisY()->setTitle(y_axe);
     m_graph->setAxisZ(new QValue3DAxis);
     m_graph->axisZ()->setTitleVisible(true);
-    QString z_axe = QString("z/") + QChar(0x03BB);
+    QString z_axe = QString("Z/") + QChar(0x03BB);
     m_graph->axisZ()->setTitle(z_axe);
     m_graph->activeTheme()->setType(Q3DTheme::ThemeStoneMoss);
     m_graph->activeTheme()->setFont(font);

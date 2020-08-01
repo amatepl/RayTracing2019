@@ -57,7 +57,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
     m_receiverfactory = receiverfactory;
 
-    reflectionsNumber = 3;
+    reflectionsNumber = 22;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
@@ -87,28 +87,6 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
     return nullptr;
 }
-
-
-void RayTracing::sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver)
-{
-    // Send data is used to share some computed data from the transmitter to the receiver.
-    MathematicalTransmitterProduct* true_transmitter =
-        static_cast<MathematicalTransmitterProduct*>(transmitter);
-
-    MathematicalReceiverProduct* true_receiver =
-        static_cast<MathematicalReceiverProduct*>(receiver);
-
-    true_receiver->setFrequency(true_transmitter->getFrequency());
-    true_receiver->setBandwidth(true_transmitter->getBandwidth());
-    true_receiver->setImpulseTau(true_transmitter->impulseTau(true_receiver));
-    true_receiver->setImpulseAttenuation(true_transmitter->impulseAttenuation(true_receiver));
-    true_receiver->riceFactor(true_transmitter->riceFactor(true_receiver));
-    true_receiver->setDopplerShift(true_transmitter->dopplerShift(true_receiver));
-    true_receiver->computeMinPrx();
-
-//    true_receiver->save();
-}
-
 
 void RayTracing::clearWorkspace()
 {

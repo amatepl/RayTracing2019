@@ -21,7 +21,6 @@ public:
 //                                   vector<MathematicalBuildingProduct*> buildings) override;
     MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
 
-    void sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver) override;
     void clearWorkspace() override;
     void setAttributs(map<string,vector<MathematicalProduct*>> mathematicalComponents);
 

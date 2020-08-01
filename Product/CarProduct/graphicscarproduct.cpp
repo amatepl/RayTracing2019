@@ -90,7 +90,7 @@ QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVarian
     if (change == QGraphicsItem::ItemPositionHasChanged
         || change == QGraphicsItem::ItemTransformHasChanged
         || change == QGraphicsItem::ItemRotationHasChanged) {
-//        m_observer->update(this);
+        //m_observer->update(this);
     }
     return value;
 }

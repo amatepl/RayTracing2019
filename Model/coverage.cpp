@@ -84,17 +84,6 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
     return nullptr;
 }
 
-
-
-
-
-void Coverage::sendData(MathematicalProduct *transmitter, MathematicalProduct *receiver)
-{
-    // Send data is used to share some computed data from the transmitter to the receiver.
-    MathematicalTransmitterProduct* true_transmitter = static_cast<MathematicalTransmitterProduct*>(transmitter);
-    MathematicalReceiverProduct* true_receiver = static_cast<MathematicalReceiverProduct*>(receiver);
-}
-
 void Coverage::clearWorkspace()
 {
 

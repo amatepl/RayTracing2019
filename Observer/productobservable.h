@@ -13,7 +13,8 @@ public:
     virtual void detachObservers() = 0;
     virtual void notify() =0;
     virtual void notify(double &power, std::vector<double>* powers, std::complex <double> &EMfiled)=0;
-    virtual void answer(ProductObserver* observer,double &power, std::vector<double>* powers, std::complex <double> &EMfiled) = 0;
+    virtual void answer(ProductObserver* observer, double frequency, double bandwidth,
+                        double &power, std::complex <double> &EMfiled) = 0;
     virtual QPointF* getPos() =0;
 
     void eraseObservers()

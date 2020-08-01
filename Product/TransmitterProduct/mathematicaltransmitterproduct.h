@@ -43,17 +43,18 @@ public:
     QPolygonF buildCoverage();
 
     //virtual void setModel(Model model) override;
-    complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction);
-    complex <double> computeEfieldGround(ProductObservable *receiver, double direction);
+    complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction, QLineF local_region);
+    complex <double> computeEfieldGround(ProductObservable *receiver, double direction,
+                                         bool properties);
 
     complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,
-                                   ProductObservable* receiver);
+                                   ProductObservable* receiver,bool properties);
 
-    complex<double>computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line);
+    complex<double>computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line, QLineF local_region);
 
     double distance(ProductObservable *receiver);
-    complex<double> computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line);
-    complex<double> computeDiffractedEfield(vector<MathematicalRayProduct *> *rayLine);
+    complex<double> computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line, QLineF local_region);
+    complex<double> computeDiffractedEfield(ProductObservable *receiver, vector<MathematicalRayProduct *> *rayLine,bool properties);
     complex<double> computeDiffractedTreeEfield(vector<QLineF>rayLine);
     vector<vector<QLineF>> buildTreeRays(QPointF *Rx,MathematicalTreeProduct *tree);
     void computeRayThroughTree(QPointF *Rx,MathematicalTreeProduct *tree);
@@ -81,24 +82,6 @@ public:
 
     void clearAll();
 
-    // Vector to receive all the physical informations to share
-    map<vector<double>,std::complex<double>> impulseAttenuation(ProductObservable *receiver) {
-        return m_attenuation[receiver];
-    }
-    map<vector<double>,double> impulseTau(ProductObservable *receiver) {
-        return m_tau[receiver];
-    }
-    map<vector<double>,double> dopplerShift(ProductObservable *receiver)
-    {
-        return m_dopplershift[receiver];
-    }
-
-    double riceFactor(ProductObservable* receiver)
-    {
-        return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);
-    }
-
-
     /*
      * ProductObserver
      *
@@ -109,9 +92,14 @@ public:
 //    void updateCarPos(ProductObservable *productObservable) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
     void compute(ProductObservable *productObservable) override;
+    double riceFactor(ProductObservable* receiver) override
+    {
+        return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);
+    }
+
     std::vector<QPointF> pointsForPathLoss(ProductObservable *true_receiver) override;
     double computePathLossPower(ProductObservable* copy_receiver) override;
-    std::complex<double> computeInterference(ProductObservable *) override;
+    std::complex<double> computeInterference(ProductObservable *,QLineF local_region) override;
 
     void  attachObservable(ProductObservable *productObservable) override;
 
@@ -225,11 +213,6 @@ private:
 
     map<ProductObservable *, bool> m_chosenBeams;
 
-
-    // Doppler variable:
-    QLineF m_receiver_speed;
-    QLineF m_ray_speed;
-
     double m_powerAtReceiver;
     ModelObservable *m_model;
     vector<ProductObservable *> m_productObservable;
@@ -237,12 +220,7 @@ private:
 
     map<ProductObservable *,vector<vector<MathematicalRayProduct *>*>> m_receiversRays;
     map<ProductObservable *,complex<double>> m_receiversField;
-    map<ProductObservable *,vector<double>> m_receiversPowers;
     vector<MathematicalTreeProduct *> m_trees;
-
-    // Attenuation for impulse response and TDL
-    map<ProductObservable *,map<vector<double>,std::complex<double>>> m_attenuation;
-    map<ProductObservable *,map<vector<double>,double>> m_tau;
 
     // Rice facor
     map<ProductObservable *,double> m_los_factor;
@@ -250,7 +228,8 @@ private:
 
     // Doppler spectrum
     map<vector<MathematicalRayProduct *> *,QLineF> ray_speeds;
-    map<ProductObservable *,map<vector<double>,double>> m_dopplershift;
+    QLineF m_receiver_speed;
+    QLineF m_ray_speed;
 
     //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;

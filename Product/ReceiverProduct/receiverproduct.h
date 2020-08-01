@@ -61,7 +61,8 @@ public:
     virtual void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
 
     // 4. Doppler
-    virtual QVector<double> dopplerShift() {return doppler_shift;}
+    virtual QVector<double> getDoppler() {return doppler;}
+    virtual QVector<double> getOmega() {return omega;}
 
     virtual void newProperties() = 0;
 
@@ -78,7 +79,8 @@ protected:
     QVector<double> cell_range, probability;
 
     // 4. Doppler
-    QVector<double> doppler_shift;
+    QVector<double> omega;
+    QVector<double> doppler;
 
     unsigned long m_transmitterfrequency;
     unsigned long m_transmitterbandwidth;

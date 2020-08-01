@@ -3,6 +3,8 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
     datavisualization
 
+CONFIG += c++17
+
 HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/abstractalgorithmfactory.h \
     Abstract_Factory/abstractrayfactory.h \

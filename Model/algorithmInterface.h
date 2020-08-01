@@ -23,8 +23,6 @@ public:
 //                                           vector<MathematicalBuildingProduct*> buildings) =0;
     virtual MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> m_mathematicalComponents, ReceiverFactory* receiverfactory) =0;
 
-    // Method used in the mediator design pattern where the algorithminterface is the mediator.
-    virtual void sendData(MathematicalProduct* transmitter, MathematicalProduct *receiver) = 0;
     virtual void clearWorkspace() = 0;
 };
 

@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cmath>
 
 
 #include "Product/mathematicalproduct.h"
@@ -60,17 +61,13 @@ public:
     void modelPathLoss();
 
     // 2. Impulse Response and TDL Computation:
-    std::map<std::vector<double>,double> getimpulseTau() {return m_tau;}
-    std::map<std::vector<double>,std::complex<double>> impulseAttenuation() {return m_attenuation;}
-    void setImpulseTau(std::map<std::vector<double>,double> raylength){m_tau = raylength;}
-    void setImpulseAttenuation(std::map<std::vector<double>,std::complex<double>> attenuation);
     void computeImpulseTDL();
 
     // 3. Cell Range Computation:
     void cellRange();
 
     // 4. Doppler
-    void setDopplerShift(map<vector<double>,double> dopplershift);
+    void dopplerSpectrum();
 
     // From ReceiverProduct:
     float getSpeed() override;
@@ -111,10 +108,11 @@ public:
     void detachObservers() override;
     void notifyObservers();
     void notifyObserversPathLoss(ProductObserver* transmitter);
-    complex<double> notifyObserversInterference(ProductObservable *copy_receiver);
+    complex<double> notifyObserversInterference(QLineF local_region);
     void notify() override;
     void notify(double &power, std::vector<double> *powers, std::complex<double> &EMfiled) override;
-    void answer(ProductObserver *observer, double &power, std::vector<double> *powers, std::complex<double> &EMfield) override;
+    void answer(ProductObserver *observer, double frequency, double bandwidth,
+                double &power, std::complex<double> &EMfield) override;
     QPointF* getPos()override;
 
 private:
@@ -147,11 +145,10 @@ private:
     QVector<double> logD, fading, logD_model;
 
     // 4. For Impulse Response and TDL
-    std::map<std::vector<double>,double> m_tau;
-    std::map<std::vector<double>,std::complex<double>> m_attenuation;
+    std::map<double,std::complex<double>> m_impulse;
 
     // 5. Doppler
-    std::map<std::vector<double>,double> m_doppler_shift;
+    std::map<double,std::complex<double>> m_doppler;
 
 public slots:
     void save(string path);
