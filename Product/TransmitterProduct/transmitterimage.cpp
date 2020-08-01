@@ -246,7 +246,7 @@ void TransmitterImage::carMoved(MathematicalCarProduct *car, int x, int y, doubl
 
     } else if (inIlluminatedCars(car, &idx)) {
 
-        m_parent->notifyCarDetected();
         m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+        m_parent->notifyCarDetected();
     }
 }

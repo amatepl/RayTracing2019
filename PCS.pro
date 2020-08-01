@@ -3,6 +3,8 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
     datavisualization
 
+CONFIG += c++11
+
 HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/abstractalgorithmfactory.h \
     Abstract_Factory/abstractrayfactory.h \
@@ -122,3 +124,6 @@ RESOURCES += \
     Ressources.qrc
 
 DISTFILES +=
+
+#INCLUDEPATH += /usr/local/Cellar/boost/1.73.0/include/boost
+#LIBS += /usr/local/Cellar/boost/1.73.0/lib -libboost_math_c99

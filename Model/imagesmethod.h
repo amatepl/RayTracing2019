@@ -31,7 +31,7 @@ public:
     void setObservers();
     void connectToCars(AbstractAntena *ant);
     void disconnectCars(AbstractAntena * ant);
-    void discnnectAllCars();
+    void disconnectAllCars();
     void clearImages(MathematicalTransmitterProduct *tx);
     void clearAllImages();
 

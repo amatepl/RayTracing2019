@@ -21,7 +21,11 @@ MathematicalProduct* TransmitterFactory::createMathematicalProduct(int posX, int
     MathematicalTransmitterProduct* mathematicalProduct = new MathematicalTransmitterProduct(posX,posY);
     if (linkgraphic){
         GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(m_productmenu, m_scene);
+
         graphicsProduct->attachObserver(mathematicalProduct);
+//        graphicsProduct->setX(posX);
+//        graphicsProduct->setY(posY);
+//        mathematicalProduct->MathematicalProduct::attachObservable(graphicsProduct);
     }
     return mathematicalProduct;
 }

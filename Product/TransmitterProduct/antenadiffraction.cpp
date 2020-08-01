@@ -33,9 +33,11 @@ void AntenaDiffraction::buildIlluminationZone(const QPointF &p1, const QPointF &
     illuminationZone << *this << line1.p2() << line2.p2();
 //    m_zone = illuminationZon.e.intersected(m_sceneBoundary);
     m_zone = illuminationZone.intersected(buildCoverage());
+    m_tmpZone = m_zone;
 //    cout<<"Number of corners of the illumination zone of a diffracted ray: "<<m_zone.size()<<endl;
 //    if(m_zone.size()>0){
-//        cout<<"The first point of the illumination zone is the position of the corner: "<<(m_zone.at(0)==*this)<<endl;
+//        cout<<"The first point of the illumination zone is the position of the corner: "
+//            << (m_zone.at(0)==*this)<<endl;
 //    }
     //m_zone = illuminationZone;
 
@@ -83,6 +85,7 @@ QPolygonF AntenaDiffraction::getIlluminatedZone() const
 void AntenaDiffraction::setIlluminatedZone(const QPolygonF &zone)
 {
     m_zone = zone;
+    m_tmpZone = zone;
 }
 
 
@@ -147,5 +150,28 @@ void AntenaDiffraction::attachObservable(ProductObservable *productObservable)
 
 void AntenaDiffraction::carMoved(MathematicalCarProduct *car, int x, int y, double orientation)
 {
+//    int idx = 0;
+//    if (m_zone.intersects(*car)) {
 
+//        m_illuminatedCars.push_back(car);
+
+//        m_zone = m_tmpZone.subtracted(*car);
+
+//    } else if (inIlluminatedCars(car, &idx)) {
+
+//        m_zone = m_tmpZone;
+
+//        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+//    }
+}
+
+bool AntenaDiffraction::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+{
+    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
+        if (m_illuminatedCars.at(i) == car) {
+            *idx = i;
+            return true;
+        }
+    }
+    return false;
 }

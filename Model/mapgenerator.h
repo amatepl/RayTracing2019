@@ -11,7 +11,9 @@
 #include "Abstract_Factory/carfactory.h"
 #include "Abstract_Factory/treefactory.h"
 
-#include <QGraphicsScene>   // For  tests
+// For  tests
+#include <QGraphicsScene>
+#include "Abstract_Factory/transmitterfactory.h"
 
 using namespace std;
 
@@ -46,7 +48,9 @@ protected:
     vector<MathematicalProduct *> m_products;
     int m_distanceTree{ 50 };
 
-    QGraphicsScene *m_scene;        // For tests
+    // FOR TESTS
+    QGraphicsScene *m_scene;
+    TransmitterFactory *m_transmitterFactory;
 };
 
 #endif // MAPGENERATOR_H

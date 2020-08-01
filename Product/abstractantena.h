@@ -50,7 +50,7 @@ protected:
 
     MathematicalBuildingProduct *m_building;
     QPolygonF m_zone;
-    QPolygonF m_tmpZone;        // Maybe to throw
+    QPolygonF m_tmpZone;
     vector<MathematicalCarProduct *> m_illuminatedCars;
     AbstractRayFactory *m_rayFactory;
     QLineF m_movement {QLineF(.0,.0,.0,.0)};
