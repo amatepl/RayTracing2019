@@ -533,10 +533,10 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
             // Add the 2 walls that are at the corner.
             nearestWalls.push_back(building->nearestWalls(corner).at(0));
             nearestWalls.push_back(building->nearestWalls(corner).at(1));
-//            addPolygon(intitIlluminationZone,QPen(),illumination);
+
         }
     }
-    //addPolygon(illuminationZone,QPen(),illumination);
+
     //ant->setIlluminatedZone(illuminationZone.intersected(Transmitter->getIlluminatedZone()));
     illuminationZone = illuminationZone.intersected(m_currentTransmitterRange);
     ant->setIlluminatedZone(illuminationZone);
