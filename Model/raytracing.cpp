@@ -57,7 +57,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
     m_receiverfactory = receiverfactory;
 
-    reflectionsNumber = 22;
+    reflectionsNumber = 3;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene,px_to_meter);
     m_rayFactory = rayFactory;

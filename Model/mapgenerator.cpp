@@ -193,12 +193,13 @@ void MapGenerator::addCars()
         dynamic_cast<MathematicalCarProduct *>(car)->setMovement(tmpLine);
 
         m_products.push_back(car);
-        m_cars.push_back((MathematicalCarProduct *)car);
-        ((MathematicalCarProduct *)car)->setRoad(line);
+        m_cars.push_back(static_cast<MathematicalCarProduct *>(car));
+        ((MathematicalCarProduct *)car)->setRoad(m_horizontalStreets.at(i));
 
-        thread *thread_obj = new thread (&MapGenerator::moveCar,
-                                        ref(*(MathematicalCarProduct*)car),
-                                        ref(*m_horizontalStreets.at(i)));
+//        thread *thread_obj = new thread (&MapGenerator::moveCar,
+//                                        ref(*(MathematicalCarProduct*)car),
+//                                        ref(*this),
+//                                        ref(*m_horizontalStreets.at(i)));
 
 
     }
@@ -289,11 +290,41 @@ void MapGenerator::addTrees()
 }
 
 
-void MapGenerator::moveCar(MathematicalCarProduct &car, QLineF &street)
+void MapGenerator::startCars()
 {
-    bool run = true;
+    m_runCars = !m_runCars;
+
+    if (m_runCars) {
+
+        for (unsigned i = 0; i < m_cars.size(); i++) {
+            thread *thread_obj = new thread (&MapGenerator::moveCar,
+                                            ref(*m_cars[i]),
+                                            ref(*this),
+                                            ref(*m_cars[i]->getRoad()));
+            m_threads.push_back(thread_obj);
+        }
+
+    } else {
+        for (unsigned i = 0; i < m_threads.size(); i++) {
+            m_threads[i]->join();
+        }
+        m_threads.clear();
+    }
+
+
+}
+
+bool MapGenerator::getRunCars() const
+{
+    return m_runCars;
+}
+
+void MapGenerator::moveCar(MathematicalCarProduct &car, MapGenerator &map, QLineF &street)
+{
+//    bool run = true;
     QLineF normal; //= street.unitVector();
     QLineF str = street;
+    bool run = map.getRunCars();
 
     while (run) {
 
@@ -316,7 +347,9 @@ void MapGenerator::moveCar(MathematicalCarProduct &car, QLineF &street)
 
         }
 
-        this_thread::sleep_for(std::chrono::milliseconds(100));
+        run = map.getRunCars();
+        this_thread::sleep_for(std::chrono::milliseconds(200));
+
     }
 }
 

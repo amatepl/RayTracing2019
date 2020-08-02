@@ -128,22 +128,19 @@ QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect) const {
 }
 
 
-void TransmitterImage::update(ProductObservable *productObservable, QLineF const movement){
-
+void TransmitterImage::update(ProductObservable *productObservable, QLineF const movement)
+{
 
     if(m_zone.containsPoint(*productObservable->getPos(),Qt::OddEvenFill)){
+
         vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
         QLineF line(*this,*productObservable->getPos());
         QPointF reflectionPoint;
         m_wall.intersect(line,&reflectionPoint);
 
-//        MathematicalRayProduct newRay(reflectionPoint,pos,line.angleTo(m_wall));
         MathematicalRayProduct ray(*m_rayFactory->createRay(reflectionPoint,
                                                             *productObservable->getPos(),
                                                             line.angleTo(m_wall)));
-
-//        cout<<"Reflected ray: "<<ray.p1().x()<<", "<<ray.p1().y()
-//             <<" and p2 = "<<ray.p2().x()<<", "<<ray.p2().y()<<endl;
 
         wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,
                                                     *productObservable->getPos(),
@@ -197,8 +194,8 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
     QPointF p1_prime = new_movement.p2();
     if (m_wallType == Wall::front) {
         if (abs(m_movement.angle()-movement.angle()) <= 90){
-            cout << "Movement received: " << movement.length() << endl;
-            cout << "Movement had: " << m_movement.length() << endl;
+//            cout << "Movement received: " << movement.length() << endl;
+//            cout << "Movement had: " << m_movement.length() << endl;
             m_movement = QLineF(p0,p1_prime+p1);
         }
     }
@@ -224,16 +221,16 @@ void TransmitterImage::notifyCarDetected()
 }
 
 
-bool TransmitterImage::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
-{
-    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
-        if (m_illuminatedCars.at(i) == car) {
-            *idx = i;
-            return true;
-        }
-    }
-    return false;
-}
+//bool TransmitterImage::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+//{
+//    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
+//        if (m_illuminatedCars.at(i) == car) {
+//            *idx = i;
+//            return true;
+//        }
+//    }
+//    return false;
+//}
 
 
 void TransmitterImage::carMoved(MathematicalCarProduct *car, int x, int y, double orientation)

@@ -20,6 +20,7 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
 
     m_scene = scene;
     MapGenerator* map = new MapGenerator(m_scene->sceneRect());
+    m_mapGenerator = map;
     map->setScene(m_scene);
     map->setBuildingFactory(buildingFactory);
     map->setCarFactory(carFactory);
@@ -123,6 +124,12 @@ void Model::launchAlgorithm(AlgorithmInterface *algorithm)
     //m_windowModelObservable->modelAnswer(transmitter->getRays().at(0));
 
 }
+
+void Model::startCars()
+{
+    m_mapGenerator->startCars();
+}
+
 
 MathematicalTransmitterProduct* Model::selectTransmitter()
 {

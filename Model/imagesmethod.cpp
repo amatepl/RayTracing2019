@@ -35,7 +35,8 @@ void ImagesMethod::launchAlgorithm()
 
         m_currentTx = transmitter;
 
-        m_currentTransmitterRange = transmitter->getIlluminationZone();
+//        m_currentTransmitterRange = transmitter->getIlluminationZone();
+        m_currentTransmitterRange = transmitter->buildCoverage();
 
 //        m_scene->addPolygon(m_currentTransmitterRange, QPen(), illumination1);
 
@@ -80,7 +81,8 @@ void ImagesMethod::setObservers()
         connectToCars(transmitter);
 
         connect(transmitter, &AbstractAntena::detectsCar,
-                this, &ImagesMethod::recomputeImages);
+                this, &ImagesMethod::recomputeImages,
+                Qt::QueuedConnection);
     }
 }
 
@@ -89,7 +91,7 @@ void ImagesMethod::connectToCars(AbstractAntena *ant)
 {
     for (unsigned i = 0; i < m_cars.size(); i++) {
         connect(m_cars.at(i), &MathematicalCarProduct::positionChanged,
-                ant, &AbstractAntena::carMoved, Qt::BlockingQueuedConnection);
+                ant, &AbstractAntena::carMoved, Qt::QueuedConnection);
     }
 }
 
@@ -134,9 +136,10 @@ void ImagesMethod::clearAllImages()
             delete m_images[m_transmitters.at(i)].at(j);
 
         }
-        m_images[m_transmitters.at(i)].erase(m_images[m_transmitters.at(i)].begin(),
-                                             m_images[m_transmitters.at(i)].end());
-        m_images[m_transmitters.at(i)].shrink_to_fit();
+        m_images[m_transmitters.at(i)].clear();
+//        m_images[m_transmitters.at(i)].erase(m_images[m_transmitters.at(i)].begin(),
+//                                             m_images[m_transmitters.at(i)].end());
+//        m_images[m_transmitters.at(i)].shrink_to_fit();
     }
 
     for (unsigned i = 0; i < m_receivers.size(); i++) {
@@ -530,10 +533,10 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
             // Add the 2 walls that are at the corner.
             nearestWalls.push_back(building->nearestWalls(corner).at(0));
             nearestWalls.push_back(building->nearestWalls(corner).at(1));
-//            addPolygon(intitIlluminationZone,QPen(),illumination);
+
         }
     }
-    //addPolygon(illuminationZone,QPen(),illumination);
+
     //ant->setIlluminatedZone(illuminationZone.intersected(Transmitter->getIlluminatedZone()));
     illuminationZone = illuminationZone.intersected(m_currentTransmitterRange);
     ant->setIlluminatedZone(illuminationZone);

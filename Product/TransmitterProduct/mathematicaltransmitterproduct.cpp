@@ -1118,7 +1118,7 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver,
 
 void MathematicalTransmitterProduct::notifyCarDetected()
 {
-//    emit detectsCar(this);
+    emit detectsCar(this);
 }
 
 
@@ -1156,8 +1156,16 @@ void MathematicalTransmitterProduct::carMoved(MathematicalCarProduct *car,
                                               int x, int y,
                                               double orientation)
 {
+    int idx = 0;
     if (m_zone.intersects(*car)) {
 
+        m_illuminatedCars.push_back(car);
+        emit detectsCar(this);
+    }
+
+    else if (inIlluminatedCars(car, &idx)) {
+
+        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
         emit detectsCar(this);
     }
 }

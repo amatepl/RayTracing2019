@@ -4,19 +4,22 @@ InfoWidget::InfoWidget(QWidget* parent):QWidget(parent)
 {
     createInfoGroup();
     createEditGeneral();
+    createMapGroup();
     createRayGroup();
     createCoverageGroup();
 
     QGridLayout *main_layout = new QGridLayout(this);
-    main_layout->addWidget(info_group,0,0);
-    main_layout->addWidget(edit_group,0,1);
-    main_layout->addWidget(ray_group,0,2);
-    main_layout->addWidget(coverage_group,0,3);
+    main_layout->addWidget(info_group, 0, 0);
+    main_layout->addWidget(edit_group, 0, 1);
+    main_layout->addWidget(map_group, 0, 2);
+    main_layout->addWidget(ray_group, 0, 3);
+    main_layout->addWidget(coverage_group, 0, 4);
 
     main_layout->setColumnStretch(0,5);
     main_layout->setColumnStretch(1,5);
     main_layout->setColumnStretch(2,5);
     main_layout->setColumnStretch(3,5);
+    main_layout->setColumnStretch(4,5);
     this->setLayout(main_layout);
 }
 
@@ -62,26 +65,26 @@ void InfoWidget::createEditGeneral(){
     bandwidth_order->addItem("kHz");
     bandwidth_order->addItem("MHz");
     bandwidth_order->addItem("GHz");
-    QHBoxLayout *f = new QHBoxLayout(edit_group);
+    QHBoxLayout *f = new QHBoxLayout;
     f->addWidget(frequency);
     f->addWidget(frequency_order);
-    QFormLayout *f_layout = new QFormLayout(edit_group);
+    QFormLayout *f_layout = new QFormLayout;
     f_layout->addRow("Frequency: ", f);
-    QHBoxLayout *b = new QHBoxLayout(edit_group);
+    QHBoxLayout *b = new QHBoxLayout;
     b->addWidget(bandwidth);
     b->addWidget(bandwidth_order);
-    QFormLayout *b_layout = new QFormLayout(edit_group);
+    QFormLayout *b_layout = new QFormLayout;
     b_layout->addRow("Bandwidth: ",b);
 
     all_same = new QCheckBox("Same Properties For all", edit_group);
-    generate_map = new QPushButton("Generate Map", edit_group);
+//    generate_map = new QPushButton("Generate Map", edit_group);
     clear_workspace = new QPushButton("Clear Workspace", edit_group);
     connect(clear_workspace,&QPushButton::clicked,this,&InfoWidget::sendClear);
 
     edit_layout->addLayout(f_layout,0,0);
     edit_layout->addLayout(b_layout,0,1);
     edit_layout->addWidget(all_same,1,0);
-    edit_layout->addWidget(generate_map,2,0);
+//    edit_layout->addWidget(generate_map,2,0);
     edit_layout->addWidget(clear_workspace,2,1);
 
     edit_group->setLayout(edit_layout);
@@ -90,10 +93,11 @@ void InfoWidget::createEditGeneral(){
 void InfoWidget::createRayGroup(){
     ray_group = new QGroupBox("Ray-Tracing",this);
     launch_raytracing = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch Ray-Tracing");
-    connect(launch_raytracing, SIGNAL(clicked()), this, SLOT(LaunchRayTracing()));
+//    connect(launch_raytracing, SIGNAL(clicked()), this, SLOT(LaunchRayTracing()));
     // Ray Tracing informations and edition
-    QFormLayout* ray_layout = new QFormLayout(ray_group);
-    ray_layout->addRow(launch_raytracing);
+    QGridLayout* ray_layout = new QGridLayout(ray_group);
+//    ray_layout->addRow(launch_raytracing);
+    ray_layout->addWidget(launch_raytracing, 0, 0, Qt::AlignTop);
     connect(launch_raytracing,&QPushButton::clicked,this,&InfoWidget::sendLaunchRayTracing);
     ray_group->setLayout(ray_layout);
 }
@@ -102,10 +106,26 @@ void InfoWidget::createCoverageGroup(){
     coverage_group = new QGroupBox("Coverage", this);
     launch_coverage = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch coverage");
     // Coverage informations and edition
-    QFormLayout *coverage_layout = new QFormLayout(coverage_group);
-    coverage_layout->addRow(launch_coverage);
+    QGridLayout *coverage_layout = new QGridLayout(coverage_group);
+//    coverage_layout->addRow(launch_coverage);
+    coverage_layout->addWidget(launch_coverage, 0, 0, Qt::AlignTop);
     connect(launch_coverage,&QPushButton::clicked,this,&InfoWidget::sendLaunchCoverage);
     coverage_group->setLayout(coverage_layout);
+}
+
+void InfoWidget::createMapGroup()
+{
+    map_group = new QGroupBox("Map", this);
+    QGridLayout *map_layout = new QGridLayout;
+
+    generate_map = new QPushButton("Generate Map");
+    map_layout->addWidget(generate_map, 0, 0, Qt::AlignTop);
+
+    start_cars = new QPushButton("Start/Stop cars");
+    map_layout->addWidget(start_cars, 1, 0, Qt::AlignTop);
+    connect(start_cars,&QPushButton::clicked,this,&InfoWidget::sendStartCars);
+
+    map_group->setLayout(map_layout);
 }
 
 void InfoWidget::changeScenePos(int x, int y){
@@ -163,3 +183,9 @@ void InfoWidget::sendClear(){
     launch_raytracing->setEnabled(true);
     launch_coverage->setEnabled(true);
 }
+
+void InfoWidget::sendStartCars()
+{
+    startCars();
+}
+

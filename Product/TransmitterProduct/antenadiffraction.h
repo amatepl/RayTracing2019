@@ -20,7 +20,7 @@ public:
     void setSceneBoundary(const QRectF &rect);
     void buildIlluminationZone(const QPointF &p1, const QPointF &p2);
     QPolygonF buildCoverage();
-    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
+//    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
 
     // Overrides from AbstractAntena
     virtual void notifyParent(ProductObservable *productObservable, QLineF const movement,

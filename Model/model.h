@@ -28,6 +28,7 @@ public:
     void setObservableProducts();
     void setModelObservers();
     void launchAlgorithm(AlgorithmInterface* algorithm);
+    void startCars();
     MathematicalTransmitterProduct* selectTransmitter();
     void notify(MathematicalTransmitterProduct* transmitter) override;
 
@@ -42,6 +43,7 @@ private:
 
     ReceiverFactory* m_receiverfactory;
     thread m_thread;
+    MapGenerator *m_mapGenerator;
 
     QGraphicsScene* m_scene;            //For tests only
 };

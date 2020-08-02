@@ -24,7 +24,9 @@ public:
     void generateMap();
     void addCars();
     void addTrees();
-    static void moveCar(MathematicalCarProduct &car, QLineF &street);
+    void startCars();
+    bool getRunCars() const;
+    static void moveCar(MathematicalCarProduct &car, MapGenerator &map, QLineF &street);
     static void moveCars(MapGenerator &mapGenerator);
     vector<MathematicalBuildingProduct *> getBuildings() const;
     vector<MathematicalCarProduct *> getCars() const;
@@ -46,7 +48,9 @@ protected:
     CarFactory *m_carFactory;
     TreeFactory *m_treeFactory;
     vector<MathematicalProduct *> m_products;
+    vector<thread *> m_threads;
     int m_distanceTree{ 50 };
+    bool m_runCars{false};
 
     // FOR TESTS
     QGraphicsScene *m_scene;
