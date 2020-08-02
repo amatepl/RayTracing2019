@@ -1,2 +1,5 @@
 # Pro user files
 *.pro.user
+
+#macOS files
+.DS_Store

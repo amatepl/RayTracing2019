@@ -37,8 +37,14 @@ void MathematicalCarProduct::moveCar(){
     }
 }
 
-void MathematicalCarProduct::setRoad(QLineF &road){
+void MathematicalCarProduct::setRoad(QLineF *road){
     m_street = road;
+}
+
+
+QLineF *MathematicalCarProduct::getRoad()
+{
+    return m_street;
 }
 
 

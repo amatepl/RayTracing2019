@@ -24,7 +24,8 @@ public:
 
     void runCar();
     static void moveCar();
-    void setRoad(QLineF &road);
+    void setRoad(QLineF *road);
+    QLineF *getRoad();
 
     void setMovement(QLineF &road);
     QLineF getMovement();
@@ -48,7 +49,7 @@ public:
 private:
     QPointF m_center;
     QLineF m_movement;
-    QLineF m_street;
+    QLineF *m_street;
 
 signals:
     void positionChanged(MathematicalCarProduct* poly,int x, int y, double orientation);

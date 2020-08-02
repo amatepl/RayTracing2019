@@ -21,6 +21,7 @@ public:
     void createEditGeneral();
     void createRayGroup();
     void createCoverageGroup();
+    void createMapGroup();
 
     void changeScenePos(int x, int y);
     void changePower(double power);
@@ -52,7 +53,6 @@ private:
     QDoubleSpinBox *target_snr;
     QDoubleSpinBox *noise_figure;
     QCheckBox *all_same;
-    QPushButton *generate_map;
     QPushButton *clear_workspace;
 
     QGroupBox *ray_group;
@@ -61,15 +61,21 @@ private:
     QGroupBox *coverage_group;
     QPushButton *launch_coverage;
 
+    QGroupBox *map_group;
+    QPushButton *generate_map;
+    QPushButton * start_cars;
+
 signals:
     void rayTracing();
     void coverage();
     void clear();
+    void startCars();
 
 public slots:
     void sendLaunchRayTracing();
     void sendLaunchCoverage();
     void sendClear();
+    void sendStartCars();
 };
 
 #endif // INFOWIDGET_H

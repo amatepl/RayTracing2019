@@ -111,6 +111,7 @@ public slots:
     void obstacleGroupClicked(int);
     void LaunchRayTracing();
     void launchCoverage();
+    void startCars();
     void deleteProduct();
     void openProduct();
     void clearWorkspace();

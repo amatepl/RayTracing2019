@@ -30,15 +30,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_coverageAlgorithm = new Coverage(m_receiverFactory,px_to_meter);
     m_coverageAlgorithm->setScene(m_map);
 
-//    MapGenerator* map = new MapGenerator(m_map->sceneRect());
-//    map->setScene(m_map);
-//    map->generateMap();
-
-
-
-    //dialogfactory = new DialogFactory(dynamic_cast<SceneObservable*>(graphicsfactory));
     addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
-    //addToolBar(Qt::TopToolBarArea,m_toolbarlaunch);
     addToolBar(Qt::TopToolBarArea,m_toolinfo);
     setCentralWidget(view);
     setWindowState(Qt::WindowMaximized);
@@ -113,11 +105,9 @@ void ApplicationWindow::modelAnswer(vector<MathematicalProduct *> sceneproducts)
 void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts->size(); i++) {
-//        m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
-//        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
-//        QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
+
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
-//        m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
+
         m_map->addItem(gItem);
     }
 }
@@ -125,7 +115,7 @@ void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproduct
 void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts.size(); i++) {
-        //GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
+
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->toGraphicsProduct());
         m_map->addItem(gItem);
     }
@@ -134,11 +124,9 @@ void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts)
 void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts->size(); i++) {
-//        m_scene->addItem((QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent());
-//        GraphicsProduct* gComp = sceneproducts->at(i).toGraphicsProduct();
-        //QGraphicsItem* gItem = (QGraphicsItem*)sceneproducts->at(i).toGraphicsComponent();
+
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
-//        m_scene->addItem(dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsComponent()));
+
         m_map->addItem(gItem);
     }
 }
@@ -147,7 +135,6 @@ void ApplicationWindow::modelNotify(vector<vector<MathematicalRayProduct*> *> sc
 {
     for(unsigned i = 0; i< sceneproducts.size(); i++) {
         for(unsigned j=0; j<sceneproducts.at(i)->size(); j++) {
-//            QGraphicsLineItem* gComp =(QGraphicsLineItem*) sceneproducts.at(i)->at(j)->toGraphicsProduct();
 
             QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->at(
                                        j)->toGraphicsProduct());
@@ -241,7 +228,6 @@ void ApplicationWindow::createToolBox()
     connect(m_obstaclegroup,SIGNAL(buttonClicked(int)),this,SLOT(obstacleGroupClicked(int)));
     QGridLayout *antenna_layout = new QGridLayout;
     QGridLayout *obstacle_layout = new QGridLayout;
-    //QGridLayout *rayTracing_layout = new QGridLayout;
 
     // Creating the antennas pannel
     QWidget* widget = createToolButton("Transmitter",int(InsertTransmitter));
@@ -290,7 +276,7 @@ void ApplicationWindow::createToolInfo()
 
     connect(m_info_widget, &InfoWidget::rayTracing, this, &ApplicationWindow::LaunchRayTracing);
     connect(m_info_widget, &InfoWidget::coverage, this, &ApplicationWindow::launchCoverage);
-    connect(m_info_widget,&InfoWidget::clear, this, &ApplicationWindow::clearWorkspace);
+    connect(m_info_widget, &InfoWidget::startCars, this, &ApplicationWindow::startCars);
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode)
@@ -336,8 +322,6 @@ void ApplicationWindow::notifyMap()
 
 void ApplicationWindow::notifyModel()
 {
-    //cout<<"Model notified"<<endl;
-    //m_model->launchAlgorithm(m_rayTracingAlgorithm);
     m_model->launchAlgorithm(m_coverageAlgorithm);
 }
 
@@ -384,13 +368,18 @@ void ApplicationWindow::obstacleGroupClicked(int mode)
 void ApplicationWindow::LaunchRayTracing()
 {
     m_model->launchAlgorithm(m_rayTracingAlgorithm);
-//    notifyModel();
+
 }
 
 void ApplicationWindow::launchCoverage()
 {
     m_model->launchAlgorithm(m_coverageAlgorithm);
-//    notifyModel();
+
+}
+
+void ApplicationWindow::startCars()
+{
+    m_model->startCars();
 }
 
 void ApplicationWindow::deleteProduct()
