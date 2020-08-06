@@ -90,7 +90,7 @@ QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVarian
     if (change == QGraphicsItem::ItemPositionHasChanged
         || change == QGraphicsItem::ItemTransformHasChanged
         || change == QGraphicsItem::ItemRotationHasChanged) {
-        //m_observer->update(this);
+        m_observer->update(this);
     }
     return value;
 }
@@ -102,8 +102,6 @@ void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
 void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int centery, double orientation)
 {
     QPolygonF graphic = *rect;
-//    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
-//    std::cout << "Center Position: " << centerx << " and " << centery << endl;
     QPointF p0 = graphic.at(0);
 
     for (int i = 0; i < graphic.size()-1; i++) {
@@ -117,13 +115,11 @@ void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int ce
     QLineF diag(p0,p1);
     QPointF center = diag.center();
     graphic.translate(-center);
-    //graphic.translate(scenePos()-QPointF(centerx,centery));
     QLinearGradient linearGrad(graphic.at(0),graphic.at(3));
     linearGrad.setColorAt(0, Qt::white);
     linearGrad.setColorAt(0.5, Qt::blue);
     linearGrad.setColorAt(1, Qt::darkBlue);
     setBrush(linearGrad);
     setPolygon(graphic);
-//    std::cout << "Scene Position: " << scenePos().x() << " and " << scenePos().y() << endl;
     setPos(centerx, centery);
 }
