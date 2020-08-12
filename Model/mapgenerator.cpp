@@ -39,7 +39,7 @@ void MapGenerator::generateMap()
 
 
 
-    int streetsDistance = 200;
+    int streetsDistance = 600;
     for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance); i++) {
         int random1 = 0;//= rand() % 100;
         int random2 = 0;//= rand() % 100;

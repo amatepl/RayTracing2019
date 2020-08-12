@@ -1,6 +1,6 @@
 #include "applicationwindow.h"
 
-float px_to_meter = 0.1;
+float px_to_meter = 100;
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -33,7 +33,6 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
     addToolBar(Qt::TopToolBarArea,m_toolinfo);
     setCentralWidget(view);
-    setWindowState(Qt::WindowMaximized);
 
     m_graphicsmode = MoveItem;
 }

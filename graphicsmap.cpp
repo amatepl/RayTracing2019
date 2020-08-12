@@ -2,10 +2,13 @@
 
 GraphicsMap::GraphicsMap(QGraphicsView *view, AppInterface *app, QMenu *productmenu)
 {
-    setSceneRect(0,0,500,500);
+    int width = 1200;
+    int height = 600;
+    setSceneRect(0,0,width,height);
     m_view = view;
     m_productmenu = productmenu;
     m_view->setScene(this);
+    m_view->setFixedSize(width+2*view->frameWidth(), height+2*view->frameWidth());
     m_app = app;
     m_mode = MoveItem;
 }

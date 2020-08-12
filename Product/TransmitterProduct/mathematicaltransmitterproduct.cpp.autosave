@@ -1028,10 +1028,11 @@ MathematicalTransmitterProduct::pointsForPathLoss(ProductObservable *true_receiv
     {
         direct_ray = m_receiversRays[true_receiver].at(0)->at(0);
         QPointF p0 = direct_ray->p1();
+        QPointF p1;
         points.push_back(p0);
         for (int i = 1; i <= number_points; i++)
         {
-            points.push_back(direct_ray->pointAt(double(i) / number_points));
+            p1 = direct_ray->pointAt(double(i) / number_points);
         }
     }
     return points;
