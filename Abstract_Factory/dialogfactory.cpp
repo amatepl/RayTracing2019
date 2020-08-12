@@ -9,7 +9,7 @@ DialogFactory::~DialogFactory(){
 
 }
 
-void DialogFactory::receiveTransmitterProduct(TransmitterProduct* transmitterproduct){
+void DialogFactory::receiveTransmitterProduct(TransmitterProduct* /*transmitterproduct*/){
     /*
     dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPosX(transmitterproduct->getPosX());
     dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPosY(transmitterproduct->getPosY());
@@ -18,19 +18,19 @@ void DialogFactory::receiveTransmitterProduct(TransmitterProduct* transmitterpro
     //dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPower(transmitterproduct->getPower());*/
 }
 
-void DialogFactory::receiveReceiverProduct(ReceiverProduct* receiverproduct){
+void DialogFactory::receiveReceiverProduct(ReceiverProduct* /*receiverproduct*/){
     //dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosX(receiverproduct->getPosX());
     //dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setPosY(receiverproduct->getPosY());
     //dynamic_cast<ReceiverProduct*>(m_graphiccomponent)->setFrequency(receiverproduct->getFrequency());
 }
 
-void DialogFactory::receiveTreeProduct(TreeProduct *treeproduct){
+void DialogFactory::receiveTreeProduct(TreeProduct */*treeproduct*/){
     /*
     dynamic_cast<TreeProduct*>(m_graphiccomponent)->setPosX(treeproduct->getPosX());
     dynamic_cast<TreeProduct*>(m_graphiccomponent)->setPosY(treeproduct->getPosY());*/
 }
 
-void DialogFactory::receiveCarProduct(CarProduct *carproduct){
+void DialogFactory::receiveCarProduct(CarProduct */*carproduct*/){
     /*
     dynamic_cast<CarProduct*>(m_graphiccomponent)->setPosX(carproduct->getPosX());
     dynamic_cast<CarProduct*>(m_graphiccomponent)->setPosY(carproduct->getPosY());
@@ -39,7 +39,7 @@ void DialogFactory::receiveCarProduct(CarProduct *carproduct){
 }
 
 
-void DialogFactory::updateNewProperties(GraphicsProduct* graphicscomponent){
+void DialogFactory::updateNewProperties(GraphicsProduct* /*graphicscomponent*/){
 //    m_graphiccomponent = graphicscomponent;
 //    switch(int (m_graphiccomponent->getType())){
 //        case int(GraphicsComponent::TransmitterProduct):
@@ -60,6 +60,6 @@ void DialogFactory::updateNewProperties(GraphicsProduct* graphicscomponent){
 //    }
 }
 
-void DialogFactory::updateChangeProperties(GraphicsProduct* graphicscomponent){
+void DialogFactory::updateChangeProperties(GraphicsProduct* /*graphicscomponent*/){
 
 }

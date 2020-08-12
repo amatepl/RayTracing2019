@@ -20,7 +20,7 @@ MathematicalCarProduct::~MathematicalCarProduct(){
 
 void MathematicalCarProduct::runCar()
 {
-    std::thread *thread_obj = new std::thread (&MathematicalCarProduct::moveCar);
+//    std::thread *thread_obj = new std::thread (&MathematicalCarProduct::moveCar);
 }
 
 

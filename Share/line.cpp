@@ -87,7 +87,7 @@ bool Line::onLine(const QPointF &point)
     QLineF testLine1(point,p2());
     QLineF testLine2(point,p1());
 
-    return (intersect(testLine1,nullptr) == 0
+    return (intersects(testLine1,nullptr) == 0
             && testLine1.length() <= length()
             && testLine2.length() <= length());
 }

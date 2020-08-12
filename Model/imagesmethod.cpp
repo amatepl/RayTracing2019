@@ -55,7 +55,7 @@ void ImagesMethod::launchAlgorithm()
     }
 }
 
-void ImagesMethod::recomputeImages(AbstractAntena *tx)
+void ImagesMethod::recomputeImages(AbstractAntena */*tx*/)
 {
 //    clearImages(tx);
 
@@ -125,11 +125,11 @@ void ImagesMethod::clearImages(MathematicalTransmitterProduct *tx)
 
 void ImagesMethod::clearAllImages()
 {
-    unsigned s = m_transmitters.size();
+//    unsigned s = m_transmitters.size();
 
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
 
-        unsigned s2 = m_images[m_transmitters.at(i)].size();
+//        unsigned s2 = m_images[m_transmitters.at(i)].size();
 
         for (unsigned j = 0; j < m_images[m_transmitters.at(i)].size(); j++){
 

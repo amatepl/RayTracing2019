@@ -83,7 +83,7 @@ void MathematicalTreeProduct::setPosY(int posY){
 }
 
 
-void MathematicalTreeProduct::update(QGraphicsItem *graphic){
+void MathematicalTreeProduct::update(QGraphicsItem */*graphic*/){
 
     //QRectF rect = graphic->sceneBoundingRect();
     //QPolygonF polyRect = QPolygonF(rect);

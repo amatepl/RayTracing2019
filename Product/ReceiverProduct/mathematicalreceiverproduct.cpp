@@ -3,19 +3,17 @@
 MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY):
     QPointF(posX,posY)
 {
-    m_type = "Receiver";
-    m_power = 0.0;
-    m_e_field = 0.0;
-    m_transmitter_distance = 0.0;
-    snr_received = 0.0;
-    delay_spread = 0.0;
+    m_type                  = "Receiver";
+    m_power                 = 0.0;
+    m_e_field               = 0.0;
+    m_transmitter_distance  = 0.0;
+    snr_received            = 0.0;
+    delay_spread            = 0.0;
     // Enable the setters of position. Can mathematical product move ?
     enable = true;
-    m_target_snr = 8; // [dB]
-    m_noise_figure = 10; // [dB]
-    m_interferencemargin = 6; // [dB]
-    //m_speed = 0.0;
-    //m_orientation = 0.0;
+    m_target_snr            = 8;    // [dB]
+    m_noise_figure          = 10;   // [dB]
+    m_interferencemargin    = 6;    // [dB]
 
     computeMinPrx();
 }
@@ -46,8 +44,6 @@ MathematicalReceiverProduct::~MathematicalReceiverProduct(){
 void MathematicalReceiverProduct::clearObeservers()
 {
     m_observers.clear();
-//    m_observers.erase(m_observers.begin(), m_observers.end());
-//    m_observers.shrink_to_fit();
 }
 
 
@@ -117,13 +113,19 @@ void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter
 
 void MathematicalReceiverProduct::save(string path)
 {
-    std::ofstream ofs (path);
+//    cout << "/Users/amate/Documents/Polytech/Thesis/powerTest.csv" <<endl;
+
+//    std::ofstream ofs (path);
+    std::ofstream ofs;
+    ofs.open(path, std::ios_base::app | std::ios_base::out);
 
     vector<unsigned> vectorSizes;
 
     vectorSizes.push_back(path_loss.size());
     vectorSizes.push_back(h.size());
+    vectorSizes.push_back(tau.size());
     vectorSizes.push_back(h_tdl.size());
+    vectorSizes.push_back(tau_tdl.size());
     vectorSizes.push_back(logD.size());
     vectorSizes.push_back(fading.size());
     vectorSizes.push_back(logD_model.size());
@@ -134,7 +136,9 @@ void MathematicalReceiverProduct::save(string path)
 
     ofs << "Path loss"
         <<";Impulse reponse"
+        <<";tau"
         <<";h_tdl"
+        <<";tau_tdl"
         <<";logD"
         <<";fading"
         <<";logD_model"
@@ -156,8 +160,20 @@ void MathematicalReceiverProduct::save(string path)
             ofs << ";" ;
         }
 
+        if (n < tau.size()) {
+            ofs << tau[n]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
         if (n < h_tdl.size()) {
             ofs << h_tdl[n]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < tau_tdl.size()) {
+            ofs << tau_tdl[n]<<";" ;
         } else {
             ofs << ";" ;
         }
@@ -189,6 +205,17 @@ void MathematicalReceiverProduct::save(string path)
         ofs << endl;
 
     }
+    ofs.close();
+}
+
+
+void MathematicalReceiverProduct::record()
+{
+    std::ofstream ofs;
+    ofs.open("/Users/amate/Documents/Polytech/Thesis/power.csv", std::ios_base::app | std::ios_base::out);
+
+    ofs<<m_power<<";"<<endl;
+
     ofs.close();
 }
 
@@ -605,9 +632,9 @@ void MathematicalReceiverProduct::notify(){
 }
 
 
-void MathematicalReceiverProduct::notify(double &power,
-                                         std::vector<double> *powers,
-                                         std::complex<double> &EMfiled)
+void MathematicalReceiverProduct::notify(double &/*power*/,
+                                         std::vector<double> */*powers*/,
+                                         std::complex<double> &/*EMfiled*/)
 {
 
 }
@@ -619,13 +646,20 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double frequ
 {
     m_e_field += EMfield;
     m_power = power;
+//    record();
+//    save("/Users/amate/Documents/Polytech/Thesis/dataOnlyBetweenCar.csv");
     m_transmitterbandwidth = bandwidth;
     m_transmitterfrequency = frequency;
     if (m_graphic != nullptr){
         m_graphic->notifyToGraphic(this,m_power);
 
         m_transmitter = observer;
-        m_transmitters.at(0)->drawRays(this, true);
+//        m_transmitters.at(0)->drawRays(this, true);
+
+        for(unsigned i = 0; i < m_transmitters.size(); i++) {
+            m_transmitters.at(i)->drawRays(this, true);
+        }
+
         computeSnr();
 
     }

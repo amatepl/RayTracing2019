@@ -68,7 +68,7 @@ void MathematicalBuildingProduct::moveToPosition(const QPointF &pos)
 
 void MathematicalBuildingProduct::moveWalls(QPointF &moveDirection)
 {
-    for(int i=0;i<m_walls.size();i++){
+    for(unsigned i=0;i<m_walls.size();i++){
         m_walls.at(i)->setPoints(m_walls.at(i)->p1() + moveDirection,m_walls.at(i)->p2() + moveDirection);
     }
 
@@ -103,6 +103,7 @@ vector <Wall*>MathematicalBuildingProduct::nearestWalls(const QPointF &point)
 Wall* MathematicalBuildingProduct::getWalls()
 {
 //    return *m_walls;
+    return nullptr;
 }
 
 QPolygonF MathematicalBuildingProduct::shadow(const QPointF &light){
@@ -149,11 +150,11 @@ vector <QPointF> MathematicalBuildingProduct::extremities(const QPointF &light){
     }
 
 
-    if (walls.at(1)->intersect(QLineF(light,nonCommonPoints.at(1)),&intersectionPoint) == 1){
+    if (walls.at(1)->intersects(QLineF(light,nonCommonPoints.at(1)),&intersectionPoint) == 1){
         extremities.push_back(walls.at(1)->p2());
         extremities.push_back(walls.at(1)->p1());
     }
-    else if (walls.at(0)->intersect(QLineF(light,nonCommonPoints.at(0)),&intersectionPoint) == 1){
+    else if (walls.at(0)->intersects(QLineF(light,nonCommonPoints.at(0)),&intersectionPoint) == 1){
         extremities.push_back(walls.at(0)->p2());
         extremities.push_back(walls.at(0)->p1());
     }
@@ -226,12 +227,12 @@ bool MathematicalBuildingProduct::adjacentWall(const QLineF &line, Wall *&wall){
      * Check is the line is adjacent to any wall. Returns the wall in wall.
     */
     bool res = false;
-    int i=0;
+    unsigned i=0;
     while( i<m_walls.size() && !res){
         QLineF line2(line.p1(),m_walls[i]->p1());
         QPointF p;
         //res = !line.intersect(line2,&p);
-        res = !(line.intersect(*m_walls[i],&p) || line.intersect(line2,&p));
+        res = !(line.intersects(*m_walls[i],&p) || line.intersects(line2,&p));
         wall = m_walls[i];
         i++;
     }

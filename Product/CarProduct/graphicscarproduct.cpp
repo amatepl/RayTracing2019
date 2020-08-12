@@ -95,11 +95,11 @@ QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVarian
     return value;
 }
 
-void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+void GraphicsCarProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
     m_observer->openDialog();
 }
 
-void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int centery, double orientation)
+void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int centery, double /*orientation*/)
 {
     QPolygonF graphic = *rect;
     QPointF p0 = graphic.at(0);

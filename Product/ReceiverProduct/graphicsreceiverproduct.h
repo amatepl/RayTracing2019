@@ -33,10 +33,10 @@ public:
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *) override;
 
 private:
-    QRgb m_color;
+//    QRgb m_color;
     QGraphicsScene *m_scene;
     QMenu *m_productmenu;
     int m_sizex, m_sizey; // Size of the cell if enable false

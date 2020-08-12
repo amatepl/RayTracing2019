@@ -18,7 +18,7 @@ public:
     // AlgorithmInterface
 //    MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
 //                                           vector<MathematicalBuildingProduct*> buildings) override;
-    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
+    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory*) override;
 
     void clearWorkspace() override;
 
@@ -27,6 +27,7 @@ public:
 protected:
     SceneFactory* m_receiverFactory;
     float px_to_meter;
+    vector <MathematicalProduct *> m_coverageRxs;
     //QPolygonF totalIlluminationZone;
 };
 

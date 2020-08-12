@@ -78,7 +78,7 @@ protected:
 
 public slots:
 
-    void recomputeImages(AbstractAntena *tx);
+    void recomputeImages(AbstractAntena *);
 
 };
 

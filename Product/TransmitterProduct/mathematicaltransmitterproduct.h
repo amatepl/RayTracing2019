@@ -101,6 +101,7 @@ public:
     double computePathLossPower(ProductObservable* copy_receiver) override;
     std::complex<double> computeInterference(ProductObservable *,QLineF local_region) override;
 
+    using MathematicalProduct::attachObservable;
     void  attachObservable(ProductObservable *productObservable) override;
 
     //ModelObserver
@@ -213,7 +214,7 @@ private:
 
     map<ProductObservable *, bool> m_chosenBeams;
 
-    double m_powerAtReceiver;
+//    double m_powerAtReceiver;
     ModelObservable *m_model;
     vector<ProductObservable *> m_productObservable;
     //map<const QPointF*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
@@ -238,7 +239,7 @@ private:
     complex<double> m_EMfield;
 
 public slots:
-    void carMoved(MathematicalCarProduct *car, int x, int y, double orientation) override;
+    void carMoved(MathematicalCarProduct *car, int, int, double) override;
 
 
 };

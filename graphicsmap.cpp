@@ -2,13 +2,13 @@
 
 GraphicsMap::GraphicsMap(QGraphicsView *view, AppInterface *app, QMenu *productmenu)
 {
-    int width = 1200;
-    int height = 600;
-    setSceneRect(0,0,width,height);
+    int width = 700;
+    int height = 700;
+    setSceneRect(0,0,width, height);
     m_view = view;
+    m_view->setFixedSize(width+2*m_view->frameWidth(), height+2*m_view->frameWidth());
     m_productmenu = productmenu;
     m_view->setScene(this);
-    m_view->setFixedSize(width+2*view->frameWidth(), height+2*view->frameWidth());
     m_app = app;
     m_mode = MoveItem;
 }
@@ -54,4 +54,3 @@ void GraphicsMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 void GraphicsMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsScene::mouseDoubleClickEvent(event);
 }
-

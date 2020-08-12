@@ -39,7 +39,7 @@ void MapGenerator::generateMap()
 
 
 
-    int streetsDistance = 600;
+    int streetsDistance = 200;
     for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance); i++) {
         int random1 = 0;//= rand() % 100;
         int random2 = 0;//= rand() % 100;
@@ -62,70 +62,68 @@ void MapGenerator::generateMap()
 
     int streetWidth = 30;
 
-//    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
-//        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
-//            QPointF intersectionPoint1;
-//            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i),
-//                                                 &intersectionPoint1);
+    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
+        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
+            QPointF intersectionPoint1;
+            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),
+                                                 &intersectionPoint1);
 
-//            QPointF intersectionPoint2;
-//            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i),
-//                                                     &intersectionPoint2);
+            QPointF intersectionPoint2;
+            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i),
+                                                     &intersectionPoint2);
 
-//            QPointF intersectionPoint3;
-//            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i + 1),
-//                                                 &intersectionPoint3);
+            QPointF intersectionPoint3;
+            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i + 1),
+                                                 &intersectionPoint3);
 
-//            QPointF intersectionPoint4;
-//            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i + 1),
-//                                                     &intersectionPoint4);
-
-
-
-//            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
-//            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
-
-//            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
-//            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
-
-//            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
-//            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
-
-//            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
-//            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
-
-////            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
-////            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
-
-////            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);
-////            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
-
-////            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
-////            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
-
-////            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
-////            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
-
-//            QPolygonF buildingForm;
-//            buildingForm << intersectionPoint1
-//                         << intersectionPoint2
-//                         << intersectionPoint4
-//                         << intersectionPoint3
-//                         << intersectionPoint1;
-
-//            MathematicalProduct *building = m_buildingFactory
-//                                                ->createMathematicalProduct(buildingForm);
-
-//            m_products.push_back(building);
+            QPointF intersectionPoint4;
+            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i + 1),
+                                                     &intersectionPoint4);
 
 
-//            m_scene->addPolygon(buildingForm);
 
-//        }
+            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
+            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
 
-//    }
+            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
+            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
+
+            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
+            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
+
+            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
+            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
+
+//            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
+//            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
+
+//            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);
+//            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
+
+//            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
+//            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
+
+//            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
+//            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
+
+            QPolygonF buildingForm;
+            buildingForm << intersectionPoint1
+                         << intersectionPoint2
+                         << intersectionPoint4
+                         << intersectionPoint3
+                         << intersectionPoint1;
+
+            MathematicalProduct *building = m_buildingFactory
+                                                ->createMathematicalProduct(buildingForm);
+
+            m_products.push_back(building);
+
+        }
+    }
 
     addCars();
+    addCars();
+
     //addTrees();
 }
 
@@ -154,29 +152,17 @@ void MapGenerator::addCars()
 
         carContour << normal.p2();
 
-//        cout <<"First point: "<< normal.p2().x()<< ", "<< normal.p2().y() <<endl;
-
         normal.translate(normal.p1() - normal.p2());
-
         carContour << normal.p1();
-
-//        cout <<"2 point: "<< normal.p1().x()<< ", "<< normal.p1().y() <<endl;
 
         normal.translate(tmpLine.p2() - tmpLine.p1());
-
         carContour << normal.p1();
 
-//        cout <<"3 point: "<< normal.p1().x()<< ", "<< normal.p1().y() <<endl;
-
         normal.translate(normal.p2() - normal.p1());
-
         carContour << normal.p2();
-
-//        cout <<"4t: "<< normal.p2().x()<< ", "<< normal.p2().y() <<endl;
 
         carContour<< carContour.at(0);
 
-//        cout <<"4: "<< normal.p2().x()<< ", "<< normal.p2().y() <<endl;
 
         QRectF carRect(line.p2().x(), line.p2().x(), 22, 22);
 
@@ -204,56 +190,56 @@ void MapGenerator::addCars()
 
     }
 
-//    for (unsigned j = 0; j < m_verticalStreets.size(); j++) {
-//        int random = rand() % (int) m_verticalStreets.at(j)->length();
-//        QLineF line = *m_verticalStreets.at(j);
-//        line.setLength(random);
-//        carPosition = line.p2();
+    for (unsigned j = 1; j < m_verticalStreets.size() - 1; j++) {
+        int random = rand() % (int) m_verticalStreets.at(j)->length();
+        QLineF line = *m_verticalStreets.at(j);
+        line.setLength(random);
+        carPosition = line.p2();
 
-//        QLineF tmpLine(line);
-//        tmpLine.setLength(tmpLine.length() - 11);
-//        QPointF tmpPoint = tmpLine.p2();
-//        tmpLine.setLength(tmpLine.length() + 22);
-//        tmpLine.setP1(tmpPoint);
+        QLineF tmpLine(line);
+        tmpLine.setLength(tmpLine.length() - 11);
+        QPointF tmpPoint = tmpLine.p2();
+        tmpLine.setLength(tmpLine.length() + 22);
+        tmpLine.setP1(tmpPoint);
 
-//        QLineF normal = tmpLine.normalVector();
-//        normal.setLength(11);
+        QLineF normal = tmpLine.normalVector();
+        normal.setLength(11);
 
-//        QPolygonF carContour;
+        QPolygonF carContour;
 
-//        carContour << normal.p2();
+        carContour << normal.p2();
 
-//        normal.translate(normal.p1() - normal.p2());
+        normal.translate(normal.p1() - normal.p2());
 
-//        carContour << normal.p1();
+        carContour << normal.p1();
 
-//        normal.translate(tmpLine.p2() - tmpLine.p1());
+        normal.translate(tmpLine.p2() - tmpLine.p1());
 
-//        carContour << normal.p1();
+        carContour << normal.p1();
 
-//        normal.translate(normal.p2() - normal.p1());
+        normal.translate(normal.p2() - normal.p1());
 
-//        carContour << normal.p2();
+        carContour << normal.p2();
 
-//        carContour<< carContour.at(0);
+        carContour<< carContour.at(0);
 
-//        MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPosition.x(),
-//                                                                           carPosition.y(),
-//                                                                           carContour,
-//                                                                           true);
+        MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPosition.x(),
+                                                                           carPosition.y(),
+                                                                           carContour,
+                                                                           true);
 
-//        dynamic_cast<MathematicalCarProduct *>(car)->setMovement(tmpLine);
+        dynamic_cast<MathematicalCarProduct *>(car)->setMovement(tmpLine);
 
-//        m_products.push_back(car);
-//        m_cars.push_back((MathematicalCarProduct *) car);
-//        ((MathematicalCarProduct *) car)->setRoad(line);
+        m_products.push_back(car);
+        m_cars.push_back((MathematicalCarProduct *) car);
+        ((MathematicalCarProduct *) car)->setRoad(m_verticalStreets.at(j));
 
 //        thread *thread_obj = new thread (&MapGenerator::moveCar,
 //                                        ref(*(MathematicalCarProduct*)car),
 //                                        ref(*m_verticalStreets.at(j)));
 
 
-//    }
+    }
 
 }
 
@@ -310,8 +296,6 @@ void MapGenerator::startCars()
         }
         m_threads.clear();
     }
-
-
 }
 
 bool MapGenerator::getRunCars() const
@@ -321,7 +305,7 @@ bool MapGenerator::getRunCars() const
 
 void MapGenerator::moveCar(MathematicalCarProduct &car, MapGenerator &map, QLineF &street)
 {
-//    bool run = true;
+
     QLineF normal; //= street.unitVector();
     QLineF str = street;
     bool run = map.getRunCars();
@@ -330,10 +314,8 @@ void MapGenerator::moveCar(MathematicalCarProduct &car, MapGenerator &map, QLine
 
         normal = str;
 
-//        normal.setP1(car.getPos());
         normal.setP2(car.getPos());
 
-//        normal.translate(QPointF(car.getPosX(), car.getPosY()) - normal.p1());
         normal.setLength(normal.length() + 5);
 
         if (QLineF(street.p1(), normal.p2()).length() > street.length()) {

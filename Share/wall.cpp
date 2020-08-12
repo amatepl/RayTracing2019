@@ -30,7 +30,7 @@ QPointF Wall::symetricalPoint(const QPointF &point){
     QLineF finalVector(point,point);
     normal.translate(point);
     QPointF closestPoint;
-    intersect(normal,&closestPoint);
+    intersects(normal,&closestPoint);
     //intersect(normalVector().translate(point),&closestPoint);
     finalVector.setP2(closestPoint);
     finalVector.setLength(2*finalVector.length());

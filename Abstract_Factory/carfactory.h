@@ -11,6 +11,7 @@ public:
     CarFactory(QMenu *productmenu, QGraphicsScene* scene,const float scale);
     GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
     MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic =true) override;
+    using SceneFactory::createMathematicalProduct;
     MathematicalProduct * createMathematicalProduct(int posX, int posY, QPolygonF poly, bool linkgraphic);
 
 private:

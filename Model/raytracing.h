@@ -13,7 +13,7 @@
 class RayTracing: public AlgorithmInterface, public ImagesMethod
 {
 public:
-    RayTracing(MathematicalTransmitterProduct* transmitter, MathematicalReceiverProduct* receiver,const float scale);
+    RayTracing(MathematicalTransmitterProduct* transmitter, MathematicalReceiverProduct*, const float scale);
     RayTracing(const float scale);
 
     //AlgorithmInterface
@@ -26,7 +26,7 @@ public:
 
 private:
     ReceiverFactory* m_receiverfactory;
-    MathematicalReceiverProduct* copy_receiver;
+//    MathematicalReceiverProduct* copy_receiver;
     float px_to_meter;
 
 };

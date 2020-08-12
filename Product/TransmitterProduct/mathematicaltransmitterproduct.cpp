@@ -410,10 +410,10 @@ MathematicalTransmitterProduct::buildTreeRays(QPointF *Rx, MathematicalTreeProdu
 
         QPointF edge1;
         directPath.setPoints(*this, *Rx);
-        directPath.intersect(distance1, &edge1);
+        directPath.intersects(distance1, &edge1);
 
         QPointF edge2;
-        directPath.intersect(distance2, &edge2);
+        directPath.intersects(distance2, &edge2);
 
         QLineF firstDiffractedRay(*this, edge1);
         QLineF lastDiffractedRay(*this, edge2);
@@ -452,10 +452,10 @@ MathematicalTransmitterProduct::buildTreeRays(QPointF *Rx, MathematicalTreeProdu
 
         QPointF edge1;
         directPath.setPoints(*this, *Rx);
-        directPath.intersect(distance2, &edge1);
+        directPath.intersects(distance2, &edge1);
 
         QPointF edge2;
-        directPath.intersect(distance1, &edge2);
+        directPath.intersects(distance1, &edge2);
 
         QLineF firstDiffractedRay(*this, edge2);
         QLineF lastDiffractedRay(*this, edge1);
@@ -473,7 +473,7 @@ void MathematicalTransmitterProduct::computeRayThroughTree(QPointF *Rx, Mathemat
 {
     vector<vector<QLineF>> wholeRays = buildTreeRays(Rx, tree);
     for (unsigned int i = 0; i < m_wholeRays.size(); i++) {
-        complex<double> EfieldTree = computeDiffractedTreeEfield(wholeRays.at(i));
+//        complex<double> EfieldTree = computeDiffractedTreeEfield(wholeRays.at(i));
     }
 }
 
@@ -638,10 +638,10 @@ QPointF MathematicalTransmitterProduct::sceneRectIntersection(const QRectF &rect
 
     QPointF intersectionPoint;
 
-    if (line.intersect(boundary1, &intersectionPoint) == 1) {}
-    else if (line.intersect(boundary2, &intersectionPoint) == 1) {}
-    else if (line.intersect(boundary3, &intersectionPoint) == 1) {}
-    else if (line.intersect(boundary4, &intersectionPoint) == 1) {}
+    if (line.intersects(boundary1, &intersectionPoint) == 1) {}
+    else if (line.intersects(boundary2, &intersectionPoint) == 1) {}
+    else if (line.intersects(boundary3, &intersectionPoint) == 1) {}
+    else if (line.intersects(boundary4, &intersectionPoint) == 1) {}
     return intersectionPoint;
 }
 
@@ -1021,8 +1021,8 @@ MathematicalTransmitterProduct::pointsForPathLoss(ProductObservable *true_receiv
     map<ProductObservable *, map<double, double>>::iterator it;
     std::vector<QPointF> points;
     int number_points = 200;
-    int number_row = 1;
-    int number_column = 1;
+    //int number_row = 1;
+    //int number_column = 1;
     MathematicalRayProduct *direct_ray;
     if (m_receiversRays[true_receiver] .size() != 0 && m_receiversRays[true_receiver].at(0)->size() == 1)
     {
@@ -1151,8 +1151,8 @@ void MathematicalTransmitterProduct::setIlluminatedZone(const QPolygonF &zone)
 
 
 void MathematicalTransmitterProduct::carMoved(MathematicalCarProduct *car,
-                                              int x, int y,
-                                              double orientation)
+                                              int /*x*/, int /*y*/,
+                                              double /*orientation*/)
 {
     int idx = 0;
     if (m_zone.intersects(*car)) {

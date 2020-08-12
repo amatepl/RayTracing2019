@@ -110,7 +110,7 @@ public:
     void notifyObserversPathLoss(ProductObserver* transmitter);
     complex<double> notifyObserversInterference(QLineF local_region);
     void notify() override;
-    void notify(double &power, std::vector<double> *powers, std::complex<double> &EMfiled) override;
+    void notify(double &, std::vector<double> *, std::complex<double> &) override;
     void answer(ProductObserver *observer, double frequency, double bandwidth,
                 double &power, std::complex<double> &EMfield) override;
     QPointF* getPos()override;
@@ -152,6 +152,7 @@ private:
 
 public slots:
     void save(string path);
+    void record();
     void sendInterferencePattern();
 };
 

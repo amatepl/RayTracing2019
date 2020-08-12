@@ -27,7 +27,7 @@ public:
                               const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
     virtual QPointF getPosition() const override;
     virtual QPolygonF getIlluminationZone() const override;
-    virtual QPolygonF getIlluminationZone(const QRectF &rect) const override;
+    virtual QPolygonF getIlluminationZone(const QRectF &) const override;
     virtual QPolygonF getIlluminatedZone() const override;
     virtual void setIlluminatedZone(const QPolygonF &zone) override;
 
@@ -46,7 +46,7 @@ private:
 
 public slots:
 
-    void carMoved(MathematicalCarProduct *car, int x, int y, double orientation) override;
+    void carMoved(MathematicalCarProduct *car, int, int, double) override;
 };
 
 #endif // ANTENADIFFRACTION_H

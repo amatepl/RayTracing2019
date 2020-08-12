@@ -1,6 +1,6 @@
 #include "applicationwindow.h"
 
-float px_to_meter = 100;
+float px_to_meter = 0.1;
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -33,6 +33,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
     addToolBar(Qt::TopToolBarArea,m_toolinfo);
     setCentralWidget(view);
+    setWindowState(Qt::WindowMaximized);
 
     m_graphicsmode = MoveItem;
 }
@@ -72,7 +73,6 @@ void ApplicationWindow::resetToolInfo(){
 void ApplicationWindow::attachObserver(WindowObserver *windowobserver){
     m_windowobserver.push_back(windowobserver);
 }
-
 void ApplicationWindow::detachObserver(WindowObserver *windowobserver){
     unsigned long long i = 0;
     for (m_windowobserveriterator = m_windowobserver.begin();
@@ -84,7 +84,6 @@ void ApplicationWindow::detachObserver(WindowObserver *windowobserver){
         i++;
     }
 }
-
 void ApplicationWindow::notify(int mode){
     for (unsigned long long i=0;i<m_windowobserver.size();i++){
         m_windowobserver.at(i)->update(mode);
