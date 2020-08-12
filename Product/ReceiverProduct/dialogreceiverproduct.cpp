@@ -389,7 +389,7 @@ QWidget* DialogReceiverProduct::DopplerSpectrum(){
     customplot->graph(0)->setName("Doppler spectrum");
 
     customplot->xAxis->setLabel("\u03C9[rad/s]");
-    customplot->yAxis->setLabel("h[dB]");
+    customplot->yAxis->setLabel("a(\u03c9)[dB]");
     customplot->yAxis->grid()->setSubGridVisible(true);
     customplot->xAxis->grid()->setSubGridVisible(true);
     customplot->rescaleAxes();

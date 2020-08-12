@@ -119,7 +119,6 @@ void MapGenerator::generateMap()
             m_products.push_back(building);
 
         }
-
     }
 
     addCars();

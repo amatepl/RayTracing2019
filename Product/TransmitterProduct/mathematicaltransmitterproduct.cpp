@@ -147,17 +147,12 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         QLineF resultant_speed(QPointF(0.0,0.0),m_receiver_speed.p2()-m_ray_speed.p2());
         QLineF beta(QPointF(.0,.0),QPointF(2.0*M_PI/lambda,0.0));
         beta.setAngle(angle_receiver);
-//        cout << "Angle Beta: " << beta.angle() << endl;
-//        cout << "Angle Receiver: " << m_receiver_speed.angle() << endl;
-//        cout << "Norm Beta: " << beta.length() << endl;
         //    cout << "Angle Ray: " << m_ray_speed.angle() << endl;
         //    cout << "Speed resultant: " << m_ray_speed.length()*3.6 << endl;
         //    cout << "Shift: " << angle_receiver - resultant_speed.angle() << endl;
-        double omega = -(beta.p2().x()*m_receiver_speed.p2().x() + beta.p2().y()*m_receiver_speed.p2().y());
+        double omega = -(beta.p2().x()*resultant_speed.p2().x() + beta.p2().y()*resultant_speed.p2().y());
         omega = round(omega*1e4)/1e4;
-//        double shift = (angle_receiver - resultant_speed.angle()) * M_PI/180.0;
-//        double omega = -2.0*M_PI * resultant_speed.length() * cos(shift) / lambda;
-        m_dopplerSpectrum[receiver][omega] += a;
+        m_dopplerSpectrum[receiver][omega] += 2*M_PI*a;
     }
     return Efield;
 }
@@ -546,7 +541,7 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
         if (wholeRay->at(0)->getDiffracted())
         {
             map<ProductObservable *, map<double, double>>::iterator it;
-            m_ray_speed = QLineF(QPointF(.0,.0),QPointF(.0,.0));
+            m_ray_speed = ray_speeds[wholeRay];
             complex<double>EMfield = computeDiffractedEfield(receiver,wholeRay,true);
             m_receiversField[receiver] += EMfield;
 

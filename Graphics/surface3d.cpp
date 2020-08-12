@@ -21,12 +21,23 @@ Surface3D::Surface3D(Q3DSurface *surface, TransmitterProduct *dialog)
     : m_graph(surface), m_dialog(dialog), m_thetamin(0.0),m_thetamax(0.0),m_ymin(0.0),m_ymax(0.0),
       m_rmin(0.0),m_rmax(0.0)
 {
+    QFont font;
+    font.setPointSize(50);
     m_graph->setAxisX(new QValue3DAxis);
+    m_graph->axisX()->setTitleVisible(true);
+    QString x_axe = QChar(0x03B8);
+    m_graph->axisX()->setTitle(x_axe);
     m_graph->setAxisY(new QValue3DAxis);
+    m_graph->axisY()->setTitleVisible(true);
+    m_graph->axisY()->setTitle("Z");
     m_graph->setAxisZ(new QValue3DAxis);
+    m_graph->axisZ()->setTitleVisible(true);
+    m_graph->axisZ()->setTitle("r");
     m_graph->setPolar(true);
     m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityHigh);
     m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
+    m_graph->activeTheme()->setType(Q3DTheme::ThemeStoneMoss);
+    m_graph->activeTheme()->setFont(font);
     m_patternProxy = new QSurfaceDataProxy();
     m_patternSeries = new QSurface3DSeries(m_patternProxy);
 

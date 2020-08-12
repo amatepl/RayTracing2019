@@ -412,7 +412,7 @@ void MathematicalReceiverProduct::dopplerSpectrum()
     int i = 0;
     for(const auto &dop : m_doppler){
         omega[i] = dop.first;
-        doppler[i] = 20*log10(abs(dop.second));
+        doppler[i] = abs(dop.second);
         i++;
     }
 }

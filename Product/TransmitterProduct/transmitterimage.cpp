@@ -192,21 +192,24 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
     QPointF p0 = m_movement.p1();
     QPointF p1 = m_movement.p2();
     QPointF p1_prime = new_movement.p2();
+    QLineF notify_movement;
     if (m_wallType == Wall::front) {
-        if (abs(m_movement.angle()-movement.angle()) <= 90){
-//            cout << "Movement received: " << movement.length() << endl;
-//            cout << "Movement had: " << m_movement.length() << endl;
-            m_movement = QLineF(p0,p1_prime+p1);
+        notify_movement = QLineF(p0,p1_prime+p1);
+        if (wholeRay->size()%2 == 0) {
+            notify_movement.setAngle(m_movement.angle()+180.0);
         }
     }
     else if (m_wallType == Wall::back) {
-        m_movement = QLineF(p0,p1_prime+p1);
+        notify_movement = QLineF(p0,p1_prime+p1);
+        if (wholeRay->size()%2 == 0) {
+            notify_movement.setAngle(m_movement.angle()+180.0);
+        }
     }
     else {
-        m_movement = new_movement;
+        notify_movement = new_movement;
     }
 
-    m_parent->notifyParent(productObservable,m_movement ,reflectionPoint,wholeRay);
+    m_parent->notifyParent(productObservable,notify_movement ,reflectionPoint,wholeRay);
 }
 
 
