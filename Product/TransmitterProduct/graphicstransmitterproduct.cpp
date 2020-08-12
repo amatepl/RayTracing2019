@@ -52,7 +52,7 @@ QVariant GraphicsTransmitterProduct::itemChange(GraphicsItemChange change, const
     return value;
 }
 
-void GraphicsTransmitterProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+void GraphicsTransmitterProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
     m_observer->openDialog();
 }
 

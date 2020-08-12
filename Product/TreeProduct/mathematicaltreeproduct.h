@@ -31,9 +31,9 @@ public:
 private:
     QPointF m_center;
     float a;            // Radius (m)
-    float h;            // length (m) of branches and leafs
-    float epsilon_r;    // dielectric constant
-    float rho;          // density (m^{-3})
+//    float h;            // length (m) of branches and leafs
+//    float epsilon_r;    // dielectric constant
+//    float rho;          // density (m^{-3})
     vector<TreeParams> m_params;
 };
 

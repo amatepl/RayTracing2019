@@ -11,7 +11,9 @@ public:
     BuildingFactory(QMenu *productmenu, QGraphicsScene* scene,const float scale);
     GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
     MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic = true) override;
+    using SceneFactory::createMathematicalProduct;
     MathematicalProduct * createMathematicalProduct(QPolygonF polygone, bool linkgraphic = true);
+
 
 private:
     QMenu *m_productmenu;

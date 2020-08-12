@@ -82,7 +82,7 @@ public:
     }
 
 
-    virtual complex <double> dipoleFactor(double theta, double phi)
+    virtual complex <double> dipoleFactor(double /*theta*/, double phi)
     {
         complex <double> dipolefactor(0.0,0.0);
         if (phi == 0.0 || phi == 180.0) dipolefactor = 0.0;
@@ -167,7 +167,7 @@ protected:
     unsigned long long m_bandwidth;
     int m_row;
     int m_column;
-    double lambda = c/m_frequency;
+    double lambda /*= c/m_frequency*/;
     double m_orientation;
     char m_pr_orientation;
 };

@@ -2,7 +2,7 @@
 
 GraphicsMap::GraphicsMap(QGraphicsView *view, AppInterface *app, QMenu *productmenu)
 {
-    setSceneRect(0,0,500,500);
+    setSceneRect(0,0,700, 700);
     m_view = view;
     m_productmenu = productmenu;
     m_view->setScene(this);

@@ -30,7 +30,7 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
     m_receiverfactory = receiverfactory;
 
     vector<MathematicalProduct *> mapProducts = map->getProducts();
-    for (int i = 0; i < mapProducts.size(); i++) {
+    for (unsigned i = 0; i < mapProducts.size(); i++) {
         string type = mapProducts.at(i)->getType();
         m_mathematicalComponents[type].push_back(mapProducts.at(i));
     }

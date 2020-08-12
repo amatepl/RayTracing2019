@@ -64,7 +64,7 @@ QVariant GraphicsReceiverProduct::itemChange(GraphicsItemChange change, const QV
     return value;
 }
 
-void GraphicsReceiverProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+void GraphicsReceiverProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
     m_observer->openDialog();
 }
 

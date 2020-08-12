@@ -47,7 +47,7 @@ public:
     void erase();
 
     MathematicalProduct* toMathematicalComponent();
-    void update(QGraphicsItem *graphic) override;
+    void update(QGraphicsItem *) override;
     void openDialog() override;
 };
 

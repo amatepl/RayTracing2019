@@ -33,12 +33,12 @@ public:
                       const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
     void notifyCarDetected() override;
     QPolygonF getIlluminationZone() const override;
-    QPolygonF getIlluminationZone(const QRectF &rect) const override;
+    QPolygonF getIlluminationZone(const QRectF &) const override;
     QPointF getPosition() const override;
 
 
     //ProductObserver
-    void update(ProductObservable *productObservable, QLineF const movement) override;
+    void update(ProductObservable *productObservable, QLineF const) override;
 //    void updateCarPos(ProductObservable *productObservable) override;
     void attachObservable(ProductObservable *productObservable) override;
 
@@ -50,7 +50,7 @@ private:
     int m_radius;
 
 public slots:
-    void carMoved(MathematicalCarProduct *car, int x, int y, double orientation) override;
+    void carMoved(MathematicalCarProduct *car, int, int, double) override;
 
 
 };

@@ -98,7 +98,7 @@ QPolygonF TransmitterImage::getIlluminationZone() const
 }
 
 
-QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect) const {
+QPolygonF TransmitterImage::getIlluminationZone(const QRectF &/*rect*/) const {
     /*
      * For the moment it's exactly the same as the one above.
      */
@@ -128,7 +128,7 @@ QPolygonF TransmitterImage::getIlluminationZone(const QRectF &rect) const {
 }
 
 
-void TransmitterImage::update(ProductObservable *productObservable, QLineF const movement)
+void TransmitterImage::update(ProductObservable *productObservable, QLineF const /*movement*/)
 {
 
     if(m_zone.containsPoint(*productObservable->getPos(),Qt::OddEvenFill)){
@@ -233,7 +233,7 @@ void TransmitterImage::notifyCarDetected()
 //}
 
 
-void TransmitterImage::carMoved(MathematicalCarProduct *car, int x, int y, double orientation)
+void TransmitterImage::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
     int idx = 0;
     if (m_zone.intersects(*car)) {

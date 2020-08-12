@@ -1,7 +1,7 @@
 #include "raytracing.h"
 
 RayTracing::RayTracing(MathematicalTransmitterProduct *transmitter,
-                       MathematicalReceiverProduct *receiver,const float scale)
+                       MathematicalReceiverProduct */*receiver*/,const float scale)
 {
     RayFactory* rayFactory = new RayFactory(true, m_scene,scale);
     m_rayFactory = rayFactory;

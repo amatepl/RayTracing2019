@@ -478,7 +478,7 @@ void MathematicalTransmitterProduct::computeRayThroughTree(QPointF *Rx, Mathemat
 {
     vector<vector<QLineF>> wholeRays = buildTreeRays(Rx, tree);
     for (unsigned int i = 0; i < m_wholeRays.size(); i++) {
-        complex<double> EfieldTree = computeDiffractedTreeEfield(wholeRays.at(i));
+//        complex<double> EfieldTree = computeDiffractedTreeEfield(wholeRays.at(i));
     }
 }
 
@@ -1153,8 +1153,8 @@ void MathematicalTransmitterProduct::setIlluminatedZone(const QPolygonF &zone)
 
 
 void MathematicalTransmitterProduct::carMoved(MathematicalCarProduct *car,
-                                              int x, int y,
-                                              double orientation)
+                                              int /*x*/, int /*y*/,
+                                              double /*orientation*/)
 {
     int idx = 0;
     if (m_zone.intersects(*car)) {

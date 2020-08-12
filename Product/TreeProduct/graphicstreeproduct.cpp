@@ -60,12 +60,12 @@ QVariant GraphicsTreeProduct::itemChange(GraphicsItemChange change, const QVaria
 }
 
 
-void GraphicsTreeProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
+void GraphicsTreeProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
     m_observer->openDialog();
 }
 
 
-void GraphicsTreeProduct::notifyToGraphic(QPolygonF *poly, int centerx, int centery){
+void GraphicsTreeProduct::notifyToGraphic(QPolygonF *poly, int /*centerx*/, int /*centery*/){
 
     QColor illumination1;
     illumination1.setGreen(255);

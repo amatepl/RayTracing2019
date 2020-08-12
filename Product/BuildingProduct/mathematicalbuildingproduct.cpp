@@ -68,7 +68,7 @@ void MathematicalBuildingProduct::moveToPosition(const QPointF &pos)
 
 void MathematicalBuildingProduct::moveWalls(QPointF &moveDirection)
 {
-    for(int i=0;i<m_walls.size();i++){
+    for(unsigned i=0;i<m_walls.size();i++){
         m_walls.at(i)->setPoints(m_walls.at(i)->p1() + moveDirection,m_walls.at(i)->p2() + moveDirection);
     }
 
@@ -103,6 +103,7 @@ vector <Wall*>MathematicalBuildingProduct::nearestWalls(const QPointF &point)
 Wall* MathematicalBuildingProduct::getWalls()
 {
 //    return *m_walls;
+    return nullptr;
 }
 
 QPolygonF MathematicalBuildingProduct::shadow(const QPointF &light){
@@ -226,7 +227,7 @@ bool MathematicalBuildingProduct::adjacentWall(const QLineF &line, Wall *&wall){
      * Check is the line is adjacent to any wall. Returns the wall in wall.
     */
     bool res = false;
-    int i=0;
+    unsigned i=0;
     while( i<m_walls.size() && !res){
         QLineF line2(line.p1(),m_walls[i]->p1());
         QPointF p;

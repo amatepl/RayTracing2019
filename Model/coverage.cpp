@@ -11,7 +11,7 @@ Coverage::Coverage(SceneFactory *receiverFactory,const float scale):m_receiverFa
 //}
 
 MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct *>> mathematicalComponents,
-                                         ReceiverFactory* receiverfactory)
+                                         ReceiverFactory* /*receiverfactory*/)
 {
     setAttributs(mathematicalComponents);
     reflectionsNumber = 5;

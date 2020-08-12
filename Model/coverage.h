@@ -18,7 +18,7 @@ public:
     // AlgorithmInterface
 //    MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
 //                                           vector<MathematicalBuildingProduct*> buildings) override;
-    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory* receiverfactory) override;
+    MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory*) override;
 
     void clearWorkspace() override;
 

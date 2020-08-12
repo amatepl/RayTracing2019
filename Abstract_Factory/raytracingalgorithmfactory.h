@@ -10,7 +10,7 @@ public:
     RayTracingAlgorithmFactory();
 
     //AbstractAlgorithmFactory
-    AlgorithmInterface * createAlgorithm(MathematicalTransmitterProduct *transmitter, MathematicalReceiverProduct *receiver) override;
+    AlgorithmInterface * createAlgorithm(MathematicalTransmitterProduct *, MathematicalReceiverProduct *) override;
 };
 
 #endif // RAYTRACINGALGORITHMFACTORY_H

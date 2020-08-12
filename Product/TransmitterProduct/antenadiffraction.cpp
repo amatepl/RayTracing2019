@@ -66,7 +66,7 @@ QPolygonF AntenaDiffraction::getIlluminationZone() const
 }
 
 
-QPolygonF AntenaDiffraction::getIlluminationZone(const QRectF &rect) const
+QPolygonF AntenaDiffraction::getIlluminationZone(const QRectF &/*rect*/) const
 {
     /*
      * For the moment it's exactly the same as the one above.
@@ -148,7 +148,7 @@ void AntenaDiffraction::attachObservable(ProductObservable *productObservable)
 }
 
 
-void AntenaDiffraction::carMoved(MathematicalCarProduct *car, int x, int y, double orientation)
+void AntenaDiffraction::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
     int idx = 0;
     if (m_zone.intersects(*car)) {

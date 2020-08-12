@@ -28,7 +28,7 @@ public:
 
 private:
     SceneObservable *m_graphicsfactory;
-    GraphicsProduct *m_graphiccomponent;
+//    GraphicsProduct *m_graphiccomponent;
 };
 
 #endif // DIALOGFACTORY_H
