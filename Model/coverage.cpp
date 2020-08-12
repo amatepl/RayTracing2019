@@ -78,6 +78,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
             dynamic_cast<MathematicalReceiverProduct*>(receiver)->setPosX(j);
             MathematicalProduct* newReceiver = m_receiverFactory->createMathematicalProduct(receiver,true);
+            m_coverageRxs.push_back(newReceiver);
 
         }
     }
