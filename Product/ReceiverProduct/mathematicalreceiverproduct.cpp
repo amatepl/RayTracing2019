@@ -35,25 +35,26 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     computeMinPrx();
 }
 
-MathematicalReceiverProduct::~MathematicalReceiverProduct(){
+MathematicalReceiverProduct::~MathematicalReceiverProduct()
+{
     cout << "Mathematical Receiver Product Deleted." << endl;
     delete m_dialog;
 }
-
 
 void MathematicalReceiverProduct::clearObeservers()
 {
     m_observers.clear();
 }
 
-
-void MathematicalReceiverProduct::clearData(){
+void MathematicalReceiverProduct::clearData()
+{
     m_power = 0;
     m_e_field = 0;
 }
 
-double MathematicalReceiverProduct::inputNoise(){
-    return 10*log10(kb*To*m_transmitterbandwidth);
+double MathematicalReceiverProduct::inputNoise()
+{
+    return 10 * log10(kb * To * m_transmitterbandwidth);
 }
 
 void MathematicalReceiverProduct::computeMinPrx()
@@ -65,7 +66,7 @@ void MathematicalReceiverProduct::computeMinPrx()
 void MathematicalReceiverProduct::computeSnr()
 {
     if (m_power != 0.0){
-        snr_received = (m_power-30) - m_noise_figure - inputNoise(); // [dB]
+        snr_received = (m_power - 30) - m_noise_figure - inputNoise(); // [dB]
     }
 }
 
@@ -101,7 +102,7 @@ void MathematicalReceiverProduct::computeDelaySpread()
 
 void MathematicalReceiverProduct::coherenceBandwidth()
 {
-    coherence_bandwidth = 1e3/delay_spread; //MHz
+    coherence_bandwidth = 1e3 / delay_spread; //MHz
 }
 
 
@@ -219,19 +220,19 @@ void MathematicalReceiverProduct::record()
     ofs.close();
 }
 
-
-void MathematicalReceiverProduct::riceFactor(double rice){
+void MathematicalReceiverProduct::riceFactor(double rice)
+{
     rice_factor = rice;
     if (isnan(rice_factor) || isinf(rice_factor)){
         rice_factor = 1e-300;
     }
 }
 
-
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 1. Path Loss Computation:
 
-void MathematicalReceiverProduct::computePathLossFading(){
+void MathematicalReceiverProduct::computePathLossFading()
+{
     path_loss.resize(m_pathloss.size());
     fading.resize(m_pathloss.size());
     linearRegressionPathLoss();
@@ -242,12 +243,14 @@ void MathematicalReceiverProduct::computePathLossFading(){
     fading_variability = standardDeviation();
 }
 
-void MathematicalReceiverProduct::linearRegressionPathLoss(){
-/*
-*b = output intercept
-*m  = output slope
-*r = output correlation coefficient (can be NULL if you don't want it)
-*/
+void MathematicalReceiverProduct::linearRegressionPathLoss()
+{
+    /*
+    *   b = output intercept
+    *   m  = output slope
+    *   r = output correlation coefficient (can be NULL if you don't want it)
+    */
+
     logD.resize(m_pathloss.size());
     Prx.resize(m_pathloss.size());
     D.resize(m_pathloss.size());

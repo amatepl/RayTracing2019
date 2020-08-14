@@ -65,19 +65,19 @@ void MapGenerator::generateMap()
     for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
         for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
             QPointF intersectionPoint1;
-            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i),
+            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),
                                                  &intersectionPoint1);
 
             QPointF intersectionPoint2;
-            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i),
+            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i),
                                                      &intersectionPoint2);
 
             QPointF intersectionPoint3;
-            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i + 1),
+            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i + 1),
                                                  &intersectionPoint3);
 
             QPointF intersectionPoint4;
-            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i + 1),
+            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i + 1),
                                                      &intersectionPoint4);
 
 

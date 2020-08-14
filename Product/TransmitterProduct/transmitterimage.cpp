@@ -26,10 +26,11 @@ QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF
 
     QPointF intersectionPoint;
 
-    if(line.intersect(boundary1,&intersectionPoint) == 1){}
-    else if(line.intersect(boundary2,&intersectionPoint) == 1){}
-    else if(line.intersect(boundary3,&intersectionPoint) == 1){}
-    else if(line.intersect(boundary4,&intersectionPoint) == 1){}
+    if (line.intersects(boundary1, &intersectionPoint) == 1) {
+    } else if (line.intersects(boundary2, &intersectionPoint) == 1) {
+    } else if (line.intersects(boundary3, &intersectionPoint) == 1) {
+    } else if (line.intersects(boundary4, &intersectionPoint) == 1) {
+    }
     return intersectionPoint;
 }
 
@@ -83,13 +84,12 @@ QPolygonF TransmitterImage::buildCoverage(){
     return coverage;
 }
 
-
 QPolygonF TransmitterImage::getIlluminationZone() const
 {
     QPolygonF zone;
-    QLineF line1(*this,m_wall.p2());
+    QLineF line1(*this, m_wall.p2());
     line1.setLength(50000);
-    QLineF line2(*this,m_wall.p1());
+    QLineF line2(*this, m_wall.p1());
     line2.setLength(50000);
     zone<<m_wall.p2()<<line1.p2()<<line2.p2()<<m_wall.p1();
 //    return zone.intersected(m_sceneBoundary);
@@ -97,8 +97,8 @@ QPolygonF TransmitterImage::getIlluminationZone() const
     //return m_zone;
 }
 
-
-QPolygonF TransmitterImage::getIlluminationZone(const QRectF &/*rect*/) const {
+QPolygonF TransmitterImage::getIlluminationZone(const QRectF & /*rect*/) const
+{
     /*
      * For the moment it's exactly the same as the one above.
      */
@@ -127,7 +127,6 @@ QPolygonF TransmitterImage::getIlluminationZone(const QRectF &/*rect*/) const {
     return zone;
 }
 
-
 void TransmitterImage::update(ProductObservable *productObservable, QLineF const /*movement*/)
 {
 
@@ -136,7 +135,7 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
         vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
         QLineF line(*this,*productObservable->getPos());
         QPointF reflectionPoint;
-        m_wall.intersect(line,&reflectionPoint);
+        m_wall.intersects(line, &reflectionPoint);
 
         MathematicalRayProduct ray(*m_rayFactory->createRay(reflectionPoint,
                                                             *productObservable->getPos(),
@@ -182,9 +181,9 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
 {
     QLineF line(*this,point);
     QPointF reflectionPoint;
-    m_wall.intersect(line,&reflectionPoint);
-//    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
-//    wholeRay->push_back(newRay);
+    m_wall.intersects(line, &reflectionPoint);
+    //    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
+    //    wholeRay->push_back(newRay);
     wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
     QLineF new_movement = movement;
     m_movement.translate(-m_movement.p1());

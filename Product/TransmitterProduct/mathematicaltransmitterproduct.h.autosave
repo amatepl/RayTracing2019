@@ -125,7 +125,7 @@ public:
     using MathematicalProduct::attachObservable;
     void  attachObservable(ProductObservable *productObservable) override;
 
-    Data * getChData(ProductObservable *) override;
+    Data * getChData(ProductObservable *rx) override;
 
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;

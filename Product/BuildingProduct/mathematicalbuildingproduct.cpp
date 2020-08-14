@@ -150,11 +150,11 @@ vector <QPointF> MathematicalBuildingProduct::extremities(const QPointF &light){
     }
 
 
-    if (walls.at(1)->intersect(QLineF(light,nonCommonPoints.at(1)),&intersectionPoint) == 1){
+    if (walls.at(1)->intersects(QLineF(light,nonCommonPoints.at(1)),&intersectionPoint) == 1){
         extremities.push_back(walls.at(1)->p2());
         extremities.push_back(walls.at(1)->p1());
     }
-    else if (walls.at(0)->intersect(QLineF(light,nonCommonPoints.at(0)),&intersectionPoint) == 1){
+    else if (walls.at(0)->intersects(QLineF(light,nonCommonPoints.at(0)),&intersectionPoint) == 1){
         extremities.push_back(walls.at(0)->p2());
         extremities.push_back(walls.at(0)->p1());
     }
@@ -232,7 +232,7 @@ bool MathematicalBuildingProduct::adjacentWall(const QLineF &line, Wall *&wall){
         QLineF line2(line.p1(),m_walls[i]->p1());
         QPointF p;
         //res = !line.intersect(line2,&p);
-        res = !(line.intersect(*m_walls[i],&p) || line.intersect(line2,&p));
+        res = !(line.intersects(*m_walls[i],&p) || line.intersects(line2,&p));
         wall = m_walls[i];
         i++;
     }

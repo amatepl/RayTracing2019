@@ -1,3 +1,14 @@
+/*!
+    \class DialogReceiverProduct
+    \brief Dialog window for the receiver
+
+    The dialog window of the receiver lets the user choose the physical and electrical properties
+    of the receiving antena.
+
+    It also displays the graphs of the communication channel properties.
+    
+*/
+
 #ifndef DIALOGRECEIVERPRODUCT_H
 #define DIALOGRECEIVERPRODUCT_H
 

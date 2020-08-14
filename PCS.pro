@@ -3,7 +3,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
     datavisualization
 
-CONFIG += c++11
+CONFIG += c++1z
 
 HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/abstractalgorithmfactory.h \
@@ -68,6 +68,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Share/line.h \
     Share/moveablegraphics.h \
     Share/reflectiveobstacle.h \
+    Share/rxdatahandler.h \
     Share/wall.h \
     Widget/infowidget.h \
     applicationwindow.h \
@@ -113,6 +114,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/abstractantena.cpp \
     Share/line.cpp \
     Share/reflectiveobstacle.cpp \
+    Share/rxdatahandler.cpp \
     Share/wall.cpp \
     Widget/infowidget.cpp \
     applicationwindow.cpp \
@@ -124,6 +126,8 @@ RESOURCES += \
     Ressources.qrc
 
 DISTFILES +=
+
+QMAKE_CXXFLAGS += "-Wno-deprecated"
 
 #INCLUDEPATH += /usr/local/Cellar/boost/1.73.0/include/boost
 #LIBS += /usr/local/Cellar/boost/1.73.0/lib -libboost_math_c99
