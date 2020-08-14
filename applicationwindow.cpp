@@ -73,7 +73,6 @@ void ApplicationWindow::resetToolInfo(){
 void ApplicationWindow::attachObserver(WindowObserver *windowobserver){
     m_windowobserver.push_back(windowobserver);
 }
-
 void ApplicationWindow::detachObserver(WindowObserver *windowobserver){
     unsigned long long i = 0;
     for (m_windowobserveriterator = m_windowobserver.begin();
@@ -85,7 +84,6 @@ void ApplicationWindow::detachObserver(WindowObserver *windowobserver){
         i++;
     }
 }
-
 void ApplicationWindow::notify(int mode){
     for (unsigned long long i=0;i<m_windowobserver.size();i++){
         m_windowobserver.at(i)->update(mode);

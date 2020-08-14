@@ -21,7 +21,7 @@ public:
     explicit Surface3D(Q3DSurface *surface, TransmitterProduct *dialog);
     ~Surface3D();
 
-    void enablePatternModel(bool enable);
+    void enablePatternModel();
 
     void toggleModeNone() { m_graph->setSelectionMode(QAbstract3DGraph::SelectionNone); }
     void toggleModeItem() { m_graph->setSelectionMode(QAbstract3DGraph::SelectionItem); }
@@ -30,13 +30,6 @@ public:
     void toggleModeSliceColumn() { m_graph->setSelectionMode(QAbstract3DGraph::SelectionItemAndColumn
                                                              | QAbstract3DGraph::SelectionSlice); }
 
-    void setBlackToYellowGradient();
-    void setGreenToRedGradient();
-
-public Q_SLOTS:
-    void changeTheme(int theme);
-    void toggleRotation();
-    void triggerRotation();
 
 private:
     Q3DSurface *m_graph;
@@ -58,7 +51,7 @@ private:
     //int m_fieldLines;
     //int m_arrowsPerLine;
 
-    void generateData();
+    void fillPatternProxy();
 };
 
 #endif // SURFACE3D_H

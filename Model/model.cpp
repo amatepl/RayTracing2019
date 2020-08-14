@@ -151,4 +151,3 @@ void Model::notify(MathematicalTransmitterProduct* transmitter)
 
     m_windowModelObservable->modelNotify(transmitter->getRays());
 }
-

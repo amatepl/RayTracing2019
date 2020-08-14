@@ -50,7 +50,7 @@ public:
 
         double d = lambda*0.5;
         double k = 2.0*M_PI/lambda;
-        double alpha  = phi*M_PI/180;
+        double alpha  = phi*M_PI/180.0;
         double principal_angle = m_pr_orientation*M_PI/12; // -5 -4 -3 ... 0 ... 3 4 5
         double beta = (theta+m_orientation)*M_PI/180;
         double alphaprime = M_PI/2;
@@ -59,17 +59,19 @@ public:
         double Aprime = sin(alphaprime)*sin(betaprime);
         double B = sin(alpha)*cos(beta);
         double Bprime = sin(alphaprime)*cos(betaprime);
-        psy = i*k*d*(A-Aprime);
-        qsy = i*k*d*(B-Bprime);
-        if ((A == Aprime) & (B != Bprime)){
+        psy = i*d*k*(A-Aprime);
+        qsy = i*d*k*(B-Bprime);
+        double modA = fmod((A-Aprime),2);
+        double modB = fmod((B-Bprime),2);
+        if ((modA == 0) & (modB != 0)){
             yarray = double(m_column) + 0.0*i;
             xarray = (exp(qsy*double(m_row))-1.0)/(exp(qsy)-1.0);
         }
-        else if ((A != Aprime) && (B==Bprime)){
+        else if ((modA != 0) && (modB == 0)){
             yarray = (exp(psy*double(m_column))-1.0)/(exp(psy)-1.0);
             xarray = double(m_row)+0.0*i;
         }
-        else if ((A == Aprime) && (B==Bprime)){
+        else if ((modA == 0)&& (modB == 0)){
             yarray = double(m_column) + 0.0*i;
             xarray = double(m_row)+0.0*i;
         }
@@ -77,6 +79,12 @@ public:
             yarray = (exp(psy*double(m_column))-1.0)/(exp(psy)-1.0);
             xarray = (exp(qsy*double(m_row))-1.0)/(exp(qsy)-1.0);
         }
+        if (theta == 180 && phi == 90)
+        {
+            cout << "xarray: " << xarray << endl;
+            cout << "yarray: " << yarray << endl;
+        }
+//        arrayfactor = xarray*yarray/complex<double>(m_column*m_row);
         arrayfactor = xarray*yarray;
         return arrayfactor;
     }

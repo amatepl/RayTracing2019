@@ -152,7 +152,7 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
         //    cout << "Shift: " << angle_receiver - resultant_speed.angle() << endl;
         double omega = -(beta.p2().x()*resultant_speed.p2().x() + beta.p2().y()*resultant_speed.p2().y());
         omega = round(omega*1e4)/1e4;
-        m_dopplerSpectrum[receiver][omega] += 2*M_PI*a;
+        m_dopplerSpectrum[receiver][omega] += a;
     }
     return Efield;
 }
@@ -818,13 +818,16 @@ MathematicalTransmitterProduct::pointsForPathLoss(ProductObservable *true_receiv
 {
     map<ProductObservable *, map<double, double>>::iterator it;
     std::vector<QPointF> points;
-    int number_points = 50;
+    int number_points = 200;
+    //int number_row = 1;
+    //int number_column = 1;
     MathematicalRayProduct *direct_ray;
-
     if (m_receiversRays[true_receiver] .size() != 0 && m_receiversRays[true_receiver].at(0)->size() == 1)
     {
         direct_ray = m_receiversRays[true_receiver].at(0)->at(0);
-        for (int i = 0; i <= number_points; i++)
+        QPointF p0 = direct_ray->p1();
+        points.push_back(p0);
+        for (int i = 1; i <= number_points; i++)
         {
             points.push_back(direct_ray->pointAt(double(i) / number_points));
         }

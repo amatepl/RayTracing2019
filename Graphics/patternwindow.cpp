@@ -20,10 +20,22 @@ PatternWindow::PatternWindow(TransmitterProduct *dialog)
     container->setFocusPolicy(Qt::StrongFocus);
 
     QWidget *widget = new QWidget;
+    auto palette = widget->palette();
+    palette.setColor(QPalette::Window, Qt::white);
+    widget->setPalette(palette);
     QHBoxLayout *hLayout = new QHBoxLayout(widget);
     QVBoxLayout *vLayout = new QVBoxLayout();
-    hLayout->addWidget(container, 1);
+    QVBoxLayout *graph_layout = new QVBoxLayout();
+    QLabel *label = new QLabel("3D Gain Pattern");
+    QFont font;
+    font.setPointSize(30);
+    label->setFont(font);
+    label->setAlignment(Qt::AlignHCenter);
+    graph_layout->addWidget(label);
+    graph_layout->addWidget(container);
+    hLayout->addLayout(graph_layout);
     hLayout->addLayout(vLayout);
+
     vLayout->setAlignment(Qt::AlignTop);
 
     widget->setWindowTitle(QStringLiteral("3D pattern"));
@@ -43,52 +55,8 @@ PatternWindow::PatternWindow(TransmitterProduct *dialog)
     selectionVBox->addWidget(modeItemRB);
     selectionGroupBox->setLayout(selectionVBox);
 
-    QComboBox *themeList = new QComboBox(widget);
-    themeList->addItem(QStringLiteral("Qt"));
-    themeList->addItem(QStringLiteral("Primary Colors"));
-    themeList->addItem(QStringLiteral("Digia"));
-    themeList->addItem(QStringLiteral("Stone Moss"));
-    themeList->addItem(QStringLiteral("Army Blue"));
-    themeList->addItem(QStringLiteral("Retro"));
-    themeList->addItem(QStringLiteral("Ebony"));
-    themeList->addItem(QStringLiteral("Isabelle"));
-
-    QGroupBox *colorGroupBox = new QGroupBox(QStringLiteral("Custom gradient"));
-
-    QLinearGradient grBtoY(0, 0, 1, 100);
-    grBtoY.setColorAt(1.0, Qt::black);
-    grBtoY.setColorAt(0.67, Qt::blue);
-    grBtoY.setColorAt(0.33, Qt::red);
-    grBtoY.setColorAt(0.0, Qt::yellow);
-    QPixmap pm(24, 100);
-    QPainter pmp(&pm);
-    pmp.setBrush(QBrush(grBtoY));
-    pmp.setPen(Qt::NoPen);
-    pmp.drawRect(0, 0, 24, 100);
-    QPushButton *gradientBtoYPB = new QPushButton(widget);
-    gradientBtoYPB->setIcon(QIcon(pm));
-    gradientBtoYPB->setIconSize(QSize(24, 100));
-
-    QLinearGradient grGtoR(0, 0, 1, 100);
-    grGtoR.setColorAt(1.0, Qt::darkGreen);
-    grGtoR.setColorAt(0.5, Qt::yellow);
-    grGtoR.setColorAt(0.2, Qt::red);
-    grGtoR.setColorAt(0.0, Qt::darkRed);
-    pmp.setBrush(QBrush(grGtoR));
-    pmp.drawRect(0, 0, 24, 100);
-    QPushButton *gradientGtoRPB = new QPushButton(widget);
-    gradientGtoRPB->setIcon(QIcon(pm));
-    gradientGtoRPB->setIconSize(QSize(24, 100));
-
-    QHBoxLayout *colorHBox = new QHBoxLayout;
-    colorHBox->addWidget(gradientBtoYPB);
-    colorHBox->addWidget(gradientGtoRPB);
-    colorGroupBox->setLayout(colorHBox);
 
     vLayout->addWidget(selectionGroupBox);
-    vLayout->addWidget(new QLabel(QStringLiteral("Theme")));
-    vLayout->addWidget(themeList);
-    vLayout->addWidget(colorGroupBox);
 
     widget->show();
 
@@ -98,16 +66,9 @@ PatternWindow::PatternWindow(TransmitterProduct *dialog)
                      modifier, &Surface3D::toggleModeNone);
     QObject::connect(modeItemRB,  &QRadioButton::toggled,
                      modifier, &Surface3D::toggleModeItem);
-    QObject::connect(themeList, SIGNAL(currentIndexChanged(int)),
-                     modifier, SLOT(changeTheme(int)));
-    QObject::connect(gradientBtoYPB, &QPushButton::pressed,
-                     modifier, &Surface3D::setBlackToYellowGradient);
-    QObject::connect(gradientGtoRPB, &QPushButton::pressed,
-                     modifier, &Surface3D::setGreenToRedGradient);
 
-    modifier->enablePatternModel(true);
+    modifier->enablePatternModel();
     modeItemRB->setChecked(true);
-    themeList->setCurrentIndex(2);
 }
 
 PatternWindow::~PatternWindow(){

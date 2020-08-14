@@ -22,10 +22,10 @@ Surface3D::Surface3D(Q3DSurface *surface, TransmitterProduct *dialog)
       m_rmin(0.0),m_rmax(0.0)
 {
     QFont font;
-    font.setPointSize(50);
+    font.setPointSize(80);
     m_graph->setAxisX(new QValue3DAxis);
     m_graph->axisX()->setTitleVisible(true);
-    QString x_axe = QChar(0x03B8);
+    QString x_axe = QChar(0x03C6);
     m_graph->axisX()->setTitle(x_axe);
     m_graph->setAxisY(new QValue3DAxis);
     m_graph->axisY()->setTitleVisible(true);
@@ -34,25 +34,54 @@ Surface3D::Surface3D(Q3DSurface *surface, TransmitterProduct *dialog)
     m_graph->axisZ()->setTitleVisible(true);
     m_graph->axisZ()->setTitle("r");
     m_graph->setPolar(true);
-    m_graph->setShadowQuality(QAbstract3DGraph::ShadowQualityHigh);
-    m_graph->scene()->activeCamera()->setCameraPreset(Q3DCamera::CameraPresetFront);
-    m_graph->activeTheme()->setType(Q3DTheme::ThemeStoneMoss);
+    m_graph->activeTheme()->setType(Q3DTheme::ThemeDigia);
     m_graph->activeTheme()->setFont(font);
+    m_graph->activeTheme()->setBackgroundEnabled(false);
     m_patternProxy = new QSurfaceDataProxy();
     m_patternSeries = new QSurface3DSeries(m_patternProxy);
-
-    //QObject::connect(&m_rotationTimer, &QTimer::timeout, this,&Surface3D::triggerRotation);
-    m_angleStep = 0.0;
-
-    toggleRotation();
-    generateData();
 }
 
 Surface3D::~Surface3D(){
 
 }
 
-void Surface3D::generateData()
+void Surface3D::enablePatternModel()
+{
+    fillPatternProxy();
+    m_patternSeries->setDrawMode(QSurface3DSeries::DrawSurface);
+    m_patternSeries->setFlatShadingEnabled(true);
+
+    m_graph->axisX()->setLabelFormat("%.2f");
+    m_graph->axisZ()->setLabelFormat("%.2f");
+    m_graph->axisX()->setRange(m_thetamin, m_thetamax);
+    m_graph->axisY()->setRange(m_ymin , m_ymax);
+    m_graph->axisZ()->setRange(m_rmin, m_rmax + 0.1);
+    m_graph->axisX()->setLabelAutoRotation(30);
+    m_graph->axisY()->setLabelAutoRotation(90);
+    m_graph->axisZ()->setLabelAutoRotation(30);
+    m_graph->scene()->activeCamera()->setYRotation(45);
+    m_graph->scene()->activeCamera()->setXRotation(225);
+    m_graph->scene()->activeCamera()->setZoomLevel(60.0);
+
+    m_graph->addSeries(m_patternSeries);
+
+    m_stepTheta = (sampleThetaMax - sampleThetaMin) / float(sampleCountTheta - 1);
+    m_stepY = (m_ymax - m_ymin) / float(sampleCountY - 1);
+
+    QLinearGradient gr;
+    gr.setColorAt(0.0, QColor(255,255,0));
+    gr.setColorAt(1.0/6.0, QColor(255,153,0));
+    gr.setColorAt(2.0/6.0, QColor(255,0,0));
+    gr.setColorAt(3.0/6.0, QColor(153,0,153));
+    gr.setColorAt(4.0/6.0,QColor(255,0,0));
+    gr.setColorAt(5.0/6.0,QColor(255,153,0));
+    gr.setColorAt(6.0/6.0,QColor(255,255,0));
+
+    m_graph->seriesList().at(0)->setBaseGradient(gr);
+    m_graph->seriesList().at(0)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+}
+
+void Surface3D::fillPatternProxy()
 {
     float stepTheta = (sampleThetaMax - sampleThetaMin) / sampleCountTheta;
     float stepPhy = (samplePhyMax - samplePhyMin) / sampleCountPhy;
@@ -84,76 +113,5 @@ void Surface3D::generateData()
         }
         *m_patternArray << newRow;
     }
-    m_graph->axisX()->setRange(m_thetamin, m_thetamax);
-    m_graph->axisY()->setRange(m_ymin-5.0, m_ymax+5.0);
-    m_graph->axisZ()->setRange(m_rmin, m_rmax+1);
     m_patternProxy->resetArray(m_patternArray);
-}
-
-void Surface3D::enablePatternModel(bool enable)
-{
-    if (enable) {
-        m_patternSeries->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
-        m_patternSeries->setFlatShadingEnabled(true);
-
-        m_graph->axisX()->setLabelFormat("%.2f");
-        m_graph->axisZ()->setLabelFormat("%.2f");
-        m_graph->axisX()->setRange(m_thetamin, m_thetamax);
-        m_graph->axisY()->setRange(m_ymin, m_ymax);
-        m_graph->axisZ()->setRange(m_rmin, m_rmax);
-        m_graph->axisX()->setLabelAutoRotation(30);
-        m_graph->axisY()->setLabelAutoRotation(90);
-        m_graph->axisZ()->setLabelAutoRotation(30);
-
-        m_graph->addSeries(m_patternSeries);
-
-        m_stepTheta = (sampleThetaMax - sampleThetaMin) / float(sampleCountTheta - 1);
-        m_stepY = (m_ymax - m_ymin) / float(sampleCountY - 1);
-    }
-}
-
-void Surface3D::triggerRotation()
-{
-    m_angleStep += M_PI/4;
-    if (m_angleStep >= 2*M_PI){
-        m_angleStep = 0;
-    }
-    m_angleStep += M_PI/4;
-    generateData();
-}
-
-void Surface3D::changeTheme(int theme)
-{
-    m_graph->activeTheme()->setType(Q3DTheme::Theme(theme));
-}
-
-void Surface3D::toggleRotation(){
-    if (m_rotationTimer.isActive())
-        m_rotationTimer.stop();
-    else
-        m_rotationTimer.start(500);
-}
-
-void Surface3D::setBlackToYellowGradient()
-{
-    QLinearGradient gr;
-    gr.setColorAt(0.0, Qt::black);
-    gr.setColorAt(0.33, Qt::blue);
-    gr.setColorAt(0.67, Qt::red);
-    gr.setColorAt(1.0, Qt::yellow);
-
-    m_graph->seriesList().at(0)->setBaseGradient(gr);
-    m_graph->seriesList().at(0)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
-}
-
-void Surface3D::setGreenToRedGradient()
-{
-    QLinearGradient gr;
-    gr.setColorAt(0.0, Qt::darkGreen);
-    gr.setColorAt(0.5, Qt::yellow);
-    gr.setColorAt(0.8, Qt::red);
-    gr.setColorAt(1.0, Qt::darkRed);
-
-    m_graph->seriesList().at(0)->setBaseGradient(gr);
-    m_graph->seriesList().at(0)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
 }

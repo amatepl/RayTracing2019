@@ -415,7 +415,7 @@ void MathematicalReceiverProduct::dopplerSpectrum()
     int i = 0;
     for(const auto &dop : m_doppler){
         omega[i] = dop.first;
-        doppler[i] = abs(dop.second);
+        doppler[i] = 20*log10(abs(dop.second));
         i++;
     }
 }
@@ -589,10 +589,9 @@ void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* trans
     std::vector<QPointF> path_loss_points = transmitter->pointsForPathLoss(this);
     MathematicalReceiverProduct* copy_receiver = new MathematicalReceiverProduct(this);
     QLineF line;
-    m_pathloss.clear();
+//    m_pathloss.clear();
     if (path_loss_points.size() > 0){
         line.setP1(path_loss_points.at(0));
-        m_pathloss.clear();
         for (unsigned long i = 1; i<path_loss_points.size(); i++)
         {
             copy_receiver->setX(path_loss_points.at(i).x());

@@ -31,6 +31,7 @@ QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF
     } else if (line.intersects(boundary3, &intersectionPoint) == 1) {
     } else if (line.intersects(boundary4, &intersectionPoint) == 1) {
     }
+
     return intersectionPoint;
 }
 
@@ -181,9 +182,11 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
 {
     QLineF line(*this,point);
     QPointF reflectionPoint;
+
     m_wall.intersects(line, &reflectionPoint);
     //    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
     //    wholeRay->push_back(newRay);
+
     wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
     QLineF new_movement = movement;
     m_movement.translate(-m_movement.p1());
