@@ -657,45 +657,31 @@ void MathematicalReceiverProduct::notifyObservers()
 
 void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
 {
-    std::vector<QLineF> path_loss_lines = transmitter->linesForPathLoss(this);
-    int number_points = 600;
-    int number_small_scale = 0;
-    QLineF path_loss_line;
-    QLineF tmp_line;
-    QPointF tmp_point;
-    QLineF tmp_normal;
-    QPointF p0;
-    double distance = 0.0;
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(-1.0,1.0);
+    int num_rows = 500;
+    int num_cols = 500;
     MathematicalReceiverProduct* copy_receiver = new MathematicalReceiverProduct(this);
-    QLineF line;
+    QPointF *tx_pos = dynamic_cast<QPointF*>(transmitter);
     m_pathloss.clear();
-    for(unsigned k = 0; k < path_loss_lines.size(); k++)
+    for(unsigned i = 0; i < num_rows; i++)
     {
-        path_loss_line = path_loss_lines.at(k);
-        p0 = path_loss_line.p1();
-        line.setP1(p0);
-        for (int i = 1; i <= number_points; i++)
+        double rand_row = distribution(generator)*num_rows;
+        for (int j = 0; j < num_cols; j++)
         {
-            tmp_point = path_loss_line.pointAt(double(i)/number_points);
-            tmp_line.setP1(tmp_point);
-            tmp_line.setP2(path_loss_line.p2());
-            tmp_normal = tmp_line.normalVector();
-            for (int j = -number_small_scale; j <= number_small_scale; j++)
+            double rand_col = distribution(generator)*num_cols;
+            copy_receiver->setX(tx_pos->x()+rand_col);
+            copy_receiver->setY(tx_pos->y()+rand_row);
+            transmitter->update(copy_receiver, m_movement);
+            for (unsigned int l = 0; l < m_observers.size(); l++)
             {
-                tmp_normal.setLength((c/frequency())*10*j);
-                copy_receiver->setX(tmp_normal.p2().x());
-                copy_receiver->setY(tmp_normal.p2().y());
-                line.setP2(tmp_normal.p2());
-                transmitter->update(copy_receiver, m_movement);
-                for (unsigned int l = 0; l < m_observers.size(); l++)
-                {
-                    m_observers.at(l)->update(copy_receiver,m_movement);
-                }
-                double power = transmitter->computePathLossPower(copy_receiver);
-                if (!isinf(power))
-                {
-                    m_pathloss[distance+line.length()*px_to_meter] = power;
-                }
+                m_observers.at(l)->update(copy_receiver,m_movement);
+            }
+            double power = transmitter->computePathLossPower(copy_receiver);
+            if (!isinf(power))
+            {
+                m_pathloss[distance+line.length()*px_to_meter] = power;
+            }
              }
         }
         if (k == 0)

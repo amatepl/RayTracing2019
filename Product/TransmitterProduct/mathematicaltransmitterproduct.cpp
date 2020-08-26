@@ -822,18 +822,18 @@ void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
     receiver->answer(this, m_frequency, m_bandwidth, powerDBm, m_receiversField[receiver]);
 }
 
-std::vector<QLineF>
-MathematicalTransmitterProduct::linesForPathLoss(ProductObservable *true_receiver)
-{
-    std::vector<QLineF> lines;
-    MathematicalRayProduct *direct_ray;
-    for (int i = m_receiversRays[true_receiver].at(0)->size()-1; i >= 0; i--)
-    {
-        direct_ray = m_receiversRays[true_receiver].at(0)->at(i);
-        lines.push_back(static_cast<QLineF>(*direct_ray));
-    }
-    return lines;
-}
+//std::vector<QLineF>
+//MathematicalTransmitterProduct::linesForPathLoss(ProductObservable *true_receiver)
+//{
+//    std::vector<QLineF> lines;
+//    MathematicalRayProduct *direct_ray;
+//    for (int i = m_receiversRays[true_receiver].at(0)->size()-1; i >= 0; i--)
+//    {
+//        direct_ray = m_receiversRays[true_receiver].at(0)->at(i);
+//        lines.push_back(static_cast<QLineF>(*direct_ray));
+//    }
+//    return lines;
+//}
 
 double
 MathematicalTransmitterProduct::computePathLossPower(ProductObservable* copy_receiver)
