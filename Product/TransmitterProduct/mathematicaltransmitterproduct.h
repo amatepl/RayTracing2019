@@ -1,12 +1,22 @@
 #ifndef MATHEMATICALTRANSMITTERPRODUCT_H
 #define MATHEMATICALTRANSMITTERPRODUCT_H
 
+//--------------------------------------------------------------------------------------------
+//
+//          Includes
+//
+//--------------------------------------------------------------------------------------------
+
+/* General Includes */
+
 #include "math.h"
 #include "complex.h"
 #include <iostream>
 #include <QPointF>
 #include <QPolygonF>
 #include <vector>
+
+/* Project Specific includes */
 
 #include "transmitterproduct.h"
 #include "dialogtransmitterproduct.h"
@@ -23,8 +33,19 @@
 #include <Product/abstractantena.h>
 #include "Product/CarProduct/mathematicalcarproduct.h"
 
+//--------------------------------------------------------------------------------------------
+//
+//          Global Variables
+//
+//--------------------------------------------------------------------------------------------
 
 using namespace std;
+
+//--------------------------------------------------------------------------------------------
+//
+//          Class MathematicalTransmitterProduct
+//
+//--------------------------------------------------------------------------------------------
 
 class MathematicalTransmitterProduct : public QPointF,
                                        public ProductObserver, public ModelObserver,
@@ -103,6 +124,8 @@ public:
 
     using MathematicalProduct::attachObservable;
     void  attachObservable(ProductObservable *productObservable) override;
+
+    Data * getChData(ProductObservable *rx) override;
 
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;
@@ -238,6 +261,9 @@ private:
     vector<vector<MathematicalRayProduct *>*> m_wholeRays;
 
     complex<double> m_EMfield;
+
+    // Data to share with receiver
+    map<ProductObservable *, Data> m_chsData;
 
 public slots:
     void carMoved(MathematicalCarProduct *car, int, int, double) override;

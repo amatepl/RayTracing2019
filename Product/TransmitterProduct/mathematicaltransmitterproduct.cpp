@@ -251,8 +251,9 @@ MathematicalTransmitterProduct::computeImpulseDiffraction(vector<MathematicalRay
     return impulse_r;
 }
 
-complex<double>
-MathematicalTransmitterProduct::computeDiffractedEfield(ProductObservable *receiver, vector<MathematicalRayProduct *> *rayLine,bool properties)
+complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(ProductObservable *receiver,
+                                                                        vector<MathematicalRayProduct *> *rayLine,
+                                                                        bool properties)
 {
 
     // Direct distance between the receiver and the transmitter
@@ -549,9 +550,7 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
 
             diffracted = true;
 
-        }
-        else
-        {
+        } else {
             m_ray_speed = ray_speeds[wholeRay];
             m_ray_speed.setLength(m_ray_speed.length()/3.6);
             complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
@@ -764,69 +763,7 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
 
     QPointF *pos = receiver->getPos();
 
-    if (m_zone.containsPoint(*pos, Qt::OddEvenFill)) {//    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
-        //        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
-        //            QPointF intersectionPoint1;
-        //            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i),
-        //                                                 &intersectionPoint1);
-
-        //            QPointF intersectionPoint2;
-        //            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i),
-        //                                                     &intersectionPoint2);
-
-        //            QPointF intersectionPoint3;
-        //            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i + 1),
-        //                                                 &intersectionPoint3);
-
-        //            QPointF intersectionPoint4;
-        //            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i + 1),
-        //                                                     &intersectionPoint4);
-
-
-
-        //            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
-        //            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
-
-        //            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
-        //            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
-
-        //            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
-        //            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
-
-        //            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
-        //            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
-
-        ////            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
-        ////            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
-
-        ////            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);
-        ////            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
-
-        ////            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
-        ////            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
-
-        ////            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
-        ////            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
-
-        //            QPolygonF buildingForm;
-        //            buildingForm << intersectionPoint1
-        //                         << intersectionPoint2
-        //                         << intersectionPoint4
-        //                         << intersectionPoint3
-        //                         << intersectionPoint1;
-
-        //            MathematicalProduct *building = m_buildingFactory
-        //                                                ->createMathematicalProduct(buildingForm);
-
-        //            m_products.push_back(building);
-
-
-        ////            m_scene->addPolygon(buildingForm);
-
-        //        }
-
-        //    }
-
+    if (m_zone.containsPoint(*pos, Qt::OddEvenFill)) {
         //      The receiver is in the illumination zone
 
         vector<MathematicalRayProduct *> *wholeRay = new vector<MathematicalRayProduct *>;
@@ -835,149 +772,6 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
         m_receiversRays[receiver].push_back(wholeRay);
     }
 }
-
-
-//void MathematicalTransmitterProduct::updateCarPos(ProductObservable *productObservable)
-//{
-//    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
-
-//    int idx = 0;
-//    if (carInIlluminatedCars(car, &idx)) {
-
-//        if (!m_zone.intersects(*car)) {
-//            m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
-//        }
-
-//    } else {
-
-//        if (m_zone.intersects(*car)) {//    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
-//        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
-//            QPointF intersectionPoint1;
-//            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i),
-//                                                 &intersectionPoint1);
-
-//            QPointF intersectionPoint2;
-//            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i),
-//                                                     &intersectionPoint2);
-
-//            QPointF intersectionPoint3;
-//            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i + 1),
-//                                                 &intersectionPoint3);
-
-//            QPointF intersectionPoint4;
-//            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i + 1),
-//                                                     &intersectionPoint4);
-
-
-
-//            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
-//            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
-
-//            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
-//            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
-
-//            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
-//            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
-
-//            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
-//            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
-
-////            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
-////            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
-
-////            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);//    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
-//        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
-//            QPointF intersectionPoint1;
-//            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i),
-//                                                 &intersectionPoint1);
-
-//            QPointF intersectionPoint2;
-//            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i),
-//                                                     &intersectionPoint2);
-
-//            QPointF intersectionPoint3;
-//            m_horizontalStreets.at(j)->intersect(*m_verticalStreets.at(i + 1),
-//                                                 &intersectionPoint3);
-
-//            QPointF intersectionPoint4;
-//            m_horizontalStreets.at(j + 1)->intersect(*m_verticalStreets.at(i + 1),
-//                                                     &intersectionPoint4);
-
-
-
-//            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
-//            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
-
-//            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
-//            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
-
-//            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
-//            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
-
-//            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
-//            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
-
-////            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
-////            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
-
-////            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);
-////            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
-
-////            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
-////            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
-
-////            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
-////            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
-
-//            QPolygonF buildingForm;
-//            buildingForm << intersectionPoint1
-//                         << intersectionPoint2
-//                         << intersectionPoint4
-//                         << intersectionPoint3
-//                         << intersectionPoint1;
-
-//            MathematicalProduct *building = m_buildingFactory
-//                                                ->createMathematicalProduct(buildingForm);
-
-//            m_products.push_back(building);
-
-
-////            m_scene->addPolygon(buildingForm);
-
-//        }
-
-//    }
-////            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
-
-////            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
-////            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
-
-////            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
-////            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
-
-//            QPolygonF buildingForm;
-//            buildingForm << intersectionPoint1
-//                         << intersectionPoint2
-//                         << intersectionPoint4
-//                         << intersectionPoint3
-//                         << intersectionPoint1;
-
-//            MathematicalProduct *building = m_buildingFactory
-//                                                ->createMathematicalProduct(buildingForm);
-
-//            m_products.push_back(building);
-
-
-////            m_scene->addPolygon(buildingForm);
-
-//        }
-
-//    }
-//            m_illuminatedCars.push_back(car);
-//        }
-//    }
-//}
-
 
 void MathematicalTransmitterProduct::attachObservable(ProductObservable *productObservable)
 {
@@ -1003,6 +797,10 @@ void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservab
     }
 }
 
+Data * MathematicalTransmitterProduct::getChData(ProductObservable *rx)
+{
+    return &m_chsData[rx];
+}
 
 void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
 {
