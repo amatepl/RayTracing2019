@@ -79,11 +79,6 @@ public:
             yarray = (exp(psy*double(m_column))-1.0)/(exp(psy)-1.0);
             xarray = (exp(qsy*double(m_row))-1.0)/(exp(qsy)-1.0);
         }
-        if (theta == 180 && phi == 90)
-        {
-            cout << "xarray: " << xarray << endl;
-            cout << "yarray: " << yarray << endl;
-        }
 //        arrayfactor = xarray*yarray/complex<double>(m_column*m_row);
         arrayfactor = xarray*yarray;
         return arrayfactor;
@@ -167,8 +162,8 @@ protected:
     double  kb              = 1.379e-23;    // Boltzmann's constant
     double  T0              = 290;          // K; reference temperature T_0
     double  BW              = 100e+6;       // Hz
-    double  antennaHeight   = 1.8;          //m
-    double  Ra              = 71.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
+    double  antennaHeight   = 1.5;          //m
+    double  Ra              = 73.0;   // Ohms, its a typical resistance data for \lambda/2 emettors
 
     double epsilonWallRel;
     unsigned long long m_frequency;           // Hz

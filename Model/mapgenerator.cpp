@@ -121,8 +121,8 @@ void MapGenerator::generateMap()
         }
     }
 
-    addCars();
-    addCars();
+//    addCars();
+//    addCars();
 
     //addTrees();
 }
