@@ -17,7 +17,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     // !!!!!!!!!!!!!!!! Relative Permittivity is on the wall !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!                                      !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    epsilonWallRel      = 4.5;
+    epsilonWallRel      = 5;
 }
 
 MathematicalTransmitterProduct::~MathematicalTransmitterProduct()
@@ -107,10 +107,11 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(const not_null<W
     // Angle in degrees
     double angle_transmitter = rayLine->angleTx();
 
-    double Ia = sqrt(2.0 * m_power / Ra); // Ia could be changed for Beamforming application (add exp)
+    double Ia = sqrt(2.0 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application (add exp)
     complex<double> array_factor = totaleArrayFactor(angle_transmitter, 90);
     complex<double> a = R * array_factor * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
 
+//<<<<<<< HEAD
     Efield = i * ((Zvoid * Ia) * a / (2.0 * M_PI));
 
     if (amountSegment == 1) {
@@ -120,6 +121,18 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(const not_null<W
         complex <double> groundEfield = this->computeEfieldGround(receiver, angle_transmitter, properties);
         Efield += groundEfield;
     }
+//=======
+//    Efield = -i * ((Zvoid * Ia) * a / (2.0 * M_PI));
+//    if (properties)
+//    {
+//        if (amountSegment == 1)
+//        {
+//            m_los_factor[receiver] = pow(abs(a),2);
+//        }
+//        else
+//        {
+//            m_nlos_factor[receiver] += pow(abs(a),2);
+//>>>>>>> 9fb7d4f3e7f4ce37821388cc444d86aacc13342e
 
 //    auto t2 = std::chrono::high_resolution_clock::now();
 //    auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>( t2 - t1 ).count();
@@ -232,10 +245,12 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
     double completeLength = sqrt(4*pow(antennaHeight,2)+pow(distance,2)); //distance / sin(thetaG);
 
     complex <double> i(0.0, 1.0);
-    double Ia = sqrt(2 * m_power / Ra); // Ia could be changed for Beamforming application
-    complex<double> array_factor = totaleArrayFactor(direction, thetaI * 180.0 / M_PI);
-    complex<double> a = R * array_factor * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
-    complex <double> Efield = i * a * (Zvoid * Ia) / (2*M_PI);
+
+    double Ia = sqrt(2 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application
+    complex<double> array_factor = totaleArrayFactor(direction,thetaI*180.0/M_PI);
+    complex<double> a = R * array_factor * exp(-i*(2.0*M_PI/lambda)*completeLength) / completeLength;
+    complex <double> Efield = -i * a * (Zvoid * Ia) / (2*M_PI);
+
     if (properties)
     {
         double tau = completeLength * 1e9/c; // [ns]
@@ -361,7 +376,7 @@ complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(ProductO
     directRay->setScale(px_to_meter);
     complex<double> a = F * array_factor * (exp(-i * (2.0 * M_PI / lambda) * directRay->getMeterLength())
                         / directRay->getMeterLength());
-    double Ia = sqrt(2 * m_power / Ra); // Ia could be changed for Beamforming application (add exp)
+    double Ia = sqrt(2 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application (add exp)
     Efield = -i  * a * ((Zvoid * Ia) / (2 * M_PI));
     delete directRay;
     if (properties){
@@ -379,11 +394,13 @@ complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(ProductO
 
 
 
+
 void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
 {
 
     double powerAtReceiver = 0;
     complex<double> emField = 0;
+    complex<double> groundField = 0;
     char chosenBeam = -5;
 
     vector<WholeRay *> wholeRays = m_receiversRays[receiver];
@@ -413,16 +430,27 @@ void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
                 //
                 //      The ray was reflected.
                 //
-                emField += computeEMfield(wholeRay, receiver,false);
+//<<<<<<< HEAD
+//                emField += computeEMfield(wholeRay, receiver,false);
+//=======
+                complex<double> EMfield = computeEMfield(wholeRay, receiver,false);
+                if (wholeRay->size() == 1) {
+                    // Adding the ground component
+                    double angle_transmitter = wholeRay->back()->angle();
+                    groundField = computeEfieldGround(receiver,angle_transmitter,false); // Compute the electrical field from the ray reflected off the ground
+                }
+                emField += EMfield;
+//>>>>>>> 9fb7d4f3e7f4ce37821388cc444d86aacc13342e
 
             }
         }
 
-        if (computePrx(emField) > powerAtReceiver) {
+        if (computePrx(emField,groundField,receiver) > powerAtReceiver) {
 
-            powerAtReceiver = computePrx(emField);
+            powerAtReceiver = computePrx(emField,groundField,receiver);
             chosenBeam = i;
             m_receiversField[receiver] = emField;
+            m_receiversGroundField[receiver] = groundField;
 
         }
     }
@@ -436,7 +464,8 @@ void
 MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
 {
     bool diffracted = false;
-
+    m_receiversField[receiver] = 0;
+    m_receiversGroundField[receiver] = 0;
     for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++)
     {
         WholeRay *wholeRay = m_receiversRays[receiver].at(i);
@@ -454,7 +483,13 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
             m_ray_speed = ray_speeds[wholeRay];
             m_ray_speed.setLength(m_ray_speed.length()/3.6);
             complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
+            if (wholeRay->size() == 1) {
+                // Adding the ground component
+                double angle_transmitter = wholeRay->back()->angle();
+                m_receiversGroundField[receiver] = computeEfieldGround(receiver,angle_transmitter,true); // Compute the electrical field from the ray reflected off the ground
+            }
             m_receiversField[receiver] += EMfield;
+
         }
     }
 
@@ -473,12 +508,13 @@ void MathematicalTransmitterProduct::freazeBeams()
 }
 
 
-double MathematicalTransmitterProduct::computePrx(complex <double> totalEfield)
+double MathematicalTransmitterProduct::computePrx(complex <double> totalEfield, complex<double> groundField, ProductObservable* receiver)
 {
     // Compute the power at the receive antenna with the total electric field induced by all MPC
-
-    complex <double> Voc = (lambda / M_PI) * (totalEfield);
-    double Prx = 1 / (8 * Ra) * norm(Voc);
+    double distance = this->distance(receiver);
+    double thetaI = atan(antennaHeight/(distance/2))+M_PI/2;
+    complex <double> Voc = (lambda/M_PI)*(totalEfield + groundField*(cos(M_PI/2*cos(thetaI))/sin(thetaI)));
+    double Prx = 1.0 / (8.0 * Ra) * norm(Voc);
     return Prx;
 }
 
@@ -755,7 +791,7 @@ void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
         comput4FixedBeam(receiver);
     }
 
-    double totalPower = computePrx(m_receiversField[receiver]);
+    double totalPower = computePrx(m_receiversField[receiver],m_receiversGroundField[receiver],receiver);
 
     double powerDBm = dBm(totalPower);
 
@@ -764,26 +800,17 @@ void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
 }
 
 
-std::vector<QPointF>
-MathematicalTransmitterProduct::pointsForPathLoss(ProductObservable *true_receiver)
+std::vector<QLineF>
+MathematicalTransmitterProduct::linesForPathLoss(ProductObservable *true_receiver)
 {
-    map<ProductObservable *, map<double, double>>::iterator it;
-    std::vector<QPointF> points;
-    int number_points = 200;
-    //int number_row = 1;
-    //int number_column = 1;
+    std::vector<QLineF> lines;
     MathematicalRayProduct *direct_ray;
-    if (m_receiversRays[true_receiver] .size() != 0 && m_receiversRays[true_receiver].at(0)->size() == 1)
+    for (int i = m_receiversRays[true_receiver].at(0)->size()-1; i >= 0; i--)
     {
-        direct_ray = m_receiversRays[true_receiver].at(0)->at(0);
-        QPointF p0 = direct_ray->p1();
-        points.push_back(p0);
-        for (int i = 1; i <= number_points; i++)
-        {
-            points.push_back(direct_ray->pointAt(double(i) / number_points));
-        }
+        direct_ray = m_receiversRays[true_receiver].at(0)->at(i);
+        lines.push_back(static_cast<QLineF>(*direct_ray));
     }
-    return points;
+    return lines;
 }
 
 double
@@ -791,7 +818,9 @@ MathematicalTransmitterProduct::computePathLossPower(ProductObservable* copy_rec
 {
     double powerAtReceiver = 0;
     complex<double> emField = 0;
+    complex<double> groundField = 0;
 
+//<<<<<<< HEAD
     vector<WholeRay *> wholeRays = m_receiversRays[copy_receiver];
 
     for (unsigned j = 0; j < wholeRays.size(); j++)
@@ -799,8 +828,30 @@ MathematicalTransmitterProduct::computePathLossPower(ProductObservable* copy_rec
         WholeRay *wholeRay  = wholeRays.at(j);
         complex<double> EMfield = computeEMfield(wholeRay, copy_receiver,false);
         emField += EMfield;
+//=======
+//    for (unsigned i = 0; i < m_receiversRays[copy_receiver].size(); i++)
+//    {
+//        vector<MathematicalRayProduct *> *wholeRay = m_receiversRays[copy_receiver].at(i);
+
+//        if (wholeRay->at(0)->getDiffracted())
+//        {
+//            map<ProductObservable *, map<double, double>>::iterator it;
+//            complex<double>EMfield = computeDiffractedEfield(copy_receiver,wholeRay,false);
+//            emField += EMfield;
+//        }
+//        else
+//        {
+//            complex<double> EMfield = computeEMfield(wholeRay, copy_receiver,false);
+//            if (wholeRay->size() == 1) {
+//                // Adding the ground component
+//                double angle_transmitter = wholeRay->back()->angle();
+//                groundField = computeEfieldGround(copy_receiver,angle_transmitter,false); // Compute the electrical field from the ray reflected off the ground
+//            }
+//            emField += EMfield;
+//        }
+//>>>>>>> 9fb7d4f3e7f4ce37821388cc444d86aacc13342e
     }
-    double totalPower = computePrx(emField);
+    double totalPower = computePrx(emField,groundField,copy_receiver);
 
     powerAtReceiver = dBm(totalPower);
 

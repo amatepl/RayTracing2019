@@ -61,6 +61,7 @@ public:
     virtual QVector<double> powerPathLoss() {return Prx;}
     virtual QVector<double> distancePathLoss() {return D;}
     virtual QVector<double> linearPathLoss() {return path_loss;}
+    virtual QVector<double> friisLoss() {return friis_loss;}
     virtual QVector<double> powerPathLossModel() {return Prx_model;}
     virtual QVector<double> distancePathLossModel() {return D_model;}
     virtual QVector<double> linearPathLossModel() {return path_loss_model;}
@@ -96,7 +97,7 @@ public:
 
 protected:
     // 1. Path Loss Variables
-    QVector<double> Prx, path_loss, D;
+    QVector<double> Prx, path_loss, friis_loss, D;
     QVector<double> Prx_model, path_loss_model, D_model;
     double m,b,r,fading_variability, min_prx; //Path loss slope and intercept and regression coefficient
 

@@ -137,19 +137,26 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
     D = m_mathematicalproduct->distancePathLoss();
     Prx = m_mathematicalproduct->powerPathLoss();
     path_loss = m_mathematicalproduct->linearPathLoss();
+    friis_loss = m_mathematicalproduct->friisLoss();
     double n = m_mathematicalproduct->pathLossExponent();
     fading_variability = m_mathematicalproduct->fadingVariability();
 
-    customplot->addGraph();
-    customplot->graph(0)->setPen(QPen(Qt::blue));
-    customplot->graph(0)->setData(D, Prx);
-    customplot->graph(0)->setName("Power Received");
+    QCPGraph *path_loss_graph = new QCPGraph(customplot->xAxis, customplot->yAxis);
 
+    path_loss_graph->setPen(QColor(Qt::blue));
+    path_loss_graph->setName("Power received");
+    path_loss_graph->setLineStyle(QCPGraph::lsLine);
+    path_loss_graph->setData(D, Prx);
 
     customplot->addGraph();
     customplot->graph(1)->setPen(QPen(Qt::red));
     customplot->graph(1)->setData(D, path_loss);
     customplot->graph(1)->setName("Path Loss");
+
+    customplot->addGraph();
+    customplot->graph(2)->setPen(QPen(Qt::darkGreen));
+    customplot->graph(2)->setData(D, friis_loss);
+    customplot->graph(2)->setName("Free propagation loss");
 
     customplot->xAxis->setLabel("Distance[m]");
     customplot->yAxis->setLabel("Prx[dbm]");
@@ -160,7 +167,7 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
     customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     customplot->replot();
     customplot->plotLayout()->insertRow(0);
-    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Real line of sight path-loss", QFont("sans", 12, QFont::Bold)));
+    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Simulation path loss", QFont("sans", 12, QFont::Bold)));
     customplot->legend->setVisible(true);
 
     // add the text label at the top:
@@ -168,7 +175,7 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
     textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
     textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
     textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
-    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(n)) + QString("\n") + QString("Std Deviation[dB] = ") + QString::number(fading_variability));
+    textLabel->setText(QString("Path Loss Exponent = ") + QString::number(abs(n)) + QString("\n") + QString("Fading variability[dB] = ") + QString::number(fading_variability));
     textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
     textLabel->setPen(QPen(Qt::black)); // show black border around text
 

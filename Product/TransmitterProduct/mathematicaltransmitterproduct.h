@@ -136,7 +136,7 @@ public:
     void comput4FixedBeam(ProductObservable * receiver);
     void dontChoseBeam(ProductObservable * receiver);
     void freazeBeams();
-    double computePrx(complex <double> totalEfield);
+    double computePrx(complex <double> totalEfield, complex<double> groundField, ProductObservable* receiver);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR) const;
     double computeReflexionPar(double thetaI, double epsilonR);
@@ -170,7 +170,9 @@ public:
         return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);
     }
 
-    vector<QPointF> pointsForPathLoss(ProductObservable *true_receiver) override;
+
+    std::vector<QLineF> linesForPathLoss(ProductObservable *true_receiver) override;
+
     double computePathLossPower(ProductObservable* copy_receiver) override;
     complex<double> computeInterference(ProductObservable *,QLineF local_region) override;
 
@@ -312,6 +314,7 @@ private:
 
     map<ProductObservable *,vector<WholeRay *>> m_receiversRays;
     map<ProductObservable *,complex<double>> m_receiversField;
+    map<ProductObservable *,complex<double>> m_receiversGroundField;
     vector<MathematicalTreeProduct *> m_trees;
 
     // Rice facor
