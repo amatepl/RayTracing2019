@@ -40,11 +40,15 @@ class ProductObservable;
 struct Data {
     std::map<double /*tau*/, std::complex<double> /*impulseResp*/>  impulseResp;
     std::map<double, std::complex<double>>                          dopplerSpctr;
-    double                                                          pathLossP;
-    std::complex<double>                                            interference;
-    double                                                          angularSpred;
+    double                                                          pathLossP{0};
+    std::complex<double>                                            interference{0};
+    double                                                          angularSpred{0};
+    std::vector<double>                                             u;
+//    std::map<double /*u*/, std::complex<double> /* a(u) */>         angularDistr;
     std::vector<std::complex<double> /* a(u) */>                    angularDistr;
-    std::vector<double /* S(u) */>                                  pAngularSpctr;
+//    std::map<double /*u*/, double /* S(u) */>                       prxAngularSpctr;
+    std::vector<double /* S(u) */>                                  prxAngularSpctr;
+    double                                                          riceFactor{0};
 };
 
 //--------------------------------------------------------------------------------------------
@@ -89,9 +93,9 @@ public:
 //    virtual void updateCarPos(ProductObservable *productObservable)  = 0;
 
 protected:
-    std::map<ProductObservable *, std::map<double /*tau*/, std::complex<double> /*impulseResp*/>>
+    std::map<const ProductObservable *, std::map<double /*tau*/, std::complex<double> /*impulseResp*/>>
         m_receiversImpulse;
-    std::map<ProductObservable *, std::map<double, std::complex<double>>> m_dopplerSpectrum;
+    std::map<const ProductObservable *, std::map<double, std::complex<double>>> m_dopplerSpectrum;
 };
 
 #endif // PRODUCTOBSERVER_H

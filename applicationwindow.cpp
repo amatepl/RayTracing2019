@@ -1,4 +1,5 @@
 #include "applicationwindow.h"
+#include "Share/wholeray.h"
 
 float px_to_meter = 0.1;
 
@@ -124,15 +125,14 @@ void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproduc
     for(unsigned i = 0; i< sceneproducts->size(); i++) {
 
         QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts->at(i).toGraphicsProduct());
-
         m_map->addItem(gItem);
     }
 }
 
-void ApplicationWindow::modelNotify(vector<vector<MathematicalRayProduct*> *> sceneproducts)
+void ApplicationWindow::modelNotify(vector<WholeRay *> sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts.size(); i++) {
-        for(unsigned j=0; j<sceneproducts.at(i)->size(); j++) {
+        for(unsigned j = 0; j<sceneproducts.at(i)->size(); j++) {
 
             QGraphicsItem* gItem = dynamic_cast<QGraphicsItem*>(sceneproducts.at(i)->at(
                                        j)->toGraphicsProduct());

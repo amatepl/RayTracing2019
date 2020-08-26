@@ -30,6 +30,7 @@ public:
     void changeDelaySpread(double delay);
     void changeRiceFactor(double rice);
     void changeCoherenceBandwidth(double coherence);
+    void changeAngularSpread(double angularSpread);
     void reset();
 
 private:
@@ -44,6 +45,7 @@ private:
     QLabel *rice_factor;
     QLabel *coherence_bw;
     QLabel *coherence_time;
+    QLabel *angular_spread;
 
     QGroupBox *edit_group;
     QDoubleSpinBox *frequency;

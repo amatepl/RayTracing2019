@@ -133,7 +133,7 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
 
     if(m_zone.containsPoint(*productObservable->getPos(),Qt::OddEvenFill)){
 
-        vector<MathematicalRayProduct*> *wholeRay = new vector<MathematicalRayProduct*>;
+        WholeRay *wholeRay = new WholeRay;
         QLineF line(*this,*productObservable->getPos());
         QPointF reflectionPoint;
         m_wall.intersects(line, &reflectionPoint);
@@ -178,7 +178,7 @@ void TransmitterImage::attachObservable(ProductObservable* productObservable){
 
 void TransmitterImage::notifyParent(ProductObservable *productObservable,
                                     QLineF const movement, const QPointF &point,
-                                    vector<MathematicalRayProduct*> *wholeRay)
+                                    WholeRay *wholeRay)
 {
     QLineF line(*this,point);
     QPointF reflectionPoint;

@@ -7,6 +7,10 @@
 #include <QLineF>
 #include <QObject>
 
+/* Project Specific */
+
+#include "Share/wholeray.h"
+
 using namespace std;
 
 class QPointF;
@@ -24,7 +28,7 @@ class AbstractAntena: public QObject
 public:
     virtual ~AbstractAntena(){};
     virtual void notifyParent(ProductObservable *receiver,QLineF const movement,
-                              const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) = 0;
+                              const QPointF &point, WholeRay *wholeRay) = 0;
     virtual void notifyCarDetected() = 0;
 
     enum typeWall {wall, front, back};

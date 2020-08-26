@@ -1,5 +1,7 @@
 #include "mathematicalreceiverproduct.h"
 
+#include <algorithm>
+
 MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY):
     QPointF(posX,posY)
 {
@@ -112,6 +114,42 @@ void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter
 }
 
 
+void MathematicalReceiverProduct::extractChData()
+{
+    for (vector<complex<double>>::iterator ang = m_chData->angularDistr.begin();
+         ang != m_chData->angularDistr.end();
+         ang++) {
+//        angular_distr[ang - m_chData->angularDistr.begin()] = 20*log10(abs(*ang));
+        angular_distr.push_back(-20*log10(abs(*ang)));
+    }
+//    if (m_chData->angularDistr.size() > 0){
+//        angular_distr = QVector<complex<double>>(m_chData->angularDistr.begin(), m_chData->angularDistr.end());
+//    }
+
+    if (m_chData->prxAngularSpctr.size() > 0) {
+        pas = QVector<double>(m_chData->prxAngularSpctr.begin(), m_chData->prxAngularSpctr.end());
+    }
+
+    double tmpPrx = 0;
+    double tmpPrxdB = 0;
+
+    for (double &prx: pas) {
+        tmpPrx += prx;
+        prx = 20*log10(abs(prx));
+        tmpPrxdB += prx;
+    }
+
+    cout<<"Tmp prx [dB]: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
+
+//    for (complex<double> &ang: angular_distr) {
+//        ang = 20*log10(abs(ang));
+//    }
+
+    angular_spread = m_chData->angularSpred;
+    u = QVector<double>(m_chData->u.begin(), m_chData->u.end());
+}
+
+
 void MathematicalReceiverProduct::save(string path)
 {
 //    cout << "/Users/amate/Documents/Polytech/Thesis/powerTest.csv" <<endl;
@@ -213,11 +251,11 @@ void MathematicalReceiverProduct::save(string path)
 void MathematicalReceiverProduct::record()
 {
     std::ofstream ofs;
-    ofs.open("/Users/amate/Documents/Polytech/Thesis/power.csv", std::ios_base::app | std::ios_base::out);
+//    ofs.open("/Users/amate/Documents/Polytech/Thesis/power.csv", std::ios_base::app | std::ios_base::out);
 
-    ofs<<m_power<<";"<<endl;
+//    ofs<<m_power<<";"<<endl;
 
-    ofs.close();
+//    ofs.close();
 }
 
 void MathematicalReceiverProduct::riceFactor(double rice)
@@ -348,9 +386,12 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
     std::vector <std::complex <double>> y(indepentant_rays);
 
     // loop over all rays
+
+    double tmpPrx = 0;
     int i = 0;
     for(const auto &imp : m_impulse){
         // Compute attenuation factor
+        tmpPrx += pow(abs(imp.second), 2);
         h[i] = 20*log10(abs(imp.second));
         // Compute time of arrival in ns
         tau[i] = imp.first; // tau
@@ -363,6 +404,9 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
         y[i] = imp.second;
         i++;
     }
+
+    cout<<"Tmp prx [dB] with impulse: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
+
     std::map<double,std::complex<double>> map_tau_tdl;
     for (unsigned long i=0; i<indepentant_rays; ++i){
         map_tau_tdl[x.at(i)] += y[i];
@@ -377,6 +421,8 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
         tau_tdl[i] = tdl.first;
         i++;
     }
+
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -468,7 +514,7 @@ void MathematicalReceiverProduct::sendInterferencePattern(){
         rice_distribution.push_back(imp.first/pow(sigma,2)
                                     * exp(-pow(imp.first,2)/(2*pow(sigma,2)))
                                     * exp(-pow(10,rice_factor/10)));
-                                    //* cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma));
+//                                    * cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma));
     }
     m_dialog->setDistributionInterference(distribution,rice_distribution);
 }
@@ -552,6 +598,7 @@ void MathematicalReceiverProduct::updateInformation(){
     m_info_widget->changeDelaySpread(delay_spread);
     m_info_widget->changeRiceFactor(rice_factor);
     m_info_widget->changeCoherenceBandwidth(coherence_bandwidth);
+    m_info_widget->changeAngularSpread(angular_spread);
 }
 
 // From ProductObservable
@@ -577,11 +624,16 @@ void MathematicalReceiverProduct::notifyObservers()
         m_impulse = m_transmitters.at(i)->receiverImpulse(this);
         m_doppler = m_transmitters.at(i)->receiverDoppler(this);
         riceFactor(m_transmitters.at(i)->riceFactor(this));
+        m_chData = m_transmitters.at(i)->getChData(this);
+
+        computeImpulseTDL();
+        computeDelaySpread();
+        coherenceBandwidth();
+        dopplerSpectrum();
+
+        extractChData();
     }
-    computeImpulseTDL();
-    computeDelaySpread();
-    coherenceBandwidth();
-    dopplerSpectrum();
+
 }
 
 void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
@@ -689,6 +741,7 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double frequ
 }
 
 
-QPointF* MathematicalReceiverProduct::getPos(){
-    return this;
+const QPointF * MathematicalReceiverProduct::getPos() const
+{
+    return this ;
 }

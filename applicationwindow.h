@@ -55,7 +55,7 @@ public:
     void modelAnswer(vector<MathematicalProduct*> sceneproduct) override;
     void modelNotify(vector<MathematicalProduct *> sceneproducts) override;
     void modelNotify(vector<MathematicalRayProduct> *sceneproducts) override;
-    void modelNotify(vector<vector<MathematicalRayProduct *> *> sceneproducts) override;
+    void modelNotify(vector<WholeRay *> sceneproducts) override;
 
     QWidget* createToolButton(const QString &text,int id);
     QWidget* rayTracingWidget();

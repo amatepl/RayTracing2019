@@ -65,11 +65,13 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/graphicsproduct.h \
     Product/mathematicalproduct.h \
     Product/sceneproduct.h \
+    Share/drafts.h \
     Share/line.h \
     Share/moveablegraphics.h \
     Share/reflectiveobstacle.h \
     Share/rxdatahandler.h \
     Share/wall.h \
+    Share/wholeray.h \
     Widget/infowidget.h \
     applicationwindow.h \
     graphicsmap.h \
@@ -116,6 +118,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Share/reflectiveobstacle.cpp \
     Share/rxdatahandler.cpp \
     Share/wall.cpp \
+    Share/wholeray.cpp \
     Widget/infowidget.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \
@@ -126,6 +129,10 @@ RESOURCES += \
     Ressources.qrc
 
 DISTFILES +=
+
+INCLUDEPATH += /usr/local/GSL/include \
+#    /usr/local/boost_1_74_0
+
 
 QMAKE_CXXFLAGS += "-Wno-deprecated"
 

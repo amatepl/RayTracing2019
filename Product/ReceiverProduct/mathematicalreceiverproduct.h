@@ -53,6 +53,13 @@ public:
     void coherenceBandwidth();
     void attachTransmitter(ProductObserver *transmitter);
 
+    /*!
+     * \brief extractChData
+     *
+     * Extracts the data from chData and copy it to ReceiverProduct
+     * member attributs.
+     */
+    void extractChData();   // Will need to be removed
 
     // 1. Path Loss Computation:
     void linearRegressionPathLoss();
@@ -113,7 +120,7 @@ public:
     void notify(double &, std::vector<double> *, std::complex<double> &) override;
     void answer(ProductObserver *observer, double frequency, double bandwidth,
                 double &power, std::complex<double> &EMfield) override;
-    QPointF* getPos()override;
+    const QPointF *getPos() const override;
 
 private:
     // 0. Intrisic parameters
@@ -130,6 +137,7 @@ private:
     vector<ProductObserver *> m_transmitters;
     ProductObserver *m_transmitter = nullptr;
 //    map<ProductObserver *, vector<ProductObserver *>> m_txImages;
+    Data *m_chData {nullptr};
 
     // 2. For E Field And Power Computation
     complex <double> m_e_field;

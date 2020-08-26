@@ -1,11 +1,33 @@
 #ifndef RECEIVERPRODUCT_H
 #define RECEIVERPRODUCT_H
 
+//--------------------------------------------------------------------------------------------
+//
+//          Includes
+//
+//--------------------------------------------------------------------------------------------
+
+/* General Includes */
+
 #include <complex>
 #include <vector>
 #include <map>
 #include <QPointF>
 #include <QVector>
+
+//--------------------------------------------------------------------------------------------
+//
+//          Definitions
+//
+//--------------------------------------------------------------------------------------------
+
+using PrxAngularSpread = QVector<double>;
+
+//--------------------------------------------------------------------------------------------
+//
+//          Class ReceiverProduct
+//
+//--------------------------------------------------------------------------------------------
 
 class ReceiverProduct
 {
@@ -64,6 +86,12 @@ public:
     virtual QVector<double> getDoppler() {return doppler;}
     virtual QVector<double> getOmega() {return omega;}
 
+    // 5. Spatial correlation
+    virtual QVector<double> prxAngularSpread(){return pas;}
+    virtual QVector<double> angularDistr(){return angular_distr;}
+    double angularSpread(){return angular_spread;}
+    QVector<double> getu() {return u;}
+
     virtual void newProperties() = 0;
 
 protected:
@@ -81,6 +109,12 @@ protected:
     // 4. Doppler
     QVector<double> omega;
     QVector<double> doppler;
+
+    // 5. Spatial correlation
+    PrxAngularSpread pas;
+    QVector<double> angular_distr;
+    double angular_spread {0};
+    QVector <double> u;
 
     unsigned long m_transmitterfrequency;
     unsigned long m_transmitterbandwidth;

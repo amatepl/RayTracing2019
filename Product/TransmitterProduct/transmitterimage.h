@@ -30,7 +30,7 @@ public:
 
     //AbstractAntena
     void notifyParent(ProductObservable *productObservable, QLineF const movement,
-                      const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
+                      const QPointF &point, WholeRay *wholeRay) override;
     void notifyCarDetected() override;
     QPolygonF getIlluminationZone() const override;
     QPolygonF getIlluminationZone(const QRectF &) const override;

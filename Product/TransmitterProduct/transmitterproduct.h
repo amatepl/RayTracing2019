@@ -81,8 +81,8 @@ public:
         }
         if (theta == 180 && phi == 90)
         {
-            cout << "xarray: " << xarray << endl;
-            cout << "yarray: " << yarray << endl;
+//            cout << "xarray: " << xarray << endl;
+//            cout << "yarray: " << yarray << endl;
         }
 //        arrayfactor = xarray*yarray/complex<double>(m_column*m_row);
         arrayfactor = xarray*yarray;

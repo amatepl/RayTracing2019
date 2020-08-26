@@ -1,9 +1,9 @@
 #include "raytracing.h"
 
 RayTracing::RayTracing(MathematicalTransmitterProduct *transmitter,
-                       MathematicalReceiverProduct */*receiver*/,const float scale)
+                       MathematicalReceiverProduct */*receiver*/, const float scale)
 {
-    RayFactory* rayFactory = new RayFactory(true, m_scene,scale);
+    RayFactory *rayFactory = new RayFactory(true, m_scene, scale);
     m_rayFactory = rayFactory;
     transmitter->setRayFactory(rayFactory);
     px_to_meter = scale;
@@ -16,48 +16,14 @@ RayTracing::RayTracing(const float scale)
 }
 
 
-//MathematicalComponent* RayTracing::compute(vector<MathematicalTransmitterProduct*>
-//        transmitters, MathematicalReceiverProduct* receiver,
-//        vector<MathematicalBuildingProduct *> buildings)
-//{
-//    m_transmitters = transmitters;
-//    m_receiver=receiver;
-//    m_buildings = buildings;
-//    reflectionsNumber = 1;
-
-
-
-//    //createImages();
-//    illuminationZones();
-
-//    RayFactory* rayFactory = new RayFactory(true, m_scene);
-//    m_rayFactory = rayFactory;
-//    cout<<"Before adding trees"<<endl;
-
-//    for(unsigned i =0; i<transmitters.size(); i++) {
-//        transmitters.at(i)->setRayFactory(rayFactory);
-//        QPolygonF illuminatedZone = transmitters.at(i)->getIlluminatedZone();
-//        for (unsigned j = 0; j<m_trees.size(); j++) {
-//            if (illuminatedZone.intersects(*m_trees.at(j))) {
-//                transmitters.at(i)->appendTree(m_trees.at(j));
-//            }
-//        }
-//    }
-
-//    return nullptr;
-//}
-
-
 MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct *>>
         mathematicalComponents, ReceiverFactory* receiverfactory)
 {
-
-
     setAttributs(mathematicalComponents);
 
     m_receiverfactory = receiverfactory;
 
-    reflectionsNumber = 20;
+    reflectionsNumber = 50;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
@@ -70,7 +36,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     //createImages();
     illuminationZones();
 
-    for(unsigned i =0; i<m_transmitters.size(); i++) {
+    for (unsigned i = 0; i< m_transmitters.size(); i++) {
         m_transmitters.at(i)->setRayFactory(rayFactory);
         QPolygonF illuminatedZone = m_transmitters.at(i)->getIlluminatedZone();
         for (unsigned j = 0; j<m_trees.size(); j++) {
@@ -80,9 +46,11 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
         }
     }
 
-    for (unsigned i = 0; i < m_receivers.size(); i++) {
+//    for (unsigned i = 0; i < m_receivers.size(); i++) {
+    for (MathematicalReceiverProduct * rx: m_receivers) {
         //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
-        m_receivers.at(i)->notifyObservers();
+        rx->notifyObservers();
+//        m_receivers.at(i)->notifyObservers();
     }
 
     return nullptr;
@@ -90,10 +58,10 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
 void RayTracing::clearWorkspace()
 {
-    for(unsigned i=0; i<m_transmitters.size(); i++) {
+    for (unsigned i = 0; i< m_transmitters.size(); i++) {
         m_transmitters.at(i)->clearAll();
     }
-    for(unsigned i=0; i<m_receivers.size(); i++) {
+    for (unsigned i = 0; i < m_receivers.size(); i++) {
         m_receivers.at(i)->detachObservers();
     }
     m_transmitters.clear();

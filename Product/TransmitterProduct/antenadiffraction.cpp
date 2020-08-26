@@ -34,7 +34,6 @@ void AntenaDiffraction::buildIlluminationZone(const QPointF &p1, const QPointF &
 //    m_zone = illuminationZon.e.intersected(m_sceneBoundary);
     m_zone = illuminationZone.intersected(buildCoverage());
     m_tmpZone = m_zone;
-//    cout<<"Number of corners of the illumination zone of a diffracted ray: "<<m_zone.size()<<endl;
 //    if(m_zone.size()>0){
 //        cout<<"The first point of the illumination zone is the position of the corner: "
 //            << (m_zone.at(0)==*this)<<endl;
@@ -92,7 +91,7 @@ void AntenaDiffraction::setIlluminatedZone(const QPolygonF &zone)
 void AntenaDiffraction::update(ProductObservable *productObservable, QLineF const movement)
 {
     if (m_zone.containsPoint(*productObservable->getPos(), Qt::OddEvenFill)) {
-        vector<MathematicalRayProduct *> *wholeRay = new vector<MathematicalRayProduct *>;
+        WholeRay *wholeRay = new WholeRay;
         QLineF line(*this, *productObservable->getPos());
 
         //ray newRay(*this,pos);
@@ -125,7 +124,7 @@ void AntenaDiffraction::update(ProductObservable *productObservable, QLineF cons
 
 void AntenaDiffraction::notifyParent(ProductObservable *productObservable,
                                      QLineF const movement,
-                                     const QPointF &point, vector<MathematicalRayProduct *> *wholeRay)
+                                     const QPointF &point, WholeRay *wholeRay)
 {
     QLineF line(*this, point);
     //ray newRay(*this,point);
