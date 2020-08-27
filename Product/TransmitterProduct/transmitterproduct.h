@@ -79,6 +79,7 @@ public:
             yarray = (exp(psy*double(m_column))-1.0)/(exp(psy)-1.0);
             xarray = (exp(qsy*double(m_row))-1.0)/(exp(qsy)-1.0);
         }
+
 //        arrayfactor = xarray*yarray/complex<double>(m_column*m_row);
         arrayfactor = xarray*yarray;
         return arrayfactor;

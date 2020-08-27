@@ -24,7 +24,7 @@ public:
 
     // Overrides from AbstractAntena
     virtual void notifyParent(ProductObservable *productObservable, QLineF const movement,
-                              const QPointF &point, vector<MathematicalRayProduct *> *wholeRay) override;
+                              const QPointF &point, WholeRay *wholeRay) override;
     virtual QPointF getPosition() const override;
     virtual QPolygonF getIlluminationZone() const override;
     virtual QPolygonF getIlluminationZone(const QRectF &) const override;

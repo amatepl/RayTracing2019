@@ -90,7 +90,6 @@ void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, float orientation)
 
 void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, double power){
 
-//    cout<<"Goiong strong in GraphicsRceiverProduct"<<endl;
     setPos(*point);
     QColor color;
     if((-20 - power)*3>=0){color.setHsv((-20 - power)*3,255,255 - (-20 - power),255);}

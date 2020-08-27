@@ -35,19 +35,19 @@ int MathematicalRayProduct::getWallInd() const
 }
 
 
-double MathematicalRayProduct::getTetai()const
+double MathematicalRayProduct::getTetai() const
 {
     return m_tetai;
 }
 
 
-double MathematicalRayProduct::getTheta()const
+double MathematicalRayProduct::getTheta() const
 {
     return theta;
 }
 
 
-int MathematicalRayProduct::getIndWall()const
+int MathematicalRayProduct::getIndWall() const
 {
     return wallIBouncedOn;
 }

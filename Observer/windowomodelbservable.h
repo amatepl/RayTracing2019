@@ -5,6 +5,7 @@
 #include <vector>
 
 class MathematicalRayProduct;
+class WholeRay;
 
 using namespace std;
 
@@ -15,7 +16,7 @@ public:
     virtual void modelAnswer(vector<MathematicalRayProduct> *sceneproducts) = 0;
     virtual void modelNotify(vector<MathematicalProduct *> sceneproducts) = 0;
     virtual void modelNotify(vector<MathematicalRayProduct>* sceneproducts) = 0;
-    virtual void modelNotify(vector<vector<MathematicalRayProduct*>*> sceneproducts) = 0;
+    virtual void modelNotify(vector<WholeRay*> sceneproducts) = 0;
 };
 
 #endif // WINDOWOMODELBSERVABLE_H

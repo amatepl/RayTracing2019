@@ -15,6 +15,8 @@
 #include <QPointF>
 #include <QPolygonF>
 #include <vector>
+#include <ratio>
+#include <gsl/pointers>
 
 /* Project Specific includes */
 
@@ -33,20 +35,46 @@
 #include <Product/abstractantena.h>
 #include "Product/CarProduct/mathematicalcarproduct.h"
 
+
 //--------------------------------------------------------------------------------------------
 //
 //          Global Variables
 //
 //--------------------------------------------------------------------------------------------
 
+#define NDEBUG
+
 using namespace std;
+using namespace gsl;
+//using WholeRay = vector<MathematicalRayProduct *>;
+
+//template <class Period = std::ratio<1>> struct Length {
+//    unsigned long long value;
+//};
+
+//auto operator ""_m(unsigned long long n)
+//{
+//    return Length<>{n};
+//}
+
+//Length metre = 13_m;
 
 //--------------------------------------------------------------------------------------------
 //
 //          Class MathematicalTransmitterProduct
 //
 //--------------------------------------------------------------------------------------------
-
+/*!
+ * \class MathematicalTransmitterProduct
+ * \brief The MathematicalTransmitterProduct class
+ *
+ * Represent the transmitter mathematical object
+ * Contains the parameters of the transmitter
+ *
+ * Create rays
+ * Computes the power and the electric field
+ * Computes channel characteristics
+ */
 class MathematicalTransmitterProduct : public QPointF,
                                        public ProductObserver, public ModelObserver,
                                        public AbstractAntena, public TransmitterProduct,
@@ -65,20 +93,44 @@ public:
 
     //virtual void setModel(Model model) override;
     complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction, QLineF local_region);
-    complex <double> computeEfieldGround(ProductObservable *receiver, double direction,
-                                         bool properties);
+    complex <double> computeEfieldGround(const ProductObservable *receiver, const double direction,
+                                         const bool properties);
 
-    complex<double> computeEMfield(vector<MathematicalRayProduct*> *rayLine,
-                                   ProductObservable* receiver,bool properties);
+    /*!
+     * \fn  complex<double> computeEMfield(WholeRay *rayLine, ProductObservable* receiver,bool properties);
+     * \brief computeEMfield - computes the electric field
+     * \param rayLine
+     * \param receiver
+     * \param properties
+     * \return EMfield
+     *
+     * Computes the electric field +
+     * the channel parameters
+     *
+     */
+    complex<double> computeEMfield(const not_null<WholeRay *> rayLine,
+                                   const ProductObservable *receiver,
+                                   const bool properties);
 
-    complex<double>computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line, QLineF local_region);
+    /*!
+     * \fn MathematicalTransmitterProduct::computeR(WholeRay *wholeRay)
+     * \brief Computes the R factor
+     * \param wholeRay
+     * \return R
+     */
+    double computeR(WholeRay *wholeRay) const;
 
-    double distance(ProductObservable *receiver);
-    complex<double> computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line, QLineF local_region);
-    complex<double> computeDiffractedEfield(ProductObservable *receiver, vector<MathematicalRayProduct *> *rayLine,bool properties);
-    complex<double> computeDiffractedTreeEfield(vector<QLineF>rayLine);
-    vector<vector<QLineF>> buildTreeRays(QPointF *Rx,MathematicalTreeProduct *tree);
-    void computeRayThroughTree(QPointF *Rx,MathematicalTreeProduct *tree);
+    /*!
+     * \fn MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
+     * \brief Estimates channel characteristics for a given receiver
+     * \param rx
+     */
+    void estimateCh(ProductObservable *rx);
+    complex<double>computeImpulseReflection(WholeRay *ray_line, QLineF local_region);
+
+    double distance(const ProductObservable *receiver);
+    complex<double> computeImpulseDiffraction(WholeRay *ray_line, QLineF local_region);
+    complex<double> computeDiffractedEfield(ProductObservable *receiver, WholeRay *rayLine,bool properties);
 
     void chooseBeam(ProductObservable * receiver);
     void comput4FixedBeam(ProductObservable * receiver);
@@ -86,7 +138,7 @@ public:
     void freazeBeams();
     double computePrx(complex <double> totalEfield, complex<double> groundField, ProductObservable* receiver);
     double dBm(double power);
-    double computeReflexionPer(double thetaI, double epsilonR);
+    double computeReflexionPer(double thetaI, double epsilonR) const;
     double computeReflexionPar(double thetaI, double epsilonR);
 
     double computeElevationScaterringAngle(float heightRx, float heightTx,
@@ -97,7 +149,7 @@ public:
                                                         float angleElevation);
 
 
-    vector<vector<MathematicalRayProduct *> *> getRays();
+    vector<WholeRay *> getRays();
     void notifyObservables();
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line) const;
 
@@ -118,14 +170,22 @@ public:
         return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);
     }
 
-    std::vector<QLineF> linesForPathLoss(ProductObservable *true_receiver) override;
     double computePathLossPower(ProductObservable* copy_receiver) override;
-    std::complex<double> computeInterference(ProductObservable *,QLineF local_region) override;
+    complex<double> computeInterference(ProductObservable *,QLineF local_region) override;
 
     using MathematicalProduct::attachObservable;
     void  attachObservable(ProductObservable *productObservable) override;
 
     Data * getChData(ProductObservable *rx) override;
+
+    /*!
+     * \brief angularSpread
+     * \param rx
+     *
+     * Computes the angular spred for rx.
+     * The result is stored in m_chsData[rx].angularSpread
+     */
+    void angularSpread(ProductObservable *rx);
 
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;
@@ -199,6 +259,13 @@ public:
     void update(QGraphicsItem *graphic) override;
     void openDialog() override;
 
+    /*!
+     * \fn void MathematicalTransmitterProduct::clearChData(ProductObservable *rx)
+     * \brief Clears all estimated data for a channel
+     * \param rx
+     */
+    void clearChData(ProductObservable *rx);
+
 //    // From ProductObserver
 //    void notify(const QPointF &pos) override;
 //    void attachObservable(ProductObservable *productObservable) override;
@@ -217,7 +284,7 @@ public:
     void notifyParent(ProductObservable *productObservable,
                       QLineF const movement,
                       const QPointF &point,
-                      vector<MathematicalRayProduct *> *wholeRay) override;
+                      WholeRay *wholeRay) override;
 
     void notifyCarDetected() override;
 
@@ -242,28 +309,29 @@ private:
     vector<ProductObservable *> m_productObservable;
     //map<const QPointF*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
 
-    map<ProductObservable *,vector<vector<MathematicalRayProduct *>*>> m_receiversRays;
+    map<ProductObservable *,vector<WholeRay *>> m_receiversRays;
     map<ProductObservable *,complex<double>> m_receiversField;
     map<ProductObservable *,complex<double>> m_receiversGroundField;
     vector<MathematicalTreeProduct *> m_trees;
 
     // Rice facor
-    map<ProductObservable *,double> m_los_factor;
-    map<ProductObservable *,double> m_nlos_factor;
+    map< ProductObservable *,double> m_los_factor;
+    map<const ProductObservable *,double> m_nlos_factor;
 
     // Doppler spectrum
-    map<vector<MathematicalRayProduct *> *,QLineF> ray_speeds;
+    map<WholeRay *,QLineF> ray_speeds;
     QLineF m_receiver_speed;
     QLineF m_ray_speed;
 
     //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;
-    vector<vector<MathematicalRayProduct *>*> m_wholeRays;
+//    vector<vector<MathematicalRayProduct *>*> m_wholeRays;
+    vector<WholeRay *> m_wholeRays;
 
     complex<double> m_EMfield;
 
     // Data to share with receiver
-    map<ProductObservable *, Data> m_chsData;
+    map<const ProductObservable *, Data> m_chsData;
 
 public slots:
     void carMoved(MathematicalCarProduct *car, int, int, double) override;

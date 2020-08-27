@@ -9,15 +9,18 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     show_tdl = true;
 
     m_tabwidget = new QTabWidget;
-    m_tabwidget->addTab(GeneralTabDialog(), tr("General"));
-    m_tabwidget->addTab(PhysicalImpulseResponse(),tr("Impulse Response"));
-    m_tabwidget->addTab(TDLImpulseResponse(),tr("TDL"));
-    m_tabwidget->addTab(ModelPathLossDialog(), tr("Model Path-Loss"));
-    m_tabwidget->addTab(RealPathLossDialog(), tr("Real Path-Loss"));
-    m_tabwidget->addTab(CellRange(),tr("Cellule range"));
-    m_tabwidget->addTab(DopplerSpectrum(), tr("Doppler Spectrum"));
-    m_tabwidget->addTab(InterferencePattern(),tr("Interference Pattern"));
-    m_tabwidget->addTab(DistributionInterference(),tr("Interference Distribution"));
+    m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
+    m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
+    m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
+    m_tabwidget->addTab(ModelPathLossDialog(),      tr("Model Path-Loss"));
+    m_tabwidget->addTab(RealPathLossDialog(),       tr("Real Path-Loss"));
+    m_tabwidget->addTab(CellRange(),                tr("Cellule range"));
+    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
+    m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
+    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
+    m_tabwidget->addTab(PrxAngularSpctr(),          tr("Power Angular Spectrum"));
+    m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
+
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
                                        | QDialogButtonBox::Save);
@@ -529,6 +532,99 @@ QWidget* DialogReceiverProduct::InterferencePattern()
 
 QWidget*
 DialogReceiverProduct::DistributionInterference()
+{
+    QWidget *widget = new QWidget;
+    m_distribution = new QCustomPlot;
+
+    m_distribution->xAxis->setLabel("|h|");
+    m_distribution->yAxis->setLabel("PDF");
+    m_distribution->xAxis->setRange(0, 1);
+    m_distribution->yAxis->setRange(0, 0.03);
+    m_distribution->yAxis->grid()->setSubGridVisible(true);
+    m_distribution->xAxis->grid()->setSubGridVisible(true);
+    m_distribution->rescaleAxes();
+    m_distribution->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    m_distribution->legend->setVisible(true);
+
+    m_distribution->plotLayout()->insertRow(0);
+    m_distribution->plotLayout()->addElement(0, 0, new QCPTextElement(m_distribution, "Histogram of |h| and Rice distribution fitting", QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(m_distribution,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
+}
+
+QWidget*
+DialogReceiverProduct::PrxAngularSpctr()
+{
+    QWidget *widget = new QWidget;
+    angular_distr_plot = new QCustomPlot;
+//    angular_distr_plot = new QCustomPlot;
+
+    pas = m_mathematicalproduct->prxAngularSpread();
+    angular_distr = m_mathematicalproduct->angularDistr();
+    u = m_mathematicalproduct->getu();
+
+    for (int i = 0; i < pas.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(angular_distr_plot);
+        line_impulse->start->setCoords(u[i], pas[i]);  // location of point 1 in plot coordinate
+        cout << "u " << u[i] <<", S(u): " << pas[i] << endl;
+        line_impulse->end->setCoords(u[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+//    for (int i = 0; i<angular_distr.size(); i++) {
+//        QCPItemLine *line_tdl = new QCPItemLine(angular_distr_plot);
+//        impulse_tdl.push_back(line_tdl);
+//        line_tdl->start->setCoords(u[i], angular_distr[i]);  // location of point 1 in plot coordinate
+//        line_tdl->end->setCoords(u[i], -600);  // location of point 2 in plot coordinate
+//        line_tdl->setPen(QPen(Qt::red));
+//    }
+
+//    for (const auto &i : u) {
+//        cout << "Are you negative in dialog? " << i <<endl;
+//    }
+
+    // Plot physiscal impulse response
+    angular_distr_plot->addGraph();
+    angular_distr_plot->graph(0)->setPen(QPen(Qt::blue));
+    angular_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    angular_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    angular_distr_plot->graph(0)->setData(u, pas);
+    angular_distr_plot->graph(0)->setName("PAS");
+
+//    angular_distr_plot->addGraph();
+//    angular_distr_plot->graph(1)->setPen(QPen(Qt::red));
+//    angular_distr_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
+//    angular_distr_plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+//    angular_distr_plot->graph(1)->setData(u, angular_distr);
+//    angular_distr_plot->graph(1)->setName("Angular Distribution");
+
+    angular_distr_plot->xAxis->setLabel("u[rad/m]");
+    angular_distr_plot->yAxis->setLabel("S(u)[dB]");
+    angular_distr_plot->yAxis->grid()->setSubGridVisible(true);
+    angular_distr_plot->xAxis->grid()->setSubGridVisible(true);
+    angular_distr_plot->rescaleAxes();
+    angular_distr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    angular_distr_plot->replot();
+    angular_distr_plot->legend->setVisible(true);
+    angular_distr_plot->plotLayout()->insertRow(0);
+    angular_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(angular_distr_plot, "Power Angular Density (PAS) and Angular Distribution", QFont("sans", 12, QFont::Bold)));
+    QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(angular_distr_plot,0,0);
+    firstLayout->addWidget(show_tdl,1,0);
+
+    widget->setLayout(firstLayout);
+
+    connect(show_tdl,&QPushButton::clicked,this,&DialogReceiverProduct::showTDL);
+    return widget;
+}
+
+QWidget*
+DialogReceiverProduct::AngularDistr()
 {
     QWidget *widget = new QWidget;
     m_distribution = new QCustomPlot;

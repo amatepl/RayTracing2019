@@ -48,6 +48,8 @@ public:
     QWidget* DopplerSpectrum();
     QWidget* InterferencePattern();
     QWidget* DistributionInterference();
+    QWidget* PrxAngularSpctr();
+    QWidget* AngularDistr();
 
     void changeGraph();
     void setInterferencePattern(vector<double> impulse_r, double min, double max);
@@ -98,6 +100,8 @@ private:
     QDialogButtonBox *m_buttonbox;
     QVector<QCPItemLine*> impulse_tdl;
     QCustomPlot *impulse_plot;
+    QCustomPlot *angular_distr_plot;
+
     bool show_tdl;
     bool enable;
     InterfererencePattern *m_interferencepattern;

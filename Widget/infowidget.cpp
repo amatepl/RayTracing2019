@@ -34,6 +34,7 @@ void InfoWidget::createInfoGroup(){
     rice_factor = new QLabel("Rice factor [dB]: " + QString::number(0),info_group);
     coherence_bw = new QLabel("Coherence bandwidth [MHz]: " + QString::number(0),info_group);
     coherence_time = new QLabel("Coherence time [\u03bcs]: " + QString::number(0),info_group);
+    angular_spread = new QLabel("Angular spread [rad]: " + QString::number(0),info_group);
 
     info_layout->addRow(scene_pos);
     info_layout->addRow(power_rx);
@@ -43,6 +44,7 @@ void InfoWidget::createInfoGroup(){
     info_layout->addRow(rice_factor);
     info_layout->addRow(coherence_bw);
     info_layout->addRow(coherence_time);
+    info_layout->addRow(angular_spread);
 
     info_group->setLayout(info_layout);
 }
@@ -128,32 +130,44 @@ void InfoWidget::createMapGroup()
     map_group->setLayout(map_layout);
 }
 
-void InfoWidget::changeScenePos(int x, int y){
+void InfoWidget::changeScenePos(int x, int y)
+{
     scene_pos->setText("Map position: ( " + QString::number(x) + " , " + QString::number(y) + " )");
 }
 
-void InfoWidget::changePower(double power){
+void InfoWidget::changePower(double power)
+{
     power_rx->setText("Power received [dBm]: " + QString::number(power));
 }
 
-void InfoWidget::changeDistance(double distance){
+void InfoWidget::changeDistance(double distance)
+{
     this->distance->setText("Transmitter distance [m]: " + QString::number(distance));
 }
 
-void InfoWidget::changeSnr(double snr){
+void InfoWidget::changeSnr(double snr)
+{
     this->snr->setText("Signal-to-noise ration [dB]: " + QString::number(snr));
 }
 
-void InfoWidget::changeDelaySpread(double delay){
+void InfoWidget::changeDelaySpread(double delay)
+{
     delay_spread->setText("Delay spread [ns]: " + QString::number(delay));
 }
 
-void InfoWidget::changeRiceFactor(double rice){
+void InfoWidget::changeRiceFactor(double rice)
+{
     rice_factor->setText("Rice factor [dB]: " + QString::number(rice));
 }
 
-void InfoWidget::changeCoherenceBandwidth(double coherence){
+void InfoWidget::changeCoherenceBandwidth(double coherence)
+{
     coherence_bw->setText("Coherence bandwidth [MHz]: " + QString::number(coherence));
+}
+
+void InfoWidget::changeAngularSpread (double angularSpread)
+{
+    angular_spread->setText("Angular Spread [rad]: " + QString::number(angularSpread));
 }
 
 void InfoWidget::reset(){
@@ -163,6 +177,7 @@ void InfoWidget::reset(){
     delay_spread->setText("Delay spread [ns]: " + QString::number(0));
     rice_factor->setText("Rice factor [dB]: " + QString::number(0));
     coherence_bw->setText("Coherence bandwidth [MHz]: " + QString::number(0));
+    angular_spread->setText("Angular spread: " + QString::number(0));
 }
 
 // ---------- SLOTS ----------

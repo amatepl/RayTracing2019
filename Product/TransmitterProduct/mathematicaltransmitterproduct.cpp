@@ -1,4 +1,6 @@
 #include "mathematicaltransmitterproduct.h"
+#include <chrono>
+
 MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY) : QPointF(posX, posY)
 {
     m_type              = "Transmitter";
@@ -46,7 +48,7 @@ QPolygonF MathematicalTransmitterProduct::buildCoverage()
 }
 
 complex<double>
-MathematicalTransmitterProduct::computeImpulseReflection(vector<MathematicalRayProduct *> *ray_line, QLineF local_region)
+MathematicalTransmitterProduct::computeImpulseReflection(WholeRay *ray_line, QLineF local_region)
 {
     complex <double> i(0.0, 1.0);
     int amountSegment = ray_line->size();
@@ -79,8 +81,9 @@ MathematicalTransmitterProduct::computeImpulseReflection(vector<MathematicalRayP
     return impulse_r;
 }
 
-complex <double> MathematicalTransmitterProduct::computeEMfield(vector<MathematicalRayProduct *> *rayLine,
-                                                               ProductObservable *receiver, bool properties)
+complex <double> MathematicalTransmitterProduct::computeEMfield(const not_null<WholeRay*> rayLine,
+                                                               const ProductObservable *receiver,
+                                                               const bool properties)
 {
     //  One vector<ray*> is one multi-path componant, the size of the vector determine the n-level
     //  we are in, for each ray only the power in the last ray is transmitted to
@@ -91,68 +94,103 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(vector<Mathemati
     //  off the buildings. The electric field is not // for the reflexion with the ground
     //  though. This is taken into account in the function computePrx.
 
+//    auto t1 = std::chrono::high_resolution_clock::now();
 
     complex <double> i(0.0, 1.0);
-    int amountSegment = rayLine->size();
-    double completeLength = 0.0;
-    double R = 1;
+//    double completeLength = 0.0;
+    double completeLength = rayLine->totalLength();
+//    double R = 1;
+    double R = computeR(rayLine);
     complex <double> Efield = 0.0;
-    MathematicalRayProduct *currentRay;
 
-    for (int i = 0; i < amountSegment; i++) {
-        currentRay = rayLine->at(i);
-        // Take angle between the ray and the x axis > 0
-        if (i != amountSegment - 1) {
-
-            //  The last segment, the one that reach the receptor does not have a rebound
-            double thetaI = abs(currentRay->getTetai());
-            R *= computeReflexionPer(thetaI, epsilonWallRel);
-        }
-
-        //  Get each length of each ray segment after the meter conversion (1px == 1dm)
-        completeLength += currentRay->getMeterLength();
-
-    }
     // Angle in degrees
-    double angle_receiver = rayLine->front()->angle();
-    double angle_transmitter = rayLine->back()->angle();
+    double angle_transmitter = rayLine->angleTx();
 
     double Ia = sqrt(2.0 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application (add exp)
     complex<double> array_factor = totaleArrayFactor(angle_transmitter, 90);
     complex<double> a = R * array_factor * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
 
     Efield = -i * ((Zvoid * Ia) * a / (2.0 * M_PI));
-    if (properties)
-    {
-        if (amountSegment == 1)
-        {
-            m_los_factor[receiver] = pow(abs(a),2);
-        }
-        else
-        {
-            m_nlos_factor[receiver] += pow(abs(a),2);
 
-        }
-        double tau = completeLength * 1e9/c; // [ns]
-        tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
-        m_receiversImpulse[receiver][tau] += a;
-        m_receiver_speed.translate(-m_receiver_speed.p1());
-        m_ray_speed.translate(-m_ray_speed.p1());
-        QLineF resultant_speed(QPointF(0.0,0.0),m_receiver_speed.p2()-m_ray_speed.p2());
-        QLineF beta(QPointF(.0,.0),QPointF(2.0*M_PI/lambda,0.0));
-        beta.setAngle(angle_receiver);
-        //    cout << "Angle Ray: " << m_ray_speed.angle() << endl;
-        //    cout << "Speed resultant: " << m_ray_speed.length()*3.6 << endl;
-        //    cout << "Shift: " << angle_receiver - resultant_speed.angle() << endl;
-        double omega = -(beta.p2().x()*resultant_speed.p2().x() + beta.p2().y()*resultant_speed.p2().y());
-        omega = round(omega*1e4)/1e4;
-        m_dopplerSpectrum[receiver][omega] += a;
-    }
+//    auto t2 = std::chrono::high_resolution_clock::now();
+//    auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>( t2 - t1 ).count();
+//    cout<<"Duration 1: "<< duration1<<endl;
+
     return Efield;
 }
 
+
+double MathematicalTransmitterProduct::computeR(WholeRay *wholeRay) const
+{
+    double R = 1;
+    for (WholeRay::iterator ray = wholeRay->begin(); ray != wholeRay->end() - 1; ray++ ) {
+        double thetaI = abs((*ray)->getTetai());
+        R *= computeReflexionPer(thetaI, epsilonWallRel);
+    }
+    return R;
+}
+
+void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
+{
+    complex <double> i(0.0, 1.0);
+    m_los_factor[rx] = 0;
+
+    for (const auto wholeRay: m_receiversRays[rx]) {
+
+        const double completeLength = wholeRay->totalLength();
+        const double angleRx = wholeRay->angleRx();
+        const double angleTx = wholeRay->angleTx();
+        Data &chData = m_chsData.at(rx);
+        complex<double> array_factor = totaleArrayFactor(angleTx, 90);
+        const double R = computeR(wholeRay);
+        complex<double> a =  R * array_factor / completeLength;
+        complex<double> h = a * exp(-i * (2.0 * M_PI / lambda) * completeLength);
+
+        m_los_factor[rx] += pow(abs(h), 2);
+
+        // Tau
+        double tau = completeLength * 1e9/c; // [ns]
+        tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
+
+        // Impulse response
+        m_receiversImpulse[rx][tau] += h; // To change
+        chData.impulseResp[tau] += h;
+
+        // u  = beta * cos(theta)
+        double waveNbr = 2 * M_PI / lambda;
+        double u = - waveNbr * sin(angleRx * M_PI / 180);
+        u = round(u * 1e4) / 1e4;
+
+        // Put computed data into channels data.
+        if (chData.u.size() == 0 || u != chData.u.back()) {
+            chData.u.push_back(u);
+            chData.angularDistr.push_back(2 * M_PI * h);
+            chData.prxAngularSpctr.push_back(norm(R * array_factor / completeLength) * 2 * M_PI);
+//            chData.prxAngularSpctr.push_back(norm(h) * 2 * M_PI / (1 - u/waveNbr));
+
+        } else {
+            chData.angularDistr.back() += 2 * M_PI * h;
+            chData.prxAngularSpctr.back() += norm(R * array_factor / completeLength) * 2 * M_PI;
+//            chData.prxAngularSpctr.back() += norm(h) * 2 * M_PI / (1 - u/waveNbr);
+        }
+
+        m_receiver_speed.translate(- m_receiver_speed.p1());
+        m_ray_speed.translate(- m_ray_speed.p1());
+        QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
+        QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
+        beta.setAngle(angleRx);
+        double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
+        omega = round(omega * 1e4) / 1e4;
+        m_dopplerSpectrum[rx][omega] += h;
+        m_chsData[rx].dopplerSpctr[omega] += h;
+
+    }
+}
+
 complex <double>
-MathematicalTransmitterProduct::computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction, QLineF local_region)
+MathematicalTransmitterProduct::computeImpulseGroundReflection(ProductObservable *copy_receiver,
+                                                               double direction,
+                                                               QLineF local_region)
 {
     double distance = this->distance(copy_receiver);
     double thetaG = atan((distance / 2) / antennaHeight);
@@ -172,7 +210,9 @@ MathematicalTransmitterProduct::computeImpulseGroundReflection(ProductObservable
     return impulse_r;
 }
 
-complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObservable *receiver, double direction,bool properties)
+complex <double> MathematicalTransmitterProduct::computeEfieldGround(const ProductObservable *receiver,
+                                                                    const double direction,
+                                                                    const bool properties)
 {
     // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
     // To Do: check if there is a wall between the TX and RX
@@ -183,26 +223,57 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(ProductObse
     double completeLength = sqrt(4*pow(antennaHeight,2)+pow(distance,2)); //distance / sin(thetaG);
 
     complex <double> i(0.0, 1.0);
+
     double Ia = sqrt(2 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application
     complex<double> array_factor = totaleArrayFactor(direction,thetaI*180.0/M_PI);
     complex<double> a = R * array_factor * exp(-i*(2.0*M_PI/lambda)*completeLength) / completeLength;
     complex <double> Efield = -i * a * (Zvoid * Ia) / (2*M_PI);
+
     if (properties)
     {
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
         m_receiversImpulse[receiver][tau] += a;
+        m_chsData[receiver].impulseResp[tau] += a;
         m_nlos_factor[receiver] += pow(abs(a),2);
-        double shift = (direction - m_receiver_speed.angle()) * M_PI/180.0;
-        double omega = -2.0*M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
+        double shift = (direction - m_receiver_speed.angle()) * M_PI / 180.0;
+        double omega = -2.0 * M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
         m_dopplerSpectrum[receiver][omega] += a;
+        m_chsData[receiver].dopplerSpctr[omega] += a;
+
+        double angleRx = 360 - direction;
+        Data &chData = m_chsData[receiver];
+
+        // u  = beta * cos(theta)
+        double waveNbr = 2 * M_PI / lambda;
+        double u =  waveNbr * sin( angleRx * M_PI / 180);
+        u = round(u * 1e4) / 1e4;
+
+        double tmpPower = 0;
+
+        // Put computed data into channels data.
+        if (chData.u.size() == 0 || u != chData.u.back()) {
+            chData.u.push_back(u);
+            chData.angularDistr.push_back(2 * M_PI * a);
+            chData.prxAngularSpctr.push_back(norm(R * array_factor / completeLength) * 2 * M_PI);
+//            chData.prxAngularSpctr.push_back(norm(a) * 2 * M_PI / (1 - u/waveNbr));
+            tmpPower += pow(R * norm(array_factor) / completeLength, 2) * 2 * M_PI;
+
+        } else {
+            chData.angularDistr.back() += 2 * M_PI * a;
+            chData.prxAngularSpctr.back() += norm(R * array_factor / completeLength) * 2 * M_PI;
+//            chData.prxAngularSpctr.back() += norm(a) * 2 * M_PI / (1 - u/waveNbr);
+            tmpPower += pow(R * norm(array_factor) / completeLength, 2) * 2 * M_PI;
+        }
+
+
     }
 
     return Efield;
 }
 
 
-double MathematicalTransmitterProduct::distance(ProductObservable *receiver)
+double MathematicalTransmitterProduct::distance(const ProductObservable *receiver)
 {
 
     //
@@ -219,7 +290,7 @@ double MathematicalTransmitterProduct::distance(ProductObservable *receiver)
 }
 
 complex<double>
-MathematicalTransmitterProduct::computeImpulseDiffraction(vector<MathematicalRayProduct *> *ray_line, QLineF local_region)
+MathematicalTransmitterProduct::computeImpulseDiffraction(WholeRay *ray_line, QLineF local_region)
 {
     double direct_dist = sqrt(pow(ray_line->at(1)->p1().x() - ray_line->at(0)->p2().x(), 2)
                               + pow(ray_line->at(1)->p1().y() - ray_line->at(0)->p2().y(), 2)); //convertir px to cm?
@@ -252,7 +323,7 @@ MathematicalTransmitterProduct::computeImpulseDiffraction(vector<MathematicalRay
 }
 
 complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(ProductObservable *receiver,
-                                                                        vector<MathematicalRayProduct *> *rayLine,
+                                                                        WholeRay *rayLine,
                                                                         bool properties)
 {
 
@@ -260,8 +331,7 @@ complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(ProductO
 //    double direct_dist = sqrt(pow(transmitter->getPosition().x()-m_Receiver->getPosX(),2)
 //                              + pow(transmitter->getPosition().y()-m_Receiver->getPosY(),2)); //convertir px to cm?
 
-    double direct_dist = sqrt(pow(rayLine->at(1)->p1().x() - rayLine->at(0)->p2().x(), 2)
-                              + pow(rayLine->at(1)->p1().y() - rayLine->at(0)->p2().y(), 2)); //convertir px to cm?
+    double direct_dist = rayLine->directDistance(); //convertir px to cm?
 
     complex<double> Efield = 0.0;
     complex<double> F = 0.0;
@@ -292,185 +362,15 @@ complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(ProductO
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
         m_receiversImpulse[receiver][tau] = a;
+        m_chsData[receiver].impulseResp[tau] = a;
 
     }
     return Efield;
 }
 
 
-complex<double> MathematicalTransmitterProduct::computeDiffractedTreeEfield(vector<QLineF> rayLine)
-{
-
-    // Direct distance between the receiver and the transmitter
-
-    double direct_dist = sqrt(pow(rayLine.at(1).p1().x() - rayLine.at(0).p2().x(), 2)
-                              + pow(rayLine.at(1).p1().y() - rayLine.at(0).p2().y(), 2)); //convertir px to cm?
-
-    complex<double> Efield = 0.0;
-    complex<double> F = 0.0;
-    complex <double> i(0.0, 1.0);
-
-    // The length defference between the path going through the tip of the obstacle, and the direct path.
-
-    double delta_r = (rayLine.at(0).length() + rayLine.at(1).length() - direct_dist) * pow(10, -1.0);
-
-    double nu = sqrt(2 * 2 * M_PI / lambda * delta_r / M_PI);
-    // The ITU's approximation for |F(nu)|^2
-
-    double absF = pow(10, -6.9 / 40) / sqrt((sqrt(pow(nu - 0.1, 2) + 1) + nu - 0.1));
-    double argF = -M_PI / 4 - pow(nu, 2) * M_PI / 2;
-    F = absF * exp(i * argF);
-
-    Line *directRay = new Line(rayLine.at(0).p2(), rayLine.at(1).p1());
-
-    double Ia = sqrt(2 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application (add exp)
-    Efield = -i  * ((Zvoid * Ia) / (2 * M_PI)) *
-             (exp(-i * (2.0 * M_PI / lambda) * directRay->getMeterLength()) / directRay->getMeterLength());
-    Efield = F * Efield;
-    delete directRay;
-    return Efield;
-}
 
 
-vector<vector<QLineF> >
-MathematicalTransmitterProduct::buildTreeRays(QPointF *Rx, MathematicalTreeProduct *tree)
-{
-
-    //
-    //  Construct the diffracted rays around the tree
-    //
-    //  Rx: receivers position
-    //
-
-    float radius = tree->getRadius();
-    QPointF treeCenter;
-    treeCenter.setX(tree->getPosX());
-    treeCenter.setY(tree->getPosY());
-
-    // The direct path is used in order to build a tree square model perpendicualr to the path
-    QLineF directPath(*this, *Rx);
-    directPath.setAngle(directPath.angle() + 90);
-    directPath.translate(treeCenter - *this);
-    directPath.setLength(radius);
-
-    directPath.setAngle(directPath.angle() + 45);
-    QPointF treeCorner1 = directPath.p2();
-
-    directPath.setAngle(directPath.angle() + 90);
-    QPointF treeCorner2 = directPath.p2();
-
-    directPath.setAngle(directPath.angle() + 90);
-    QPointF treeCorner3 = directPath.p2();
-
-    directPath.setAngle(directPath.angle() + 90);
-    QPointF treeCorner4 = directPath.p2();
-
-    QLineF distance1;
-    QLineF distance2;
-
-    distance1.setPoints(*this, treeCorner1);
-    distance2.setPoints(*this, treeCorner4);
-
-    vector<vector<QLineF>> wholeRays;
-    vector<QLineF> wholeRay1;
-    vector<QLineF> wholeRay2;
-    vector<QLineF> wholeRay3;
-
-    if (distance1.length() < distance2.length()) {
-
-
-        //          Rx
-        //
-        //      4 ----- 3
-        //      |       |
-        //      |       |
-        //      1 ----- 2
-        //
-        //          Tx
-
-
-        wholeRay1.push_back(distance1);
-        wholeRay1.push_back(QLineF(treeCorner1, treeCorner4));
-        wholeRay1.push_back(QLineF(treeCorner4, *Rx));
-
-        wholeRays.push_back(wholeRay1);
-
-        wholeRay2.push_back(QLineF(*this, treeCorner2));
-        wholeRay2.push_back(QLineF(treeCorner2, treeCorner3));
-        wholeRay2.push_back(QLineF(treeCorner3, *Rx));
-
-        wholeRays.push_back(wholeRay2);
-
-        // Top ray
-
-        QPointF edge1;
-        directPath.setPoints(*this, *Rx);
-        directPath.intersects(distance1, &edge1);
-
-        QPointF edge2;
-        directPath.intersects(distance2, &edge2);
-
-        QLineF firstDiffractedRay(*this, edge1);
-        QLineF lastDiffractedRay(*this, edge2);
-
-        // Correct the lenght of the first and last diffractrd rays
-        wholeRay3.push_back(firstDiffractedRay);
-        wholeRay3.push_back(QLineF(edge1, edge2));
-        wholeRay3.push_back(lastDiffractedRay);
-
-    } else {
-
-
-        //         Rx
-        //
-        //     2 ----- 1
-        //     |       |
-        //     |       |
-        //     3 ----- 4
-        //
-        //         Tx
-
-
-        wholeRay1.push_back(QLineF(distance2));
-        wholeRay1.push_back(QLineF(treeCorner4, treeCorner1));
-        wholeRay1.push_back(QLineF(treeCorner1, *Rx));
-
-        wholeRays.push_back(wholeRay1);
-
-        wholeRay2.push_back(QLineF(*this, treeCorner3));
-        wholeRay2.push_back(QLineF(treeCorner3, treeCorner2));
-        wholeRay2.push_back(QLineF(treeCorner2, *Rx));
-
-        wholeRays.push_back(wholeRay2);
-
-        // Top ray
-
-        QPointF edge1;
-        directPath.setPoints(*this, *Rx);
-        directPath.intersects(distance2, &edge1);
-
-        QPointF edge2;
-        directPath.intersects(distance1, &edge2);
-
-        QLineF firstDiffractedRay(*this, edge2);
-        QLineF lastDiffractedRay(*this, edge1);
-
-        // Correct the lenght of the first and last diffractrd rays
-        wholeRay3.push_back(firstDiffractedRay);
-        wholeRay3.push_back(QLineF(edge2, edge1));
-        wholeRay3.push_back(lastDiffractedRay);
-    }
-    return wholeRays;
-}
-
-
-void MathematicalTransmitterProduct::computeRayThroughTree(QPointF *Rx, MathematicalTreeProduct *tree)
-{
-    vector<vector<QLineF>> wholeRays = buildTreeRays(Rx, tree);
-    for (unsigned int i = 0; i < m_wholeRays.size(); i++) {
-//        complex<double> EfieldTree = computeDiffractedTreeEfield(wholeRays.at(i));
-    }
-}
 
 
 void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
@@ -481,15 +381,19 @@ void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
     complex<double> groundField = 0;
     char chosenBeam = -5;
 
-    vector<vector<MathematicalRayProduct *>*> wholeRays = m_receiversRays[receiver];
+    vector<WholeRay *> wholeRays = m_receiversRays[receiver];
 
     for (int i = -5; i < 5; i++) {
         m_pr_orientation = i;
 
         emField = 0;
 
+//        for (vector<WholeRay *>::iterator j = wholeRays.begin(); j != wholeRays.end(); j++) {
+
+//        }
+
         for (unsigned j = 0; j < wholeRays.size(); j++) {
-            vector<MathematicalRayProduct *> *wholeRay  = wholeRays.at(j);
+            WholeRay *wholeRay  = wholeRays.at(j);
 
             if (wholeRay->at(0)->getDiffracted()) {
 
@@ -497,8 +401,7 @@ void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
                 //      The ray is a diffracted one.
                 //
 
-                complex<double>EMfield = computeDiffractedEfield(receiver,wholeRay,false);
-                emField += EMfield;
+                emField += computeDiffractedEfield(receiver,wholeRay,false);
 
             } else {
 
@@ -539,7 +442,7 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
     m_receiversGroundField[receiver] = 0;
     for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++)
     {
-        vector<MathematicalRayProduct *> *wholeRay = m_receiversRays[receiver].at(i);
+        WholeRay *wholeRay = m_receiversRays[receiver].at(i);
 
         if (wholeRay->at(0)->getDiffracted())
         {
@@ -563,6 +466,8 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
 
         }
     }
+
+    estimateCh(receiver);
 }
 
 void MathematicalTransmitterProduct::dontChoseBeam(ProductObservable *receiver)
@@ -594,7 +499,7 @@ double MathematicalTransmitterProduct::dBm(double power)
 }
 
 
-double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR)
+double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double epsilonR) const
 {
 //    double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))
 //               /(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
@@ -618,7 +523,7 @@ double MathematicalTransmitterProduct::computeReflexionPar(double thetaI, double
 }
 
 
-vector<vector<MathematicalRayProduct *> *> MathematicalTransmitterProduct::getRays()
+vector<WholeRay *> MathematicalTransmitterProduct::getRays()
 {
     return m_wholeRays;
 }
@@ -678,13 +583,13 @@ MathematicalTransmitterProduct::computeIncidenceDepartureAngles(float angleIncid
 
 void MathematicalTransmitterProduct::clearAll(){
     //map<ProductObservable *,vector<vector<MathematicalRayProduct *>*>>::iterator rays;
-    vector<vector<MathematicalRayProduct*>*> whole_rays;
-    vector<MathematicalRayProduct*>* tmp;
+    vector<WholeRay *> whole_rays;
+    WholeRay *tmp;
     for (const auto  &rays: m_receiversRays){
         whole_rays = rays.second;
         for (unsigned i = 0; i<whole_rays.size(); i++){
             tmp = whole_rays.at(i);
-            for (unsigned j = 0; j<tmp->size();j++){
+            for (unsigned j = 0; j< tmp->size();j ++) {
                 delete tmp->at(j);
             }
             delete whole_rays.at(i);
@@ -727,6 +632,19 @@ void MathematicalTransmitterProduct::openDialog()
     new DialogTransmitterProduct(this);
 }
 
+void MathematicalTransmitterProduct::clearChData(ProductObservable *rx)
+{
+    m_chsData[rx].dopplerSpctr.clear();
+    m_chsData[rx].impulseResp.clear();
+    m_chsData[rx].pathLossP = 0;
+    m_chsData[rx].interference = 0;
+    m_chsData[rx].angularSpred = 0;
+    m_chsData[rx].u.clear();
+    m_chsData[rx].angularDistr.clear();
+    m_chsData[rx].prxAngularSpctr.clear();
+    m_chsData[rx].riceFactor = 0;
+
+}
 
 // ---------------------------------------------------- ProductObserver -------------------------------------------------------------------
 
@@ -737,6 +655,7 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
     //      The trasnmitter is updated every time an receiver moves
 
     // Clear data corresponding to the receiver calling the update
+    clearChData(receiver);
 
     m_receiversField[receiver] = 0;
     m_los_factor[receiver] = 0.0;
@@ -761,14 +680,14 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
         m_receiversRays[receiver].shrink_to_fit();
     }
 
-    QPointF *pos = receiver->getPos();
+    const QPointF &pos = *receiver->getPos();
 
-    if (m_zone.containsPoint(*pos, Qt::OddEvenFill)) {
+    if (m_zone.containsPoint(pos, Qt::OddEvenFill)) {
         //      The receiver is in the illumination zone
 
-        vector<MathematicalRayProduct *> *wholeRay = new vector<MathematicalRayProduct *>;
+        WholeRay *wholeRay = new WholeRay;
         QPointF m_pos(int(this->x()), int(this->y()));
-        wholeRay->push_back(m_rayFactory->createRay(*this, *pos));
+        wholeRay->push_back(m_rayFactory->createRay(*this, pos));
         m_receiversRays[receiver].push_back(wholeRay);
     }
 }
@@ -797,9 +716,41 @@ void MathematicalTransmitterProduct::drawRays(ProductObservable *productObservab
     }
 }
 
+
 Data * MathematicalTransmitterProduct::getChData(ProductObservable *rx)
 {
+    // Rice Factor
+    m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
+
+    // Angular Spread
+    angularSpread(rx);
+
     return &m_chsData[rx];
+}
+
+void MathematicalTransmitterProduct::angularSpread(ProductObservable *rx)
+{
+    double prx = 0;
+    double variance = 0;
+    double mean = 0;
+
+    const vector<double> &prxAngularSpread = m_chsData.at(rx).prxAngularSpctr;
+    const vector<double> &u = m_chsData.at(rx).u;
+
+    for (unsigned i = 0; i < prxAngularSpread.size(); i++) {
+        prx += prxAngularSpread.at(i);
+        variance += pow(u.at(i), 2) * prxAngularSpread.at(i);
+        mean += u.at(i) * prxAngularSpread.at(i);
+    }
+
+//    cout << "Power: " << prx << endl;
+//    cout << "pow(u.at(i)): " <<
+//    cout << "Variance: " << variance << endl;
+//    cout << "mean: "<< mean << endl;
+
+
+    m_chsData.at(rx).angularSpred = sqrt(variance/prx - pow(mean, 2));
+//    cout << "Ang Spread: "<< m_chsData.at(rx).angularSpred << endl;
 }
 
 void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
@@ -822,18 +773,6 @@ void MathematicalTransmitterProduct::compute(ProductObservable *receiver)
     receiver->answer(this, m_frequency, m_bandwidth, powerDBm, m_receiversField[receiver]);
 }
 
-//std::vector<QLineF>
-//MathematicalTransmitterProduct::linesForPathLoss(ProductObservable *true_receiver)
-//{
-//    std::vector<QLineF> lines;
-//    MathematicalRayProduct *direct_ray;
-//    for (int i = m_receiversRays[true_receiver].at(0)->size()-1; i >= 0; i--)
-//    {
-//        direct_ray = m_receiversRays[true_receiver].at(0)->at(i);
-//        lines.push_back(static_cast<QLineF>(*direct_ray));
-//    }
-//    return lines;
-//}
 
 double
 MathematicalTransmitterProduct::computePathLossPower(ProductObservable* copy_receiver)
@@ -844,7 +783,7 @@ MathematicalTransmitterProduct::computePathLossPower(ProductObservable* copy_rec
 
     for (unsigned i = 0; i < m_receiversRays[copy_receiver].size(); i++)
     {
-        vector<MathematicalRayProduct *> *wholeRay = m_receiversRays[copy_receiver].at(i);
+        WholeRay *wholeRay = m_receiversRays[copy_receiver].at(i);
 
         if (wholeRay->at(0)->getDiffracted())
         {
@@ -873,11 +812,11 @@ MathematicalTransmitterProduct::computePathLossPower(ProductObservable* copy_rec
 complex<double> MathematicalTransmitterProduct::computeInterference(ProductObservable* copy_receiver,QLineF local_region)
 {
     complex<double> impulse_r = 0;
-    vector<vector<MathematicalRayProduct *>*> wholeRays = m_receiversRays[copy_receiver];
+    vector<WholeRay *> wholeRays = m_receiversRays[copy_receiver];
 
     for (unsigned j = 0; j < wholeRays.size(); j++)
     {
-        vector<MathematicalRayProduct *> *wholeRay  = wholeRays.at(j);
+        WholeRay *wholeRay  = wholeRays.at(j);
 
         if (wholeRay->at(0)->getDiffracted())
         {
@@ -912,7 +851,7 @@ void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObse
 void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver,
                                                   QLineF const movement,
                                                   const QPointF &point,
-                                                  vector<MathematicalRayProduct *> *wholeRay)
+                                                  WholeRay *wholeRay)
 {
 
     //
