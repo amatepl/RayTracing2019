@@ -60,7 +60,7 @@ MathematicalTransmitterProduct::computeImpulseReflection(WholeRay *ray_line, QLi
         current_ray = ray_line->at(i);
         if (i != amountSegment - 1) {
             double thetaI = abs(current_ray->getTetai());
-            R *= computeReflexionPer(thetaI, epsilonWallRel);
+            R *= computeReflexionPar(thetaI, epsilonWallRel);
         }
         completeLength += current_ray->getMeterLength();
     }
@@ -107,32 +107,11 @@ complex <double> MathematicalTransmitterProduct::computeEMfield(const not_null<W
     // Angle in degrees
     double angle_transmitter = rayLine->angleTx();
 
-    double Ia = sqrt(2.0 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application (add exp)
+    double Ia = sqrt(2.0 * m_power / (m_row * m_column * Ra)); // Ia could be changed for Beamforming application (add exp)
     complex<double> array_factor = totaleArrayFactor(angle_transmitter, 90);
     complex<double> a = R * array_factor * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
 
-//<<<<<<< HEAD
-    Efield = i * ((Zvoid * Ia) * a / (2.0 * M_PI));
-
-    if (amountSegment == 1) {
-        // Adding the ground component
-
-        // Compute the electrical field from the ray reflected off the ground
-        complex <double> groundEfield = this->computeEfieldGround(receiver, angle_transmitter, properties);
-        Efield += groundEfield;
-    }
-//=======
-//    Efield = -i * ((Zvoid * Ia) * a / (2.0 * M_PI));
-//    if (properties)
-//    {
-//        if (amountSegment == 1)
-//        {
-//            m_los_factor[receiver] = pow(abs(a),2);
-//        }
-//        else
-//        {
-//            m_nlos_factor[receiver] += pow(abs(a),2);
-//>>>>>>> 9fb7d4f3e7f4ce37821388cc444d86aacc13342e
+    Efield = - i * ((Zvoid * Ia) * a / (2.0 * M_PI));
 
 //    auto t2 = std::chrono::high_resolution_clock::now();
 //    auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>( t2 - t1 ).count();
@@ -156,6 +135,8 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 {
     complex <double> i(0.0, 1.0);
     m_los_factor[rx] = 0;
+    double pwr = 0;
+    double hMax = 0;
 
     for (const auto wholeRay: m_receiversRays[rx]) {
 
@@ -167,8 +148,10 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
         const double R = computeR(wholeRay);
         complex<double> a =  R * array_factor / completeLength;
         complex<double> h = a * exp(-i * (2.0 * M_PI / lambda) * completeLength);
+        pwr += norm(h);
+        hMax = abs(h) < hMax ? abs(h): hMax;
 
-        m_los_factor[rx] += pow(abs(h), 2);
+        m_los_factor[rx] += norm(h);
 
         // Tau
         double tau = completeLength * 1e9/c; // [ns]
@@ -180,21 +163,27 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 
         // u  = beta * cos(theta)
         double waveNbr = 2 * M_PI / lambda;
-        double u = - waveNbr * sin(angleRx * M_PI / 180);
-        u = round(u * 1e4) / 1e4;
+        double theta = angleRx > 90 ? angleRx - 90: angleRx + 270;
+        double u = waveNbr * cos(theta * M_PI / 180);
+//        u = round(u * 1e4) / 1e4;
 
         // Put computed data into channels data.
-        if (chData.u.size() == 0 || u != chData.u.back()) {
-            chData.u.push_back(u);
-            chData.angularDistr.push_back(2 * M_PI * h);
-            chData.prxAngularSpctr.push_back(norm(R * array_factor / completeLength) * 2 * M_PI);
-//            chData.prxAngularSpctr.push_back(norm(h) * 2 * M_PI / (1 - u/waveNbr));
+//        if (chData.u.size() == 0 || u != chData.u.back()) {
+        complex<double> angularDistr =  /*h*/1 /(2 * M_PI * waveNbr * pow(sqrt(1 - pow(u / waveNbr, 2)), 1));
+        chData.u.push_back(u);
+        chData.angularDistr.push_back(angularDistr);
+//            chData.prxAngularSpctr.push_back(norm(R * array_factor / completeLength) * 2 * M_PI);
+//        chData.prxAngularSpctr.push_back(norm(h) * 2 * M_PI / /*(pow(waveNbr, 2) * (1 - pow(u / waveNbr, 2)))) /*/ (waveNbr*sqrt((1 - pow(u / waveNbr, 2)))));
+//        chData.prxAngularSpctr.push_back(2 * M_PI *norm(h)/(  waveNbr * sqrt((1 - pow(u / waveNbr, 2)))));
+        chData.prxAngularSpctr.push_back(norm(angularDistr));
+//        cout << "Norm h: " << norm(h) * 2 * M_PI<< ", denom: "<< pow(waveNbr, 2)*(1 - pow(u/waveNbr, 2)) << "Theta: " << theta <<endl;
 
-        } else {
-            chData.angularDistr.back() += 2 * M_PI * h;
-            chData.prxAngularSpctr.back() += norm(R * array_factor / completeLength) * 2 * M_PI;
-//            chData.prxAngularSpctr.back() += norm(h) * 2 * M_PI / (1 - u/waveNbr);
-        }
+//        } else {
+//            chData.angularDistr.back() += 2 * M_PI * h;
+////            chData.prxAngularSpctr.back() += norm(R * array_factor / completeLength) * 2 * M_PI;
+//            chData.prxAngularSpctr.back() += norm(h) * 2 * M_PI / (pow(waveNbr, 2) * (1 - pow(u / waveNbr, 2)));
+//            cout << "Norm h: " << norm(h) * 2 * M_PI<< ", denom: "<< pow(waveNbr, 2)*(1 - pow(u/waveNbr, 2)) << endl;
+//        }
 
         m_receiver_speed.translate(- m_receiver_speed.p1());
         m_ray_speed.translate(- m_ray_speed.p1());
@@ -207,6 +196,11 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
         m_chsData[rx].dopplerSpctr[omega] += h;
 
     }
+
+//    for (auto pas: m_chsData.at(rx).prxAngularSpctr) {
+//        pas = pas / pow(hMax, 2) ;
+//    }
+
 }
 
 complex <double>
@@ -217,7 +211,7 @@ MathematicalTransmitterProduct::computeImpulseGroundReflection(ProductObservable
     double distance = this->distance(copy_receiver);
     double thetaG = atan((distance / 2) / antennaHeight);
     double thetaI = M_PI - thetaG;
-    double R = computeReflexionPar(thetaG, epsilonWallRel);
+    double R = computeReflexionPer(thetaG, epsilonWallRel);
     double completeLength = sqrt(4*pow(antennaHeight,2)+pow(distance,2));
     complex <double> i(0.0, 1.0);
     double a = R  / completeLength;
@@ -277,14 +271,14 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
         if (chData.u.size() == 0 || u != chData.u.back()) {
             chData.u.push_back(u);
             chData.angularDistr.push_back(2 * M_PI * a);
-            chData.prxAngularSpctr.push_back(norm(R * array_factor / completeLength) * 2 * M_PI);
-//            chData.prxAngularSpctr.push_back(norm(a) * 2 * M_PI / (1 - u/waveNbr));
+//            chData.prxAngularSpctr.push_back(norm(R * array_factor / completeLength) * 2 * M_PI);
+            chData.prxAngularSpctr.push_back(norm(a) * 2 * M_PI / (pow(waveNbr, 2) * (1 - pow(u/waveNbr, 2))));
             tmpPower += pow(R * norm(array_factor) / completeLength, 2) * 2 * M_PI;
 
         } else {
             chData.angularDistr.back() += 2 * M_PI * a;
-            chData.prxAngularSpctr.back() += norm(R * array_factor / completeLength) * 2 * M_PI;
-//            chData.prxAngularSpctr.back() += norm(a) * 2 * M_PI / (1 - u/waveNbr);
+//            chData.prxAngularSpctr.back() += norm(R * array_factor / completeLength) * 2 * M_PI;
+            chData.prxAngularSpctr.back() += norm(a) * 2 * M_PI / (pow(waveNbr, 2) * (1 - pow(u/waveNbr, 2)));
             tmpPower += pow(R * norm(array_factor) / completeLength, 2) * 2 * M_PI;
         }
 
@@ -389,10 +383,6 @@ complex<double> MathematicalTransmitterProduct::computeDiffractedEfield(ProductO
     }
     return Efield;
 }
-
-
-
-
 
 
 void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
@@ -541,7 +531,7 @@ double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double
 }
 
 
-double MathematicalTransmitterProduct::computeReflexionPar(double thetaI, double epsilonR)
+double MathematicalTransmitterProduct::computeReflexionPar(double thetaI, double epsilonR) const
 {
     double R = (cos(thetaI) - (1 / sqrt(epsilonR)) * sqrt(1 - (1 / epsilonR) * pow(sin(thetaI), 2))) /
                (cos(thetaI) + (1 / sqrt(epsilonR)) * sqrt(1 - (1 / epsilonR) * pow(sin(thetaI), 2)));
@@ -712,7 +702,7 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
         //      The receiver is in the illumination zone
 
         WholeRay *wholeRay = new WholeRay;
-        QPointF m_pos(int(this->x()), int(this->y()));
+//        QPointF m_pos(int(this->x()), int(this->y()));
         wholeRay->push_back(m_rayFactory->createRay(*this, pos));
         m_receiversRays[receiver].push_back(wholeRay);
     }

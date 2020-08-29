@@ -27,7 +27,9 @@ length WholeRay::totalLength() const
 
 angle WholeRay::angleRx() const
 {
-    return this->front()->angle();
+    angle a = this->front()->angle();
+    a = a > 180 ? a - 180: a + 180;
+    return a;
 }
 
 angle WholeRay::angleTx() const

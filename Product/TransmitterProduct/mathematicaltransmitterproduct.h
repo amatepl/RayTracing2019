@@ -139,7 +139,7 @@ public:
     double computePrx(complex <double> totalEfield, complex<double> groundField, ProductObservable* receiver);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR) const;
-    double computeReflexionPar(double thetaI, double epsilonR);
+    double computeReflexionPar(double thetaI, double epsilonR) const;
 
     double computeElevationScaterringAngle(float heightRx, float heightTx,
                                            float heightConopy, float distanceRxTree);

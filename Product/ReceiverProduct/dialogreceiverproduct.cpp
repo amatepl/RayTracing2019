@@ -570,7 +570,7 @@ DialogReceiverProduct::PrxAngularSpctr()
     for (int i = 0; i < pas.size(); i++) {
         QCPItemLine *line_impulse = new QCPItemLine(angular_distr_plot);
         line_impulse->start->setCoords(u[i], pas[i]);  // location of point 1 in plot coordinate
-        cout << "u " << u[i] <<", S(u): " << pas[i] << endl;
+//        cout << "u " << u[i] <<", S(u): " << pas[i] << endl;
         line_impulse->end->setCoords(u[i], -600);  // location of point 2 in plot coordinate
         line_impulse->setPen(QPen(Qt::blue));
     }

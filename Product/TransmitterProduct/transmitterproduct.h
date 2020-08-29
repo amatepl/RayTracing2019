@@ -88,9 +88,14 @@ public:
 
     virtual complex <double> dipoleFactor(double /*theta*/, double phi)
     {
-        complex <double> dipolefactor(0.0,0.0);
-        if (phi == 0.0 || phi == 180.0) dipolefactor = 0.0;
-        else dipolefactor = cos(0.5*M_PI*cos(phi*M_PI/180))/sin(phi*M_PI/180);
+        complex <double> dipolefactor(0.0, 0.0);
+        if (phi == 0.0 || phi == 180.0) {
+            dipolefactor = 0.0;
+
+        } else {
+            dipolefactor = cos(0.5 * M_PI * cos(phi * M_PI / 180)) / sin(phi * M_PI / 180);
+
+        }
         return dipolefactor;
     }
 
@@ -106,7 +111,9 @@ public:
             thetaprime = 360 + thetaprime;
         }
         complex <double> psy = k*d*sin(phi*M_PI/180)*cos(thetaprime*M_PI/180);
-        if ((thetaprime >= 270 && thetaprime < 360.0) || (thetaprime >=0 && thetaprime < 90.0)){reflectorfactor = 2.0*i*exp(-i*psy)*sin(psy);}
+        if ((thetaprime >= 270 && thetaprime < 360.0) || (thetaprime >=0 && thetaprime < 90.0)) {
+            reflectorfactor = 2.0 * i * exp(-i * psy) * sin(psy);
+        }
         return reflectorfactor;
     }
 
