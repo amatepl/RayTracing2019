@@ -271,11 +271,11 @@ void MathematicalReceiverProduct::riceFactor(double rice)
 
 void MathematicalReceiverProduct::computePathLossFading()
 {
-    path_loss.resize(m_pathloss.size());
-    fading.resize(m_pathloss.size());
-    friis_loss.resize(m_pathloss.size());
+    path_loss.resize(m_pathloss.size()-1);
+    fading.resize(m_pathloss.size()-1);
+    friis_loss.resize(m_pathloss.size()-1);
     linearRegressionPathLoss();
-    for (unsigned long i=0; i<(m_pathloss.size()); ++i){
+    for (unsigned long i=0; i<m_pathloss.size()-1; i++){
         path_loss[i] = m*logD[i]+b;
         fading[i] = Prx[i]-path_loss[i];
         friis_loss[i] = -20*logD[i] + m_pathloss[1.0];
@@ -640,66 +640,50 @@ void MathematicalReceiverProduct::notifyObservers()
 
 void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
 {
-    std::vector<QLineF> path_loss_lines = transmitter->linesForPathLoss(this);
-    int number_points = 600;
-    int number_small_scale = 0;
-    QLineF path_loss_line;
-    QLineF tmp_line;
-    QPointF tmp_point;
-    QLineF tmp_normal;
-    QPointF p0;
-    double distance = 0.0;
+    QPointF *tx_pos = dynamic_cast<QPointF*>(transmitter);
+    int num_rows = 100;
+    int num_cols = 20;
     MathematicalReceiverProduct* copy_receiver = new MathematicalReceiverProduct(this);
-    QLineF line;
-    m_pathloss.clear();
-    for(unsigned k = 0; k < path_loss_lines.size(); k++)
-    {
-        path_loss_line = path_loss_lines.at(k);
-        p0 = path_loss_line.p1();
-        line.setP1(p0);
-        for (int i = 1; i <= number_points; i++)
-        {
-            tmp_point = path_loss_line.pointAt(double(i)/number_points);
-            tmp_line.setP1(tmp_point);
-            tmp_line.setP2(path_loss_line.p2());
-            tmp_normal = tmp_line.normalVector();
-            for (int j = -number_small_scale; j <= number_small_scale; j++)
-            {
-                tmp_normal.setLength((c/frequency())*10*j);
-                copy_receiver->setX(tmp_normal.p2().x());
-                copy_receiver->setY(tmp_normal.p2().y());
-                line.setP2(tmp_normal.p2());
-                transmitter->update(copy_receiver, m_movement);
-                for (unsigned int l = 0; l < m_observers.size(); l++)
-                {
-                    m_observers.at(l)->update(copy_receiver,m_movement);
-                }
-                double power = transmitter->computePathLossPower(copy_receiver);
-                if (!isinf(power))
-                {
-                    m_pathloss[distance+line.length()*px_to_meter] = power;
-                }
-             }
-        }
-        if (k == 0)
-        {
-            path_loss_line.setLength(1/px_to_meter);
-            copy_receiver->setX(path_loss_line.p2().x());
-            copy_receiver->setY(path_loss_line.p2().y());
-            transmitter->update(copy_receiver, m_movement);
-            for (unsigned int l = 0; l < m_observers.size(); l++)
-            {
-                m_observers.at(l)->update(copy_receiver,m_movement);
-            }
-            double power = transmitter->computePathLossPower(copy_receiver);
-            if (!isinf(power))
-            {
-                m_pathloss[1.0] = power;
-            }
-        }
-        distance += path_loss_lines.at(k).length()*px_to_meter;
-    }
 
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(-20.0*c/frequency(),20.0*c/frequency());
+
+    m_pathloss.clear();
+    for(int i = 0; i <= num_cols; i++)
+    {
+        for (int j = 0; j <= num_rows; j++)
+        {
+            if (i != 0 || j != 0)
+            {
+                for (int k = -5; k < 5; k++)
+                {
+                    double rand_num = distribution(generator);
+                    copy_receiver->setX(tx_pos->x()+i+rand_num);
+                    copy_receiver->setY(tx_pos->y()+j+rand_num);
+                    transmitter->update(copy_receiver, m_movement);
+                    for (unsigned int l = 0; l < m_observers.size(); l++)
+                    {
+                        m_observers.at(l)->update(copy_receiver,m_movement);
+                    }
+                    double power = transmitter->computePathLossPower(copy_receiver);
+                    if (!isinf(power))
+                    {
+                        QLineF line(*tx_pos,*static_cast<QPointF*>(copy_receiver));
+                        m_pathloss[line.length()*px_to_meter] = power;
+                    }
+                }
+            }
+         }
+    }
+    copy_receiver->setX(tx_pos->x()+1.0/px_to_meter);
+    copy_receiver->setY(tx_pos->y()+0.0);
+    transmitter->update(copy_receiver, m_movement);
+    for (unsigned int l = 0; l < m_observers.size(); l++)
+    {
+        m_observers.at(l)->update(copy_receiver,m_movement);
+    }
+    double power = transmitter->computePathLossPower(copy_receiver);
+    m_pathloss[1.0] = power;
     computePathLossFading();
     modelPathLoss();
     cellRange();

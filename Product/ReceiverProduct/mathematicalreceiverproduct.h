@@ -16,6 +16,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <random>
 
 
 #include "Product/mathematicalproduct.h"

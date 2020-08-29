@@ -16,7 +16,7 @@
 #include <QPolygonF>
 #include <vector>
 #include <ratio>
-#include <gsl/gsl>
+#include <gsl/pointers>
 
 /* Project Specific includes */
 
@@ -108,9 +108,7 @@ public:
      * the channel parameters
      *
      */
-    complex<double> computeEMfield(const not_null<WholeRay *> rayLine,
-                                   const ProductObservable *receiver,
-                                   const bool properties);
+    complex<double> computeEMfield(const not_null<WholeRay *> rayLine, const ProductObservable *, const bool);
 
     /*!
      * \fn MathematicalTransmitterProduct::computeR(WholeRay *wholeRay)
@@ -169,9 +167,6 @@ public:
     {
         return 10*log10(m_los_factor[receiver]/m_nlos_factor[receiver]);
     }
-
-
-    std::vector<QLineF> linesForPathLoss(ProductObservable *true_receiver) override;
 
     double computePathLossPower(ProductObservable* copy_receiver) override;
     complex<double> computeInterference(ProductObservable *,QLineF local_region) override;

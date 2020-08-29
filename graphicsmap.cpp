@@ -6,7 +6,7 @@ GraphicsMap::GraphicsMap(QGraphicsView *view, AppInterface *app, QMenu *productm
     int height = 700;
     setSceneRect(0,0,width, height);
     m_view = view;
-    m_view->setFixedSize(width+2*m_view->frameWidth(), height+2*m_view->frameWidth());
+    //m_view->setFixedSize(width+2*m_view->frameWidth(), height+2*m_view->frameWidth());
     m_productmenu = productmenu;
     m_view->setScene(this);
     m_app = app;

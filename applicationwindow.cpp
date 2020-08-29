@@ -1,6 +1,7 @@
 #include "applicationwindow.h"
 #include "Share/wholeray.h"
 
+
 float px_to_meter = 1;
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)

@@ -1,4 +1,5 @@
-QT       += core gui
+QT       += core gui \
+    gui widgets
 
 greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
     datavisualization
@@ -133,10 +134,8 @@ DISTFILES +=
 INCLUDEPATH += /usr/local/GSL/include \
     /usr/local/boost_1_74_0
 
-
 QMAKE_CXXFLAGS += -Wno-deprecated
 
-CXX
 
 #INCLUDEPATH += /usr/local/Cellar/boost/1.73.0/include/boost
 #LIBS += /usr/local/Cellar/boost/1.73.0/lib -libboost_math_c99
