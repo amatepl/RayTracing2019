@@ -11,6 +11,9 @@
 #include <QCheckBox>
 #include <QDoubleSpinBox>
 #include <QComboBox>
+#include <iostream>
+
+using namespace std;
 
 class InfoWidget: public QWidget
 {
@@ -32,6 +35,8 @@ public:
     void changeCoherenceBandwidth(double coherence);
     void changeAngularSpread(double angularSpread);
     void reset();
+
+
 
 private:
     QGridLayout *main_layout;
@@ -59,9 +64,12 @@ private:
 
     QGroupBox *ray_group;
     QPushButton *launch_raytracing;
+    QDoubleSpinBox *rflctns_ray;
 
     QGroupBox *coverage_group;
     QPushButton *launch_coverage;
+    QDoubleSpinBox *rflctns_cov;
+    QDoubleSpinBox *cov_dnsty;
 
     QGroupBox *map_group;
     QPushButton *generate_map;
@@ -78,6 +86,7 @@ public slots:
     void sendLaunchCoverage();
     void sendClear();
     void sendStartCars();
+    void printValue(double value);  // For tests
 };
 
 #endif // INFOWIDGET_H
