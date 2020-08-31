@@ -154,7 +154,7 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 
         double u = uMPC(angleRx);
         complex<double> angularDistr = angDistrMPC(h, u);
-        double prxAngSpctr = pasMPC(angularDistr);
+        double prxAngSpctr = prxSpctrMPC(angularDistr, u);
 
         // Save Data
         chData.u.push_back(u);
@@ -173,7 +173,7 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 
     }
 
-//    normalizePAS(m_chsData.at(rx).prxAngularSpctr, pow(hMax, 2));
+    normalizePAS(m_chsData.at(rx).prxAngularSpctr);
 
 }
 
@@ -239,7 +239,7 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
         // Put computed data into channels data.
         double u = uMPC(angleRx);
         complex<double> angularDistr = angDistrMPC(a, u);
-        double prxAngSpctr = pasMPC(angularDistr);
+        double prxAngSpctr = prxSpctrMPC(angularDistr, u);
 
         // Save Data
         chData.u.push_back(u);
@@ -258,22 +258,29 @@ double MathematicalTransmitterProduct::uMPC(angle angleRx)
     return beta * cos(theta * M_PI / 180);
 }
 
-double MathematicalTransmitterProduct::pasMPC(complex<double> &angDistr)
+double MathematicalTransmitterProduct::omegaMPC(double v, double angleRx)
 {
-    return norm(angDistr / (2 * M_PI));
+    return v * uMPC(angleRx);
+}
+
+double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, double u, double v)
+{
+//    return norm(angDistr / (2 * M_PI));
+    double beta = 2 * M_PI / lambda;
+    return 2 * M_PI / (beta * v * sqrt(1 - pow(u/(beta * v), 2)));
 }
 
 complex<double> MathematicalTransmitterProduct::angDistrMPC(complex<double> &h, double u)
 {
     double beta = 2 * M_PI / lambda;
     return 2 * M_PI * h / (beta * sqrt(1 - pow(u / beta, 2)));
-
 }
 
-void MathematicalTransmitterProduct::normalizePAS(vector<double> &pas, double normTerm)
+void MathematicalTransmitterProduct::normalizePAS(vector<double> &pas)
 {
+    double nbrMPCs = pas.size();
     for (auto &p: pas) {
-        p = p / normTerm;
+        p = p / nbrMPCs;
     }
 }
 
