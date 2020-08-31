@@ -89,7 +89,7 @@ public:
     void appendTree(MathematicalTreeProduct *tree);
 
     void drawRays();
-    QPolygonF buildCoverage();
+    QPolygonF buildCoverage() const;
 
     //virtual void setModel(Model model) override;
     complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction, QLineF local_region);
@@ -139,7 +139,7 @@ public:
     double computePrx(complex <double> totalEfield, complex<double> groundField, ProductObservable* receiver);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR) const;
-    double computeReflexionPar(double thetaI, double epsilonR);
+    double computeReflexionPar(double thetaI, double epsilonR) const;
 
     double computeElevationScaterringAngle(float heightRx, float heightTx,
                                            float heightConopy, float distanceRxTree);
@@ -152,6 +152,15 @@ public:
     vector<WholeRay *> getRays();
     void notifyObservables();
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line) const;
+
+    /*!
+     * \brief angularSpread
+     * \param rx
+     *
+     * Computes the angular spred for rx.
+     * The result is stored in m_chsData[rx].angularSpread
+     */
+    void angularSpread(ProductObservable *rx);
 
     void clearAll();
 
@@ -179,13 +188,17 @@ public:
     Data * getChData(ProductObservable *rx) override;
 
     /*!
-     * \brief angularSpread
-     * \param rx
+     * \fn MathematicalTransmitterProduct::pathLossPoints()
+     * \brief Find points for computation of the path loss
+     * \return path_points
      *
-     * Computes the angular spred for rx.
-     * The result is stored in m_chsData[rx].angularSpread
+     * Compute points linearly in the coverage zone of the transmitter.
+     * These points will be requested by MathRxProd to calculate
+     * the power. See MathematicalReceiverProduct::notifyObserversPathLoss.
+     * This function is an override of ProductObserver but shouldn't be.
+     *
      */
-    void angularSpread(ProductObservable *rx);
+    vector<QPointF> pathLossPoints() const override;
 
     //ModelObserver
     void attachObservable(ModelObservable *modelObserver) override;
@@ -258,6 +271,7 @@ public:
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
     void openDialog() override;
+    void setScale(float scale) override;
 
     /*!
      * \fn void MathematicalTransmitterProduct::clearChData(ProductObservable *rx)
@@ -299,7 +313,7 @@ public:
 private:
     double m_power                 { 2 };
     Kind m_kind               { dipole };
-    int m_radius                 { 500 };
+    int m_radius                 { 5000 };
     bool m_beamsFrozen = false;
 
     map<ProductObservable *, bool> m_chosenBeams;

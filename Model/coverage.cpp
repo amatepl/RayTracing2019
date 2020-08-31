@@ -68,13 +68,13 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
     for(int i = workingZone.topLeft().y();
          i < workingZone.bottomLeft().y();
-         i += workingZone.height() / 200){
+         i += workingZone.height() / (200/px_to_meter)){
 
         dynamic_cast<MathematicalReceiverProduct*>(receiver)->setPosY(i);
 
         for(int j = workingZone.topLeft().x();
              j < workingZone.topRight().x();
-             j += workingZone.width() / 200){
+             j += workingZone.width() / (200/px_to_meter)){
 
             dynamic_cast<MathematicalReceiverProduct*>(receiver)->setPosX(j);
             MathematicalProduct* newReceiver = m_receiverFactory->createMathematicalProduct(receiver,true);

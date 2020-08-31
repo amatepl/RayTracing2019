@@ -115,7 +115,41 @@ public:
     void attachObserver(ProductObserver *productObserver) override;
     void detachObservers() override;
     void notifyObservers();
+
+    /*!
+     * \fn MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
+     * \brief Fill the map m_pathloss to compute the path loss.
+     * \param transmitter
+     *
+     * This function calls two other functions that are only used
+     * in MathTxProduct but are virtualized in ProductObserver (bad choice).
+     * The first one is MathTxProduct::pointsPathLoss which gives
+     * the points where the power should be calculated.
+     * The second one is MathTxProduct::computePathLossPower which
+     * calculates the power from the receiver copied to the point.
+     * The m_pathloss map is then filled with the Euclidean distance
+     * from the point and the power in dBm at this point.
+     * An average is computed if the same distance is calculated.
+     *
+     */
     void notifyObserversPathLoss(ProductObserver* transmitter);
+
+    /*!
+     * \fn MathematicalReceiverProduct::averageOnMap(std::map<double,double> values,
+                                                     std::map<double,int> counter);
+     * \brief Average value inside a map by the number of keyword iteration
+     * \param values
+     * \param counter
+     *
+     * The keyword is the same. The value of the counter is the iteration
+     * number of the same value. The value of values is the sum of all
+     * value that the map found for the same key.
+     *
+     */
+    std::map<double/*compare value*/,double/*average value*/>
+    averageOnMap(std::map<double/*compare value*/,double/*value*/> values,
+                 std::map<double/*compare value*/,int/*counter*/> counter) const;
+
     complex<double> notifyObserversInterference(QLineF local_region);
     void notify() override;
     void notify(double &, std::vector<double> *, std::complex<double> &) override;
@@ -150,7 +184,7 @@ private:
     double coherence_bandwidth;
 
     // 3. For Path Loss Computation
-    std::map<double, double> m_pathloss;
+    std::map<double /*distance*/, double /*power*/> m_pathloss;
     QVector<double> logD, fading, logD_model;
 
     // 4. For Impulse Response and TDL

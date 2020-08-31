@@ -38,7 +38,7 @@ void MathematicalTransmitterProduct::drawRays()
 }
 
 
-QPolygonF MathematicalTransmitterProduct::buildCoverage()
+QPolygonF MathematicalTransmitterProduct::buildCoverage() const
 {
     QPolygonF coverage;
     for (int i = 0; i < 16; i++) {
@@ -60,7 +60,7 @@ MathematicalTransmitterProduct::computeImpulseReflection(WholeRay *ray_line, QLi
         current_ray = ray_line->at(i);
         if (i != amountSegment - 1) {
             double thetaI = abs(current_ray->getTetai());
-            R *= computeReflexionPer(thetaI, epsilonWallRel);
+            R *= computeReflexionPar(thetaI, epsilonWallRel);
         }
         completeLength += current_ray->getMeterLength();
     }
@@ -515,7 +515,7 @@ double MathematicalTransmitterProduct::computeReflexionPer(double thetaI, double
 }
 
 
-double MathematicalTransmitterProduct::computeReflexionPar(double thetaI, double epsilonR)
+double MathematicalTransmitterProduct::computeReflexionPar(double thetaI, double epsilonR) const
 {
     double R = (cos(thetaI) - (1 / sqrt(epsilonR)) * sqrt(1 - (1 / epsilonR) * pow(sin(thetaI), 2))) /
                (cos(thetaI) + (1 / sqrt(epsilonR)) * sqrt(1 - (1 / epsilonR) * pow(sin(thetaI), 2)));
@@ -598,6 +598,37 @@ void MathematicalTransmitterProduct::clearAll(){
     m_receiversRays.clear();
 }
 
+vector<QPointF> MathematicalTransmitterProduct::pathLossPoints() const
+{
+    vector<QPointF> pl_points; // Path loss (pl) points
+    QPolygonF coverage = buildCoverage();
+    QRectF bounding_rect = coverage.boundingRect();
+                               // Bounding rect of the coverage zone
+    int width = bounding_rect.width();
+    int height = bounding_rect.height();
+    QPointF tmp_point = bounding_rect.topLeft();
+                               // Starting point
+    int num_points = 10000/px_to_meter;
+                               // Number of considered points
+    int range_x = width/num_points;
+    int range_y = height/num_points;
+    for (int i = 0; i <= num_points; i++)
+    {
+        for (int j = 0; j <= num_points; j++)
+        {
+            tmp_point = bounding_rect.topLeft() + QPointF(i*range_x,j*range_y);
+                                // Scan point inside de bounding rect
+            if (m_zone.containsPoint(tmp_point,Qt::OddEvenFill))
+            {
+                                // tmp_point is inside the coverage zone
+                pl_points.push_back(tmp_point);
+                                // add tmp_point inside the pl_points
+            }
+        }
+    }
+    return pl_points;
+}
+
 // ---------------------------------------------------- TransmitterProduct -------------------------------------------------------------------
 
 
@@ -630,6 +661,13 @@ void MathematicalTransmitterProduct::update(QGraphicsItem *graphic)
 void MathematicalTransmitterProduct::openDialog()
 {
     new DialogTransmitterProduct(this);
+}
+
+void MathematicalTransmitterProduct::setScale(float scale)
+{
+    MathematicalProduct::setScale(scale);
+    m_radius = m_radius/px_to_meter;
+    m_zone  = buildCoverage();
 }
 
 void MathematicalTransmitterProduct::clearChData(ProductObservable *rx)

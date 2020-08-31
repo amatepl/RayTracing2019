@@ -16,6 +16,15 @@ GraphicsProduct* TransmitterFactory::createGraphicsProduct(int posX, int posY){
     graphicsProduct->setX(posX);
     graphicsProduct->setY(posY);
     mathematicalProduct->MathematicalProduct::attachObservable(graphicsProduct);
+
+    double rad = 1;
+    vector<QPointF> pl_points = mathematicalProduct->pathLossPoints();
+    for (unsigned i = 0; i < pl_points.size(); i++)
+    {
+        m_scene->addEllipse(pl_points.at(i).x()-rad, pl_points.at(i).y()-rad, rad*2.0, rad*2.0,
+            QPen(QColor(Qt::red)), QBrush(Qt::SolidPattern));
+    }
+
     return graphicsProduct;
 }
 

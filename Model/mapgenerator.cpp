@@ -39,87 +39,111 @@ void MapGenerator::generateMap()
 
 
 
-    int streetsDistance = 200;
-    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance); i++) {
-        int random1 = 0;//= rand() % 100;
-        int random2 = 0;//= rand() % 100;
-        QLineF *horizontalLine = new QLineF(0, i*streetsDistance + random1,
-                                            m_mapBoundary.right(),
-                                            i*streetsDistance + random2);
+//    int streetsDistance = 100;
+//    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance); i++) {
+//        int random1 = 0;//= rand() % 100;
+//        int random2 = 0;//= rand() % 100;
+//        QLineF *horizontalLine = new QLineF(0, i*streetsDistance + random1,
+//                                            m_mapBoundary.right(),
+//                                            i*streetsDistance + random2);
 
-        int random3 = 0;//rand() % 100;
-        int random4 = 0;//rand() % 100;
-        QLineF *verticalLine = new QLineF(i*streetsDistance + random3,
-                                          m_mapBoundary.top(),
-                                          i*streetsDistance + random4,
-                                          m_mapBoundary.bottom());
-
-
-        m_horizontalStreets.push_back(horizontalLine);
-        m_verticalStreets.push_back(verticalLine);
-
-    }
-
-    int streetWidth = 30;
-
-    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
-        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
-            QPointF intersectionPoint1;
-            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),
-                                                 &intersectionPoint1);
-
-            QPointF intersectionPoint2;
-            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i),
-                                                     &intersectionPoint2);
-
-            QPointF intersectionPoint3;
-            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i + 1),
-                                                 &intersectionPoint3);
-
-            QPointF intersectionPoint4;
-            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i + 1),
-                                                     &intersectionPoint4);
+//        int random3 = 0;//rand() % 100;
+//        int random4 = 0;//rand() % 100;
+//        QLineF *verticalLine = new QLineF(i*streetsDistance + random3,
+//                                          m_mapBoundary.top(),
+//                                          i*streetsDistance + random4,
+//                                          m_mapBoundary.bottom());
 
 
+//        m_horizontalStreets.push_back(horizontalLine);
+//        m_verticalStreets.push_back(verticalLine);
 
-            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
-            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
+//    }
 
-            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
-            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
+//    int streetWidth = 10;
 
-            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
-            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
+//    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
+//        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
+//            QPointF intersectionPoint1;
+//            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),
+//                                                 &intersectionPoint1);
 
-            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
-            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
+//            QPointF intersectionPoint2;
+//            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i),
+//                                                     &intersectionPoint2);
 
-//            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
-//            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
+//            QPointF intersectionPoint3;
+//            m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i + 1),
+//                                                 &intersectionPoint3);
 
-//            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);
-//            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
+//            QPointF intersectionPoint4;
+//            m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i + 1),
+//                                                     &intersectionPoint4);
 
-//            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
-//            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
 
-//            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
-//            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
 
-            QPolygonF buildingForm;
-            buildingForm << intersectionPoint1
-                         << intersectionPoint2
-                         << intersectionPoint4
-                         << intersectionPoint3
-                         << intersectionPoint1;
+//            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
+//            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
 
-            MathematicalProduct *building = m_buildingFactory
-                                                ->createMathematicalProduct(buildingForm);
+//            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
+//            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
 
-            m_products.push_back(building);
+//            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
+//            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
 
-        }
-    }
+//            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
+//            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
+
+////            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
+////            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
+
+////            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);
+////            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
+
+////            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
+////            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
+
+////            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
+////            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
+
+//            QPolygonF buildingForm;
+//            buildingForm << intersectionPoint1
+//                         << intersectionPoint2
+//                         << intersectionPoint4
+//                         << intersectionPoint3
+//                         << intersectionPoint1;
+
+//            MathematicalProduct *building = m_buildingFactory
+//                                                ->createMathematicalProduct(buildingForm);
+
+//            m_products.push_back(building);
+
+//        }
+//    }
+
+//                QPolygonF buildingForm;
+//                buildingForm << QPointF(0,0)
+//                             << QPointF(600,0)
+//                             << QPointF(600,200)
+//                             << QPointF(0,200)
+//                             << QPointF(0,0);
+
+//                MathematicalProduct *building = m_buildingFactory
+//                                                    ->createMathematicalProduct(buildingForm);
+
+//                m_products.push_back(building);
+
+//                QPolygonF buildingForm2;
+//                buildingForm2 << QPointF(0,210)
+//                             << QPointF(600,210)
+//                             << QPointF(600,410)
+//                             << QPointF(0,410)
+//                             << QPointF(0,210);
+
+//                MathematicalProduct *building2 = m_buildingFactory
+//                                                    ->createMathematicalProduct(buildingForm2);
+
+//                m_products.push_back(building2);
 
 //    addCars();
 //    addCars();

@@ -82,7 +82,7 @@ public:
     }
 
     virtual double riceFactor(ProductObservable *) { return 0; }
-
+    virtual std::vector<QPointF> pathLossPoints() const {std::vector<QPointF> points; return points;}
     virtual double computePathLossPower(ProductObservable* ) {return 0;}
     virtual std::complex<double> computeInterference(ProductObservable*,QLineF){return 0;}
 //    virtual void updateCarPos(ProductObservable *productObservable)  = 0;
