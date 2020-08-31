@@ -69,11 +69,13 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Share/drafts.h \
     Share/line.h \
     Share/moveablegraphics.h \
+    Share/params.h \
     Share/reflectiveobstacle.h \
     Share/rxdatahandler.h \
     Share/wall.h \
     Share/wholeray.h \
     Widget/infowidget.h \
+    Widget/toolbox.h \
     applicationwindow.h \
     graphicsmap.h \
     qcustomplot.h
@@ -121,6 +123,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Share/wall.cpp \
     Share/wholeray.cpp \
     Widget/infowidget.cpp \
+    Widget/toolbox.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \
     main.cpp \
@@ -134,9 +137,8 @@ DISTFILES +=
 INCLUDEPATH += /usr/local/GSL/include \
     /usr/local/boost_1_74_0
 
+QMAKE_CXXFLAGS += -Wno-deprecated
 
-QMAKE_CXXFLAGS += "-Wno-deprecated" \
-	-fno-strict-aliasing
 
 #INCLUDEPATH += /usr/local/Cellar/boost/1.73.0/include/boost
 #LIBS += /usr/local/Cellar/boost/1.73.0/lib -libboost_math_c99

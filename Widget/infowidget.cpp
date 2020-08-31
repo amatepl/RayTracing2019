@@ -15,16 +15,17 @@ InfoWidget::InfoWidget(QWidget* parent):QWidget(parent)
     main_layout->addWidget(ray_group, 0, 3);
     main_layout->addWidget(coverage_group, 0, 4);
 
-    main_layout->setColumnStretch(0,5);
-    main_layout->setColumnStretch(1,5);
-    main_layout->setColumnStretch(2,5);
-    main_layout->setColumnStretch(3,5);
-    main_layout->setColumnStretch(4,5);
+//    main_layout->setColumnStretch(0,5);
+//    main_layout->setColumnStretch(1,5);
+//    main_layout->setColumnStretch(2,5);
+//    main_layout->setColumnStretch(3,5);
+//    main_layout->setColumnStretch(4,5);
     this->setLayout(main_layout);
 }
 
 void InfoWidget::createInfoGroup(){
     info_group = new QGroupBox("General Informations",this);
+    info_group->setFixedWidth(300);
     QFormLayout* info_layout = new QFormLayout(info_group);
     scene_pos = new QLabel("Map position: ( " + QString::number(0) + " , " + QString::number(0) + " )",info_group);
     power_rx = new QLabel("Power received [dBm]: " + QString::number(0),info_group);
@@ -94,30 +95,64 @@ void InfoWidget::createEditGeneral(){
 
 void InfoWidget::createRayGroup(){
     ray_group = new QGroupBox("Ray-Tracing",this);
+    ray_group->setFixedWidth(200);
     launch_raytracing = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch Ray-Tracing");
-//    connect(launch_raytracing, SIGNAL(clicked()), this, SLOT(LaunchRayTracing()));
     // Ray Tracing informations and edition
     QGridLayout* ray_layout = new QGridLayout(ray_group);
-//    ray_layout->addRow(launch_raytracing);
     ray_layout->addWidget(launch_raytracing, 0, 0, Qt::AlignTop);
     connect(launch_raytracing,&QPushButton::clicked,this,&InfoWidget::sendLaunchRayTracing);
+
+    rflctns_ray = new QDoubleSpinBox(ray_group);
+    rflctns_ray->setRange(0.00,999.00);
+    rflctns_ray->setAccelerated(true);
+    QHBoxLayout *f = new QHBoxLayout;
+    f->addWidget(rflctns_ray);
+    QFormLayout *f_layout = new QFormLayout;
+    f_layout->addRow("Reflections: ", f);
+    ray_layout->addLayout(f_layout, 1, 0, Qt::AlignTop);
+
+
     ray_group->setLayout(ray_layout);
 }
 
 void InfoWidget::createCoverageGroup(){
     coverage_group = new QGroupBox("Coverage", this);
+    coverage_group->setFixedWidth(200);
     launch_coverage = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch coverage");
     // Coverage informations and edition
     QGridLayout *coverage_layout = new QGridLayout(coverage_group);
 //    coverage_layout->addRow(launch_coverage);
     coverage_layout->addWidget(launch_coverage, 0, 0, Qt::AlignTop);
     connect(launch_coverage,&QPushButton::clicked,this,&InfoWidget::sendLaunchCoverage);
+
+    rflctns_cov = new QDoubleSpinBox(ray_group);
+    rflctns_cov->setRange(0.00,999.00);
+    rflctns_cov->setAccelerated(true);
+    connect(rflctns_cov, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &InfoWidget::printValue);
+
+    QFormLayout *f_layout = new QFormLayout;
+    f_layout->addRow("Density: ", rflctns_cov);
+
+    cov_dnsty = new QDoubleSpinBox(ray_group);
+    cov_dnsty->setRange(0.00,999.00);
+    cov_dnsty->setAccelerated(true);
+
+    f_layout->addRow("Reflections: ", cov_dnsty);
+
+    coverage_layout->addLayout(f_layout, 1, 0, Qt::AlignTop);
+
     coverage_group->setLayout(coverage_layout);
+}
+
+void InfoWidget::printValue(double value)
+{
+    cout<< value << endl;
 }
 
 void InfoWidget::createMapGroup()
 {
     map_group = new QGroupBox("Map", this);
+    map_group->setFixedWidth(200);
     QGridLayout *map_layout = new QGridLayout;
 
     generate_map = new QPushButton("Generate Map");

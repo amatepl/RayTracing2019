@@ -1,7 +1,8 @@
 #include "applicationwindow.h"
 #include "Share/wholeray.h"
+#include "Share/params.h"
 
-float px_to_meter = 10.0;
+float px_to_meter = 1;
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -225,41 +226,30 @@ void ApplicationWindow::createToolBox()
     connect(m_antennagroup,SIGNAL(buttonClicked(int)),this,SLOT(antennaGroupClicked(int)));
     connect(m_obstaclegroup,SIGNAL(buttonClicked(int)),this,SLOT(obstacleGroupClicked(int)));
     QGridLayout *antenna_layout = new QGridLayout;
-    QGridLayout *obstacle_layout = new QGridLayout;
 
     // Creating the antennas pannel
     QWidget* widget = createToolButton("Transmitter",int(InsertTransmitter));
-    antenna_layout->addWidget(widget, 0, 0);
+    antenna_layout->addWidget(widget, 0, 0, Qt::AlignTop);
     QWidget* widget1 = createToolButton("Receiver", int(InsertReceiver));
-    antenna_layout->addWidget(widget1, 0, 1);
-
-    antenna_layout->setRowStretch(1,10);
-    antenna_layout->setColumnStretch(2, 10);
-
-    // Creating the obstacle pannel
-    obstacle_layout->setHorizontalSpacing(10);
+    antenna_layout->addWidget(widget1, 1, 0, Qt::AlignTop);
 
     QWidget* obstacle_widget = createToolButton("Building",int(InsertBuilding));
-    obstacle_layout->addWidget(obstacle_widget, 0, 0);
+    antenna_layout->addWidget(obstacle_widget, 2, 0, Qt::AlignTop);
     QWidget* tree_widget = createToolButton("Tree", int(InsertTree));
-    obstacle_layout->addWidget(tree_widget,0,1);
+    antenna_layout->addWidget(tree_widget, 3, 0, Qt::AlignTop);
     QWidget* car_layout = createToolButton("Car", int(InsertCar));
-    obstacle_layout->addWidget(car_layout,1,0);
+    antenna_layout->addWidget(car_layout, 4, 0, Qt::AlignTop);
 
-    obstacle_layout->setRowStretch(3, 10);
-    obstacle_layout->setColumnStretch(2, 10);
-    obstacle_layout->setHorizontalSpacing(10);
+    antenna_layout->setRowStretch(5,10);
+    antenna_layout->setColumnStretch(1, 10);
+
     QWidget *itemWidget = new QWidget;
     itemWidget->setLayout(antenna_layout);
-
-    QWidget *obstacleWidget = new QWidget;
-    obstacleWidget->setLayout(obstacle_layout);
 
     m_toolbox = new QToolBox;
     m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     m_toolbox->setMinimumWidth(itemWidget->sizeHint().width());
     m_toolbox->addItem(itemWidget, tr("Insert antenna"));
-    m_toolbox->addItem(obstacleWidget, tr("Insert obstacles"));
     m_toolbarobject = new QToolBar;
     m_toolbarobject->addWidget(m_toolbox);
     m_toolbarobject->setFloatable(false);

@@ -95,6 +95,38 @@ public:
     complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction, QLineF local_region);
     complex <double> computeEfieldGround(const ProductObservable *receiver, const double direction,
                                          const bool properties);
+    /*!
+     * \fn double uMPC(WholeRay *wholeRay)
+     * \brief Return u parameter for a given MPC
+     * \param wholeRay
+     * \return
+     *
+     */
+    double uMPC(angle angleRx);
+
+    /*!
+     * \fn double pasMPC (WholeRay *wholeRay);
+     * \brief Computes Power Angular Spectrum for one MPC
+     * \param complex<double> angDistr
+     * \return Power Angular Sepctrum for one MPC
+     */
+    double pasMPC (complex<double> &angDistr);
+
+    /*!
+     * \fn complex<double> angDistr()
+     * \brief Returns tha angular distribution for one MPC
+     * \return
+     */
+    complex<double> angDistrMPC(complex<double> &h, double u);
+
+    /*!
+     * \fn void normalizePAS(vector<double> &pas)
+     * \brief Normalizes the PAS.
+     * \param pas
+     *
+     * For now its for tests
+     */
+    void normalizePAS(vector<double> &pas, double normTerm);
 
     /*!
      * \fn  complex<double> computeEMfield(WholeRay *rayLine, ProductObservable* receiver,bool properties);
@@ -104,13 +136,10 @@ public:
      * \param properties
      * \return EMfield
      *
-     * Computes the electric field +
-     * the channel parameters
+     * Computes the electric field
      *
      */
-    complex<double> computeEMfield(const not_null<WholeRay *> rayLine,
-                                   const ProductObservable *receiver,
-                                   const bool properties);
+    complex<double> computeEMfield(const not_null<WholeRay *> rayLine, const ProductObservable *, const bool);
 
     /*!
      * \fn MathematicalTransmitterProduct::computeR(WholeRay *wholeRay)
@@ -141,17 +170,8 @@ public:
     double computeReflexionPer(double thetaI, double epsilonR) const;
     double computeReflexionPar(double thetaI, double epsilonR) const;
 
-    double computeElevationScaterringAngle(float heightRx, float heightTx,
-                                           float heightConopy, float distanceRxTree);
-
-    map<string,double> computeIncidenceDepartureAngles(float angleIncidenceConopy,
-                                                        float angleAzimuth,
-                                                        float angleElevation);
-
-
     vector<WholeRay *> getRays();
     void notifyObservables();
-    QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line) const;
 
     /*!
      * \brief angularSpread

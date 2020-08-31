@@ -219,4 +219,46 @@ void computeRayThroughTree(QPointF *Rx, MathematicalTreeProduct *tree)
     }
 }
 
+QPointF sceneRectIntersection(const QRectF &rect, const QLineF &line)
+{
+
+    //  This function takes a bounding ray (line) of the illumination zone and gives its intersection
+    //  with the scene boundaries.
+    //
+
+    QLineF boundary1(rect.topLeft(), rect.bottomLeft()),
+           boundary2(rect.bottomLeft(), rect.bottomRight()),
+           boundary3(rect.bottomRight(), rect.topRight()),
+           boundary4(rect.topRight(), rect.topLeft());
+
+    QPointF intersectionPoint;
+
+    if (line.intersects(boundary1, &intersectionPoint) == 1) {}
+    else if (line.intersects(boundary2, &intersectionPoint) == 1) {}
+    else if (line.intersects(boundary3, &intersectionPoint) == 1) {}
+    else if (line.intersects(boundary4, &intersectionPoint) == 1) {}
+    return intersectionPoint;
+}
+
+double computeElevationScaterringAngle(float heightRx,
+                                       float heightTx,
+                                       float heightConopy,
+                                       float distanceRxTree)
+{
+    // ???????
+    return M_PI / 2 - atan2(heightRx - (heightTx + heightConopy / 2), distanceRxTree);
+}
+
+
+map<string, double> computeIncidenceDepartureAngles(float angleIncidenceConopy,
+                                                    float angleAzimuth,
+                                                    float angleElevation)
+{
+    // ????????????
+    map<string, double> anglesScttering;
+    anglesScttering["incidenceElevation"] = acos(cos(angleElevation) * cos(angleIncidenceConopy)
+                                                 - sin(angleElevation) * cos(angleAzimuth));
+    return  anglesScttering;
+}
+
 #endif // DRAFTS_H
