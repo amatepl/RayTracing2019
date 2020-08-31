@@ -130,14 +130,11 @@ void MathematicalReceiverProduct::extractChData()
         pas = QVector<double>(m_chData->prxAngularSpctr.begin(), m_chData->prxAngularSpctr.end());
     }
 
-    double tmpPrx = 0;
-    double tmpPrxdB = 0;
-
-    for (double &prx: pas) {
-        tmpPrx += prx;
-        prx = 20*log10(prx);
-        tmpPrxdB += prx;
-    }
+//    for (double &prx: pas) {
+//        tmpPrx += prx;
+//        prx = 20*log10(prx);
+//        tmpPrxdB += prx;
+//    }
 
 //    cout<<"Tmp prx [dB]: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
 
@@ -407,7 +404,6 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
         i++;
     }
 
-    cout<<"Tmp prx [dB] with impulse: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
 
     std::map<double,std::complex<double>> map_tau_tdl;
     for (unsigned long i=0; i<indepentant_rays; ++i){

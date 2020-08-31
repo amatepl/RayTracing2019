@@ -105,12 +105,20 @@ public:
     double uMPC(angle angleRx);
 
     /*!
+     * \fn double omegaMPC(double v)
+     * \brief return omega variable for Doppler Spectrum
+     * \param v
+     * \return
+     */
+    double omegaMPC(double v, double angleRx);
+
+    /*!
      * \fn double pasMPC (WholeRay *wholeRay);
      * \brief Computes Power Angular Spectrum for one MPC
      * \param complex<double> angDistr
      * \return Power Angular Sepctrum for one MPC
      */
-    double pasMPC (complex<double> &angDistr);
+    double prxSpctrMPC (complex<double> &angDistr, double u, double v = 1);
 
     /*!
      * \fn complex<double> angDistr()
@@ -126,7 +134,7 @@ public:
      *
      * For now its for tests
      */
-    void normalizePAS(vector<double> &pas, double normTerm);
+    void normalizePAS(vector<double> &pas);
 
     /*!
      * \fn  complex<double> computeEMfield(WholeRay *rayLine, ProductObservable* receiver,bool properties);

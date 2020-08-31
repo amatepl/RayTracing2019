@@ -102,7 +102,7 @@ void InfoWidget::createRayGroup(){
     ray_layout->addWidget(launch_raytracing, 0, 0, Qt::AlignTop);
     connect(launch_raytracing,&QPushButton::clicked,this,&InfoWidget::sendLaunchRayTracing);
 
-    rflctns_ray = new QDoubleSpinBox(ray_group);
+    rflctns_ray = new QSpinBox(ray_group);
     rflctns_ray->setRange(0.00,999.00);
     rflctns_ray->setAccelerated(true);
     QHBoxLayout *f = new QHBoxLayout;
@@ -125,15 +125,15 @@ void InfoWidget::createCoverageGroup(){
     coverage_layout->addWidget(launch_coverage, 0, 0, Qt::AlignTop);
     connect(launch_coverage,&QPushButton::clicked,this,&InfoWidget::sendLaunchCoverage);
 
-    rflctns_cov = new QDoubleSpinBox(ray_group);
+    rflctns_cov = new QSpinBox(ray_group);
     rflctns_cov->setRange(0.00,999.00);
     rflctns_cov->setAccelerated(true);
-    connect(rflctns_cov, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &InfoWidget::printValue);
+    connect(rflctns_cov, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
 
     QFormLayout *f_layout = new QFormLayout;
     f_layout->addRow("Density: ", rflctns_cov);
 
-    cov_dnsty = new QDoubleSpinBox(ray_group);
+    cov_dnsty = new QSpinBox(ray_group);
     cov_dnsty->setRange(0.00,999.00);
     cov_dnsty->setAccelerated(true);
 
@@ -161,6 +161,46 @@ void InfoWidget::createMapGroup()
     start_cars = new QPushButton("Start/Stop cars");
     map_layout->addWidget(start_cars, 1, 0, Qt::AlignTop);
     connect(start_cars,&QPushButton::clicked,this,&InfoWidget::sendStartCars);
+
+    st_dnsty = new QSpinBox(map_group);
+    st_dnsty->setRange(0.00,999.00);
+    st_dnsty->setAccelerated(true);
+    connect(st_dnsty, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
+
+    QFormLayout *f_layout = new QFormLayout;
+    f_layout->addRow("Streets Density: ", st_dnsty);
+
+    car_dnsty = new QSpinBox(map_group);
+    car_dnsty->setRange(0.00,999.00);
+    car_dnsty->setAccelerated(true);
+
+    f_layout->addRow("Cars Density: ", car_dnsty);
+
+    QGridLayout *size_layout = new QGridLayout;
+
+    QLabel *label = new QLabel("Size");
+
+    size_layout->addWidget(label, 0, 0);
+
+    height = new QSpinBox(map_group);
+    height->setRange(0.00,999.00);
+    height->setAccelerated(true);
+
+    size_layout->addWidget(height, 0, 1);
+//    f_layout->addRow("Cars Density: ", height);
+
+    width = new QSpinBox(map_group);
+    width->setRange(0.00,999.00);
+    width->setAccelerated(true);
+
+    size_layout->addWidget(width, 0, 2);
+
+//    f_layout->addRow("Size: ", size_layout);
+//    f_layout->addRow("Cars Density: ", width);
+    map_layout->addLayout(size_layout, 3, 0, Qt::AlignTop);
+
+    map_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
+
 
     map_group->setLayout(map_layout);
 }

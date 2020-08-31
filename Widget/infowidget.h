@@ -41,6 +41,7 @@ public:
 private:
     QGridLayout *main_layout;
 
+    // Info
     QGroupBox *info_group;
     QLabel *scene_pos;
     QLabel *power_rx;
@@ -52,6 +53,7 @@ private:
     QLabel *coherence_time;
     QLabel *angular_spread;
 
+    // Antena
     QGroupBox *edit_group;
     QDoubleSpinBox *frequency;
     QComboBox *frequency_order;
@@ -62,18 +64,25 @@ private:
     QCheckBox *all_same;
     QPushButton *clear_workspace;
 
+    // Ray Tracing
     QGroupBox *ray_group;
     QPushButton *launch_raytracing;
-    QDoubleSpinBox *rflctns_ray;
+    QSpinBox *rflctns_ray;
 
+    // Coverage
     QGroupBox *coverage_group;
     QPushButton *launch_coverage;
-    QDoubleSpinBox *rflctns_cov;
-    QDoubleSpinBox *cov_dnsty;
+    QSpinBox *rflctns_cov;
+    QSpinBox *cov_dnsty;
 
+    // Map
     QGroupBox *map_group;
     QPushButton *generate_map;
     QPushButton * start_cars;
+    QSpinBox *car_dnsty;
+    QSpinBox *st_dnsty;
+    QSpinBox *height;
+    QSpinBox *width;
 
 signals:
     void rayTracing();
