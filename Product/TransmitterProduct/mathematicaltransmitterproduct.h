@@ -118,14 +118,17 @@ public:
      * \param complex<double> angDistr
      * \return Power Angular Sepctrum for one MPC
      */
-    double prxSpctrMPC (complex<double> &angDistr, double u, double v = 1);
+    double prxSpctrMPC (complex<double> &angDistr, double theta, double spectrum);
 
     /*!
      * \fn complex<double> angDistr()
+     * \param h
+     * \param theta
+     * \param spectrum (Angular or Doppler)
      * \brief Returns tha angular distribution for one MPC
      * \return
      */
-    complex<double> angDistrMPC(complex<double> &h, double u);
+    complex<double> angDistrMPC(complex<double> &h, double theta, double spectrum);
 
     /*!
      * \fn void normalizePAS(vector<double> &pas)
@@ -163,6 +166,25 @@ public:
      * \param rx
      */
     void estimateCh(ProductObservable *rx);
+
+    /*!
+     * \brief MathematicalTransmitterProduct::vecSpeed
+     * \param length
+     * \param angle
+     * \return vector speed under QLineF shape
+     */
+    QLineF vecSpeed(double length, double angle);
+
+    /*!
+     * \brief resultant
+     * \param line1
+     * \param line2
+     * \return Compute resultant under QLineF shape
+     *
+     * The p1 of the return is (0.0)
+     */
+    QLineF resultant(QLineF line1, QLineF line2);
+
     complex<double>computeImpulseReflection(WholeRay *ray_line, QLineF local_region);
 
     double distance(const ProductObservable *receiver);
@@ -324,7 +346,7 @@ public:
      *
      *****************/
     void notifyParent(ProductObservable *productObservable,
-                      QLineF const movement,
+                      double speed,
                       const QPointF &point,
                       WholeRay *wholeRay) override;
 
@@ -341,7 +363,7 @@ public:
 private:
     double m_power                 { 2 };
     Kind m_kind               { dipole };
-    int m_radius                 { 5000 };
+    int m_radius                 { 500 };
     bool m_beamsFrozen = false;
 
     map<ProductObservable *, bool> m_chosenBeams;
@@ -361,9 +383,9 @@ private:
     map<const ProductObservable *,double> m_nlos_factor;
 
     // Doppler spectrum
-    map<WholeRay *,QLineF> ray_speeds;
-    QLineF m_receiver_speed;
-    QLineF m_ray_speed;
+    map<WholeRay *,double /*speed*/> rays_speed;
+    map<ProductObservable*, QLineF /*movement*/> receivers_speed;
+//    QLineF m_ray_speed;
 
     //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;

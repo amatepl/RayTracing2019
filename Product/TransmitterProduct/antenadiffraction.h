@@ -23,7 +23,7 @@ public:
 //    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
 
     // Overrides from AbstractAntena
-    virtual void notifyParent(ProductObservable *productObservable, QLineF const movement,
+    virtual void notifyParent(ProductObservable *productObservable, double speed,
                               const QPointF &point, WholeRay *wholeRay) override;
     virtual QPointF getPosition() const override;
     virtual QPolygonF getIlluminationZone() const override;

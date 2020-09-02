@@ -98,7 +98,7 @@ void AntenaDiffraction::update(ProductObservable *productObservable, QLineF cons
         MathematicalRayProduct *newRay = m_rayFactory->createRay(*this, *productObservable->getPos());
         newRay->setDiffracted(true);
         wholeRay->push_back(newRay);
-        m_parent->notifyParent(productObservable, movement, *this, wholeRay);
+        m_parent->notifyParent(productObservable,0.0 , *this, wholeRay);
     }
 }
 
@@ -123,7 +123,7 @@ void AntenaDiffraction::update(ProductObservable *productObservable, QLineF cons
 
 
 void AntenaDiffraction::notifyParent(ProductObservable *productObservable,
-                                     QLineF const movement,
+                                     double speed,
                                      const QPointF &point, WholeRay *wholeRay)
 {
     QLineF line(*this, point);
@@ -131,7 +131,7 @@ void AntenaDiffraction::notifyParent(ProductObservable *productObservable,
     MathematicalRayProduct *newRay = m_rayFactory->createRay(*this, point);
     newRay->setDiffracted(true);
     wholeRay->push_back(newRay);
-    m_parent->notifyParent(productObservable, movement, *this, wholeRay);
+    m_parent->notifyParent(productObservable, speed, *this, wholeRay);
 }
 
 

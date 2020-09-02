@@ -29,7 +29,7 @@ public:
 //    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
 
     //AbstractAntena
-    void notifyParent(ProductObservable *productObservable, QLineF const movement,
+    void notifyParent(ProductObservable *productObservable, double speed,
                       const QPointF &point, WholeRay *wholeRay) override;
     void notifyCarDetected() override;
     QPolygonF getIlluminationZone() const override;

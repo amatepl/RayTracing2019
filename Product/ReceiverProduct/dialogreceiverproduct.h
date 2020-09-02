@@ -45,11 +45,13 @@ public:
     QWidget* RealPathLossDialog();
     QWidget* ModelPathLossDialog();
     QWidget* CellRange();
-    QWidget* DopplerSpectrum();
+//    QWidget* DopplerSpectrum();
     QWidget* InterferencePattern();
     QWidget* DistributionInterference();
     QWidget* PrxAngularSpctr();
     QWidget* AngularDistr();
+    QWidget* PrxDopplerSpctr();
+    QWidget* DopplerDistr();
 
     void changeGraph();
     void setInterferencePattern(vector<double> impulse_r, double min, double max);
@@ -101,6 +103,7 @@ private:
     QVector<QCPItemLine*> impulse_tdl;
     QCustomPlot *impulse_plot;
     QCustomPlot *angular_distr_plot;
+    QCustomPlot *doppler_distr_plot;
 
     bool show_tdl;
     bool enable;

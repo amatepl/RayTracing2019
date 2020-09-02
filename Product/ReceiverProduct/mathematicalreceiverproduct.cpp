@@ -122,12 +122,18 @@ void MathematicalReceiverProduct::extractChData()
 //        angular_distr[ang - m_chData->angularDistr.begin()] = 20*log10(abs(*ang));
         angular_distr.push_back(-20*log10(abs(*ang)));
     }
+    for (vector<complex<double>>::iterator dop = m_chData->dopplerDistr.begin();
+         dop != m_chData->dopplerDistr.end();
+         dop++) {
+         doppler_distr.push_back(-20*log10(abs(*dop)));
+    }
 //    if (m_chData->angularDistr.size() > 0){
 //        angular_distr = QVector<complex<double>>(m_chData->angularDistr.begin(), m_chData->angularDistr.end());
 //    }
 
     if (m_chData->prxAngularSpctr.size() > 0) {
         pas = QVector<double>(m_chData->prxAngularSpctr.begin(), m_chData->prxAngularSpctr.end());
+        pds = QVector<double>(m_chData->prxDopplerSpctr.begin(), m_chData->prxDopplerSpctr.end());
     }
 
 //    for (double &prx: pas) {
@@ -143,7 +149,9 @@ void MathematicalReceiverProduct::extractChData()
 //    }
 
     angular_spread = m_chData->angularSpred;
+    doppler_spread = m_chData->dopplerSpread;
     u = QVector<double>(m_chData->u.begin(), m_chData->u.end());
+    w = QVector<double>(m_chData->w.begin(), m_chData->w.end());
 }
 
 
@@ -627,7 +635,7 @@ void MathematicalReceiverProduct::notifyObservers()
         computeImpulseTDL();
         computeDelaySpread();
         coherenceBandwidth();
-        dopplerSpectrum();
+//        dopplerSpectrum();
 
         extractChData();
     }

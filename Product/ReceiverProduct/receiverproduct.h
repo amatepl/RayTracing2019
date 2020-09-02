@@ -22,7 +22,7 @@
 //--------------------------------------------------------------------------------------------
 
 using PrxAngularSpread = QVector<double>;
-
+using PrxDopplerSpread = QVector<double>;
 //--------------------------------------------------------------------------------------------
 //
 //          Class ReceiverProduct
@@ -84,6 +84,11 @@ public:
     virtual void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
 
     // 4. Doppler
+    virtual QVector<double> prxDopplerSpread(){return pds;}
+    virtual QVector<double> dopplerDistr(){return doppler_distr;}
+    double dopplerSpread(){return doppler_spread;}
+    QVector<double> getw() {return w;}
+
     virtual QVector<double> getDoppler() {return doppler;}
     virtual QVector<double> getOmega() {return omega;}
 
@@ -108,6 +113,11 @@ protected:
     QVector<double> cell_range, probability;
 
     // 4. Doppler
+    PrxDopplerSpread pds;
+    QVector<double> doppler_distr;
+    double doppler_spread {0};
+    QVector<double> w;
+
     QVector<double> omega;
     QVector<double> doppler;
 

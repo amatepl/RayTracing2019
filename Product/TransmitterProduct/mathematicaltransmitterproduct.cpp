@@ -128,6 +128,8 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
     m_los_factor[rx] = 0;
     double pwr = 0;
     double hMax = 0;
+    QLineF receiver_speed = receivers_speed[rx];
+    QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
 
     for (const auto wholeRay: m_receiversRays[rx]) {
 
@@ -152,29 +154,66 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
         m_receiversImpulse[rx][tau] += h; // To change
         chData.impulseResp[tau] += h;
 
-        double u = uMPC(angleRx);
-        complex<double> angularDistr = angDistrMPC(h, u);
-        double prxAngSpctr = prxSpctrMPC(angularDistr, u);
+        beta.setAngle(angleRx+180);
+
+        double theta = angleRx;
+        if (receiver_speed.length() > 0.0){
+            theta = beta.angleTo(receiver_speed);
+        }
+
+        double u = uMPC(theta);
+        double w = receiver_speed.length()*u;
+        //double w = u*(receiver_speed.length()+rays_speed[wholeRay]*cos(theta*M_PI/180));
+        //double u = uMPC(angleRx);
+        complex<double> angularDistr = angDistrMPC(h, theta, u);
+        complex<double> dopplerDistr = angDistrMPC(h, theta, w);
+        double prxAngSpctr = prxSpctrMPC(angularDistr, theta, u);
+        double prxDopSpctr = prxSpctrMPC(dopplerDistr, theta, w);
 
         // Save Data
         chData.u.push_back(u);
+        chData.w.push_back(w);
         chData.angularDistr.push_back(angularDistr);
+        chData.dopplerDistr.push_back(dopplerDistr);
         chData.prxAngularSpctr.push_back(prxAngSpctr);
+        chData.prxDopplerSpctr.push_back(prxDopSpctr);
 
-        m_receiver_speed.translate(- m_receiver_speed.p1());
-        m_ray_speed.translate(- m_ray_speed.p1());
-        QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
-        QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
-        beta.setAngle(angleRx);
-        double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
+        //receivers_speed.translate(- m_receiver_speed.p1());
+        // m_ray_speed.translate(- m_ray_speed.p1());
+        //QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
+        //double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
+        double omega = 2.0 * M_PI / lambda * rays_speed[wholeRay];
         omega = round(omega * 1e4) / 1e4;
-        m_dopplerSpectrum[rx][omega] += h;
-        m_chsData[rx].dopplerSpctr[omega] += h;
+        //m_dopplerSpectrum[rx][omega] += h;
+        //chData.dopplerSpctr[omega] += h;
+        //chData.dopplerDistr[omega] += h;
 
     }
 
     normalizePAS(m_chsData.at(rx).prxAngularSpctr);
+    normalizePAS(m_chsData.at(rx).prxDopplerSpctr);
 
+}
+
+QLineF
+MathematicalTransmitterProduct::vecSpeed(double length, double angle)
+{
+    QLineF vector(QPointF(0.,0.),QPointF(10.,0.));
+    vector.setLength(abs(length));
+    if (length > 0){
+        vector.setAngle(angle+180);
+    }
+    else vector.setAngle(angle);
+    return vector;
+}
+
+QLineF
+MathematicalTransmitterProduct::resultant(QLineF line1, QLineF line2)
+{
+    line1.translate(-line1.p1());
+    line2.translate(-line2.p1());
+    QLineF res(QPointF(.0,.0), line1.p2()+line2.p2());
+    return res;
 }
 
 complex <double>
@@ -228,18 +267,18 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
         m_receiversImpulse[receiver][tau] += a;
         m_chsData[receiver].impulseResp[tau] += a;
         m_nlos_factor[receiver] += pow(abs(a),2);
-        double shift = (direction - m_receiver_speed.angle()) * M_PI / 180.0;
-        double omega = -2.0 * M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
-        m_dopplerSpectrum[receiver][omega] += a;
-        m_chsData[receiver].dopplerSpctr[omega] += a;
+        //double shift = (direction - m_receiver_speed.angle()) * M_PI / 180.0;
+        //double omega = -2.0 * M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
+        //m_dopplerSpectrum[receiver][omega] += a;
+        //m_chsData[receiver].dopplerSpctr[omega] += a;
 
         double angleRx = 360 - direction;
         Data &chData = m_chsData[receiver];
 
         // Put computed data into channels data.
         double u = uMPC(angleRx);
-        complex<double> angularDistr = angDistrMPC(a, u);
-        double prxAngSpctr = prxSpctrMPC(angularDistr, u);
+        complex<double> angularDistr = angDistrMPC(a, angleRx, u);
+        double prxAngSpctr = prxSpctrMPC(angularDistr, angleRx, u);
 
         // Save Data
         chData.u.push_back(u);
@@ -254,7 +293,9 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
 double MathematicalTransmitterProduct::uMPC(angle angleRx)
 {
     double beta = 2 * M_PI / lambda;
-    double theta = angleRx > 90 ? angleRx - 90: angleRx + 270;
+    // if we choose 0° in -y axe which is not natural
+    // double theta = angleRx > 90 ? angleRx - 90: angleRx + 270;
+    double theta = angleRx;
     return beta * cos(theta * M_PI / 180);
 }
 
@@ -263,17 +304,30 @@ double MathematicalTransmitterProduct::omegaMPC(double v, double angleRx)
     return v * uMPC(angleRx);
 }
 
-double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, double u, double v)
+//double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, double u, double v)
+//{
+////    return norm(angDistr / (2 * M_PI));
+//    double beta = 2 * M_PI / lambda;
+//    return 2 * M_PI / (beta * v * sqrt(1 - pow(u/(beta * v), 2)));
+//}
+
+double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, double theta, double spectrum)
 {
 //    return norm(angDistr / (2 * M_PI));
-    double beta = 2 * M_PI / lambda;
-    return 2 * M_PI / (beta * v * sqrt(1 - pow(u/(beta * v), 2)));
+//    double beta = 2 * M_PI / lambda;
+    double max_spectrum = spectrum/cos(theta*M_PI/180.);
+    return 2 * M_PI / (max_spectrum * sqrt(1 - pow(spectrum/max_spectrum, 2)));
 }
 
-complex<double> MathematicalTransmitterProduct::angDistrMPC(complex<double> &h, double u)
+//complex<double> MathematicalTransmitterProduct::angDistrMPC(complex<double> &h, double u)
+//{
+//    double beta = 2 * M_PI / lambda;
+//    return 2 * M_PI * h / (beta * sqrt(1 - pow(u / beta, 2)));
+//}
+
+complex<double> MathematicalTransmitterProduct::angDistrMPC(complex<double> &h, double theta, double spectrum)
 {
-    double beta = 2 * M_PI / lambda;
-    return 2 * M_PI * h / (beta * sqrt(1 - pow(u / beta, 2)));
+    return 2 * M_PI * h / (spectrum*sin(theta*M_PI/180.0)/cos(theta*M_PI/180));
 }
 
 void MathematicalTransmitterProduct::normalizePAS(vector<double> &pas)
@@ -454,15 +508,15 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
         if (wholeRay->at(0)->getDiffracted())
         {
             map<ProductObservable *, map<double, double>>::iterator it;
-            m_ray_speed = ray_speeds[wholeRay];
+            //m_ray_speed = ray_speeds[wholeRay];
             complex<double>EMfield = computeDiffractedEfield(receiver,wholeRay,true);
             m_receiversField[receiver] += EMfield;
 
             diffracted = true;
 
         } else {
-            m_ray_speed = ray_speeds[wholeRay];
-            m_ray_speed.setLength(m_ray_speed.length()/3.6);
+            //m_ray_speed = ray_speeds[wholeRay];
+            //m_ray_speed.setLength(m_ray_speed.length()/3.6);
             complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
             if (wholeRay->size() == 1) {
                 // Adding the ground component
@@ -636,7 +690,6 @@ void MathematicalTransmitterProduct::setScale(float scale)
 
 void MathematicalTransmitterProduct::clearChData(ProductObservable *rx)
 {
-    m_chsData[rx].dopplerSpctr.clear();
     m_chsData[rx].impulseResp.clear();
     m_chsData[rx].pathLossP = 0;
     m_chsData[rx].interference = 0;
@@ -644,6 +697,9 @@ void MathematicalTransmitterProduct::clearChData(ProductObservable *rx)
     m_chsData[rx].u.clear();
     m_chsData[rx].angularDistr.clear();
     m_chsData[rx].prxAngularSpctr.clear();
+    m_chsData[rx].w.clear();
+    m_chsData[rx].dopplerDistr.clear();
+    m_chsData[rx].prxDopplerSpctr.clear();
     m_chsData[rx].riceFactor = 0;
 
 }
@@ -662,12 +718,12 @@ void MathematicalTransmitterProduct::update(ProductObservable *receiver,
     m_receiversField[receiver] = 0;
     m_los_factor[receiver] = 0.0;
     m_nlos_factor[receiver] = 0.0;
-    ray_speeds.erase(ray_speeds.begin(), ray_speeds.end());
+    rays_speed.erase(rays_speed.begin(), rays_speed.end());
     m_receiversImpulse.erase(receiver);
     m_dopplerSpectrum.erase(receiver);
-    m_receiver_speed = movement;
-    m_receiver_speed.setLength(m_receiver_speed.length()/3.6);
-    m_ray_speed = QLineF(QPointF(0.0,0.0),QPointF(0.0,0.0));
+    receivers_speed[receiver] = movement;
+    receivers_speed[receiver].setLength(movement.length()/3.6);
+    //m_ray_speed = QLineF(QPointF(0.0,0.0),QPointF(0.0,0.0));
 
     m_chosenBeams[receiver] = false;
 
@@ -845,7 +901,7 @@ void MathematicalTransmitterProduct::attachObservable(ModelObservable *modelObse
 
 
 void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver,
-                                                  QLineF const movement,
+                                                  double speed,
                                                   const QPointF &point,
                                                   WholeRay *wholeRay)
 {
@@ -857,7 +913,7 @@ void MathematicalTransmitterProduct::notifyParent(ProductObservable *receiver,
     MathematicalRayProduct *newRay = m_rayFactory->createRay(*this, point);
     wholeRay->push_back(newRay);
     m_receiversRays[receiver].push_back(wholeRay);
-    ray_speeds[wholeRay] = movement;
+    rays_speed[wholeRay] = speed/3.6;
 }
 
 

@@ -142,11 +142,14 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
                                                             *productObservable->getPos(),
                                                             line.angleTo(m_wall)));
 
+        double angle = m_movement.angleTo(QLineF(reflectionPoint,*productObservable->getPos()));
+        double speed = m_movement.length()*cos(angle*M_PI/180.0);
+
         wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,
                                                     *productObservable->getPos(),
                                                     line.angleTo(m_wall)));
 
-        m_parent->notifyParent(productObservable,m_movement, reflectionPoint,wholeRay);
+        m_parent->notifyParent(productObservable,speed, reflectionPoint,wholeRay);
     }
 }
 
@@ -177,7 +180,7 @@ void TransmitterImage::attachObservable(ProductObservable* productObservable){
 
 
 void TransmitterImage::notifyParent(ProductObservable *productObservable,
-                                    QLineF const movement, const QPointF &point,
+                                    double speed, const QPointF &point,
                                     WholeRay *wholeRay)
 {
     QLineF line(*this,point);
@@ -188,32 +191,14 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
     //    wholeRay->push_back(newRay);
 
     wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
-    QLineF new_movement = movement;
-    m_movement.translate(-m_movement.p1());
-    new_movement.translate(-movement.p1());
-    QPointF p0 = m_movement.p1();
-    QPointF p1 = m_movement.p2();
-    QPointF p1_prime = new_movement.p2();
-    QLineF notify_movement;
-    if (m_wallType == Wall::front) {
-        notify_movement = QLineF(p0,p1_prime+p1);
-        if (wholeRay->size()%2 == 0) {
-            notify_movement.setAngle(m_movement.angle()+180.0);
-        }
-    }
-    else if (m_wallType == Wall::back) {
-        notify_movement = QLineF(p0,p1_prime+p1);
-        if (wholeRay->size()%2 == 0) {
-            notify_movement.setAngle(m_movement.angle()+180.0);
-        }
-    }
-    else {
-        notify_movement = new_movement;
+    double this_speed = speed;
+    if (m_movement.length() != 0.0){
+        double angle = m_movement.angleTo(QLineF(reflectionPoint,point));
+        this_speed += m_movement.length()*cos(angle*M_PI/180.0);
     }
 
-    m_parent->notifyParent(productObservable,notify_movement ,reflectionPoint,wholeRay);
+    m_parent->notifyParent(productObservable,this_speed ,reflectionPoint,wholeRay);
 }
-
 
 QPointF TransmitterImage::getPosition() const {
     return *this;

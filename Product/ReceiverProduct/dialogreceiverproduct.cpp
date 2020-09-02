@@ -12,14 +12,15 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
     m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
-    m_tabwidget->addTab(ModelPathLossDialog(),      tr("Model Path-Loss"));
+//    m_tabwidget->addTab(ModelPathLossDialog(),      tr("Model Path-Loss"));
     m_tabwidget->addTab(RealPathLossDialog(),       tr("Real Path-Loss"));
     m_tabwidget->addTab(CellRange(),                tr("Cellule range"));
-    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
     m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
     m_tabwidget->addTab(PrxAngularSpctr(),          tr("Power Angular Spectrum"));
     m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
+    m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
+    m_tabwidget->addTab(DopplerDistr(),             tr("Doppler Distribution"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -377,45 +378,6 @@ QWidget* DialogReceiverProduct::TDLImpulseResponse(){
     return widget;
 }
 
-QWidget* DialogReceiverProduct::DopplerSpectrum(){
-    QWidget *widget = new QWidget;
-    QCustomPlot *customplot = new QCustomPlot;
-
-    doppler = m_mathematicalproduct->getDoppler();
-    omega = m_mathematicalproduct->getOmega();
-
-    for(int i = 0; i < doppler.size(); i++){
-        QCPItemLine *line_doppler = new QCPItemLine(customplot);
-        line_doppler->start->setCoords(omega[i], doppler[i]);  // location of point 1 in plot coordinate
-        line_doppler->end->setCoords(omega[i], -130);  // location of point 2 in plot coordinate
-        line_doppler->setPen(QPen(Qt::blue));
-    }
-
-    customplot->addGraph();
-    customplot->graph(0)->setPen(QPen(Qt::red));
-    customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
-    customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    customplot->graph(0)->setData(omega, doppler);
-    customplot->graph(0)->setName("Doppler spectrum");
-
-    customplot->xAxis->setLabel("\u03C9[rad/s]");
-    customplot->yAxis->setLabel("a(\u03c9)[dB]");
-    customplot->yAxis->grid()->setSubGridVisible(true);
-    customplot->xAxis->grid()->setSubGridVisible(true);
-    customplot->rescaleAxes();
-    customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    customplot->replot();
-
-    customplot->plotLayout()->insertRow(0);
-    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Dopler spectrum", QFont("sans", 12, QFont::Bold)));
-
-    QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(customplot,0,0);
-
-    widget->setLayout(firstLayout);
-    return widget;
-}
-
 QWidget* DialogReceiverProduct::InterferencePattern()
 {
     Q3DSurface *graph = new Q3DSurface();
@@ -648,6 +610,115 @@ DialogReceiverProduct::AngularDistr()
     widget->setLayout(firstLayout);
     return widget;
 }
+
+QWidget*
+DialogReceiverProduct::PrxDopplerSpctr()
+{
+    QWidget *widget = new QWidget;
+    doppler_distr_plot = new QCustomPlot;
+
+    pds = m_mathematicalproduct->prxDopplerSpread();
+    doppler_distr = m_mathematicalproduct->dopplerDistr();
+    w = m_mathematicalproduct->getw();
+
+    for (int i = 0; i < pds.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(doppler_distr_plot);
+        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+
+    // Plot physiscal impulse response
+    doppler_distr_plot->addGraph();
+    doppler_distr_plot->graph(0)->setPen(QPen(Qt::blue));
+    doppler_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    doppler_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    doppler_distr_plot->graph(0)->setData(w, pds);
+    doppler_distr_plot->graph(0)->setName("PDS");
+
+    doppler_distr_plot->xAxis->setLabel("w[rad/s]");
+    doppler_distr_plot->yAxis->setLabel("S(w)[dB]");
+    doppler_distr_plot->yAxis->grid()->setSubGridVisible(true);
+    doppler_distr_plot->xAxis->grid()->setSubGridVisible(true);
+    doppler_distr_plot->rescaleAxes();
+    doppler_distr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    doppler_distr_plot->replot();
+    doppler_distr_plot->legend->setVisible(true);
+    doppler_distr_plot->plotLayout()->insertRow(0);
+    doppler_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(doppler_distr_plot, "Power Doppler Density (PAS) and Doppler Distribution", QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(doppler_distr_plot,0,0);
+
+    widget->setLayout(firstLayout);
+
+    return widget;
+}
+
+QWidget*
+DialogReceiverProduct::DopplerDistr()
+{
+    QWidget *widget = new QWidget;
+    m_distribution = new QCustomPlot;
+
+    m_distribution->xAxis->setLabel("|h|");
+    m_distribution->yAxis->setLabel("PDF");
+    m_distribution->xAxis->setRange(0, 1);
+    m_distribution->yAxis->setRange(0, 0.03);
+    m_distribution->yAxis->grid()->setSubGridVisible(true);
+    m_distribution->xAxis->grid()->setSubGridVisible(true);
+    m_distribution->rescaleAxes();
+    m_distribution->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    m_distribution->legend->setVisible(true);
+
+    m_distribution->plotLayout()->insertRow(0);
+    m_distribution->plotLayout()->addElement(0, 0, new QCPTextElement(m_distribution, "Histogram of |h| and Rice distribution fitting", QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(m_distribution,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
+}
+
+//QWidget* DialogReceiverProduct::DopplerSpectrum(){
+//    QWidget *widget = new QWidget;
+//    QCustomPlot *customplot = new QCustomPlot;
+
+//    doppler = m_mathematicalproduct->getDoppler();
+//    omega = m_mathematicalproduct->getOmega();
+
+//    for(int i = 0; i < doppler.size(); i++){
+//        QCPItemLine *line_doppler = new QCPItemLine(customplot);
+//        line_doppler->start->setCoords(omega[i], doppler[i]);  // location of point 1 in plot coordinate
+//        line_doppler->end->setCoords(omega[i], -130);  // location of point 2 in plot coordinate
+//        line_doppler->setPen(QPen(Qt::blue));
+//    }
+
+//    customplot->addGraph();
+//    customplot->graph(0)->setPen(QPen(Qt::red));
+//    customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
+//    customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+//    customplot->graph(0)->setData(omega, doppler);
+//    customplot->graph(0)->setName("Doppler spectrum");
+
+//    customplot->xAxis->setLabel("\u03C9[rad/s]");
+//    customplot->yAxis->setLabel("a(\u03c9)[dB]");
+//    customplot->yAxis->grid()->setSubGridVisible(true);
+//    customplot->xAxis->grid()->setSubGridVisible(true);
+//    customplot->rescaleAxes();
+//    customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+//    customplot->replot();
+
+//    customplot->plotLayout()->insertRow(0);
+//    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Dopler spectrum", QFont("sans", 12, QFont::Bold)));
+
+//    QGridLayout *firstLayout = new QGridLayout;
+//    firstLayout->addWidget(customplot,0,0);
+
+//    widget->setLayout(firstLayout);
+//    return widget;
+//}
 
 void DialogReceiverProduct::changeGraph(){
 }
