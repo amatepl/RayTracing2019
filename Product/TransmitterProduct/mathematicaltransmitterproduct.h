@@ -46,6 +46,8 @@
 
 using namespace std;
 using namespace gsl;
+using u = double;
+using amp_u = double;
 //using WholeRay = vector<MathematicalRayProduct *>;
 
 //template <class Period = std::ratio<1>> struct Length {
@@ -102,7 +104,7 @@ public:
      * \return
      *
      */
-    double uMPC(angle angleRx);
+    u uMPC(double wvNbr, angle theta);
 
     /*!
      * \fn double omegaMPC(double v)
@@ -110,7 +112,7 @@ public:
      * \param v
      * \return
      */
-    double omegaMPC(double v, double angleRx);
+    double omegaMPC(double v, double wvNbr, angle angleRx);
 
     /*!
      * \fn double pasMPC (WholeRay *wholeRay);
@@ -118,7 +120,7 @@ public:
      * \param complex<double> angDistr
      * \return Power Angular Sepctrum for one MPC
      */
-    double prxSpctrMPC (complex<double> &angDistr, double theta, double spectrum);
+    double prxSpctrMPC (complex<double> &angDistr, angle theta, double spectrum);
 
     /*!
      * \fn complex<double> angDistr()
@@ -137,7 +139,7 @@ public:
      *
      * For now its for tests
      */
-    void normalizePAS(vector<double> &pas);
+    void normalizePrxSpctr(vector<double> &pas);
 
     /*!
      * \fn  complex<double> computeEMfield(WholeRay *rayLine, ProductObservable* receiver,bool properties);
