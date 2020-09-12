@@ -39,6 +39,31 @@ public:
     DialogReceiverProduct(ReceiverProduct* mathematicalproduct);
     ~DialogReceiverProduct() override;
 
+    /*!
+     * \brief templatePlot
+     * \param plot
+     * \param title
+     * \param xlabel
+     * \param ylabel
+     * \param xlog
+     * \param ylog
+     * \return Widget window with a simple graph window
+     */
+    QWidget* templatePlot(QCustomPlot *plot,
+                          QString title,
+                          QString xlabel,
+                          QString ylabel,
+                          bool xlog = false,
+                          bool ylog = false);
+    /*!
+     * \brief shadowing
+     * \param shadow
+     *
+     * New plot in shadowing tab
+     *
+     */
+    void shadowing(map<double /*angle*/, double /*power*/> shadow);
+
     QWidget* PhysicalImpulseResponse();
     QWidget* TDLImpulseResponse();
     QWidget* GeneralTabDialog();
@@ -104,6 +129,7 @@ private:
     QCustomPlot *impulse_plot;
     QCustomPlot *angular_distr_plot;
     QCustomPlot *doppler_distr_plot;
+    QCustomPlot *shadowing_plot;
 
     bool show_tdl;
     bool enable;

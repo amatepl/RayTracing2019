@@ -20,6 +20,15 @@ GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
     graphicsReceiverProduct->setX(posX);
     graphicsReceiverProduct->setY(posY);
     mathematicalReceiverProduct->attachObservable(graphicsReceiverProduct);
+
+//    vector<QPointF> pl_points = mathematicalReceiverProduct->circlePoints(QPointF(250,300),15,20);
+//    int rad = 1;
+//    for (unsigned i = 0; i < pl_points.size(); i++)
+//    {
+//        m_scene->addEllipse(pl_points.at(i).x()-rad, pl_points.at(i).y()-rad, rad*2.0, rad*2.0,
+//            QPen(QColor(Qt::red)), QBrush(Qt::SolidPattern));
+//    }
+
     return graphicsReceiverProduct;
 }
 

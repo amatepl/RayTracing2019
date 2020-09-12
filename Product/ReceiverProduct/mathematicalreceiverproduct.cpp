@@ -122,10 +122,12 @@ void MathematicalReceiverProduct::extractChData()
 //        angular_distr[ang - m_chData->angularDistr.begin()] = 20*log10(abs(*ang));
         angular_distr.push_back(-20*log10(abs(*ang)));
     }
-    for (vector<complex<double>>::iterator dop = m_chData->dopplerDistr.begin();
-         dop != m_chData->dopplerDistr.end();
-         dop++) {
-         doppler_distr.push_back(-20*log10(abs(*dop)));
+    if (m_movement.length() > 0){
+        for (vector<complex<double>>::iterator dop = m_chData->dopplerDistr.begin();
+             dop != m_chData->dopplerDistr.end();
+             dop++) {
+             doppler_distr.push_back(20*log10(abs(*dop)));
+        }
     }
 //    if (m_chData->angularDistr.size() > 0){
 //        angular_distr = QVector<complex<double>>(m_chData->angularDistr.begin(), m_chData->angularDistr.end());
@@ -581,6 +583,9 @@ void MathematicalReceiverProduct::openDialog(){
         notifyObserversPathLoss(m_transmitters.at(i));
     }
     m_dialog = new DialogReceiverProduct(this);
+    for (unsigned i = 0; i < m_transmitters.size(); i++) {
+        m_dialog->shadowing(notifyObservervesShadowing(m_transmitters.at(i)));
+    }
     connect(m_dialog, &DialogReceiverProduct::save,
             this, &MathematicalReceiverProduct::save);
     connect(m_dialog,&DialogReceiverProduct::interferenceActivated,this,&MathematicalReceiverProduct::sendInterferencePattern);
@@ -687,6 +692,46 @@ void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* trans
     cellRange();
     computeMinPrx();
     delete copy_receiver;
+}
+
+map<double,double>
+MathematicalReceiverProduct::notifyObservervesShadowing(ProductObserver* tx)
+{
+    vector<QPointF> points = circlePoints(*dynamic_cast<QPointF*>(tx),100,1);
+    MathematicalReceiverProduct* copy_receiver = new MathematicalReceiverProduct(this);
+    map <double /*angle*/,double /*power*/> shadow;
+    for(unsigned i = 0; i < points.size(); i++)
+    {
+        copy_receiver->setX(points.at(i).x());
+        copy_receiver->setY(points.at(i).y());
+        tx->update(copy_receiver, m_movement);
+        for (unsigned int l = 0; l < m_observers.size(); l++)
+        {
+            m_observers.at(l)->update(copy_receiver,m_movement);
+        }
+        double power = tx->computePathLossPower(copy_receiver);
+        QLineF line(*dynamic_cast<QPointF*>(tx),*copy_receiver);
+        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
+        {
+            shadow[line.angle()*M_PI/180.0] = power;
+        }
+    }
+    delete copy_receiver;
+    return shadow;
+}
+
+vector<QPointF>
+MathematicalReceiverProduct::circlePoints(QPointF center, double radius, int rpd)
+{
+    vector<QPointF> points;
+    QPointF point;
+    double range = 1.0/rpd;
+    for (double theta = 0; theta < 360; theta += range){
+        point.setX(radius*cos(theta*M_PI/180.0));
+        point.setY(radius*sin(theta*M_PI/180.0));
+        points.push_back(center+point);
+    }
+    return points;
 }
 
 std::map<double,double>

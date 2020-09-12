@@ -29,6 +29,7 @@ GraphicsBuildingProduct::GraphicsBuildingProduct(QPolygonF poly,QMenu* productme
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     m_type = "building";
+    setBrush(QBrush(QColor(Qt::white)));
 
     draw();
 }

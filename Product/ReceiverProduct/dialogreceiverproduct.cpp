@@ -8,17 +8,23 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     setMinimumSize(1000,900);
     show_tdl = true;
 
+    shadowing_plot = new QCustomPlot();
     m_tabwidget = new QTabWidget;
     m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
     m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
 //    m_tabwidget->addTab(ModelPathLossDialog(),      tr("Model Path-Loss"));
     m_tabwidget->addTab(RealPathLossDialog(),       tr("Real Path-Loss"));
+    m_tabwidget->addTab(templatePlot(shadowing_plot,
+                                     "Shadowing around transmitter at a reference distance",
+                                     "Angle [rad]",
+                                     "P[dBm]"),
+                        tr("Shadowing"));
     m_tabwidget->addTab(CellRange(),                tr("Cellule range"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
     m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
     m_tabwidget->addTab(PrxAngularSpctr(),          tr("Power Angular Spectrum"));
-    m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
+//    m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
     m_tabwidget->addTab(DopplerDistr(),             tr("Doppler Distribution"));
 
@@ -53,6 +59,59 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
 
 DialogReceiverProduct::~DialogReceiverProduct(){
 
+}
+
+QWidget* DialogReceiverProduct::templatePlot(QCustomPlot *plot,
+                                             QString title,
+                                             QString xlabel,
+                                             QString ylabel,
+                                             bool xlog,
+                                             bool ylog)
+{
+    QWidget *widget = new QWidget();
+
+    plot->xAxis->setLabel(xlabel);
+    plot->yAxis->setLabel(ylabel);
+    if (xlog) plot->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    if (ylog) plot->yAxis->setScaleType(QCPAxis::stLogarithmic);
+    plot->yAxis->grid()->setSubGridVisible(true);
+    plot->xAxis->grid()->setSubGridVisible(true);
+    plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    plot->plotLayout()->insertRow(0);
+    plot->plotLayout()->addElement(0, 0, new QCPTextElement(plot, title, QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(plot,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
+}
+
+void DialogReceiverProduct::shadowing(map<double, double> shadow)
+{
+    QVector<double> angle;
+    QVector<double> power;
+    for (auto &sha: shadow){
+        angle.push_back(sha.first);
+        power.push_back(sha.second);
+    }
+    const auto mean = std::accumulate(power.begin(), power.end(), .0) / power.size();
+    QVector<double> mean_vector(power.size(),mean);
+
+    shadowing_plot->addGraph();
+    shadowing_plot->graph(0)->setPen(QPen(Qt::blue));
+    shadowing_plot->graph(0)->setData(angle, power);
+    shadowing_plot->graph(0)->setName("Shadowing power");
+
+    shadowing_plot->addGraph();
+    shadowing_plot->graph(1)->setPen(QPen(Qt::red));
+    shadowing_plot->graph(1)->setData(angle, mean_vector);
+    shadowing_plot->graph(1)->setName("<Prx(d)>");
+
+    shadowing_plot->rescaleAxes();
+    shadowing_plot->replot();
+    shadowing_plot->xAxis->setTicker(QSharedPointer<QCPAxisTickerPi>(new QCPAxisTickerPi));
+    shadowing_plot->legend->setVisible(true);
 }
 
 QWidget* DialogReceiverProduct::GeneralTabDialog(){
@@ -142,26 +201,31 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
     double n = m_mathematicalproduct->pathLossExponent();
     fading_variability = m_mathematicalproduct->fadingVariability();
 
+    QVector<double> logD(D.size());
+    for (int i = 0; i < D.size(); i++){
+        logD[i] = log10(D[i]);
+    }
+
     QCPGraph *path_loss_graph = new QCPGraph(customplot->xAxis, customplot->yAxis);
 
     path_loss_graph->setPen(QColor(Qt::blue));
     path_loss_graph->setName("Power received");
     path_loss_graph->setLineStyle(QCPGraph::lsLine);
-    path_loss_graph->setData(D, Prx);
+    path_loss_graph->setData(logD, Prx);
 
     customplot->addGraph();
     customplot->graph(1)->setPen(QPen(Qt::red));
-    customplot->graph(1)->setData(D, path_loss);
+    customplot->graph(1)->setData(logD, path_loss);
     customplot->graph(1)->setName("Path Loss");
 
     customplot->addGraph();
     customplot->graph(2)->setPen(QPen(Qt::darkGreen));
-    customplot->graph(2)->setData(D, friis_loss);
+    customplot->graph(2)->setData(logD, friis_loss);
     customplot->graph(2)->setName("Free propagation loss");
 
-    customplot->xAxis->setLabel("Distance[m]");
+    customplot->xAxis->setLabel("Distance log(d/1m)]");
     customplot->yAxis->setLabel("Prx[dbm]");
-    customplot->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    //customplot->xAxis->setScaleType(QCPAxis::stLogarithmic);
     customplot->yAxis->grid()->setSubGridVisible(true);
     customplot->xAxis->grid()->setSubGridVisible(true);
     customplot->rescaleAxes();
@@ -250,6 +314,7 @@ QWidget* DialogReceiverProduct::ModelPathLossDialog(){
 QWidget* DialogReceiverProduct::CellRange(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
+    min_prx = m_mathematicalproduct->minPower();
     probability = m_mathematicalproduct->probabilityConnection();
     cell_range = m_mathematicalproduct->cellRangeConnection();
 
@@ -294,14 +359,14 @@ QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
     for(int i = 0; i < h.size(); i++){
         QCPItemLine *line_impulse = new QCPItemLine(impulse_plot);
         line_impulse->start->setCoords(tau[i], h[i]);  // location of point 1 in plot coordinate
-        line_impulse->end->setCoords(tau[i], -130);  // location of point 2 in plot coordinate
+        line_impulse->end->setCoords(tau[i], -700);  // location of point 2 in plot coordinate
         line_impulse->setPen(QPen(Qt::blue));
     }
     for (int i=0; i<h_tdl.size();i++){
         QCPItemLine *line_tdl = new QCPItemLine(impulse_plot);
         impulse_tdl.push_back(line_tdl);
         line_tdl->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
-        line_tdl->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+        line_tdl->end->setCoords(tau_tdl[i], -700);  // location of point 2 in plot coordinate
         line_tdl->setPen(QPen(Qt::red));
     }
 
@@ -348,7 +413,7 @@ QWidget* DialogReceiverProduct::TDLImpulseResponse(){
     for(int i = 0; i<h_tdl.size(); i++){
         QCPItemLine *line = new QCPItemLine(customplot);
         line->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
-        line->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+        line->end->setCoords(tau_tdl[i], -700);  // location of point 2 in plot coordinate
         line->setPen(QPen(Qt::red));
     }
     // Plot physiscal impulse response
@@ -659,23 +724,35 @@ QWidget*
 DialogReceiverProduct::DopplerDistr()
 {
     QWidget *widget = new QWidget;
-    m_distribution = new QCustomPlot;
+    QCustomPlot *customplot = new QCustomPlot;
+    for(int i = 0; i<doppler_distr.size(); i++){
+        QCPItemLine *line = new QCPItemLine(customplot);
+        line->start->setCoords(w[i], doppler_distr[i]);  // location of point 1 in plot coordinate
+        line->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
+        line->setPen(QPen(Qt::red));
+    }
+    // Plot physiscal impulse response
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::red));
+    customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    customplot->graph(0)->setData(w, doppler_distr);
+    customplot->graph(0)->setName("Doppler distribution");
 
-    m_distribution->xAxis->setLabel("|h|");
-    m_distribution->yAxis->setLabel("PDF");
-    m_distribution->xAxis->setRange(0, 1);
-    m_distribution->yAxis->setRange(0, 0.03);
-    m_distribution->yAxis->grid()->setSubGridVisible(true);
-    m_distribution->xAxis->grid()->setSubGridVisible(true);
-    m_distribution->rescaleAxes();
-    m_distribution->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    m_distribution->legend->setVisible(true);
+    customplot->xAxis->setLabel("w [rad/s]");
+    customplot->yAxis->setLabel("a(w)[dB]");
+    customplot->yAxis->grid()->setSubGridVisible(true);
+    customplot->xAxis->grid()->setSubGridVisible(true);
+    customplot->rescaleAxes();
+    customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    customplot->legend->setVisible(true);
+    customplot->replot();
 
-    m_distribution->plotLayout()->insertRow(0);
-    m_distribution->plotLayout()->addElement(0, 0, new QCPTextElement(m_distribution, "Histogram of |h| and Rice distribution fitting", QFont("sans", 12, QFont::Bold)));
+    customplot->plotLayout()->insertRow(0);
+    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Doppler distribution", QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(m_distribution,0,0);
+    firstLayout->addWidget(customplot,0,0);
 
     widget->setLayout(firstLayout);
     return widget;
@@ -812,7 +889,7 @@ void DialogReceiverProduct::showTDL(){
             QCPItemLine *line_tdl = new QCPItemLine(impulse_plot);
             impulse_tdl.push_back(line_tdl);
             line_tdl->start->setCoords(tau_tdl[i], h_tdl[i]);  // location of point 1 in plot coordinate
-            line_tdl->end->setCoords(tau_tdl[i], -130);  // location of point 2 in plot coordinate
+            line_tdl->end->setCoords(tau_tdl[i], -700);  // location of point 2 in plot coordinate
             line_tdl->setPen(QPen(Qt::red));
         }
         impulse_plot->addGraph();

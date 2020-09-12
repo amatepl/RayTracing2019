@@ -154,7 +154,7 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
         m_receiversImpulse[rx][tau] += h; // To change
         chData.impulseResp[tau] += h;
 
-        beta.setAngle(angleRx+180);
+        beta.setAngle(angleRx);
 
         double theta = angleRx;
         if (receiver_speed.length() > 0.0){
@@ -626,7 +626,7 @@ vector<QPointF> MathematicalTransmitterProduct::pathLossPoints() const
     int height = bounding_rect.height();
     QPointF tmp_point = bounding_rect.topLeft();
                                // Starting point
-    int num_points = 100/px_to_meter;
+    int num_points = 250;//px_to_meter;
                                // Number of considered points
     int range_x = width/num_points;
     int range_y = height/num_points;

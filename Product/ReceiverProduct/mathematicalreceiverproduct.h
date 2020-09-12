@@ -135,6 +135,19 @@ public:
     void notifyObserversPathLoss(ProductObserver* transmitter);
 
     /*!
+     * \brief notifyObservervesShadowing
+     * \param tx
+     * \return Coresponding angle with power receiver as a map
+     *
+     * The shadowing is computed at the same distance as transmitter
+     * but around 360°. The shadowing represent the variability around
+     * the transmitter.
+     *
+     */
+    map<double /*angle*/, double /*power*/>
+    notifyObservervesShadowing(ProductObserver* tx);
+
+    /*!
      * \fn MathematicalReceiverProduct::averageOnMap(std::map<double,double> values,
                                                      std::map<double,int> counter);
      * \brief Average value inside a map by the number of keyword iteration
@@ -149,6 +162,15 @@ public:
     std::map<double/*compare value*/,double/*average value*/>
     averageOnMap(std::map<double/*compare value*/,double/*value*/> values,
                  std::map<double/*compare value*/,int/*counter*/> counter) const;
+
+    /*!
+     * \brief circlePoints
+     * \param center
+     * \param radius
+     * \param rpd: Range per degree (number of samples per degree)
+     * \return Vector of QPointF in the perimeter of a circle
+     */
+    vector<QPointF> circlePoints(QPointF center,double radius, int rpd);
 
     complex<double> notifyObserversInterference(QLineF local_region);
     void notify() override;

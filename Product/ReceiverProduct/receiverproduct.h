@@ -69,13 +69,13 @@ public:
     virtual double fadingVariability() {return fading_variability;}
     virtual double minPower() {return min_prx;}
 
-    // 2. Impulse and TDL Results:
+    // 3. Impulse and TDL Results:
     virtual QVector<double> impulse(){return h;}
     virtual QVector<double> impulseTDL(){return h_tdl;}
     virtual QVector<double> impulseTau() {return tau;}
     virtual QVector<double> impulseTauTDL() {return tau_tdl;}
 
-    // 3. Cell Range Results:
+    // 4. Cell Range Results:
     virtual QVector<double> probabilityConnection() {return probability;}
     virtual QVector<double> cellRangeConnection() {return cell_range;}
     virtual unsigned long frequency() {return m_transmitterfrequency;}
@@ -83,7 +83,7 @@ public:
     virtual void setFrequency(unsigned long frequency){m_transmitterfrequency = frequency;}
     virtual void setBandwidth(unsigned long bandwidth){m_transmitterbandwidth = bandwidth;}
 
-    // 4. Doppler
+    // 5. Doppler
     virtual QVector<double> prxDopplerSpread(){return pds;}
     virtual QVector<double> dopplerDistr(){return doppler_distr;}
     double dopplerSpread(){return doppler_spread;}
@@ -92,7 +92,7 @@ public:
     virtual QVector<double> getDoppler() {return doppler;}
     virtual QVector<double> getOmega() {return omega;}
 
-    // 5. Spatial correlation
+    // 6. Spatial correlation
     virtual QVector<double> prxAngularSpread(){return pas;}
     virtual QVector<double> angularDistr(){return angular_distr;}
     double angularSpread(){return angular_spread;}
