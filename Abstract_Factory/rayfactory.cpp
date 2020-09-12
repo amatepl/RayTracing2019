@@ -7,18 +7,18 @@ RayFactory::RayFactory(bool visible, QGraphicsScene *scene,const float scale)
     px_to_meter = scale;
 }
 
-MathematicalRayProduct* RayFactory::createRay(const QPointF &p1, const QPointF &p2, double Tetai, int indWall){
+MathematicalRayProduct* RayFactory::createRay(const QPointF &p1, const QPointF &p2, const double Tetai, const double epsilonWall){
     MathematicalRayProduct* mathematicalComponent;
     if(m_visibleRays){
 
         //cout<<"Ray created in factory"<<endl;
-        mathematicalComponent = new MathematicalRayProduct(p1, p2, Tetai, indWall);
+        mathematicalComponent = new MathematicalRayProduct(p1, p2, Tetai, epsilonWall);
         mathematicalComponent->Line::setScale(px_to_meter);
-        GraphicsRayProduct* graphicsComponent = new GraphicsRayProduct(p1, p2,m_scene);
+        GraphicsRayProduct* graphicsComponent = new GraphicsRayProduct(p1, p2, m_scene);
         mathematicalComponent->attachObservable(graphicsComponent);
     }
     else{
-        mathematicalComponent = new MathematicalRayProduct(p1, p2, Tetai, indWall);
+        mathematicalComponent = new MathematicalRayProduct(p1, p2, Tetai);
         mathematicalComponent->Line::setScale(px_to_meter);
     }
     return mathematicalComponent;

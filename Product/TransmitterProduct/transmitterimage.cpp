@@ -1,7 +1,7 @@
 #include "transmitterimage.h"
 
-TransmitterImage::TransmitterImage(const Line &wall, AbstractAntena *parent):
-    QPointF(),m_wall(wall),m_parent(parent),m_radius(500)
+TransmitterImage::TransmitterImage(const Line &wall, AbstractAntena *parent, const double epsilonWall):
+      QPointF(),m_wall(wall),m_parent(parent),m_radius(500), m_epsilonWall(epsilonWall)
 {
     QPointF pos = m_wall.symetricalPoint(parent->getPosition());
     setX(pos.x()); setY(pos.y());
@@ -147,7 +147,8 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
 
         wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,
                                                     *productObservable->getPos(),
-                                                    line.angleTo(m_wall)));
+                                                    line.angleTo(m_wall),
+                                                    m_epsilonWall));
 
         m_parent->notifyParent(productObservable,speed, reflectionPoint,wholeRay);
     }
@@ -187,10 +188,8 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
     QPointF reflectionPoint;
 
     m_wall.intersects(line, &reflectionPoint);
-    //    MathematicalRayProduct newRay(reflectionPoint,point,line.angleTo(m_wall));
-    //    wholeRay->push_back(newRay);
 
-    wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,point,line.angleTo(m_wall)));
+    wholeRay->push_back(m_rayFactory->createRay(reflectionPoint, point, line.angleTo(m_wall), m_epsilonWall));
     double this_speed = speed;
     if (m_movement.length() != 0.0){
         double angle = m_movement.angleTo(QLineF(reflectionPoint,point));

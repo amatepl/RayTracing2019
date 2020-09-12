@@ -6,8 +6,8 @@ MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points
     m_extremities = points;
     setModel("concrete");
     m_type = "Building";
-    for(int i =0; i<size()-1;i++){
-        Wall *wall = new Wall(this->at(i),this->at((i+1)%(size())),0.0,m_conductivity,m_permittivity,i);
+    for (int i = 0; i < size() - 1; i++) {
+        Wall *wall = new Wall(this->at(i), this->at((i+1)%(size())), 0.0, m_permittivity, m_conductivity, i);
         wall->setBuilding(this);
         wall->setScale(px_to_meter);
         m_walls.push_back(wall);
@@ -16,7 +16,7 @@ MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points
 
 MathematicalBuildingProduct::~MathematicalBuildingProduct(){
     cout << "Mathematical Building Product Deleted." << endl;
-    for(int i=0;i<size()-1;i++){
+    for(int i = 0;i < size()-1; i++) {
         delete m_walls.at(i);
     }
 }

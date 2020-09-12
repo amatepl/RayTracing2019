@@ -1,10 +1,9 @@
 #include "mathematicalrayproduct.h"
 
-MathematicalRayProduct::MathematicalRayProduct(const QPointF &p1,const QPointF &p2, double Tetai, int indWall):
-    Line(p1,p2),wallIBouncedOn(indWall)
+MathematicalRayProduct::MathematicalRayProduct(const QPointF &p1, const QPointF &p2, double Tetai, const double epsilonWall):
+      Line(p1,p2), m_tetai(Tetai), m_epsilonWall{epsilonWall}
 {
     m_type = "Ray";
-    setTetai(Tetai);
     updateMeterLength();
 }
 
@@ -43,20 +42,20 @@ double MathematicalRayProduct::getTetai() const
 
 double MathematicalRayProduct::getTheta() const
 {
-    return theta;
+    return m_theta;
 }
 
 
 int MathematicalRayProduct::getIndWall() const
 {
-    return wallIBouncedOn;
+    return m_wallIBouncedOn;
 }
 
 
 //double MathematicalRayProduct::getMeterLength()const{return meterLength;}
 
 
-void MathematicalRayProduct::setTetai(double tetai)
+void MathematicalRayProduct::setTetai(const double tetai)
 {
     if (tetai > 180) {
         m_tetai = (tetai - 180)*M_PI/180;
@@ -65,7 +64,7 @@ void MathematicalRayProduct::setTetai(double tetai)
 }
 
 
-void MathematicalRayProduct::setDiffracted(bool diffracted)
+void MathematicalRayProduct::setDiffracted(const bool diffracted)
 {
     m_diffracted = diffracted;
 }
@@ -74,6 +73,12 @@ void MathematicalRayProduct::setDiffracted(bool diffracted)
 bool MathematicalRayProduct::getDiffracted() const
 {
     return m_diffracted;
+}
+
+
+double MathematicalRayProduct::getEpsilon() const
+{
+    return m_epsilonWall;
 }
 
 

@@ -19,7 +19,7 @@ class TransmitterImage: public QPointF, public ProductObserver,
                         public AbstractAntena
 {
 public:
-    TransmitterImage(const Line &wall, AbstractAntena *parent);
+    TransmitterImage(const Line &wall, AbstractAntena *parent, const double epsilonWall = 5);
     ~TransmitterImage() override;
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF  &line) const;
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone) const;
@@ -48,6 +48,7 @@ private:
     QRectF m_sceneBoundary;
     vector<ProductObservable *> m_observable;
     int m_radius;
+    double m_epsilonWall;
 
 public slots:
     void carMoved(MathematicalCarProduct *car, int, int, double) override;

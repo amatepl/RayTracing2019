@@ -53,7 +53,8 @@ protected:
     QVector<QPointF> m_extremities;
     int m_posx, m_posy; // Correspond to the up-left corner
     std::string m_model;
-    double m_permittivity,m_conductivity;
+    double m_permittivity;
+    double m_conductivity;
     vector<Wall*> m_walls; // Array of pointers.
 };
 

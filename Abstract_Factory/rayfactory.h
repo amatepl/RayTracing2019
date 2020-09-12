@@ -11,7 +11,7 @@ class RayFactory: public AbstractRayFactory
 {
 public:
     RayFactory(bool visible,QGraphicsScene *scene,const float scale);
-    MathematicalRayProduct* createRay(const QPointF &p1, const QPointF &p2,double Tetai=0,int indWall=0) override;
+    MathematicalRayProduct* createRay(const QPointF &p1, const QPointF &p2, const double Tetai=0, const double epsilonWall = 5) override;
 
 private:
     bool m_visibleRays;

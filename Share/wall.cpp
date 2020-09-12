@@ -1,7 +1,7 @@
 #include "wall.h"
 
-Wall::Wall(double x01, double y01, double x02, double y02, double thickness, double relEps, double sig, int listInd):
-    Line(x01, y01, x02, y02),thick(thickness),epsilon(relEps),sigma(sig),indWall(listInd)
+Wall::Wall(double x01, double y01, double x02, double y02, double thickness, double relEps, double sig, int indWall):
+    Line(x01, y01, x02, y02), m_thick(thickness), m_epsilon(relEps), m_sigma(sig), m_indWall(indWall)
 
   /*
    * inherits from Line, basic line function to be called when interacting with rays
@@ -12,8 +12,8 @@ Wall::Wall(double x01, double y01, double x02, double y02, double thickness, dou
 }
 
 
-Wall::Wall(const QPointF &p1, const QPointF &p2, double thickness, double relEps, double sig, int listInd):
-    Line(p1,p2),thick(thickness),epsilon(relEps),sigma(sig),indWall(listInd)
+Wall::Wall(const QPointF &p1, const QPointF &p2, double thickness, double relEps, double sig, int indWall):
+    Line(p1,p2), m_thick(thickness), m_epsilon(relEps), m_sigma(sig), m_indWall(indWall)
 {
 
 }

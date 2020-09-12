@@ -138,11 +138,9 @@ void MathematicalReceiverProduct::extractChData()
         pds = QVector<double>(m_chData->prxDopplerSpctr.begin(), m_chData->prxDopplerSpctr.end());
     }
 
-//    for (double &prx: pas) {
-//        tmpPrx += prx;
-//        prx = 20*log10(prx);
-//        tmpPrxdB += prx;
-//    }
+    for (double &prx: pas) {
+        prx = 20*log10(prx);
+    }
 
 //    cout<<"Tmp prx [dB]: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
 

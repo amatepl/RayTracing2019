@@ -70,6 +70,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Share/line.h \
     Share/moveablegraphics.h \
     Share/params.h \
+    Share/physics.h \
     Share/reflectiveobstacle.h \
     Share/rxdatahandler.h \
     Share/wall.h \
@@ -118,6 +119,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/treeparams.cpp \
     Product/abstractantena.cpp \
     Share/line.cpp \
+    Share/physics.cpp \
     Share/reflectiveobstacle.cpp \
     Share/rxdatahandler.cpp \
     Share/wall.cpp \

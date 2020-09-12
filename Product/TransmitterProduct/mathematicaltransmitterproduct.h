@@ -9,8 +9,8 @@
 
 /* General Includes */
 
-#include "math.h"
-#include "complex.h"
+#include <math.h>
+#include <complex>
 #include <iostream>
 #include <QPointF>
 #include <QPolygonF>
@@ -30,10 +30,12 @@
 #include "Observer/modelobserver.h"
 #include "Observer/modelobservable.h"
 
-#include <Product/RayProduct/mathematicalrayproduct.h>
+#include "Product/RayProduct/mathematicalrayproduct.h"
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include <Product/abstractantena.h>
 #include "Product/CarProduct/mathematicalcarproduct.h"
+
+#include "Share/physics.h"
 
 
 //--------------------------------------------------------------------------------------------
@@ -97,49 +99,7 @@ public:
     complex<double> computeImpulseGroundReflection(ProductObservable *copy_receiver, double direction, QLineF local_region);
     complex <double> computeEfieldGround(const ProductObservable *receiver, const double direction,
                                          const bool properties);
-    /*!
-     * \fn double uMPC(WholeRay *wholeRay)
-     * \brief Return u parameter for a given MPC
-     * \param wholeRay
-     * \return
-     *
-     */
-    u uMPC(double wvNbr, angle theta);
 
-    /*!
-     * \fn double omegaMPC(double v)
-     * \brief return omega variable for Doppler Spectrum
-     * \param v
-     * \return
-     */
-    double omegaMPC(double v, double wvNbr, angle angleRx);
-
-    /*!
-     * \fn double pasMPC (WholeRay *wholeRay);
-     * \brief Computes Power Angular Spectrum for one MPC
-     * \param complex<double> angDistr
-     * \return Power Angular Sepctrum for one MPC
-     */
-    double prxSpctrMPC (complex<double> &angDistr, angle theta, double spectrum);
-
-    /*!
-     * \fn complex<double> angDistr()
-     * \param h
-     * \param theta
-     * \param spectrum (Angular or Doppler)
-     * \brief Returns tha angular distribution for one MPC
-     * \return
-     */
-    complex<double> angDistrMPC(complex<double> &h, double theta, double spectrum);
-
-    /*!
-     * \fn void normalizePAS(vector<double> &pas)
-     * \brief Normalizes the PAS.
-     * \param pas
-     *
-     * For now its for tests
-     */
-    void normalizePrxSpctr(vector<double> &pas);
 
     /*!
      * \fn  complex<double> computeEMfield(WholeRay *rayLine, ProductObservable* receiver,bool properties);
@@ -386,7 +346,7 @@ private:
 
     // Doppler spectrum
     map<WholeRay *,double /*speed*/> rays_speed;
-    map<ProductObservable*, QLineF /*movement*/> receivers_speed;
+    map<const ProductObservable*, QLineF /*movement*/> receivers_speed;
 //    QLineF m_ray_speed;
 
     //QPolygonF m_zone;
@@ -404,5 +364,51 @@ public slots:
 
 
 };
+
+///*!
+//     * \fn double uMPC(WholeRay *wholeRay)
+//     * \brief Return u parameter for a given MPC
+//     * \param wholeRay
+//     * \return
+//     *
+//     */
+//u uMPC(double wvNbr, angle theta);
+
+///*!
+//     * \fn double omegaMPC(double v)
+//     * \brief return omega variable for Doppler Spectrum
+//     * \param v
+//     * \return
+//     */
+//double omegaMPC(double v, double wvNbr, angle angleRx);
+
+///*!
+//     * \fn double pasMPC (WholeRay *wholeRay);
+//     * \brief Computes Power Angular Spectrum for one MPC
+//     * \param complex<double> angDistr
+//     * \return Power Angular Sepctrum for one MPC
+//     */
+//double prxSpctrMPC (angle theta, double spectrum);
+
+//double prxSpctrMPC(complex<double> &angDistr);
+
+///*!
+//     * \fn complex<double> angDistr()
+//     * \param h
+//     * \param theta
+//     * \param spectrum (Angular or Doppler)
+//     * \brief Returns tha angular distribution for one MPC
+//     * \return
+//     */
+//complex<double> angDistrMPC(const complex<double> &h, const double theta, const double spectrum);
+
+///*!
+//     * \fn void normalizePAS(vector<double> &pas)
+//     * \brief Normalizes the PAS.
+//     * \param pas
+//     *
+//     * For now its for tests
+//     */
+//void normalizePrxSpctr(vector<double> &pas);
 
 #endif // MATHEMATICALTRANSMITTERPRODUCT_H

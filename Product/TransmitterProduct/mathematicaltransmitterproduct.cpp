@@ -1,5 +1,6 @@
 #include "mathematicaltransmitterproduct.h"
 #include <chrono>
+//#include "Share/physics.h"
 
 MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int posY) : QPointF(posX, posY)
 {
@@ -12,7 +13,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_orientation       = 0;
     m_pr_orientation    = 0;
     lambda              = c / m_frequency;
-    wvNbr               = 2 * M_PI / lambda;
+    wvNbr               = 2.0 * M_PI / lambda;
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!                                      !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!! Relative Permittivity is on the wall !!!!!!!!!!!!!
@@ -166,13 +167,13 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
             theta = beta.angleTo(receiver_speed);
         }
 
-        double u = uMPC(wvNbr, theta);
+        double u = ph::uMPC(wvNbr, theta);
         double w = receiver_speed.length()*u;
 
-        complex<double> angularDistr = angDistrMPC(h, theta, u);
-        complex<double> dopplerDistr = angDistrMPC(h, theta, w);
-        double prxAngSpctr = prxSpctrMPC(angularDistr, theta, u);
-        double prxDopSpctr = prxSpctrMPC(dopplerDistr, theta, w);
+        complex<double> angularDistr = ph::angDistrMPC(h, theta, u);
+        complex<double> dopplerDistr = ph::angDistrMPC(h, theta, w);
+        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
+        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
         // Save Data
         chData.u.push_back(u);
@@ -194,8 +195,8 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 
     }
 
-    normalizePrxSpctr(m_chsData.at(rx).prxAngularSpctr);
-    normalizePrxSpctr(m_chsData.at(rx).prxDopplerSpctr);
+//    normalizePrxSpctr(m_chsData.at(rx).prxAngularSpctr);
+//    normalizePrxSpctr(m_chsData.at(rx).prxDopplerSpctr);
 
 }
 
@@ -257,12 +258,13 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
 
     complex <double> i(0.0, 1.0);
 
-    double Ia = sqrt(2 * m_power / (m_row*m_column*Ra)); // Ia could be changed for Beamforming application
-    complex<double> array_factor = totaleArrayFactor(direction,thetaI*180.0/M_PI);
-    complex<double> a = R * array_factor * exp(-i*(2.0*M_PI/lambda)*completeLength) / completeLength;
-    complex <double> Efield = -i * a * (Zvoid * Ia) / (2*M_PI);
+    double Ia = sqrt(2 * m_power / (m_row * m_column * Ra)); // Ia could be changed for Beamforming application
+    complex<double> array_factor = totaleArrayFactor(direction, thetaI * 180.0 / M_PI);
+    complex<double> a = R * array_factor * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
+    complex <double> Efield = -i * a * (Zvoid * Ia) / (2 * M_PI);
 
-
+    QLineF receiver_speed = receivers_speed[receiver];
+    QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
 
     if (properties)
     {
@@ -276,14 +278,20 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
         //m_dopplerSpectrum[receiver][omega] += a;
         //m_chsData[receiver].dopplerSpctr[omega] += a;
 
-        double angleRx = 360 - direction;
+        double angleRx = 180 + direction;
         Data &chData = m_chsData[receiver];
 
-        // Put computed data into channels data.
-        double u = uMPC(wvNbr, angleRx);
+        beta.setAngle(angleRx + 180);
 
-        complex<double> angularDistr = angDistrMPC(a, angleRx, u);
-        double prxAngSpctr = prxSpctrMPC(angularDistr, angleRx, u);
+        double theta = angleRx;
+        if (receiver_speed.length() > 0.0){
+            theta = beta.angleTo(receiver_speed);
+        }
+        // Put computed data into channels data.
+        double u = ph::uMPC(wvNbr, angleRx);
+
+        complex<double> angularDistr = ph::angDistrMPC(a, angleRx, u);
+        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
 
         // Save Data
         chData.u.push_back(u);
@@ -293,43 +301,6 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
     }
 
     return Efield;
-}
-
-u MathematicalTransmitterProduct::uMPC(double wvNbr, angle theta)
-{
-//    double beta = 2 * M_PI / lambda;
-    // if we choose 0° in -y axe which is not natural
-    // double theta = angleRx > 90 ? angleRx - 90: angleRx + 270;
-//    double theta = angleRx;
-    return wvNbr * cos(theta * M_PI / 180);
-}
-
-double MathematicalTransmitterProduct::omegaMPC(double v, double wvNbr,  angle angleRx)
-{
-    return v * uMPC(wvNbr, angleRx);
-}
-
-
-double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, angle theta, double spectrum)
-{
-//    return norm(angDistr / (2 * M_PI));
-//    double beta = 2 * M_PI / lambda;
-    double max_spectrum = spectrum / cos(theta * M_PI / 180.);
-    return 2 * M_PI / (max_spectrum * sqrt(1 - pow(spectrum/max_spectrum, 2)));
-}
-
-
-complex<double> MathematicalTransmitterProduct::angDistrMPC(complex<double> &h, double theta, double spectrum)
-{
-    return 2 * M_PI * h / (spectrum * sin(theta * M_PI / 180.0) / cos(theta * M_PI / 180));
-}
-
-void MathematicalTransmitterProduct::normalizePrxSpctr(vector<double> &pas)
-{
-    double nbrMPCs = pas.size();
-    for (auto &p: pas) {
-        p = p / nbrMPCs;
-    }
 }
 
 double MathematicalTransmitterProduct::distance(const ProductObservable *receiver)
@@ -500,7 +471,14 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
         } else {
             //m_ray_speed = ray_speeds[wholeRay];
             //m_ray_speed.setLength(m_ray_speed.length()/3.6);
-            complex<double> EMfield = computeEMfield(wholeRay, receiver, true);
+
+            tuple<int, int> arrSize = {m_column, m_row};
+            double wvNbr = 2.0 * M_PI / lambda;
+            complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
+//            complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+//                                                     m_orientation, m_pr_orientation,
+//                                                         static_cast<ph::TxType>(m_kind));
+
             if (wholeRay->size() == 1) {
                 // Adding the ground component
                 double angle_transmitter = wholeRay->back()->angle();
@@ -953,3 +931,4 @@ void MathematicalTransmitterProduct::carMoved(MathematicalCarProduct *car,
         emit detectsCar(this);
     }
 }
+

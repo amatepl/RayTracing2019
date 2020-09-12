@@ -22,32 +22,36 @@ private:
     int wallInd;
     double m_tetai ;
     double meterLength;
-    int wallIBouncedOn;
-    double theta;
+    int m_wallIBouncedOn;
+    double m_theta;
     bool m_diffracted = false;
-
-    //std::vector <Wall*> walls_intersected;   // Pas la meilleure approche, trop à enregsitrer.
+    double m_epsilonWall;
 
     void updateMeterLength();
 public:
-    MathematicalRayProduct(const QPointF &p1 = QPointF(0,0), const QPointF &p2= QPointF(0,0), double Tetai = 0, int indWall = 0);
+    MathematicalRayProduct(const QPointF &p1 = QPointF(0,0), const QPointF &p2= QPointF(0,0), double Tetai = 0, const double epsilonWall = 5);
     ~MathematicalRayProduct();
 
-    double getCoefficient()const;
-    int getWallInd()const;
-    //void setCoefficient(double iAngle, Wall& inWall);
-    double getTetai()const;
-    void setTetai(double tetai);
-    double getTheta()const;
-//    double getMeterLength()const;
-    int getIndWall()const;
-    void setDiffracted(bool diffracted);
-    bool getDiffracted()const;
+    /* Getters */
+    double getCoefficient() const;
+    int getWallInd() const;
+    double getTetai() const;
+    double getTheta() const;
+    int getIndWall() const;
+    bool getDiffracted() const;
+    double getEpsilon() const;
+
+    /* Modifiers */
+    void setTetai(const double tetai);
+    void setDiffracted(const bool diffracted);
+
+    /* Utility */
     void draw();
     void erase();
-
-    MathematicalProduct* toMathematicalComponent();
     void update(QGraphicsItem *) override;
+
+    /* Miscellaneous */
+    MathematicalProduct* toMathematicalComponent();
     void openDialog() override;
 };
 

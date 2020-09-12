@@ -533,7 +533,8 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
 
                 //Creation of the trasmitter image
                 TransmitterImage *image = new TransmitterImage(Line(zone.at(i), zone.at(i+1)),
-                                                               parent);
+                                                               parent,
+                                                               walls.at(j)->getEpsilon());
 
                 m_images[m_currentTx].push_back(image);
 

@@ -55,9 +55,9 @@ public:
         double beta = (theta+m_orientation)*M_PI/180;
         double alphaprime = M_PI/2;
         double betaprime = principal_angle;
-        double A = sin(alpha)*sin(beta);
+        double A = sin(alpha) * sin(beta);
         double Aprime = sin(alphaprime)*sin(betaprime);
-        double B = sin(alpha)*cos(beta);
+        double B = sin(alpha) * cos(beta);
         double Bprime = sin(alphaprime)*cos(betaprime);
         psy = i*d*k*(A-Aprime);
         qsy = i*d*k*(B-Bprime);
@@ -110,7 +110,7 @@ public:
         if (thetaprime < 0.0){
             thetaprime = 360 + thetaprime;
         }
-        complex <double> psy = k*d*sin(phi*M_PI/180)*cos(thetaprime*M_PI/180);
+        complex <double> psy = k * d * sin(phi * M_PI / 180) * cos(thetaprime * M_PI / 180);
         if ((thetaprime >= 270 && thetaprime < 360.0) || (thetaprime >=0 && thetaprime < 90.0)) {
             reflectorfactor = 2.0 * i * exp(-i * psy) * sin(psy);
         }
