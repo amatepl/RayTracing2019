@@ -263,7 +263,7 @@ double ph::computeR(WholeRay *wholeRay)
 
         double thetaI = abs((*ray)->getTetai());
         double epsilonWallRel = (*ray)->getEpsilon();
-        R *= ph::computeReflexionPer(thetaI, epsilonWallRel);
+        R *= ph::computeReflexionPer(thetaI * 2 * M_PI / 180 , epsilonWallRel);
     }
     return R;
 }

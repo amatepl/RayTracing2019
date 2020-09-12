@@ -483,11 +483,11 @@ void MathematicalReceiverProduct::sendInterferencePattern(){
     double max_h = -150.0;
     double impulse_db = 0.0;
     QLineF local_region(QPointF(.0,.0),QPointF(.1,.1));
-    for (int i = -40; i<40; i++)
+    for (int i = -40; i < 40; i++)
     {
-        for (int j = -40; j<40; j++)
+        for (int j = -40; j < 40; j++)
         {
-            local_region.setP2(QPointF(-i*0.05*lambda,-j*0.05*lambda));
+            local_region.setP2(QPointF(-i * 0.05 * lambda,-j * 0.05 * lambda));
             complex<double> impulse = notifyObserversInterference(local_region);
             impulse_db = 20*log(abs(impulse));
             impulse_r[k] = impulse_db;
@@ -517,12 +517,12 @@ void MathematicalReceiverProduct::sendInterferencePattern(){
     }
     for (auto const &imp: distribution)
     {
-        rice_distribution.push_back(imp.first/pow(sigma,2)
+        rice_distribution.push_back(imp.first / pow(sigma, 2)
                                     * exp(-pow(imp.first,2)/(2*pow(sigma,2)))
                                     * exp(-pow(10,rice_factor/10)));
 //                                    * cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma));
     }
-    m_dialog->setDistributionInterference(distribution,rice_distribution);
+    m_dialog->setDistributionInterference(distribution ,rice_distribution);
 }
 
 // From ReceiverProduct

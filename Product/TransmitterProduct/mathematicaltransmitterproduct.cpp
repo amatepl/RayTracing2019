@@ -53,19 +53,21 @@ complex<double>
 MathematicalTransmitterProduct::computeImpulseReflection(WholeRay *ray_line, QLineF local_region)
 {
     complex <double> i(0.0, 1.0);
-    int amountSegment = ray_line->size();
-    double completeLength = 0.0;
-    double R = 1;
-    MathematicalRayProduct *current_ray;
+//    int amountSegment = ray_line->size();
+//    double completeLength = 0.0;
+//    double R = 1;
+//    MathematicalRayProduct *current_ray;
 
-    for (int i = 0; i < amountSegment; i++) {
-        current_ray = ray_line->at(i);
-        if (i != amountSegment - 1) {
-            double thetaI = abs(current_ray->getTetai());
-            R *= computeReflexionPar(thetaI, epsilonWallRel);
-        }
-        completeLength += current_ray->getMeterLength();
-    }
+//    for (int i = 0; i < amountSegment; i++) {
+//        current_ray = ray_line->at(i);
+//        if (i != amountSegment - 1) {
+//            double thetaI = abs(current_ray->getTetai());
+//            R *= computeReflexionPer(thetaI * 2 * M_PI / 180, epsilonWallRel);
+//        }
+//        completeLength += current_ray->getMeterLength();
+//    }
+    double completeLength = ray_line->totalLength();
+    double R = computeR(ray_line);
     double a = R / completeLength;
 
     // Angle in degrees
@@ -119,7 +121,7 @@ double MathematicalTransmitterProduct::computeR(WholeRay *wholeRay) const
     double R = 1;
     for (WholeRay::iterator ray = wholeRay->begin(); ray != wholeRay->end() - 1; ray++ ) {
         double thetaI = abs((*ray)->getTetai());
-        R *= computeReflexionPer(thetaI, epsilonWallRel);
+        R *= computeReflexionPer(thetaI * 2 * M_PI / 180, epsilonWallRel);
     }
     return R;
 }
