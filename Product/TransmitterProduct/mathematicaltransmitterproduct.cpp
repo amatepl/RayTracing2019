@@ -149,7 +149,7 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 
         // Tau
         double tau = completeLength * 1e9/c; // [ns]
-        tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
+        tau = round(tau * 1e4) / 1e4; // [precision of 0.1 ps]
 
         // Impulse response
         m_receiversImpulse[rx][tau] += h; // To change
@@ -500,11 +500,11 @@ MathematicalTransmitterProduct::comput4FixedBeam(ProductObservable *receiver)
         } else {
             //m_ray_speed = ray_speeds[wholeRay];
             //m_ray_speed.setLength(m_ray_speed.length()/3.6);
-            complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
+            complex<double> EMfield = computeEMfield(wholeRay, receiver, true);
             if (wholeRay->size() == 1) {
                 // Adding the ground component
                 double angle_transmitter = wholeRay->back()->angle();
-                m_receiversGroundField[receiver] = computeEfieldGround(receiver,angle_transmitter,true); // Compute the electrical field from the ray reflected off the ground
+                m_receiversGroundField[receiver] = computeEfieldGround(receiver, angle_transmitter, true); // Compute the electrical field from the ray reflected off the ground
             }
             m_receiversField[receiver] += EMfield;
 
