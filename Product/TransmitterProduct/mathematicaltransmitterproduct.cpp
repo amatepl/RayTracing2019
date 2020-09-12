@@ -231,7 +231,7 @@ MathematicalTransmitterProduct::computeImpulseGroundReflection(ProductObservable
     double distance = this->distance(copy_receiver);
     double thetaG = atan((distance / 2) / antennaHeight);
     double thetaI = M_PI - thetaG;
-    double R = computeReflexionPer(thetaG, epsilonWallRel);
+    double R = computeReflexionPar(thetaG, epsilonWallRel);
     double completeLength = sqrt(4*pow(antennaHeight,2)+pow(distance,2));
     complex <double> i(0.0, 1.0);
     double a = R  / completeLength;
