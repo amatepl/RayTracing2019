@@ -152,7 +152,7 @@ void InfoWidget::printValue(double value)
 void InfoWidget::createMapGroup()
 {
     map_group = new QGroupBox("Map", this);
-    map_group->setFixedWidth(200);
+    map_group->setFixedWidth(230);
     QGridLayout *map_layout = new QGridLayout;
 
     generate_map = new QPushButton("Generate Map");
@@ -163,7 +163,7 @@ void InfoWidget::createMapGroup()
     connect(start_cars,&QPushButton::clicked,this,&InfoWidget::sendStartCars);
 
     st_dnsty = new QSpinBox(map_group);
-    st_dnsty->setRange(0.00,999.00);
+    st_dnsty->setRange(0, 999);
     st_dnsty->setAccelerated(true);
     connect(st_dnsty, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
 
@@ -171,29 +171,34 @@ void InfoWidget::createMapGroup()
     f_layout->addRow("Streets Density: ", st_dnsty);
 
     car_dnsty = new QSpinBox(map_group);
-    car_dnsty->setRange(0.00,999.00);
+    car_dnsty->setRange(0, 999);
     car_dnsty->setAccelerated(true);
 
     f_layout->addRow("Cars Density: ", car_dnsty);
 
     QGridLayout *size_layout = new QGridLayout;
 
-    QLabel *label = new QLabel("Size");
+    QLabel *size = new QLabel("Size:");
 
-    size_layout->addWidget(label, 0, 0);
+    size_layout->addWidget(size, 0, 0);
+
+    QLabel *h = new QLabel("h");
+    size_layout->addWidget(h, 0, 1);
 
     height = new QSpinBox(map_group);
-    height->setRange(0.00,999.00);
+    height->setRange(0, 9999);
     height->setAccelerated(true);
 
-    size_layout->addWidget(height, 0, 1);
+    size_layout->addWidget(height, 0, 2);
 //    f_layout->addRow("Cars Density: ", height);
 
-    width = new QSpinBox(map_group);
-    width->setRange(0.00,999.00);
-    width->setAccelerated(true);
+    QLabel *w = new QLabel("w");
+    size_layout->addWidget(w, 0, 3);
 
-    size_layout->addWidget(width, 0, 2);
+    width = new QSpinBox(map_group);
+    width->setRange(0, 9999);
+    width->setAccelerated(true);
+    size_layout->addWidget(width, 0, 4);
 
 //    f_layout->addRow("Size: ", size_layout);
 //    f_layout->addRow("Cars Density: ", width);

@@ -12,6 +12,7 @@ MathematicalTransmitterProduct::MathematicalTransmitterProduct(int posX, int pos
     m_orientation       = 0;
     m_pr_orientation    = 0;
     lambda              = c / m_frequency;
+    wvNbr               = 2 * M_PI / lambda;
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!                                      !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!! Relative Permittivity is on the wall !!!!!!!!!!!!!
@@ -140,7 +141,7 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
         complex<double> array_factor = totaleArrayFactor(angleTx, 90);
         const double R = computeR(wholeRay);
         complex<double> a =  R * array_factor / completeLength;
-        complex<double> h = a * exp(-i * (2.0 * M_PI / lambda) * completeLength);
+        complex<double> h = a * exp(-i * (wvNbr) * completeLength);
         pwr += norm(h);
         hMax = abs(h) > hMax ? abs(h): hMax;
 
@@ -156,15 +157,18 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 
         beta.setAngle(angleRx);
 
+//=======
+//        beta.setAngle(angleRx + 180);
+//>>>>>>> 2559737b96b8d5fcf7922120950f26c76a027b78
+
         double theta = angleRx;
         if (receiver_speed.length() > 0.0){
             theta = beta.angleTo(receiver_speed);
         }
 
-        double u = uMPC(theta);
+        double u = uMPC(wvNbr, theta);
         double w = receiver_speed.length()*u;
-        //double w = u*(receiver_speed.length()+rays_speed[wholeRay]*cos(theta*M_PI/180));
-        //double u = uMPC(angleRx);
+
         complex<double> angularDistr = angDistrMPC(h, theta, u);
         complex<double> dopplerDistr = angDistrMPC(h, theta, w);
         double prxAngSpctr = prxSpctrMPC(angularDistr, theta, u);
@@ -190,8 +194,8 @@ void MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
 
     }
 
-    normalizePAS(m_chsData.at(rx).prxAngularSpctr);
-    normalizePAS(m_chsData.at(rx).prxDopplerSpctr);
+    normalizePrxSpctr(m_chsData.at(rx).prxAngularSpctr);
+    normalizePrxSpctr(m_chsData.at(rx).prxDopplerSpctr);
 
 }
 
@@ -276,7 +280,8 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
         Data &chData = m_chsData[receiver];
 
         // Put computed data into channels data.
-        double u = uMPC(angleRx);
+        double u = uMPC(wvNbr, angleRx);
+
         complex<double> angularDistr = angDistrMPC(a, angleRx, u);
         double prxAngSpctr = prxSpctrMPC(angularDistr, angleRx, u);
 
@@ -290,47 +295,36 @@ complex <double> MathematicalTransmitterProduct::computeEfieldGround(const Produ
     return Efield;
 }
 
-double MathematicalTransmitterProduct::uMPC(angle angleRx)
+u MathematicalTransmitterProduct::uMPC(double wvNbr, angle theta)
 {
-    double beta = 2 * M_PI / lambda;
+//    double beta = 2 * M_PI / lambda;
     // if we choose 0° in -y axe which is not natural
     // double theta = angleRx > 90 ? angleRx - 90: angleRx + 270;
-    double theta = angleRx;
-    return beta * cos(theta * M_PI / 180);
+//    double theta = angleRx;
+    return wvNbr * cos(theta * M_PI / 180);
 }
 
-double MathematicalTransmitterProduct::omegaMPC(double v, double angleRx)
+double MathematicalTransmitterProduct::omegaMPC(double v, double wvNbr,  angle angleRx)
 {
-    return v * uMPC(angleRx);
+    return v * uMPC(wvNbr, angleRx);
 }
 
-//double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, double u, double v)
-//{
-////    return norm(angDistr / (2 * M_PI));
-//    double beta = 2 * M_PI / lambda;
-//    return 2 * M_PI / (beta * v * sqrt(1 - pow(u/(beta * v), 2)));
-//}
 
-double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, double theta, double spectrum)
+double MathematicalTransmitterProduct::prxSpctrMPC(complex<double> &angDistr, angle theta, double spectrum)
 {
 //    return norm(angDistr / (2 * M_PI));
 //    double beta = 2 * M_PI / lambda;
-    double max_spectrum = spectrum/cos(theta*M_PI/180.);
+    double max_spectrum = spectrum / cos(theta * M_PI / 180.);
     return 2 * M_PI / (max_spectrum * sqrt(1 - pow(spectrum/max_spectrum, 2)));
 }
 
-//complex<double> MathematicalTransmitterProduct::angDistrMPC(complex<double> &h, double u)
-//{
-//    double beta = 2 * M_PI / lambda;
-//    return 2 * M_PI * h / (beta * sqrt(1 - pow(u / beta, 2)));
-//}
 
 complex<double> MathematicalTransmitterProduct::angDistrMPC(complex<double> &h, double theta, double spectrum)
 {
-    return 2 * M_PI * h / (spectrum*sin(theta*M_PI/180.0)/cos(theta*M_PI/180));
+    return 2 * M_PI * h / (spectrum * sin(theta * M_PI / 180.0) / cos(theta * M_PI / 180));
 }
 
-void MathematicalTransmitterProduct::normalizePAS(vector<double> &pas)
+void MathematicalTransmitterProduct::normalizePrxSpctr(vector<double> &pas)
 {
     double nbrMPCs = pas.size();
     for (auto &p: pas) {
@@ -445,38 +439,27 @@ void MathematicalTransmitterProduct::chooseBeam(ProductObservable *receiver)
     vector<WholeRay *> wholeRays = m_receiversRays[receiver];
 
     for (int i = -5; i < 5; i++) {
-        m_pr_orientation = i;
-
+//        m_pr_orientation = i;
         emField = 0;
-
-//        for (vector<WholeRay *>::iterator j = wholeRays.begin(); j != wholeRays.end(); j++) {
-
-//        }
 
         for (unsigned j = 0; j < wholeRays.size(); j++) {
             WholeRay *wholeRay  = wholeRays.at(j);
 
-            if (wholeRay->at(0)->getDiffracted()) {
-
-                //
-                //      The ray is a diffracted one.
-                //
+            if (wholeRay->at(0)->getDiffracted()) {     // The ray is a diffracted one.
 
                 emField += computeDiffractedEfield(receiver,wholeRay,false);
 
-            } else {
+            } else {                                    // The ray was reflected.
 
-                //
-                //      The ray was reflected.
-                //
                 complex<double> EMfield = computeEMfield(wholeRay, receiver,false);
+
                 if (wholeRay->size() == 1) {
                     // Adding the ground component
                     double angle_transmitter = wholeRay->back()->angle();
                     groundField = computeEfieldGround(receiver,angle_transmitter,false); // Compute the electrical field from the ray reflected off the ground
                 }
-                emField += EMfield;
 
+                emField += EMfield;
             }
         }
 

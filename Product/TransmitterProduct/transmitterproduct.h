@@ -179,6 +179,7 @@ protected:
     int m_row;
     int m_column;
     double lambda /*= c/m_frequency*/;
+    double wvNbr;
     double m_orientation;
     char m_pr_orientation;
 };
