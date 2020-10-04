@@ -102,7 +102,7 @@ void ApplicationWindow::modelAnswer(vector<MathematicalProduct *> sceneproducts)
     }
 }
 
-void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts)
+void ApplicationWindow::modelAnswer(vector<Ray> *sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts->size(); i++) {
 
@@ -121,7 +121,7 @@ void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts)
     }
 }
 
-void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproducts)
+void ApplicationWindow::modelNotify(vector<Ray > *sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts->size(); i++) {
 
@@ -153,17 +153,17 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode)
     QIcon icon;
     switch(mode) {
     case int(InsertTransmitter):
-        icon = QIcon(GraphicsTransmitterProduct::getImage());
+        icon = QIcon(GraphicsTx::getImage());
         button->setIcon(icon);
         m_antennagroup->addButton(button,mode);
         break;
     case int(InsertReceiver):
-        icon = QIcon(GraphicsReceiverProduct::getImage());
+        icon = QIcon(GraphicsRx::getImage());
         button->setIcon(icon);
         m_antennagroup->addButton(button,mode);
         break;
     case int(InsertBuilding):
-        icon = QIcon(GraphicsBuildingProduct::getImage());
+        icon = QIcon(GraphicsBuilding::getImage());
         button->setIcon(icon);
         m_obstaclegroup->addButton(button,mode);
         break;

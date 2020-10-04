@@ -1,5 +1,5 @@
-#ifndef GRAPHICSBUILDINGPRODUCT_H
-#define GRAPHICSBUILDINGPRODUCT_H
+#ifndef GRAPHICSBUILDING_H
+#define GRAPHICSBUILDING_H
 
 #include <QGraphicsPolygonItem>
 #include <QGraphicsScene>
@@ -10,12 +10,12 @@
 
 #include "Product/graphicsproduct.h"
 
-class GraphicsBuildingProduct : public QGraphicsPolygonItem, public GraphicsProduct
+class GraphicsBuilding : public QGraphicsPolygonItem, public GraphicsProduct
 {
 public:
-    GraphicsBuildingProduct(QMenu *menuproduct, QGraphicsScene *scene);
-    GraphicsBuildingProduct(QPolygonF poly, QMenu *menuproduct, QGraphicsScene *scene);
-    ~GraphicsBuildingProduct() override;
+    GraphicsBuilding(QMenu *menuproduct, QGraphicsScene *scene);
+    GraphicsBuilding(QPolygonF poly, QMenu *menuproduct, QGraphicsScene *scene);
+    ~GraphicsBuilding() override;
 
     static QPixmap getImage();
     QVector<QPointF> getExtremities() {return m_extremities;}
@@ -42,4 +42,4 @@ private:
     QMenu* m_productmenu;
 };
 
-#endif // GRAPHICSBUILDINGPRODUCT_H
+#endif // GRAPHICSBUILDING_H

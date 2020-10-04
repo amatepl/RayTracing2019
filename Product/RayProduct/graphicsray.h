@@ -1,5 +1,5 @@
-#ifndef GRAPHICSRAYPRODUCT_H
-#define GRAPHICSRAYPRODUCT_H
+#ifndef GRAPHICSRAY_H
+#define GRAPHICSRAY_H
 
 #include <QMenu>
 #include <QGraphicsScene>
@@ -11,11 +11,11 @@
 
 using namespace std;
 
-class GraphicsRayProduct: public GraphicsProduct, public QGraphicsLineItem
+class GraphicsRay: public GraphicsProduct, public QGraphicsLineItem
 {
 public:
-    GraphicsRayProduct(const QPointF &p1, const QPointF &p2, QGraphicsScene *scene = nullptr);
-    ~GraphicsRayProduct();
+    GraphicsRay(const QPointF &p1, const QPointF &p2, QGraphicsScene *scene = nullptr);
+    ~GraphicsRay();
 
     void draw() override;
     void erase() override;
@@ -27,4 +27,4 @@ private:
     QGraphicsScene *m_scene;
 };
 
-#endif // GRAPHICSRAYPRODUCT_H
+#endif // GRAPHICSRAY_H

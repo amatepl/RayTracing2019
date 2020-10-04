@@ -1,18 +1,18 @@
-#include "transmitterimage.h"
+#include "tximg.h"
 
-TransmitterImage::TransmitterImage(const Line &wall, AbstractAntena *parent, const double epsilonWall):
+TxImg::TxImg(const Line &wall, AbstractAntena *parent, const double epsilonWall):
       QPointF(),m_wall(wall),m_parent(parent),m_radius(500), m_epsilonWall(epsilonWall)
 {
     QPointF pos = m_wall.symetricalPoint(parent->getPosition());
     setX(pos.x()); setY(pos.y());
     m_zone = buildCoverage();
 }
-TransmitterImage::~TransmitterImage(){
+TxImg::~TxImg(){
 //    cout << "Transmitter Image Deleted." << endl;
 }
 
 
-QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF  &line) const
+QPointF TxImg::sceneRectIntersection(const QRectF &rect, const QLineF  &line) const
 {
     /*
      * This function takes a bounding ray (line) of the illumination zone and gives
@@ -36,7 +36,7 @@ QPointF TransmitterImage::sceneRectIntersection(const QRectF &rect, const QLineF
 }
 
 
-vector <QPointF> TransmitterImage::boundaryCorners(const QRectF &rect,
+vector <QPointF> TxImg::boundaryCorners(const QRectF &rect,
                                                   const QPolygonF &unboundedZone) const
 {
     /*
@@ -61,16 +61,16 @@ vector <QPointF> TransmitterImage::boundaryCorners(const QRectF &rect,
     return points;
 }
 
-//void TransmitterImage::setBuilding(MathematicalBuildingProduct *building){
+//void TxImg::setBuilding(Building *building){
 //    m_building = building;
 //}
 
-void TransmitterImage::setSceneBoundary(const QRectF &rect){
+void TxImg::setSceneBoundary(const QRectF &rect){
     m_sceneBoundary = rect;
 }
 
 
-QPolygonF TransmitterImage::buildCoverage(){
+QPolygonF TxImg::buildCoverage(){
     QPolygonF coverage;
     QLineF line = m_wall;
     line.setLength(line.length()/2);
@@ -85,7 +85,7 @@ QPolygonF TransmitterImage::buildCoverage(){
     return coverage;
 }
 
-QPolygonF TransmitterImage::getIlluminationZone() const
+QPolygonF TxImg::getIlluminationZone() const
 {
     QPolygonF zone;
     QLineF line1(*this, m_wall.p2());
@@ -98,7 +98,7 @@ QPolygonF TransmitterImage::getIlluminationZone() const
     //return m_zone;
 }
 
-QPolygonF TransmitterImage::getIlluminationZone(const QRectF & /*rect*/) const
+QPolygonF TxImg::getIlluminationZone(const QRectF & /*rect*/) const
 {
     /*
      * For the moment it's exactly the same as the one above.
@@ -128,7 +128,7 @@ QPolygonF TransmitterImage::getIlluminationZone(const QRectF & /*rect*/) const
     return zone;
 }
 
-void TransmitterImage::update(ProductObservable *productObservable, QLineF const /*movement*/)
+Data *TxImg::update(ProductObservable *productObservable, QLineF const /*movement*/)
 {
 
     if(m_zone.containsPoint(*productObservable->getPos(),Qt::OddEvenFill)){
@@ -138,9 +138,8 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
         QPointF reflectionPoint;
         m_wall.intersects(line, &reflectionPoint);
 
-        MathematicalRayProduct ray(*m_rayFactory->createRay(reflectionPoint,
-                                                            *productObservable->getPos(),
-                                                            line.angleTo(m_wall)));
+//        Ray ray(*m_rayFactory->createRay(reflectionPoint, *productObservable->getPos(),
+//                                                            line.angleTo(m_wall)));
 
         double angle = m_movement.angleTo(QLineF(reflectionPoint,*productObservable->getPos()));
         double speed = m_movement.length()*cos(angle*M_PI/180.0);
@@ -150,12 +149,14 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
                                                     line.angleTo(m_wall),
                                                     m_epsilonWall));
 
-        m_parent->notifyParent(productObservable,speed, reflectionPoint,wholeRay);
+        m_parent->notifyParent(productObservable, speed, reflectionPoint, wholeRay);
     }
+
+    return nullptr;
 }
 
 
-//void TransmitterImage::updateCarPos(ProductObservable *productObservable)
+//void TxImg::updateCarPos(ProductObservable *productObservable)
 //{
 //    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
 
@@ -175,12 +176,12 @@ void TransmitterImage::update(ProductObservable *productObservable, QLineF const
 //}
 
 
-void TransmitterImage::attachObservable(ProductObservable* productObservable){
+void TxImg::attachObservable(ProductObservable* productObservable){
     m_observable.push_back(productObservable);
 }
 
 
-void TransmitterImage::notifyParent(ProductObservable *productObservable,
+void TxImg::notifyParent(ProductObservable *productObservable,
                                     double speed, const QPointF &point,
                                     WholeRay *wholeRay)
 {
@@ -199,18 +200,18 @@ void TransmitterImage::notifyParent(ProductObservable *productObservable,
     m_parent->notifyParent(productObservable,this_speed ,reflectionPoint,wholeRay);
 }
 
-QPointF TransmitterImage::getPosition() const {
+QPointF TxImg::getPosition() const {
     return *this;
 }
 
 
-void TransmitterImage::notifyCarDetected()
+void TxImg::notifyCarDetected()
 {
     m_parent->notifyCarDetected();
 }
 
 
-//bool TransmitterImage::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+//bool TxImg::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
 //{
 //    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
 //        if (m_illuminatedCars.at(i) == car) {
@@ -222,7 +223,7 @@ void TransmitterImage::notifyCarDetected()
 //}
 
 
-void TransmitterImage::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
+void TxImg::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
     int idx = 0;
     if (m_zone.intersects(*car)) {

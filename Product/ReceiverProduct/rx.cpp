@@ -1,8 +1,9 @@
-#include "mathematicalreceiverproduct.h"
+#include "rx.h"
 
 #include <algorithm>
+#include "Share/physics.h"
 
-MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY):
+Rx::Rx(int posX, int posY):
     QPointF(posX,posY)
 {
     m_type                  = "Receiver";
@@ -20,7 +21,7 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(int posX, int posY):
     computeMinPrx();
 }
 
-MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverProduct* receiver):
+Rx::Rx(Rx* receiver):
     QPointF(receiver->getPosX(),receiver->getPosY())
 {
     m_type = "Receiver";
@@ -37,35 +38,35 @@ MathematicalReceiverProduct::MathematicalReceiverProduct(MathematicalReceiverPro
     computeMinPrx();
 }
 
-MathematicalReceiverProduct::~MathematicalReceiverProduct()
+Rx::~Rx()
 {
     cout << "Mathematical Receiver Product Deleted." << endl;
     delete m_dialog;
 }
 
-void MathematicalReceiverProduct::clearObeservers()
+void Rx::clearObeservers()
 {
     m_observers.clear();
 }
 
-void MathematicalReceiverProduct::clearData()
+void Rx::clearData()
 {
     m_power = 0;
     m_e_field = 0;
 }
 
-double MathematicalReceiverProduct::inputNoise()
+double Rx::inputNoise()
 {
-    return 10 * log10(kb * To * m_transmitterbandwidth);
+    return 10 * log10(k_b * t_0 * m_transmitterbandwidth);
 }
 
-void MathematicalReceiverProduct::computeMinPrx()
+void Rx::computeMinPrx()
 {
     min_prx = m_target_snr + m_noise_figure + inputNoise() + m_interferencemargin + 30; // [dBm]
 }
 
 
-void MathematicalReceiverProduct::computeSnr()
+void Rx::computeSnr()
 {
     if (m_power != 0.0){
         snr_received = (m_power - 30) - m_noise_figure - inputNoise(); // [dB]
@@ -73,7 +74,7 @@ void MathematicalReceiverProduct::computeSnr()
 }
 
 
-void MathematicalReceiverProduct::computeDelaySpread()
+void Rx::computeDelaySpread()
 {
     double min_tau, max_tau, t;
     int i = 0;
@@ -102,20 +103,25 @@ void MathematicalReceiverProduct::computeDelaySpread()
 }
 
 
-void MathematicalReceiverProduct::coherenceBandwidth()
+void Rx::coherenceBandwidth()
 {
     coherence_bandwidth = 1e3 / delay_spread; //MHz
 }
 
 
-void MathematicalReceiverProduct::attachTransmitter(ProductObserver *transmitter)
+void Rx::attachTransmitter(ProductObserver *transmitter)
 {
     m_transmitters.push_back(transmitter);
 }
 
 
-void MathematicalReceiverProduct::extractChData()
+void Rx::extractChData()
 {
+
+    m_impulse = m_chData->impulseResp;
+    m_doppler = m_chData->dopplerSpctr;
+    riceFactor(m_chData->riceFactor);
+
     for (vector<complex<double>>::iterator ang = m_chData->angularDistr.begin();
          ang != m_chData->angularDistr.end();
          ang++) {
@@ -138,9 +144,8 @@ void MathematicalReceiverProduct::extractChData()
         pds = QVector<double>(m_chData->prxDopplerSpctr.begin(), m_chData->prxDopplerSpctr.end());
     }
 
-    for (double &prx: pas) {
-        prx = 20*log10(prx);
-    }
+    dB(pas);
+//    dB(pds);
 
 //    cout<<"Tmp prx [dB]: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
 
@@ -155,7 +160,7 @@ void MathematicalReceiverProduct::extractChData()
 }
 
 
-void MathematicalReceiverProduct::save(string path)
+void Rx::save(string path)
 {
 //    cout << "/Users/amate/Documents/Polytech/Thesis/powerTest.csv" <<endl;
 
@@ -253,7 +258,7 @@ void MathematicalReceiverProduct::save(string path)
 }
 
 
-void MathematicalReceiverProduct::record()
+void Rx::record()
 {
     std::ofstream ofs;
 //    ofs.open("/Users/amate/Documents/Polytech/Thesis/power.csv", std::ios_base::app | std::ios_base::out);
@@ -263,7 +268,7 @@ void MathematicalReceiverProduct::record()
 //    ofs.close();
 }
 
-void MathematicalReceiverProduct::riceFactor(double rice)
+void Rx::riceFactor(double rice)
 {
     rice_factor = rice;
     if (isnan(rice_factor) || isinf(rice_factor)){
@@ -274,7 +279,7 @@ void MathematicalReceiverProduct::riceFactor(double rice)
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 1. Path Loss Computation:
 
-void MathematicalReceiverProduct::computePathLossFading()
+void Rx::computePathLossFading()
 {
     path_loss.resize(m_pathloss.size());
     fading.resize(m_pathloss.size());
@@ -288,7 +293,7 @@ void MathematicalReceiverProduct::computePathLossFading()
     fading_variability = standardDeviation();
 }
 
-void MathematicalReceiverProduct::linearRegressionPathLoss()
+void Rx::linearRegressionPathLoss()
 {
     /*
     *   b = output intercept
@@ -339,7 +344,7 @@ void MathematicalReceiverProduct::linearRegressionPathLoss()
     }
 }
 
-double MathematicalReceiverProduct::standardDeviation(){
+double Rx::standardDeviation(){
     double sum = 0.0, sDeviation = 0.0, mean;
     int count = fading.size();
     int i;
@@ -356,7 +361,7 @@ double MathematicalReceiverProduct::standardDeviation(){
     return res;
 }
 
-void MathematicalReceiverProduct::modelPathLoss(){
+void Rx::modelPathLoss(){
     std::default_random_engine generator;
     std::normal_distribution<double> distribution(0.0, fading_variability);
     double minDist = log10(10); //10m
@@ -378,7 +383,7 @@ void MathematicalReceiverProduct::modelPathLoss(){
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 2. Impulse Resoonse and TDL Computation:
-void MathematicalReceiverProduct::computeImpulseTDL(){
+void Rx::computeImpulseTDL(){
    // Number of rays = Number of powers received:
     unsigned long indepentant_rays = m_impulse.size();
     // Creation of two vectors (impusle) and time of each impulse
@@ -433,7 +438,7 @@ void MathematicalReceiverProduct::computeImpulseTDL(){
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 3. Cell Range Computation:
-void MathematicalReceiverProduct::cellRange()
+void Rx::cellRange()
 {
     // minPrx = <Prx> - L_fading
     // <Prx> = mx + b; where x = log10(d)
@@ -458,7 +463,7 @@ void MathematicalReceiverProduct::cellRange()
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 4. Doppler:
-void MathematicalReceiverProduct::dopplerSpectrum()
+void Rx::dopplerSpectrum()
 {
     omega.clear();
     doppler.clear();
@@ -472,7 +477,7 @@ void MathematicalReceiverProduct::dopplerSpectrum()
     }
 }
 
-void MathematicalReceiverProduct::sendInterferencePattern(){
+void Rx::sendInterferencePattern(){
     vector<double> impulse_r(80*80);
     vector<double> tmp_vect_h(80*80);
     QVector<double> rice_distribution;
@@ -526,29 +531,29 @@ void MathematicalReceiverProduct::sendInterferencePattern(){
 }
 
 // From ReceiverProduct
-float MathematicalReceiverProduct::getSpeed(){return m_movement.length();}
-float MathematicalReceiverProduct::getOrientation(){return m_movement.angle();}
-QLineF MathematicalReceiverProduct::movement() const {return m_movement;}
-int MathematicalReceiverProduct::getPosX(){return x();}
-int MathematicalReceiverProduct::getPosY(){return y();}
-double MathematicalReceiverProduct::getPower() {return m_power;}
-complex <double> MathematicalReceiverProduct::getEField() {return m_e_field;}
-bool MathematicalReceiverProduct::getEnable() {return enable;}
+float Rx::getSpeed(){return m_movement.length();}
+float Rx::getOrientation(){return m_movement.angle();}
+QLineF Rx::movement() const {return m_movement;}
+int Rx::getPosX(){return x();}
+int Rx::getPosY(){return y();}
+double Rx::getPower() {return m_power;}
+complex <double> Rx::getEField() {return m_e_field;}
+bool Rx::getEnable() {return enable;}
 
-void MathematicalReceiverProduct::setSpeed(float speed){
+void Rx::setSpeed(float speed){
     if (m_movement.length() == 0.0){m_movement = QLineF(0,0,0,50);}
     m_movement.setLength(speed);
 }
 
-void MathematicalReceiverProduct::setOrientation(float orientation){
+void Rx::setOrientation(float orientation){
     m_movement.setAngle(orientation);
 }
 
-void MathematicalReceiverProduct::setMovement(const QLineF movement){
+void Rx::setMovement(const QLineF movement){
     m_movement = movement;
 }
 
-void MathematicalReceiverProduct::setPosX(int posX) {
+void Rx::setPosX(int posX) {
     clearData();
     setX(posX);
     if (m_graphic != nullptr){
@@ -556,7 +561,7 @@ void MathematicalReceiverProduct::setPosX(int posX) {
     }
     notifyObservers();
 }
-void MathematicalReceiverProduct::setPosY(int posY) {
+void Rx::setPosY(int posY) {
     clearData();
     setY(posY);
     if (m_graphic != nullptr){
@@ -564,11 +569,11 @@ void MathematicalReceiverProduct::setPosY(int posY) {
     }
     notifyObservers();
 }
-void MathematicalReceiverProduct::setPower(double p) {m_power = p;}
-void MathematicalReceiverProduct::setEField(complex<double> e) {m_e_field = e;}
-void MathematicalReceiverProduct::setEnable(bool enable) {this->enable = enable;}
+void Rx::setPower(double p) {m_power = p;}
+void Rx::setEField(complex<double> e) {m_e_field = e;}
+void Rx::setEnable(bool enable) {this->enable = enable;}
 
-void MathematicalReceiverProduct::newProperties(){
+void Rx::newProperties(){
     computeMinPrx();
     if (m_graphic != nullptr){
         m_graphic->notifyToGraphic(this,getOrientation());
@@ -576,31 +581,31 @@ void MathematicalReceiverProduct::newProperties(){
 }
 
 // From MathematicalProduct
-void MathematicalReceiverProduct::openDialog(){
+void Rx::openDialog(){
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         notifyObserversPathLoss(m_transmitters.at(i));
     }
-    m_dialog = new DialogReceiverProduct(this);
+    m_dialog = new DialogRx(this);
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         m_dialog->shadowing(notifyObservervesShadowing(m_transmitters.at(i)));
     }
-    connect(m_dialog, &DialogReceiverProduct::save,
-            this, &MathematicalReceiverProduct::save);
-    connect(m_dialog,&DialogReceiverProduct::interferenceActivated,this,&MathematicalReceiverProduct::sendInterferencePattern);
+    connect(m_dialog, &DialogRx::save,
+            this, &Rx::save);
+    connect(m_dialog,&DialogRx::interferenceActivated,this,&Rx::sendInterferencePattern);
 }
 
-void MathematicalReceiverProduct::update(QGraphicsItem* graphic){
+void Rx::update(QGraphicsItem* graphic){
     setX(graphic->scenePos().x());
     setY(graphic->scenePos().y());
     notifyObservers();
 }
 
-void MathematicalReceiverProduct::attachObservable(GraphicsProduct *graphic){
+void Rx::attachObservable(GraphicsProduct *graphic){
     m_graphic = graphic;
     m_graphic->notifyToGraphic(this,m_power);
 }
 
-void MathematicalReceiverProduct::updateInformation(){
+void Rx::updateInformation(){
     m_info_widget->changePower(m_power);
     m_info_widget->changeDistance(m_transmitter_distance);
     m_info_widget->changeSnr(snr_received);
@@ -608,48 +613,69 @@ void MathematicalReceiverProduct::updateInformation(){
     m_info_widget->changeRiceFactor(rice_factor);
     m_info_widget->changeCoherenceBandwidth(coherence_bandwidth);
     m_info_widget->changeAngularSpread(angular_spread);
+    m_info_widget->changeDopplerSpread(doppler_spread);
+
 }
 
 // From ProductObservable
-void MathematicalReceiverProduct::attachObserver(ProductObserver *productObserver){
+void Rx::attachObserver(ProductObserver *productObserver){
 //    cout<<"Observevr attached"<<endl;
     m_observers.push_back(productObserver);
 }
 
-void MathematicalReceiverProduct::notifyObservers()
+void Rx::notifyObservers()
 {
     m_impulse.clear();
     m_doppler.clear();
-    for (unsigned i = 0; i < m_transmitters.size(); i++) {
-        m_transmitters.at(i)->update(this, m_movement);
-        }
+    angular_distr.clear();
+    doppler_distr.clear();
 
-    for (unsigned int i = 0; i < m_observers.size(); i++) {
-        m_observers.at(i)->update(this,m_movement);
+    for (unsigned i = 0; i < m_transmitters.size(); i++) {
+        m_chData = m_transmitters.at(i)->update(this, m_movement);
+        m_e_field += m_chData->eField;
+        m_power = m_chData->prx;
+        m_transmitterbandwidth = m_chData->bw;
+        m_transmitterfrequency = m_chData->fq;
+
+        if (m_graphic != nullptr){
+            m_graphic->notifyToGraphic(this,m_power);
+
+            m_transmitter = m_transmitters.at(i);
+    //        m_transmitters.at(0)->drawRays(this, true);
+
+            for(unsigned i = 0; i < m_transmitters.size(); i++) {
+                m_transmitters.at(i)->drawRays(this, true);
+            }
+            computeSnr();
     }
+}
+
+//    for (unsigned int i = 0; i < m_observers.size(); i++) {
+//        m_observers.at(i)->update(this,m_movement);
+//    }
 
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
-        m_transmitters.at(i)->compute(this);
-        m_impulse = m_transmitters.at(i)->receiverImpulse(this);
-        m_doppler = m_transmitters.at(i)->receiverDoppler(this);
-        riceFactor(m_transmitters.at(i)->riceFactor(this));
-        m_chData = m_transmitters.at(i)->getChData(this);
+//        m_transmitters.at(i)->compute(this);
+//        m_impulse = m_transmitters.at(i)->receiverImpulse(this);
+//        m_doppler = m_transmitters.at(i)->receiverDoppler(this);
+//        riceFactor(m_transmitters.at(i)->riceFactor(this));
+//        m_chData = m_transmitters.at(i)->getChData(this);
 
+        extractChData();
         computeImpulseTDL();
         computeDelaySpread();
         coherenceBandwidth();
-//        dopplerSpectrum();
+////        dopplerSpectrum();
 
-        extractChData();
     }
 
 }
 
-void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
+void Rx::notifyObserversPathLoss(ProductObserver* transmitter)
 {
     vector<QPointF> pl_points = transmitter->pathLossPoints();
                                 // get the path loss (pl) points of the transmitter
-    MathematicalReceiverProduct* copy_receiver = new MathematicalReceiverProduct(this);
+    Rx* copy_receiver = new Rx(this);
                                 // copy a receiver to compute power
     std::map<double /*distance*/, double /*power sum*/> sum_power;
                                 // sum of power
@@ -693,10 +719,10 @@ void MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* trans
 }
 
 map<double,double>
-MathematicalReceiverProduct::notifyObservervesShadowing(ProductObserver* tx)
+Rx::notifyObservervesShadowing(ProductObserver* tx)
 {
     vector<QPointF> points = circlePoints(*dynamic_cast<QPointF*>(tx),100,1);
-    MathematicalReceiverProduct* copy_receiver = new MathematicalReceiverProduct(this);
+    Rx* copy_receiver = new Rx(this);
     map <double /*angle*/,double /*power*/> shadow;
     for(unsigned i = 0; i < points.size(); i++)
     {
@@ -719,7 +745,7 @@ MathematicalReceiverProduct::notifyObservervesShadowing(ProductObserver* tx)
 }
 
 vector<QPointF>
-MathematicalReceiverProduct::circlePoints(QPointF center, double radius, int rpd)
+Rx::circlePoints(QPointF center, double radius, int rpd)
 {
     vector<QPointF> points;
     QPointF point;
@@ -733,7 +759,7 @@ MathematicalReceiverProduct::circlePoints(QPointF center, double radius, int rpd
 }
 
 std::map<double,double>
-MathematicalReceiverProduct::averageOnMap(std::map<double, double> values,
+Rx::averageOnMap(std::map<double, double> values,
                                           std::map<double, int> counter) const
 {
     std::map<double,double> average_map;
@@ -743,7 +769,7 @@ MathematicalReceiverProduct::averageOnMap(std::map<double, double> values,
     return average_map;
 }
 
-complex<double> MathematicalReceiverProduct::notifyObserversInterference(QLineF local_region)
+complex<double> Rx::notifyObserversInterference(QLineF local_region)
 {
     complex<double> impulse_r;
     for (unsigned i = 0; i < m_transmitters.size(); i++)
@@ -753,7 +779,7 @@ complex<double> MathematicalReceiverProduct::notifyObserversInterference(QLineF 
     return impulse_r;
 }
 
-void MathematicalReceiverProduct::detachObservers() {
+void Rx::detachObservers() {
     for (unsigned int i = 0; i < m_observers.size(); i++) {
         delete m_observers.at(i);
     }
@@ -761,12 +787,12 @@ void MathematicalReceiverProduct::detachObservers() {
     m_transmitters.clear();
 }
 
-void MathematicalReceiverProduct::notify(){
+void Rx::notify(){
     notifyObservers();
 }
 
 
-void MathematicalReceiverProduct::notify(double &/*power*/,
+void Rx::notify(double &/*power*/,
                                          std::vector<double> */*powers*/,
                                          std::complex<double> &/*EMfiled*/)
 {
@@ -774,7 +800,7 @@ void MathematicalReceiverProduct::notify(double &/*power*/,
 }
 
 
-void MathematicalReceiverProduct::answer(ProductObserver *observer, double frequency,
+void Rx::answer(ProductObserver *observer, double frequency,
                                          double bandwidth, double &power,
                                          std::complex<double> &EMfield)
 {
@@ -820,7 +846,7 @@ void MathematicalReceiverProduct::answer(ProductObserver *observer, double frequ
 }
 
 
-const QPointF * MathematicalReceiverProduct::getPos() const
+const QPointF * Rx::getPos() const
 {
     return this ;
 }

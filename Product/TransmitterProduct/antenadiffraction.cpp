@@ -88,18 +88,19 @@ void AntenaDiffraction::setIlluminatedZone(const QPolygonF &zone)
 }
 
 
-void AntenaDiffraction::update(ProductObservable *productObservable, QLineF const movement)
+Data *AntenaDiffraction::update(ProductObservable *productObservable, QLineF const /*movement*/)
 {
     if (m_zone.containsPoint(*productObservable->getPos(), Qt::OddEvenFill)) {
         WholeRay *wholeRay = new WholeRay;
         QLineF line(*this, *productObservable->getPos());
 
         //ray newRay(*this,pos);
-        MathematicalRayProduct *newRay = m_rayFactory->createRay(*this, *productObservable->getPos());
+        unique_ptr<Ray> newRay = m_rayFactory->createRay(*this, *productObservable->getPos());
         newRay->setDiffracted(true);
-        wholeRay->push_back(newRay);
+        wholeRay->push_back(move(newRay));
         m_parent->notifyParent(productObservable,0.0 , *this, wholeRay);
     }
+    return nullptr;
 }
 
 //void AntenaDiffraction::updateCarPos(ProductObservable *productObservable)
@@ -128,9 +129,9 @@ void AntenaDiffraction::notifyParent(ProductObservable *productObservable,
 {
     QLineF line(*this, point);
     //ray newRay(*this,point);
-    MathematicalRayProduct *newRay = m_rayFactory->createRay(*this, point);
+    unique_ptr<Ray> newRay = m_rayFactory->createRay(*this, point);
     newRay->setDiffracted(true);
-    wholeRay->push_back(newRay);
+    wholeRay->push_back(move(newRay));
     m_parent->notifyParent(productObservable, speed, *this, wholeRay);
 }
 

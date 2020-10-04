@@ -1,6 +1,6 @@
-#include "mathematicalbuildingproduct.h"
+#include "building.h"
 
-MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points) : QPolygonF(points),
+Building::Building(QVector<QPointF> points) : QPolygonF(points),
     m_posx(0),m_posy(0)
 {
     m_extremities = points;
@@ -14,20 +14,20 @@ MathematicalBuildingProduct::MathematicalBuildingProduct(QVector<QPointF> points
     }
 }
 
-MathematicalBuildingProduct::~MathematicalBuildingProduct(){
+Building::~Building(){
     cout << "Mathematical Building Product Deleted." << endl;
     for(int i = 0;i < size()-1; i++) {
         delete m_walls.at(i);
     }
 }
 
-void MathematicalBuildingProduct::setExtremities(QVector<QPointF> extremities){
+void Building::setExtremities(QVector<QPointF> extremities){
     m_extremities = extremities;
     QPolygonF poly = QPolygonF(m_extremities);
     swap(poly);
 }
 
-void MathematicalBuildingProduct::setModel(std::string model){
+void Building::setModel(std::string model){
     m_model = model;
     if (model == "brick"){
         m_conductivity = 0.0014;
@@ -39,7 +39,7 @@ void MathematicalBuildingProduct::setModel(std::string model){
     }
 }
 
-void MathematicalBuildingProduct::update(QGraphicsItem *graphic){
+void Building::update(QGraphicsItem *graphic){
     QPointF offset = QPointF(graphic->x(),graphic->y()) - QPointF(m_posx,m_posy);
     this->translate(offset);
     setPosX(graphic->scenePos().x());
@@ -48,25 +48,25 @@ void MathematicalBuildingProduct::update(QGraphicsItem *graphic){
     setExtremities(*this);
 }
 
-void MathematicalBuildingProduct::openDialog(){
+void Building::openDialog(){
     new DialogBuildingProduct(this);
 }
 
-void MathematicalBuildingProduct::newProperties(){
+void Building::newProperties(){
     QPolygonF poly = *this;
     poly.translate(-m_posx, -m_posy);
     m_graphic->notifyToGraphic(&poly,m_posx,m_posy);
 }
 
 
-void MathematicalBuildingProduct::moveToPosition(const QPointF &pos)
+void Building::moveToPosition(const QPointF &pos)
 {
     //moveTopLeft(pos);
     QPointF moveDirection = pos - QPointF(m_posx,m_posy);
     moveWalls(moveDirection);
 }
 
-void MathematicalBuildingProduct::moveWalls(QPointF &moveDirection)
+void Building::moveWalls(QPointF &moveDirection)
 {
     for(unsigned i=0;i<m_walls.size();i++){
         m_walls.at(i)->setPoints(m_walls.at(i)->p1() + moveDirection,m_walls.at(i)->p2() + moveDirection);
@@ -74,7 +74,7 @@ void MathematicalBuildingProduct::moveWalls(QPointF &moveDirection)
 
 }
 
-QPointF MathematicalBuildingProduct::closestPoint(const QPointF &point)
+QPointF Building::closestPoint(const QPointF &point)
 {
     vector<QLineF> distances;
 
@@ -88,7 +88,7 @@ QPointF MathematicalBuildingProduct::closestPoint(const QPointF &point)
     return distances[0].p2();
 }
 
-vector <Wall*>MathematicalBuildingProduct::nearestWalls(const QPointF &point)
+vector <Wall*>Building::nearestWalls(const QPointF &point)
 {
     vector<Wall*> walls;
 
@@ -100,13 +100,13 @@ vector <Wall*>MathematicalBuildingProduct::nearestWalls(const QPointF &point)
     return walls;
 }
 
-Wall* MathematicalBuildingProduct::getWalls()
+Wall* Building::getWalls()
 {
 //    return *m_walls;
     return nullptr;
 }
 
-QPolygonF MathematicalBuildingProduct::shadow(const QPointF &light){
+QPolygonF Building::shadow(const QPointF &light){
     QPolygonF shadow;
     shadow<<closestPoint(light);
     vector <QPointF> corners = extremities(light);
@@ -124,7 +124,7 @@ QPolygonF MathematicalBuildingProduct::shadow(const QPointF &light){
     return shadow;
 }
 
-vector <QPointF> MathematicalBuildingProduct::extremities(const QPointF &light){
+vector <QPointF> Building::extremities(const QPointF &light){
     /*
      * Looking for the corners that will cast the shadow.
      * light    - ponctual source of light.
@@ -191,7 +191,7 @@ vector <QPointF> MathematicalBuildingProduct::extremities(const QPointF &light){
    return extremities;
 }
 
-QPointF MathematicalBuildingProduct::forDiffraction(Wall *wall, const QPointF &corner) const{
+QPointF Building::forDiffraction(Wall *wall, const QPointF &corner) const{
     QPointF p2;
     Wall *w = cornerSecondWall(wall,corner);
     if(w->p1() == corner){
@@ -204,7 +204,7 @@ QPointF MathematicalBuildingProduct::forDiffraction(Wall *wall, const QPointF &c
 }
 
 
-Wall* MathematicalBuildingProduct::cornerSecondWall(Wall *wall,const QPointF &corner)const {
+Wall* Building::cornerSecondWall(Wall *wall,const QPointF &corner)const {
     /*
      * Get the second wall composing the corner of a building.
      * wall     - one of the walls at the corner
@@ -222,7 +222,7 @@ Wall* MathematicalBuildingProduct::cornerSecondWall(Wall *wall,const QPointF &co
     return m_walls[i-1];
 }
 
-bool MathematicalBuildingProduct::adjacentWall(const QLineF &line, Wall *&wall){
+bool Building::adjacentWall(const QLineF &line, Wall *&wall){
     /*
      * Check is the line is adjacent to any wall. Returns the wall in wall.
     */

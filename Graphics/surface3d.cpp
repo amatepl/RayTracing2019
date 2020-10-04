@@ -6,6 +6,7 @@
 #include <QtDataVisualization/qsurface3dseries.h>
 #include <QtDataVisualization/q3dtheme.h>
 #include <QtCore/qmath.h>
+#include "Share/physics.h"
 
 using namespace QtDataVisualization;
 
@@ -17,7 +18,7 @@ const float sampleThetaMax = 360.0;
 const float samplePhyMin = 0.0;
 const float samplePhyMax = 180.0;
 
-Surface3D::Surface3D(Q3DSurface *surface, TransmitterProduct *dialog)
+Surface3D::Surface3D(Q3DSurface *surface, TxInterface *dialog)
     : m_graph(surface), m_dialog(dialog), m_thetamin(0.0),m_thetamax(0.0),m_ymin(0.0),m_ymax(0.0),
       m_rmin(0.0),m_rmax(0.0)
 {
@@ -99,7 +100,7 @@ void Surface3D::fillPatternProxy()
         int index = 0;
         for (int j = 0; j < sampleCountTheta; j++) {
             float theta = qMin(sampleThetaMax, (j * stepTheta + sampleThetaMin));
-            double gain = abs(m_dialog->totaleArrayFactor(double(theta),double(phy)));
+            double gain = abs(m_dialog->getTotalArrayFctr(double(theta),double(phy)));
             float xtheta = theta*M_PI/180.0;
             m_thetamax = qMax(xtheta,m_thetamax);
             m_thetamin = qMin(xtheta,m_thetamin);

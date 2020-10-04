@@ -1,5 +1,5 @@
 /*!
-    \class DialogReceiverProduct
+    \class DialogRx
     \brief Dialog window for the receiver
 
     The dialog window of the receiver lets the user choose the physical and electrical properties
@@ -9,8 +9,8 @@
     
 */
 
-#ifndef DIALOGRECEIVERPRODUCT_H
-#define DIALOGRECEIVERPRODUCT_H
+#ifndef DIALOGRX_H
+#define DIALOGRX_H
 
 #include <QDialog>
 #include <QLineEdit>
@@ -26,18 +26,18 @@
 #include <QtDataVisualization>
 
 #include "receiverproduct.h"
-#include "Product/ReceiverProduct/graphicsreceiverproduct.h"
+#include "Product/ReceiverProduct/graphicsrx.h"
 #include "qcustomplot.h"
 #include "Graphics/interfererencepattern.h"
 
 using namespace QtDataVisualization;
 
-class DialogReceiverProduct : public QDialog, public ReceiverProduct
+class DialogRx : public QDialog, public ReceiverProduct
 {
     Q_OBJECT
 public:
-    DialogReceiverProduct(ReceiverProduct* mathematicalproduct);
-    ~DialogReceiverProduct() override;
+    DialogRx(ReceiverProduct* mathematicalproduct);
+    ~DialogRx() override;
 
     /*!
      * \brief templatePlot
@@ -77,6 +77,7 @@ public:
     QWidget* AngularDistr();
     QWidget* PrxDopplerSpctr();
     QWidget* DopplerDistr();
+    QWidget *SpcCrltn();
 
     void changeGraph();
     void setInterferencePattern(vector<double> impulse_r, double min, double max);
@@ -127,9 +128,13 @@ private:
     QDialogButtonBox *m_buttonbox;
     QVector<QCPItemLine*> impulse_tdl;
     QCustomPlot *impulse_plot;
+    QCustomPlot *pas_plot;
+    QCustomPlot *pds_ploot;
     QCustomPlot *angular_distr_plot;
     QCustomPlot *doppler_distr_plot;
     QCustomPlot *shadowing_plot;
+    QCustomPlot *spc_crltn_plot;
+    QCustomPlot *tm_crltn_plot;
 
     bool show_tdl;
     bool enable;
@@ -147,4 +152,4 @@ public slots:
     void showTDL();
 };
 
-#endif // DIALOGRECEIVERPRODUCT_H
+#endif // DIALOGRX_H

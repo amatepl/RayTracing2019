@@ -1,5 +1,5 @@
-#ifndef MATHEMATICALBUILDINGPRODUCT_H
-#define MATHEMATICALBUILDINGPRODUCT_H
+#ifndef BUILDING_H
+#define BUILDING_H
 
 #include <QPolygonF>
 #include <array>
@@ -11,11 +11,11 @@
 
 using namespace std;
 
-class MathematicalBuildingProduct : public QPolygonF, public MathematicalProduct, public BuildingProduct
+class Building : public QPolygonF, public MathematicalProduct, public BuildingProduct
 {
 public:
-    MathematicalBuildingProduct(QVector<QPointF> points);
-    ~MathematicalBuildingProduct() override;
+    Building(QVector<QPointF> points);
+    ~Building() override;
 
     // From BuildingProduct
     int getPosX() override {return m_posx;}
@@ -59,4 +59,4 @@ protected:
 };
 
 
-#endif // MATHEMATICALBUILDINGPRODUCT_H
+#endif // BUILDING_H

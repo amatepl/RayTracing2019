@@ -1,5 +1,5 @@
-#ifndef GRAPHICSTRANSMITTERPRODUCT_H
-#define GRAPHICSTRANSMITTERPRODUCT_H
+#ifndef GRAPHICSTX_H
+#define GRAPHICSTX_H
 #include <iostream>
 
 #include <QGraphicsPixmapItem>
@@ -7,18 +7,19 @@
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
 #include <vector>
+#include <QDialog>
 
-#include "transmitterproduct.h"
+#include "txinterface.h"
 #include "Product/graphicsproduct.h"
-
+#include "Share/dialogfctry.h"
 
 using namespace std;
 
-class GraphicsTransmitterProduct :public QGraphicsPixmapItem, public GraphicsProduct
+class GraphicsTx :public QGraphicsPixmapItem, public GraphicsProduct
 {
 public:
-    GraphicsTransmitterProduct(QMenu* productmenu, QGraphicsScene *scene);
-    ~GraphicsTransmitterProduct() override;
+    GraphicsTx(QMenu* productmenu, QGraphicsScene *scene);
+    ~GraphicsTx() override;
 
     void drawRays(vector<GraphicsProduct*> rays);
 
@@ -35,6 +36,7 @@ public:
 
     void notifyToGraphic(QPointF *point, double orientation) override;
 
+    void setDialogFctry(DialogWinFctry<QDialog> *dialogFctry);
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *) override;
@@ -42,6 +44,8 @@ protected:
 private:
     QGraphicsScene *m_scene;
     QMenu* m_productmenu;
+    DialogWinFctry<QDialog> *m_dialogFctry;
+    unique_ptr<QDialog> m_dialog;
 };
 
-#endif // GRAPHICSTRANSMITTERPRODUCT_H
+#endif // GRAPHICSTX_H

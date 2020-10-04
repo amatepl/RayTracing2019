@@ -16,8 +16,8 @@ public:
     void choseBeams();
 
     // AlgorithmInterface
-//    MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
-//                                           vector<MathematicalBuildingProduct*> buildings) override;
+//    MathematicalComponent* compute(vector<Tx*> transmitter, Rx* receiver,
+//                                           vector<Building*> buildings) override;
     MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> mathematicalComponents, ReceiverFactory*) override;
 
     void clearWorkspace() override;

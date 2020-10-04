@@ -1,5 +1,5 @@
-#ifndef TRANSMITTERIMAGE_H
-#define TRANSMITTERIMAGE_H
+#ifndef TXIMG_H
+#define TXIMG_H
 
 #include <QPointF>
 #include <QLineF>
@@ -7,23 +7,24 @@
 #include "Observer/productobserver.h"
 #include "Observer/productobservable.h"
 #include "Product/abstractantena.h"
-#include "Product/RayProduct/mathematicalrayproduct.h"  // Should probably be deleted
+#include "Product/RayProduct/ray.h"  // Should probably be deleted
 #include "Share/wall.h"
 #include "Abstract_Factory/abstractrayfactory.h"
 #include "Product/CarProduct/mathematicalcarproduct.h"
 
+struct Data;
 
 using namespace std;
 
-class TransmitterImage: public QPointF, public ProductObserver,
+class TxImg: public QPointF, public ProductObserver,
                         public AbstractAntena
 {
 public:
-    TransmitterImage(const Line &wall, AbstractAntena *parent, const double epsilonWall = 5);
-    ~TransmitterImage() override;
+    TxImg(const Line &wall, AbstractAntena *parent, const double epsilonWall = 5);
+    ~TxImg() override;
     QPointF sceneRectIntersection(const QRectF &rect, const QLineF  &line) const;
     vector <QPointF> boundaryCorners(const QRectF &rect, const QPolygonF &unboundedZone) const;
-    //void setBuilding(MathematicalBuildingProduct *building);
+    //void setBuilding(Building *building);
     void setSceneBoundary(const QRectF &rect);
     QPolygonF buildCoverage();
 //    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
@@ -38,7 +39,7 @@ public:
 
 
     //ProductObserver
-    void update(ProductObservable *productObservable, QLineF const) override;
+    Data *update(ProductObservable *productObservable, QLineF const) override;
 //    void updateCarPos(ProductObservable *productObservable) override;
     void attachObservable(ProductObservable *productObservable) override;
 
@@ -56,4 +57,4 @@ public slots:
 
 };
 
-#endif // TRANSMITTERIMAGE_H
+#endif // TXIMG_H

@@ -1,6 +1,6 @@
-#include "graphicstransmitterproduct.h"
+#include "graphicstx.h"
 
-GraphicsTransmitterProduct::GraphicsTransmitterProduct(QMenu* productmenu, QGraphicsScene *scene)
+GraphicsTx::GraphicsTx(QMenu* productmenu, QGraphicsScene *scene)
 {
     QPixmap icon(":/Images/Transmitter1.png");
     setPixmap(icon);
@@ -19,32 +19,32 @@ GraphicsTransmitterProduct::GraphicsTransmitterProduct(QMenu* productmenu, QGrap
 
 }
 
-GraphicsTransmitterProduct::~GraphicsTransmitterProduct(){
+GraphicsTx::~GraphicsTx(){
     cout << "Graphics Transmitter Product Deleted." << endl;
     delete m_observer;
 }
 
-QPixmap GraphicsTransmitterProduct::getImage(){
+QPixmap GraphicsTx::getImage(){
     QPixmap icon(":/Images/Transmitter1.png");
     return icon;
 }
 
 
-bool GraphicsTransmitterProduct::graphicsSelected() {
+bool GraphicsTx::graphicsSelected() {
     return isSelected();
 }
 
-void GraphicsTransmitterProduct::draw(){
+void GraphicsTx::draw(){
     m_scene->addItem(this);
 }
 
-void GraphicsTransmitterProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+void GraphicsTx::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
         //m_graphicsfactory->clearSelection();
         setSelected(true);
         m_productmenu->exec(event->screenPos());
 }
 
-QVariant GraphicsTransmitterProduct::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant GraphicsTx::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged || change == QGraphicsItem::ItemRotationChange) {
         m_observer->update(this);
@@ -52,12 +52,18 @@ QVariant GraphicsTransmitterProduct::itemChange(GraphicsItemChange change, const
     return value;
 }
 
-void GraphicsTransmitterProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
-    m_observer->openDialog();
+void GraphicsTx::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
+//    m_observer->openDialog();
+    m_dialog = m_dialogFctry->create();
 }
 
-void GraphicsTransmitterProduct::notifyToGraphic(QPointF *point, double orientation){
+void GraphicsTx::notifyToGraphic(QPointF *point, double orientation){
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setPos(*point);
     setRotation(orientation);
+}
+
+void GraphicsTx::setDialogFctry(DialogWinFctry<QDialog> *dialogFctry)
+{
+    m_dialogFctry = dialogFctry;
 }

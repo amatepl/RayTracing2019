@@ -1,4 +1,5 @@
 #include "physics.h"
+#include <FFT>
 
 using namespace ph;
 
@@ -33,22 +34,38 @@ double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const 
 std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double theta, const double spectrum)
 {
     return 2 * M_PI * h / (spectrum * sin(theta * M_PI / 180.0)/ cos(theta * M_PI / 180));
+//    return 2 * M_PI * 1 / (spectrum * sin(theta * M_PI / 180.0)/ cos(theta * M_PI / 180));
 }
 
 
-double ph::angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u)
+double ph::angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u, const double ampu)
 {
     double prx = 0;
     double variance = 0;
     double mean = 0;
 
     for (unsigned i = 0; i < prxAngularSpread.size(); i++) {
-        prx += prxAngularSpread.at(i);      // Has to be modified maybe give norm u as parameter.
+        prx += prxAngularSpread.at(i) * ampu * sqrt(1 - pow(u.at(i) / ampu, 2)) / (2 * M_PI);
         variance += pow(u.at(i), 2) * prxAngularSpread.at(i);
         mean += u.at(i) * prxAngularSpread.at(i);
     }
 
     return sqrt(variance/prx - pow(mean, 2));
+}
+
+
+map<double, double> ph::correlation(const vector<complex<double> > &spctr)
+{
+    vector <double> out;
+    Eigen::FFT<double> fft;
+    fft.inv(out, spctr);
+
+    map<double, double> corr;
+    unsigned size = out.size();
+    for (unsigned i = 0; i < size; i++) {
+        corr[i] = out[i];
+    }
+    return corr;
 }
 
 
@@ -68,7 +85,7 @@ complex <double> ph::dipoleFactor(double phi)
 
 complex <double> ph::reflectorFactor(angle theta, angle phi, double fq, angle antOrien){
     complex <double> reflectorfactor(0.0,0.0);
-    double lambda = C/fq;
+    double lambda = c/fq;
 
     double d = lambda/4.0;
     double k = 2.0*M_PI/lambda;
@@ -87,7 +104,7 @@ complex <double> ph::reflectorFactor(angle theta, angle phi, double fq, angle an
 
 complex <double> ph::reflectorFactor(angle theta, angle phi, const ph::TxParams &txParams){
     complex <double> reflectorfactor(0.0,0.0);
-    double lambda = C/txParams.fq;
+    double lambda = c/txParams.fq;
 
     double d = lambda/4.0;
     double k = 2.0*M_PI/lambda;
@@ -113,7 +130,7 @@ complex <double> ph::arrayFactor(angle theta, angle phi,double fq, angle antOrie
     complex <double> i(0.0,1.0);
     complex <double> psy(0.0,0.0);
     complex <double> qsy(0.0,0.0);
-    double lambda = C / fq;
+    double lambda = c / fq;
 
     double d = lambda * 0.5;
     double k = 2.0 * M_PI / lambda;
@@ -160,7 +177,7 @@ complex <double> ph::arrayFactor(angle theta, angle phi, const ph::TxParams &txP
     complex <double> i(0.0,1.0);
     complex <double> psy(0.0,0.0);
     complex <double> qsy(0.0,0.0);
-    double lambda = C / txParams.fq;
+    double lambda = c / txParams.fq;
 
     double d = lambda * 0.5;
     double k = 2.0 * M_PI / lambda;
@@ -219,6 +236,13 @@ complex <double> ph::totaleArrayFactor(double theta, double phi, double fq, angl
     return 0;
 }
 
+double ph::electricalGain(complex<double> arrayFctr){
+    return abs(arrayFctr);
+}
+
+double ph::powerGain(complex<double> arrayFctr){
+    return 16.0/(3.0*M_PI)*pow(abs(arrayFctr),2);
+}
 
 complex <double> ph::totaleArrayFactor(double theta, double phi, const TxParams &txParams){
     complex <double> arrayfactor = ph::arrayFactor(theta, phi, txParams);
@@ -269,6 +293,12 @@ double ph::computeR(WholeRay *wholeRay)
 }
 
 
+double ph::currentTx(const double power, const tuple<width, height> antArry)
+{
+    return sqrt(2.0 * power / (std::get<0>(antArry) * std::get<1>(antArry) * r_a));
+}
+
+
 std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine,
                                     const std::tuple<width, height> antArry,
                                     double power,
@@ -293,10 +323,10 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine
 
     // Angle in degrees
     double angle_transmitter = rayLine->angleTx();
-    complex<double> array_fctr = ph::totaleArrayFactor(angle_transmitter, 90, wvNbr * C / (2 * M_PI),
+    complex<double> array_fctr = ph::totaleArrayFactor(angle_transmitter, 90, wvNbr * c / (2 * M_PI),
                                                    antOrien, beam, std::get<0>(antArry), std::get<1>(antArry),
                                                    txType);
-    double Ia = sqrt(2.0 * power / (std::get<0>(antArry) * std::get<1>(antArry) * r_a)); // Ia could be changed for Beamforming application (add exp)
+    double Ia = currentTx(power, antArry);
     complex<double> a = R * array_fctr * exp(-i * wvNbr * totalLength) / totalLength;
 
     Efield = - i * ((z_0 * Ia) * a / (2.0 * M_PI));
@@ -325,7 +355,7 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay*> rayLine,
     double angle_transmitter = rayLine->angleTx();
     complex<double> array_fctr = ph::totaleArrayFactor(angle_transmitter, 90, txParams);
     double Ia = sqrt(2.0 * txParams.prx / (txParams.arrW * txParams.arrH * r_a)); // Ia could be changed for Beamforming application (add exp)
-    complex<double> a = R * array_fctr * exp(-i * 2.0 * M_PI * txParams.fq * totalLength / C) / totalLength;
+    complex<double> a = R * array_fctr * exp(-i * 2.0 * M_PI * txParams.fq * totalLength / c) / totalLength;
 
     Efield = - i * ((z_0 * Ia) * a / (2.0 * M_PI));
 

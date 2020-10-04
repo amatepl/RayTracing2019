@@ -20,7 +20,7 @@ DialogBuildingProduct::~DialogBuildingProduct(){
 
 void DialogBuildingProduct::createDialog(){
     setWindowTitle("Building properties: ");
-    setWindowIcon(QIcon(GraphicsBuildingProduct::getImage()));
+    setWindowIcon(QIcon(GraphicsBuilding::getImage()));
     QPushButton *save = new QPushButton("Save",this);
     QPushButton *cancel = new QPushButton("Cancel",this);
 

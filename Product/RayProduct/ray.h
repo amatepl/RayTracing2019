@@ -1,5 +1,5 @@
-#ifndef MATHEMATICALRAYPRODUCT_H
-#define MATHEMATICALRAYPRODUCT_H
+#ifndef RAY_H
+#define RAY_H
 
 #include <math.h>
 
@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class MathematicalRayProduct: public Line, public MathematicalProduct
+class Ray: public Line, public MathematicalProduct
 {
 private:
     int state;       // 0 for direct ray, 1 for transmitted ray, 2 for reflected ray, 3 for refracted ray
@@ -29,8 +29,8 @@ private:
 
     void updateMeterLength();
 public:
-    MathematicalRayProduct(const QPointF &p1 = QPointF(0,0), const QPointF &p2= QPointF(0,0), double Tetai = 0, const double epsilonWall = 5);
-    ~MathematicalRayProduct();
+    Ray(const QPointF &p1 = QPointF(0,0), const QPointF &p2= QPointF(0,0), double Tetai = 0, const double epsilonWall = 5);
+    ~Ray();
 
     /* Getters */
     double getCoefficient() const;
@@ -55,4 +55,4 @@ public:
     void openDialog() override;
 };
 
-#endif // MATHEMATICALRAYPRODUCT_H
+#endif // RAY_H

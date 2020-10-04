@@ -7,13 +7,13 @@
 
 #include "carproduct.h"
 #include "Product/mathematicalproduct.h"
-#include "Product/BuildingProduct/mathematicalbuildingproduct.h"
+#include "Product/BuildingProduct/building.h"
 #include "dialogcarproduct.h"
 #include "Share/moveablegraphics.h"
 
 using namespace std;
 
-class MathematicalCarProduct:public QObject, public MathematicalBuildingProduct,
+class MathematicalCarProduct:public QObject, public Building,
                                /*  public MathematicalProduct,*/ public CarProduct
 {
     Q_OBJECT

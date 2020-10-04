@@ -27,15 +27,16 @@ void InfoWidget::createInfoGroup(){
     info_group = new QGroupBox("General Informations",this);
     info_group->setFixedWidth(300);
     QFormLayout* info_layout = new QFormLayout(info_group);
-    scene_pos = new QLabel("Map position: ( " + QString::number(0) + " , " + QString::number(0) + " )",info_group);
-    power_rx = new QLabel("Power received [dBm]: " + QString::number(0),info_group);
-    distance = new QLabel("Transmitter distance [m]: " + QString::number(0),info_group);
-    snr = new QLabel("Signal-to-noise ration [dB]: " + QString::number(0),info_group);
-    delay_spread = new QLabel("Delay spread [ns]: " + QString::number(0),info_group);
-    rice_factor = new QLabel("Rice factor [dB]: " + QString::number(0),info_group);
-    coherence_bw = new QLabel("Coherence bandwidth [MHz]: " + QString::number(0),info_group);
-    coherence_time = new QLabel("Coherence time [\u03bcs]: " + QString::number(0),info_group);
-    angular_spread = new QLabel("Angular spread [rad]: " + QString::number(0),info_group);
+    scene_pos = new QLabel("Map position: ( " + QString::number(0) + " , " + QString::number(0) + " )", info_group);
+    power_rx = new QLabel("Power received [dBm]: " + QString::number(0), info_group);
+    distance = new QLabel("Transmitter distance [m]: " + QString::number(0), info_group);
+    snr = new QLabel("Signal-to-noise ration [dB]: " + QString::number(0), info_group);
+    delay_spread = new QLabel("Delay spread [ns]: " + QString::number(0), info_group);
+    rice_factor = new QLabel("Rice factor [dB]: " + QString::number(0), info_group);
+    coherence_bw = new QLabel("Coherence bandwidth [MHz]: " + QString::number(0), info_group);
+    coherence_time = new QLabel("Coherence time [\u03bcs]: " + QString::number(0), info_group);
+    angular_spread = new QLabel("Angular spread [rad]: " + QString::number(0), info_group);
+    doppler_spread = new QLabel("Doppler Spread [rad/s]: " + QString::number(0), info_group);
 
     info_layout->addRow(scene_pos);
     info_layout->addRow(power_rx);
@@ -46,6 +47,7 @@ void InfoWidget::createInfoGroup(){
     info_layout->addRow(coherence_bw);
     info_layout->addRow(coherence_time);
     info_layout->addRow(angular_spread);
+    info_layout->addRow(doppler_spread);
 
     info_group->setLayout(info_layout);
 }
@@ -248,6 +250,11 @@ void InfoWidget::changeCoherenceBandwidth(double coherence)
 void InfoWidget::changeAngularSpread (double angularSpread)
 {
     angular_spread->setText("Angular Spread [rad]: " + QString::number(angularSpread));
+}
+
+void InfoWidget::changeDopplerSpread (double dopplerSpread)
+{
+    doppler_spread->setText("Doppler Spread [rad/s]: " + QString::number(dopplerSpread));
 }
 
 void InfoWidget::reset(){

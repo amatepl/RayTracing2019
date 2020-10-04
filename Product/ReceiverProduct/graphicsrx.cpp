@@ -1,6 +1,6 @@
-#include "graphicsreceiverproduct.h"
+#include "graphicsrx.h"
 
-GraphicsReceiverProduct::GraphicsReceiverProduct(bool enable, QMenu *menuproduct, QGraphicsScene *scene)
+GraphicsRx::GraphicsRx(bool enable, QMenu *menuproduct, QGraphicsScene *scene)
 {
     m_productmenu = menuproduct;
     m_sizex = 10;
@@ -11,12 +11,12 @@ GraphicsReceiverProduct::GraphicsReceiverProduct(bool enable, QMenu *menuproduct
     m_type = "receiver";
 }
 
-GraphicsReceiverProduct::~GraphicsReceiverProduct(){
+GraphicsRx::~GraphicsRx(){
     cout << "Graphics Receiver Product Deleted." << endl;
     delete m_observer;
 }
 
-void GraphicsReceiverProduct::enableReceiver(bool enable){
+void GraphicsRx::enableReceiver(bool enable){
     if (enable) {
         QPixmap icon(":/Images/Receiver1.png");
         setPixmap(icon);
@@ -35,7 +35,7 @@ void GraphicsReceiverProduct::enableReceiver(bool enable){
     }
 }
 
-QColor GraphicsReceiverProduct::scaleColor(double min, double max, double value){
+QColor GraphicsRx::scaleColor(double min, double max, double value){
     double interval = (max-min)/2;
     QColor color;
     if (value < min+interval){
@@ -45,16 +45,14 @@ QColor GraphicsReceiverProduct::scaleColor(double min, double max, double value)
         color.setRgb(255,0,255*(max-value)/interval);
     }
     return color;
-
-
 }
 
-QPixmap GraphicsReceiverProduct::getImage(){
+QPixmap GraphicsRx::getImage(){
     QPixmap icon(":/Images/Receiver1.png");
     return icon;
 }
 
-QVariant GraphicsReceiverProduct::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant GraphicsRx::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
         //m_mathematicalProduct->setPosX(pos().x());
@@ -64,31 +62,31 @@ QVariant GraphicsReceiverProduct::itemChange(GraphicsItemChange change, const QV
     return value;
 }
 
-void GraphicsReceiverProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
+void GraphicsRx::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
     m_observer->openDialog();
 }
 
-bool GraphicsReceiverProduct::graphicsSelected() {
+bool GraphicsRx::graphicsSelected() {
     return isSelected();
 }
 
-void GraphicsReceiverProduct::draw(){
+void GraphicsRx::draw(){
     m_scene->addItem(this);
 }
 
 
-void GraphicsReceiverProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+void GraphicsRx::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
 }
 
-void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, float orientation){
+void GraphicsRx::notifyToGraphic(QPointF *point, float orientation){
     setPos(*point);
     setRotation(360-orientation);
 }
 
-void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, double power){
+void GraphicsRx::notifyToGraphic(QPointF *point, double power){
 
     setPos(*point);
     QColor color;
@@ -109,11 +107,11 @@ void GraphicsReceiverProduct::notifyToGraphic(QPointF *point, double power){
 //    brush->setColor(color);
 }
 
-void GraphicsReceiverProduct::sendInformation(){
+void GraphicsRx::sendInformation(){
     m_observer->updateInformation();
 }
 
-void GraphicsReceiverProduct::mousePressEvent(QGraphicsSceneMouseEvent* event){
+void GraphicsRx::mousePressEvent(QGraphicsSceneMouseEvent* event){
     if (event->button() != Qt::LeftButton){
         return;
     }
@@ -123,7 +121,7 @@ void GraphicsReceiverProduct::mousePressEvent(QGraphicsSceneMouseEvent* event){
     QGraphicsItem::mousePressEvent(event);
 }
 
-void GraphicsReceiverProduct::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+void GraphicsRx::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     sendInformation();
     QGraphicsItem::mouseMoveEvent(event);
 }

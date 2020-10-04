@@ -1,6 +1,6 @@
-#include "graphicsbuildingproduct.h"
+#include "graphicsbuilding.h"
 
-GraphicsBuildingProduct::GraphicsBuildingProduct(QMenu* productmenu, QGraphicsScene *scene):
+GraphicsBuilding::GraphicsBuilding(QMenu* productmenu, QGraphicsScene *scene):
     m_scene(scene),m_productmenu(productmenu)
 {
     QRectF rect(0,0,50,50);
@@ -17,7 +17,7 @@ GraphicsBuildingProduct::GraphicsBuildingProduct(QMenu* productmenu, QGraphicsSc
 }
 
 
-GraphicsBuildingProduct::GraphicsBuildingProduct(QPolygonF poly,QMenu* productmenu, QGraphicsScene *scene):QGraphicsPolygonItem(poly),
+GraphicsBuilding::GraphicsBuilding(QPolygonF poly,QMenu* productmenu, QGraphicsScene *scene):QGraphicsPolygonItem(poly),
     m_scene(scene),m_productmenu(productmenu)
 {
     //QRectF rect(0,0,50,50);
@@ -34,12 +34,12 @@ GraphicsBuildingProduct::GraphicsBuildingProduct(QPolygonF poly,QMenu* productme
     draw();
 }
 
-GraphicsBuildingProduct::~GraphicsBuildingProduct(){
+GraphicsBuilding::~GraphicsBuilding(){
     cout << "Graphics Building Product Deleted." << endl;
     delete m_observer;
 }
 
-QPixmap GraphicsBuildingProduct::getImage(){
+QPixmap GraphicsBuilding::getImage(){
     QPixmap pixmap(100,100);
     pixmap.fill(Qt::transparent);
     QPainter painter(&pixmap);
@@ -51,15 +51,15 @@ QPixmap GraphicsBuildingProduct::getImage(){
 }
 
 
-bool GraphicsBuildingProduct::graphicsSelected(){
+bool GraphicsBuilding::graphicsSelected(){
     return isSelected();
 }
 
-void GraphicsBuildingProduct::draw(){
+void GraphicsBuilding::draw(){
     m_scene->addItem(this);
 }
 
-void GraphicsBuildingProduct::setModel(std::string model){
+void GraphicsBuilding::setModel(std::string model){
     QPen pen(Qt::black, 2);
     if (model == "brick") {
         pen.setColor(Qt::darkRed);
@@ -76,18 +76,18 @@ void GraphicsBuildingProduct::setModel(std::string model){
     m_model = model;
 }
 
-void GraphicsBuildingProduct::setExtremities(QVector<QPointF> extremities){
+void GraphicsBuilding::setExtremities(QVector<QPointF> extremities){
     m_extremities = extremities;
     setPolygon(QPolygonF(m_extremities));
 }
 
-void GraphicsBuildingProduct::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
+void GraphicsBuilding::contextMenuEvent(QGraphicsSceneContextMenuEvent *event){
     //m_graphicsfactory->clearSelection();
     setSelected(true);
     m_productmenu->exec(event->screenPos());
 }
 
-QVariant GraphicsBuildingProduct::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant GraphicsBuilding::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionHasChanged) {
         m_observer->update(this);
@@ -95,11 +95,11 @@ QVariant GraphicsBuildingProduct::itemChange(GraphicsItemChange change, const QV
     return value;
 }
 
-void GraphicsBuildingProduct::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
+void GraphicsBuilding::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
     m_observer->openDialog();
 }
 
-void GraphicsBuildingProduct::notifyToGraphic(QPolygonF *poly, int posX, int posY){
+void GraphicsBuilding::notifyToGraphic(QPolygonF *poly, int posX, int posY){
     setPolygon(*poly);
     setX(posX);
     setY(posY);

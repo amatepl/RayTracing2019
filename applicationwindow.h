@@ -51,10 +51,10 @@ public:
     //void notify(int mode) override;
 
     //ModelObservable
-    void modelAnswer(vector<MathematicalRayProduct > *sceneproduct) override;
+    void modelAnswer(vector<Ray > *sceneproduct) override;
     void modelAnswer(vector<MathematicalProduct*> sceneproduct) override;
     void modelNotify(vector<MathematicalProduct *> sceneproducts) override;
-    void modelNotify(vector<MathematicalRayProduct> *sceneproducts) override;
+    void modelNotify(vector<Ray> *sceneproducts) override;
     void modelNotify(vector<WholeRay *> sceneproducts) override;
 
     QWidget* createToolButton(const QString &text,int id);

@@ -1,10 +1,10 @@
-#include "dialogreceiverproduct.h"
+#include "dialogrx.h"
 
-DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduct):
+DialogRx::DialogRx(ReceiverProduct *mathematicalproduct):
     m_mathematicalproduct(mathematicalproduct)
 {
     setWindowTitle("Receiver properties: ");
-    setWindowIcon(QIcon(GraphicsReceiverProduct::getImage()));
+    setWindowIcon(QIcon(GraphicsRx::getImage()));
     setMinimumSize(1000,900);
     show_tdl = true;
 
@@ -23,10 +23,12 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     m_tabwidget->addTab(CellRange(),                tr("Cellule range"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
     m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
-    m_tabwidget->addTab(PrxAngularSpctr(),          tr("Power Angular Spectrum"));
-//    m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
+    m_tabwidget->addTab(PrxAngularSpctr(),
+                        tr("Power Angular Spectrum"));
+    m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
     m_tabwidget->addTab(DopplerDistr(),             tr("Doppler Distribution"));
+    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -38,16 +40,16 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
     setLayout(mainlayout);
 
     setAttribute(Qt::WA_DeleteOnClose,true);
-    connect(m_buttonbox, &QDialogButtonBox::rejected, this, &DialogReceiverProduct::close);
-    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogReceiverProduct::saveProperties);
-//    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogReceiverProduct::saveToDisk);
-    connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogReceiverProduct::buttonBoxClicked);
+    connect(m_buttonbox, &QDialogButtonBox::rejected, this, &DialogRx::close);
+    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogRx::saveProperties);
+//    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogRx::saveToDisk);
+    connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogRx::buttonBoxClicked);
 
     open();
 }
 
 
-//void DialogReceiverProduct::handleButtonClick(self, button)
+//void DialogRx::handleButtonClick(self, button)
 //{
 //    sb = self.buttonBox.standardButton(button)
 //    if sb == QtGui.QDialogButtonBox.Apply:
@@ -57,11 +59,11 @@ DialogReceiverProduct::DialogReceiverProduct(ReceiverProduct *mathematicalproduc
 //}
 
 
-DialogReceiverProduct::~DialogReceiverProduct(){
+DialogRx::~DialogRx(){
 
 }
 
-QWidget* DialogReceiverProduct::templatePlot(QCustomPlot *plot,
+QWidget* DialogRx::templatePlot(QCustomPlot *plot,
                                              QString title,
                                              QString xlabel,
                                              QString ylabel,
@@ -87,7 +89,7 @@ QWidget* DialogReceiverProduct::templatePlot(QCustomPlot *plot,
     return widget;
 }
 
-void DialogReceiverProduct::shadowing(map<double, double> shadow)
+void DialogRx::shadowing(map<double, double> shadow)
 {
     QVector<double> angle;
     QVector<double> power;
@@ -114,7 +116,7 @@ void DialogReceiverProduct::shadowing(map<double, double> shadow)
     shadowing_plot->legend->setVisible(true);
 }
 
-QWidget* DialogReceiverProduct::GeneralTabDialog(){
+QWidget* DialogRx::GeneralTabDialog(){
     QWidget *widget = new QWidget;
 
     m_posx = new QSpinBox(this);
@@ -191,7 +193,7 @@ QWidget* DialogReceiverProduct::GeneralTabDialog(){
     return widget;
 }
 
-QWidget* DialogReceiverProduct::RealPathLossDialog(){
+QWidget* DialogRx::RealPathLossDialog(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
     D = m_mathematicalproduct->distancePathLoss();
@@ -251,7 +253,7 @@ QWidget* DialogReceiverProduct::RealPathLossDialog(){
     return widget;
 }
 
-QWidget* DialogReceiverProduct::ModelPathLossDialog(){
+QWidget* DialogRx::ModelPathLossDialog(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
     D_model = m_mathematicalproduct->distancePathLossModel();
@@ -311,7 +313,7 @@ QWidget* DialogReceiverProduct::ModelPathLossDialog(){
     return widget;
 }
 
-QWidget* DialogReceiverProduct::CellRange(){
+QWidget* DialogRx::CellRange(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
     min_prx = m_mathematicalproduct->minPower();
@@ -349,7 +351,7 @@ QWidget* DialogReceiverProduct::CellRange(){
     return widget;
 }
 
-QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
+QWidget* DialogRx::PhysicalImpulseResponse(){
     QWidget *widget = new QWidget;
     impulse_plot = new QCustomPlot;
     h = m_mathematicalproduct->impulse();
@@ -403,11 +405,11 @@ QWidget* DialogReceiverProduct::PhysicalImpulseResponse(){
 
     widget->setLayout(firstLayout);
 
-    connect(show_tdl,&QPushButton::clicked,this,&DialogReceiverProduct::showTDL);
+    connect(show_tdl,&QPushButton::clicked,this,&DialogRx::showTDL);
     return widget;
 }
 
-QWidget* DialogReceiverProduct::TDLImpulseResponse(){
+QWidget* DialogRx::TDLImpulseResponse(){
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
     for(int i = 0; i<h_tdl.size(); i++){
@@ -443,7 +445,7 @@ QWidget* DialogReceiverProduct::TDLImpulseResponse(){
     return widget;
 }
 
-QWidget* DialogReceiverProduct::InterferencePattern()
+QWidget* DialogRx::InterferencePattern()
 {
     Q3DSurface *graph = new Q3DSurface();
     QWidget *container = QWidget::createWindowContainer(graph);
@@ -519,7 +521,7 @@ QWidget* DialogReceiverProduct::InterferencePattern()
     axisMaxSliderZ->setEnabled(true);
 
     QPushButton *send_data = new QPushButton("Draw Interference",widget);
-    connect(send_data,&QPushButton::clicked,this,&DialogReceiverProduct::interferenceActivated);
+    connect(send_data,&QPushButton::clicked,this,&DialogRx::interferenceActivated);
 
     vLayout->addWidget(send_data);
     vLayout->addWidget(selectionGroupBox);
@@ -558,13 +560,13 @@ QWidget* DialogReceiverProduct::InterferencePattern()
 }
 
 QWidget*
-DialogReceiverProduct::DistributionInterference()
+DialogRx::DistributionInterference()
 {
     QWidget *widget = new QWidget;
     m_distribution = new QCustomPlot;
 
-    m_distribution->xAxis->setLabel("|h|");
-    m_distribution->yAxis->setLabel("PDF");
+    m_distribution->xAxis->setLabel("u");
+    m_distribution->yAxis->setLabel("a");
     m_distribution->xAxis->setRange(0, 1);
     m_distribution->yAxis->setRange(0, 0.03);
     m_distribution->yAxis->grid()->setSubGridVisible(true);
@@ -574,7 +576,7 @@ DialogReceiverProduct::DistributionInterference()
     m_distribution->legend->setVisible(true);
 
     m_distribution->plotLayout()->insertRow(0);
-    m_distribution->plotLayout()->addElement(0, 0, new QCPTextElement(m_distribution, "Histogram of |h| and Rice distribution fitting", QFont("sans", 12, QFont::Bold)));
+    m_distribution->plotLayout()->addElement(0, 0, new QCPTextElement(m_distribution, "Angular Distribution", QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(m_distribution,0,0);
@@ -584,100 +586,99 @@ DialogReceiverProduct::DistributionInterference()
 }
 
 QWidget*
-DialogReceiverProduct::PrxAngularSpctr()
+DialogRx::PrxAngularSpctr()
 {
     QWidget *widget = new QWidget;
-    angular_distr_plot = new QCustomPlot;
-//    angular_distr_plot = new QCustomPlot;
+    pas_plot = new QCustomPlot;
 
     pas = m_mathematicalproduct->prxAngularSpread();
     angular_distr = m_mathematicalproduct->angularDistr();
     u = m_mathematicalproduct->getu();
 
     for (int i = 0; i < pas.size(); i++) {
-        QCPItemLine *line_impulse = new QCPItemLine(angular_distr_plot);
+        QCPItemLine *line_impulse = new QCPItemLine(pas_plot);
         line_impulse->start->setCoords(u[i], pas[i]);  // location of point 1 in plot coordinate
-//        cout << "u " << u[i] <<", S(u): " << pas[i] << endl;
         line_impulse->end->setCoords(u[i], -1500);  // location of point 2 in plot coordinate
         line_impulse->setPen(QPen(Qt::blue));
     }
-//    for (int i = 0; i<angular_distr.size(); i++) {
-//        QCPItemLine *line_tdl = new QCPItemLine(angular_distr_plot);
-//        impulse_tdl.push_back(line_tdl);
-//        line_tdl->start->setCoords(u[i], angular_distr[i]);  // location of point 1 in plot coordinate
-//        line_tdl->end->setCoords(u[i], -600);  // location of point 2 in plot coordinate
-//        line_tdl->setPen(QPen(Qt::red));
-//    }
 
-//    for (const auto &i : u) {
-//        cout << "Are you negative in dialog? " << i <<endl;
-//    }
+    // Plot power angular spectrum
+    pas_plot->addGraph();
+    pas_plot->graph(0)->setPen(QPen(Qt::blue));
+    pas_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    pas_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    pas_plot->graph(0)->setData(u, pas);
+    pas_plot->graph(0)->setName("PAS");
 
-    // Plot physiscal impulse response
-    angular_distr_plot->addGraph();
-    angular_distr_plot->graph(0)->setPen(QPen(Qt::blue));
-    angular_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-    angular_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    angular_distr_plot->graph(0)->setData(u, pas);
-    angular_distr_plot->graph(0)->setName("PAS");
-
-//    angular_distr_plot->addGraph();
-//    angular_distr_plot->graph(1)->setPen(QPen(Qt::red));
-//    angular_distr_plot->graph(1)->setLineStyle(QCPGraph::lsNone);
-//    angular_distr_plot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-//    angular_distr_plot->graph(1)->setData(u, angular_distr);
-//    angular_distr_plot->graph(1)->setName("Angular Distribution");
-
-    angular_distr_plot->xAxis->setLabel("u[rad/m]");
-    angular_distr_plot->yAxis->setLabel("S(u)[dB]");
-    angular_distr_plot->yAxis->grid()->setSubGridVisible(true);
-    angular_distr_plot->xAxis->grid()->setSubGridVisible(true);
-    angular_distr_plot->rescaleAxes();
-    angular_distr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    angular_distr_plot->replot();
-    angular_distr_plot->legend->setVisible(true);
-    angular_distr_plot->plotLayout()->insertRow(0);
-    angular_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(angular_distr_plot, "Power Angular Density (PAS) and Angular Distribution", QFont("sans", 12, QFont::Bold)));
+    pas_plot->xAxis->setLabel("u[rad/m]");
+    pas_plot->yAxis->setLabel("S(u)[dB]");
+    pas_plot->yAxis->grid()->setSubGridVisible(true);
+    pas_plot->xAxis->grid()->setSubGridVisible(true);
+    pas_plot->rescaleAxes();
+    pas_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    pas_plot->replot();
+    pas_plot->legend->setVisible(true);
+    pas_plot->plotLayout()->insertRow(0);
+    pas_plot->plotLayout()->addElement(0, 0, new QCPTextElement(pas_plot,
+                                                                          "Power Angular Density (PAS) and Angular Distribution",
+                                                                          QFont("sans", 12, QFont::Bold)));
     QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(angular_distr_plot,0,0);
+    firstLayout->addWidget(pas_plot,0,0);
     firstLayout->addWidget(show_tdl,1,0);
 
     widget->setLayout(firstLayout);
 
-    connect(show_tdl,&QPushButton::clicked,this,&DialogReceiverProduct::showTDL);
+    connect(show_tdl,&QPushButton::clicked,this,&DialogRx::showTDL);
     return widget;
 }
 
 QWidget*
-DialogReceiverProduct::AngularDistr()
+DialogRx::AngularDistr()
 {
     QWidget *widget = new QWidget;
-    m_distribution = new QCustomPlot;
+    angular_distr_plot = new QCustomPlot;
 
-    m_distribution->xAxis->setLabel("|h|");
-    m_distribution->yAxis->setLabel("PDF");
-    m_distribution->xAxis->setRange(0, 1);
-    m_distribution->yAxis->setRange(0, 0.03);
-    m_distribution->yAxis->grid()->setSubGridVisible(true);
-    m_distribution->xAxis->grid()->setSubGridVisible(true);
-    m_distribution->rescaleAxes();
-    m_distribution->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    m_distribution->legend->setVisible(true);
+    angular_distr = m_mathematicalproduct->angularDistr();
+    u = m_mathematicalproduct->getu();
 
-    m_distribution->plotLayout()->insertRow(0);
-    m_distribution->plotLayout()->addElement(0, 0, new QCPTextElement(m_distribution, "Histogram of |h| and Rice distribution fitting", QFont("sans", 12, QFont::Bold)));
+    for (int i = 0; i < angular_distr.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(angular_distr_plot);
+        line_impulse->start->setCoords(u[i], angular_distr[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(u[i], -1500);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+
+    angular_distr_plot->addGraph();
+    angular_distr_plot->graph(0)->setPen(QPen(Qt::blue));
+    angular_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    angular_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    angular_distr_plot->graph(0)->setData(u, angular_distr);
+    angular_distr_plot->graph(0)->setName("Angular Distribution");
+
+    angular_distr_plot->xAxis->setLabel("u");
+    angular_distr_plot->yAxis->setLabel("a");
+    angular_distr_plot->xAxis->setRange(0, 1);
+    angular_distr_plot->yAxis->setRange(0, 0.03);
+    angular_distr_plot->yAxis->grid()->setSubGridVisible(true);
+    angular_distr_plot->xAxis->grid()->setSubGridVisible(true);
+    angular_distr_plot->rescaleAxes();
+    angular_distr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    angular_distr_plot->legend->setVisible(true);
+
+    angular_distr_plot->plotLayout()->insertRow(0);
+    angular_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(angular_distr_plot, "Angular Distribution", QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(m_distribution,0,0);
+    firstLayout->addWidget(angular_distr_plot,0,0);
 
     widget->setLayout(firstLayout);
     return widget;
 }
 
 QWidget*
-DialogReceiverProduct::PrxDopplerSpctr()
+DialogRx::PrxDopplerSpctr()
 {
     QWidget *widget = new QWidget;
     doppler_distr_plot = new QCustomPlot;
@@ -686,18 +687,24 @@ DialogReceiverProduct::PrxDopplerSpctr()
     doppler_distr = m_mathematicalproduct->dopplerDistr();
     w = m_mathematicalproduct->getw();
 
-    for (int i = 0; i < pds.size(); i++) {
-        QCPItemLine *line_impulse = new QCPItemLine(doppler_distr_plot);
-        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
-        line_impulse->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
-        line_impulse->setPen(QPen(Qt::blue));
-    }
+    cout << "pds size: " <<pds.size() << endl;
+    cout << "w size: " <<w.size() << endl;
+
+    QVector<double> localpds = pds;
+    QVector<double> localw = w;
+
+//    for (int i = 0; i < pds.size(); i++) {
+//        QCPItemLine *line_impulse = new QCPItemLine(doppler_distr_plot);
+//        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
+//        line_impulse->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
+//        line_impulse->setPen(QPen(Qt::blue));
+//    }
 
     // Plot physiscal impulse response
     doppler_distr_plot->addGraph();
     doppler_distr_plot->graph(0)->setPen(QPen(Qt::blue));
-    doppler_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-    doppler_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+//    doppler_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+//    doppler_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
     doppler_distr_plot->graph(0)->setData(w, pds);
     doppler_distr_plot->graph(0)->setName("PDS");
 
@@ -710,7 +717,9 @@ DialogReceiverProduct::PrxDopplerSpctr()
     doppler_distr_plot->replot();
     doppler_distr_plot->legend->setVisible(true);
     doppler_distr_plot->plotLayout()->insertRow(0);
-    doppler_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(doppler_distr_plot, "Power Doppler Density (PAS) and Doppler Distribution", QFont("sans", 12, QFont::Bold)));
+    doppler_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(doppler_distr_plot,
+                                                                          "Power Doppler Density (PAS) and Doppler Distribution",
+                                                                          QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(doppler_distr_plot,0,0);
@@ -721,7 +730,7 @@ DialogReceiverProduct::PrxDopplerSpctr()
 }
 
 QWidget*
-DialogReceiverProduct::DopplerDistr()
+DialogRx::DopplerDistr()
 {
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
@@ -758,7 +767,7 @@ DialogReceiverProduct::DopplerDistr()
     return widget;
 }
 
-//QWidget* DialogReceiverProduct::DopplerSpectrum(){
+//QWidget* DialogRx::DopplerSpectrum(){
 //    QWidget *widget = new QWidget;
 //    QCustomPlot *customplot = new QCustomPlot;
 
@@ -797,17 +806,56 @@ DialogReceiverProduct::DopplerDistr()
 //    return widget;
 //}
 
-void DialogReceiverProduct::changeGraph(){
+QWidget *DialogRx::SpcCrltn()
+{
+    QWidget *widget = new QWidget;
+    spc_crltn_plot = new QCustomPlot;
+
+    pds = m_mathematicalproduct->prxDopplerSpread();
+    doppler_distr = m_mathematicalproduct->dopplerDistr();
+    w = m_mathematicalproduct->getw();
+
+    QVector<double> localpds = pds;
+    QVector<double> localw = w;
+
+    // Plot physiscal impulse response
+    spc_crltn_plot->addGraph();
+    spc_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
+    spc_crltn_plot->graph(0)->setData(w, pds);
+    spc_crltn_plot->graph(0)->setName("Spatial Correlation");
+
+    spc_crltn_plot->xAxis->setLabel("z");
+    spc_crltn_plot->yAxis->setLabel("R");
+    spc_crltn_plot->yAxis->grid()->setSubGridVisible(true);
+    spc_crltn_plot->xAxis->grid()->setSubGridVisible(true);
+    spc_crltn_plot->rescaleAxes();
+    spc_crltn_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    spc_crltn_plot->replot();
+    spc_crltn_plot->legend->setVisible(true);
+    spc_crltn_plot->plotLayout()->insertRow(0);
+    spc_crltn_plot->plotLayout()->addElement(0, 0, new QCPTextElement(spc_crltn_plot,
+                                                                          "Spatial Correlation",
+                                                                          QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(spc_crltn_plot,0,0);
+
+    widget->setLayout(firstLayout);
+
+    return widget;
+}
+
+void DialogRx::changeGraph(){
 }
 
 void
-DialogReceiverProduct::setInterferencePattern(vector<double> impulse_r, double min, double max)
+DialogRx::setInterferencePattern(vector<double> impulse_r, double min, double max)
 {
     m_interferencepattern->enableImpulseInterference(impulse_r, min, max);
 }
 
 void
-DialogReceiverProduct::setDistributionInterference(map<double,double> impulse,QVector<double> rice_distribution)
+DialogRx::setDistributionInterference(map<double,double> impulse,QVector<double> rice_distribution)
 {
     QVector<double> impulse_value;
     QVector<double> probability;
@@ -837,13 +885,13 @@ DialogReceiverProduct::setDistributionInterference(map<double,double> impulse,QV
     m_distribution->replot();
 }
 
-void DialogReceiverProduct::setEnable(bool enable){
+void DialogRx::setEnable(bool enable){
     this->enable = enable;
     m_posx->setEnabled(this->enable);
     m_posy->setEnabled(this->enable);
 }
 
-void DialogReceiverProduct::newProperties(){
+void DialogRx::newProperties(){
     m_mathematicalproduct->setSpeed(getSpeed());
     m_mathematicalproduct->setOrientation(getOrientation());
     m_mathematicalproduct->setPosX(getPosX());
@@ -856,7 +904,7 @@ void DialogReceiverProduct::newProperties(){
 }
 
 
-void DialogReceiverProduct::buttonBoxClicked(QAbstractButton *button)
+void DialogRx::buttonBoxClicked(QAbstractButton *button)
 {
     if (button->text() == "OK") {
 
@@ -870,11 +918,11 @@ void DialogReceiverProduct::buttonBoxClicked(QAbstractButton *button)
 }
 
 
-void DialogReceiverProduct::saveProperties(){
+void DialogRx::saveProperties(){
     newProperties();
 }
 
-void DialogReceiverProduct::saveToDisk()
+void DialogRx::saveToDisk()
 {
 
     QString fichier = QFileDialog::getSaveFileName(this, "Save file", QString(), "Table (*.csv)");
@@ -882,7 +930,7 @@ void DialogReceiverProduct::saveToDisk()
 
 }
 
-void DialogReceiverProduct::showTDL(){
+void DialogRx::showTDL(){
     show_tdl = !show_tdl;
     if (show_tdl){
         for (int i=0; i<h_tdl.size();i++){

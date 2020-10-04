@@ -1,7 +1,7 @@
 #ifndef SURFACE3D_H
 #define SURFACE3D_H
 
-#include "Product/TransmitterProduct/transmitterproduct.h"
+#include "Product/TransmitterProduct/txinterface.h"
 
 #include <QtDataVisualization/Q3DSurface>
 #include <QtDataVisualization/QSurfaceDataProxy>
@@ -18,7 +18,7 @@ class Surface3D : public QObject
 {
     Q_OBJECT
 public:
-    explicit Surface3D(Q3DSurface *surface, TransmitterProduct *dialog);
+    explicit Surface3D(Q3DSurface *surface, TxInterface *dialog);
     ~Surface3D();
 
     void enablePatternModel();
@@ -37,7 +37,7 @@ private:
     QSurfaceDataProxy *m_patternProxy;
     QSurface3DSeries *m_patternSeries;
     QSurfaceDataArray *m_patternArray;
-    TransmitterProduct *m_dialog;
+    TxInterface *m_dialog;
 
     float m_stepTheta;
     float m_stepY;

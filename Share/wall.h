@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include "Share/line.h"
-class MathematicalBuildingProduct;
+class Building;
 
 class Wall: public Line
 {
@@ -24,13 +24,13 @@ public:
     int getWallType() const;
     QLineF movement() const;
     QPointF otherPoint(const QPointF &point)const;
-    MathematicalBuildingProduct* getBuilding()const {return m_building;}
+    Building* getBuilding()const {return m_building;}
 
     /* Modifiers */
     void setWallType(int type);
     void setSpeed(double speed);
     void setOrientation(double orientation);
-    void setBuilding(MathematicalBuildingProduct *building) {m_building = building;}
+    void setBuilding(Building *building) {m_building = building;}
     void setMovement(QLineF const movement);
     void setPoints(const QPointF &p0, const QPointF &p1);
 
@@ -43,7 +43,7 @@ private:
     double m_epsilon;
     double m_sigma;
     int m_indWall;
-    MathematicalBuildingProduct *m_building;
+    Building *m_building;
     QLineF m_movement       {QLineF(.0,.0,.0,.0)};
     //double m_speed {0};
     //double m_orientation{0};

@@ -1,5 +1,5 @@
-#ifndef MATHEMATICALTRANSMITTERPRODUCT_H
-#define MATHEMATICALTRANSMITTERPRODUCT_H
+#ifndef TX_H
+#define TX_H
 
 //--------------------------------------------------------------------------------------------
 //
@@ -20,8 +20,8 @@
 
 /* Project Specific includes */
 
-#include "transmitterproduct.h"
-#include "dialogtransmitterproduct.h"
+#include "txinterface.h"
+#include "dialogtx.h"
 #include "Product/mathematicalproduct.h"
 #include "Abstract_Factory/abstractrayfactory.h"
 
@@ -30,13 +30,13 @@
 #include "Observer/modelobserver.h"
 #include "Observer/modelobservable.h"
 
-#include "Product/RayProduct/mathematicalrayproduct.h"
+#include "Product/RayProduct/ray.h"
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include <Product/abstractantena.h>
 #include "Product/CarProduct/mathematicalcarproduct.h"
 
 #include "Share/physics.h"
-
+#include "Share/chdata.h"
 
 //--------------------------------------------------------------------------------------------
 //
@@ -50,7 +50,7 @@ using namespace std;
 using namespace gsl;
 using u = double;
 using amp_u = double;
-//using WholeRay = vector<MathematicalRayProduct *>;
+//using WholeRay = vector<Ray *>;
 
 //template <class Period = std::ratio<1>> struct Length {
 //    unsigned long long value;
@@ -65,12 +65,12 @@ using amp_u = double;
 
 //--------------------------------------------------------------------------------------------
 //
-//          Class MathematicalTransmitterProduct
+//          Class Tx
 //
 //--------------------------------------------------------------------------------------------
 /*!
- * \class MathematicalTransmitterProduct
- * \brief The MathematicalTransmitterProduct class
+ * \class Tx
+ * \brief The Tx class
  *
  * Represent the transmitter mathematical object
  * Contains the parameters of the transmitter
@@ -79,16 +79,16 @@ using amp_u = double;
  * Computes the power and the electric field
  * Computes channel characteristics
  */
-class MathematicalTransmitterProduct : public QPointF,
+class Tx : public QPointF,
                                        public ProductObserver, public ModelObserver,
-                                       public AbstractAntena, public TransmitterProduct,
+                                       public AbstractAntena, public TxInterface,
                                        public MathematicalProduct
 {
 
 
 public:
-    MathematicalTransmitterProduct(int posX, int posY);
-    ~MathematicalTransmitterProduct() override;
+    Tx(int posX, int posY);
+    ~Tx() override;
 
     void appendTree(MathematicalTreeProduct *tree);
 
@@ -102,20 +102,7 @@ public:
 
 
     /*!
-     * \fn  complex<double> computeEMfield(WholeRay *rayLine, ProductObservable* receiver,bool properties);
-     * \brief computeEMfield - computes the electric field
-     * \param rayLine
-     * \param receiver
-     * \param properties
-     * \return EMfield
-     *
-     * Computes the electric field
-     *
-     */
-    complex<double> computeEMfield(const not_null<WholeRay *> rayLine, const ProductObservable *, const bool);
-
-    /*!
-     * \fn MathematicalTransmitterProduct::computeR(WholeRay *wholeRay)
+     * \fn Tx::computeR(WholeRay *wholeRay)
      * \brief Computes the R factor
      * \param wholeRay
      * \return R
@@ -123,14 +110,14 @@ public:
     double computeR(WholeRay *wholeRay) const;
 
     /*!
-     * \fn MathematicalTransmitterProduct::estimateCh(ProductObservable *rx)
+     * \fn Tx::estimateCh(ProductObservable *rx)
      * \brief Estimates channel characteristics for a given receiver
      * \param rx
      */
     void estimateCh(ProductObservable *rx);
 
     /*!
-     * \brief MathematicalTransmitterProduct::vecSpeed
+     * \brief Tx::vecSpeed
      * \param length
      * \param angle
      * \return vector speed under QLineF shape
@@ -164,6 +151,7 @@ public:
 
     vector<WholeRay *> getRays();
     void notifyObservables();
+    void notifyObservers(ProductObservable *rx, const QLineF mvmnt);
 
     /*!
      * \brief angularSpread
@@ -176,13 +164,15 @@ public:
 
     void clearAll();
 
+    void addTxImg(ProductObserver *txImg);
+
     /*
      * ProductObserver
      *
      *****************/
 
     //void update(const QPointF *productObservable, const float speed, const float direction) override{};
-    void update(ProductObservable *receiver, QLineF const movement) override;
+    Data *update(ProductObservable *receiver, QLineF const movement) override;
 //    void updateCarPos(ProductObservable *productObservable) override;
     void drawRays(ProductObservable *productObservable, bool draw) override;
     void compute(ProductObservable *productObservable) override;
@@ -200,13 +190,13 @@ public:
     Data * getChData(ProductObservable *rx) override;
 
     /*!
-     * \fn MathematicalTransmitterProduct::pathLossPoints()
+     * \fn Tx::pathLossPoints()
      * \brief Find points for computation of the path loss
      * \return path_points
      *
      * Compute points linearly in the coverage zone of the transmitter.
      * These points will be requested by MathRxProd to calculate
-     * the power. See MathematicalReceiverProduct::notifyObserversPathLoss.
+     * the power. See Rx::notifyObserversPathLoss.
      * This function is an override of ProductObserver but shouldn't be.
      *
      */
@@ -218,7 +208,7 @@ public:
 
 
     /*
-     * TransmitterProduct
+     * TxInterface
      *
      *****************/
 
@@ -252,10 +242,22 @@ public:
     unsigned long getBandwidth() override {
         return m_bandwidth;
     }
+
+    vector<double> powerPathLoss() override {};
+    vector<double> distancePathLoss() override {};
+    vector<double> linearPathLoss() override {};
+    vector<double> friisLoss() override {};
+    vector<double> powerPathLossModel() override {};
+    vector<double> distancePathLossModel() override {};
+    vector<double> linearPathLossModel() override {};
+    double pathLossExponent() override {};
+    double fadingVariability() override {};
+    double minPower() override {};
+
     void setPosX(int posX) override;
     void setPosY(int posY) override;
     void setOrientation(double orientation) override {
-        TransmitterProduct::m_orientation = orientation;
+        TxInterface::m_orientation = orientation;
     }
     void setPrincipalOrientation(char orientation) override {
         m_pr_orientation = orientation;
@@ -286,7 +288,7 @@ public:
     void setScale(float scale) override;
 
     /*!
-     * \fn void MathematicalTransmitterProduct::clearChData(ProductObservable *rx)
+     * \fn void Tx::clearChData(ProductObservable *rx)
      * \brief Clears all estimated data for a channel
      * \param rx
      */
@@ -328,12 +330,14 @@ private:
     int m_radius                 { 500 };
     bool m_beamsFrozen = false;
 
+    vector<ProductObserver *> m_txImgs;     // Would be nice if converted to unique_ptr
+
     map<ProductObservable *, bool> m_chosenBeams;
 
 //    double m_powerAtReceiver;
     ModelObservable *m_model;
     vector<ProductObservable *> m_productObservable;
-    //map<const QPointF*,vector<vector<MathematicalRayProduct*>*>> m_receiversRays;
+    //map<const QPointF*,vector<vector<Ray*>*>> m_receiversRays;
 
     map<ProductObservable *,vector<WholeRay *>> m_receiversRays;
     map<ProductObservable *,complex<double>> m_receiversField;
@@ -351,7 +355,7 @@ private:
 
     //QPolygonF m_zone;
     complex<double> m_EMfieldAtReceiver;
-//    vector<vector<MathematicalRayProduct *>*> m_wholeRays;
+//    vector<vector<Ray *>*> m_wholeRays;
     vector<WholeRay *> m_wholeRays;
 
     complex<double> m_EMfield;
@@ -365,50 +369,4 @@ public slots:
 
 };
 
-///*!
-//     * \fn double uMPC(WholeRay *wholeRay)
-//     * \brief Return u parameter for a given MPC
-//     * \param wholeRay
-//     * \return
-//     *
-//     */
-//u uMPC(double wvNbr, angle theta);
-
-///*!
-//     * \fn double omegaMPC(double v)
-//     * \brief return omega variable for Doppler Spectrum
-//     * \param v
-//     * \return
-//     */
-//double omegaMPC(double v, double wvNbr, angle angleRx);
-
-///*!
-//     * \fn double pasMPC (WholeRay *wholeRay);
-//     * \brief Computes Power Angular Spectrum for one MPC
-//     * \param complex<double> angDistr
-//     * \return Power Angular Sepctrum for one MPC
-//     */
-//double prxSpctrMPC (angle theta, double spectrum);
-
-//double prxSpctrMPC(complex<double> &angDistr);
-
-///*!
-//     * \fn complex<double> angDistr()
-//     * \param h
-//     * \param theta
-//     * \param spectrum (Angular or Doppler)
-//     * \brief Returns tha angular distribution for one MPC
-//     * \return
-//     */
-//complex<double> angDistrMPC(const complex<double> &h, const double theta, const double spectrum);
-
-///*!
-//     * \fn void normalizePAS(vector<double> &pas)
-//     * \brief Normalizes the PAS.
-//     * \param pas
-//     *
-//     * For now its for tests
-//     */
-//void normalizePrxSpctr(vector<double> &pas);
-
-#endif // MATHEMATICALTRANSMITTERPRODUCT_H
+#endif // TX_H

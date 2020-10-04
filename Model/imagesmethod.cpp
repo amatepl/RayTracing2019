@@ -31,7 +31,7 @@ void ImagesMethod::launchAlgorithm()
 //        m_receivers.at(i)->eraseObservers();
 //    }
 
-    foreach (MathematicalTransmitterProduct *transmitter, m_transmitters) {
+    foreach (Tx *transmitter, m_transmitters) {
 
         m_currentTx = transmitter;
 
@@ -72,7 +72,7 @@ void ImagesMethod::recomputeImages(AbstractAntena */*tx*/)
 
 void ImagesMethod::setObservers()
 {
-    foreach (MathematicalTransmitterProduct *transmitter, m_transmitters) {
+    foreach (Tx *transmitter, m_transmitters) {
         for (unsigned i = 0; i < m_receivers.size(); i++) {
             m_receivers.at(i)->attachTransmitter(transmitter);
             transmitter->attachObservable(m_receivers.at(i));
@@ -115,7 +115,7 @@ void ImagesMethod::disconnectAllCars()
 }
 
 
-void ImagesMethod::clearImages(MathematicalTransmitterProduct *tx)
+void ImagesMethod::clearImages(Tx *tx)
 {
     for (unsigned i = 0; i< m_images[tx].size(); i++) {
         delete m_images[tx].at(i);
@@ -204,7 +204,7 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 //    m_scene->addEllipse(zone.at(0).x(),zone.at(0).y(),5,5,redPen);
 //    m_scene->addPolygon(zone,illumination2);
 
-    MathematicalBuildingProduct *cornersBuilding = nullptr;
+    Building *cornersBuilding = nullptr;
 
     for(int i = 0; i < zone.length() - 1; i++){
         const QPointF *cornerP = nullptr;
@@ -285,13 +285,14 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
                 delete corner;
                 continue;
             } else {
-                for (unsigned int numberReceivers = 0; numberReceivers < m_receivers.size(); numberReceivers++) {
-                    m_receivers.at(numberReceivers)->attachObserver(corner);
-//                    m_scene->addPolygon(corner->getIlluminationZone(), QPen(), illumination1);
-                }
+//                for (unsigned int numberReceivers = 0; numberReceivers < m_receivers.size(); numberReceivers++) {
+//                    m_receivers.at(numberReceivers)->attachObserver(corner);
+////                    m_scene->addPolygon(corner->getIlluminationZone(), QPen(), illumination1);
+//                }
 
                 connectToCars(corner);
                 m_images[m_currentTx].push_back(corner);
+                m_currentTx->addTxImg(corner);
 
             }
 
@@ -363,7 +364,7 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 }
 
 
-forImage ImagesMethod::transmitterIllumination(MathematicalTransmitterProduct *transmitter)
+forImage ImagesMethod::transmitterIllumination(Tx *transmitter)
 {
 
     // Painting tools
@@ -378,7 +379,7 @@ forImage ImagesMethod::transmitterIllumination(MathematicalTransmitterProduct *t
     QPolygonF illuminationZone = transmitter->buildCoverage();
     vector <Wall *> nearestWalls;		// Vector containing the nearest walls to the transmitter of every building.
 
-    foreach (MathematicalBuildingProduct *building, m_buildings) {
+    foreach (Building *building, m_buildings) {
         QPolygonF p_building(*building);
 
         if (p_building.intersects(illuminationZone)) {
@@ -420,7 +421,7 @@ QPolygonF ImagesMethod::buildIlluminationZone(AbstractAntena *ant)
     //addPolygon(illuminationZone,QPen(),illumination2);
     vector <Wall*> nearestWalls;
 
-    foreach (MathematicalBuildingProduct *building, m_buildings){
+    foreach (Building *building, m_buildings){
         QPolygonF p_building(*building);
 
         if (p_building.intersects(illuminationZone) && building != ant->getBuilding()) {
@@ -464,7 +465,7 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
 //    m_scene->addPolygon(illuminationZone,QPen(),illumination2);
     vector <Wall *> nearestWalls;
 
-    foreach (MathematicalBuildingProduct *building, m_buildings) {
+    foreach (Building *building, m_buildings) {
         QPolygonF p_building(*building);
 
         if (p_building.intersects(illuminationZone) && building != ant->getBuilding()) {
@@ -511,7 +512,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
     illumination1.setGreen(255);
     illumination1.setAlpha(100);
 
-    vector <TransmitterImage *> images; // vector for tests
+    vector <TxImg *> images; // vector for tests
 
     for (int i = 1; i < zone.length() - 1; i++) {
 
@@ -532,11 +533,12 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                 //addLine(Line(zone.at(i),zone.at(i+1)),redPen);
 
                 //Creation of the trasmitter image
-                TransmitterImage *image = new TransmitterImage(Line(zone.at(i), zone.at(i+1)),
+                TxImg *image = new TxImg(Line(zone.at(i), zone.at(i+1)),
                                                                parent,
                                                                walls.at(j)->getEpsilon());
 
                 m_images[m_currentTx].push_back(image);
+                m_currentTx->addTxImg(image);
 
 //                m_scene->addEllipse(image->getPosition().x(), image->getPosition().y(), 5, 5, redPen);
 
@@ -551,12 +553,12 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
 
                 image->setRayFactory(m_rayFactory);
 //                m_receiver->attachObserver(image);
-                for (unsigned int numberReceivers = 0;
-                     numberReceivers < m_receivers.size();
-                     numberReceivers++) {
+//                for (unsigned int numberReceivers = 0;
+//                     numberReceivers < m_receivers.size();
+//                     numberReceivers++) {
 
-                    m_receivers.at(numberReceivers)->attachObserver(image);
-                }
+//                    m_receivers.at(numberReceivers)->attachObserver(image);
+//                }
 
                 images.push_back(image);
 

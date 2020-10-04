@@ -1,7 +1,7 @@
 #include "mathematicalcarproduct.h"
 
 MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center):
-    MathematicalBuildingProduct(rect), m_center(center)
+    Building(rect), m_center(center)
 {
     //setRect(round(rect.topLeft().x()),round(rect.topLeft().y()),rect.width(),rect.height());
     m_type = "Car";

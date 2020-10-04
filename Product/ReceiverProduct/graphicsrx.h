@@ -1,5 +1,5 @@
-#ifndef GRAPHICSRECEIVERPRODUCT_H
-#define GRAPHICSRECEIVERPRODUCT_H
+#ifndef GRAPHICSRX_H
+#define GRAPHICSRX_H
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
@@ -9,11 +9,11 @@
 
 #include "Product/graphicsproduct.h"
 
-class GraphicsReceiverProduct : public QGraphicsPixmapItem, public GraphicsProduct
+class GraphicsRx : public QGraphicsPixmapItem, public GraphicsProduct
 {
 public:
-    GraphicsReceiverProduct(bool enable, QMenu *menuproduct, QGraphicsScene *scene);
-    ~GraphicsReceiverProduct() override;
+    GraphicsRx(bool enable, QMenu *menuproduct, QGraphicsScene *scene);
+    ~GraphicsRx() override;
 
     void enableReceiver(bool enable);
     QColor scaleColor(double min, double max, double value);
@@ -41,4 +41,4 @@ private:
     QMenu *m_productmenu;
     int m_sizex, m_sizey; // Size of the cell if enable false
 };
-#endif // GRAPHICSRECEIVERPRODUCT_H
+#endif // GRAPHICSRX_H

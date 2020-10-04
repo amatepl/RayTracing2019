@@ -1,5 +1,5 @@
-#ifndef MATHEMATICALRECEIVERPRODUCT_H
-#define MATHEMATICALRECEIVERPRODUCT_H
+#ifndef RX_H
+#define RX_H
 
 //#include <stdio.h>  /* defines FILENAME_MAX */
 //#ifdef WINDOWS
@@ -23,24 +23,24 @@
 #include "Product/graphicsproduct.h"
 #include "Observer/productobservable.h"
 #include "receiverproduct.h"
-#include "dialogreceiverproduct.h"
+#include "dialogrx.h"
 #include "Widget/infowidget.h"
+#include "Share/chdata.h"
 
-
-const double kb = 1.379e-23;
-const double To = 290.0;
-const double c = 2.998e+8;
+//const double kb = 1.379e-23;
+//const double To = 290.0;
+//const double c = 2.998e+8;
 
 using namespace std;
 
-class MathematicalReceiverProduct: public QPointF, public MathematicalProduct,
+class Rx: public QPointF, public MathematicalProduct,
                                    public ProductObservable, public ReceiverProduct,
                                     public QObject
 {
 public:
-    MathematicalReceiverProduct(int posX, int posY);
-    MathematicalReceiverProduct(MathematicalReceiverProduct *receiver);
-    ~MathematicalReceiverProduct() override;
+    Rx(int posX, int posY);
+    Rx(Rx *receiver);
+    ~Rx() override;
 
     void clearObeservers();
     void clearData();
@@ -117,7 +117,7 @@ public:
     void notifyObservers();
 
     /*!
-     * \fn MathematicalReceiverProduct::notifyObserversPathLoss(ProductObserver* transmitter)
+     * \fn Rx::notifyObserversPathLoss(ProductObserver* transmitter)
      * \brief Fill the map m_pathloss to compute the path loss.
      * \param transmitter
      *
@@ -148,7 +148,7 @@ public:
     notifyObservervesShadowing(ProductObserver* tx);
 
     /*!
-     * \fn MathematicalReceiverProduct::averageOnMap(std::map<double,double> values,
+     * \fn Rx::averageOnMap(std::map<double,double> values,
                                                      std::map<double,int> counter);
      * \brief Average value inside a map by the number of keyword iteration
      * \param values
@@ -186,7 +186,7 @@ private:
     int m_target_snr;
     int m_noise_figure;
     int m_interferencemargin;
-    DialogReceiverProduct *m_dialog = nullptr;
+    DialogRx *m_dialog = nullptr;
     InfoWidget *m_info_widget;
 
     // 1. For ProductOBserves
@@ -221,4 +221,13 @@ public slots:
     void sendInterferencePattern();
 };
 
-#endif // MATHEMATICALRECEIVERPRODUCT_H
+template <typename T>
+void dB (T &container)
+{
+    for (auto & i: container) {
+        i = 20 * log10(i);
+    }
+}
+
+
+#endif // RX_H

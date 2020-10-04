@@ -6,9 +6,9 @@
 #include <QPointF>
 
 class MathematicalComponent;
-class MathematicalTransmitterProduct;
-class MathematicalReceiverProduct;
-class MathematicalBuildingProduct;
+class Tx;
+class Rx;
+class Building;
 class MathematicalProduct;
 class ProductObservable;
 class ReceiverFactory;
@@ -19,8 +19,8 @@ using namespace std;
 class AlgorithmInterface
 {
 public:
-//    virtual MathematicalComponent* compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
-//                                           vector<MathematicalBuildingProduct*> buildings) =0;
+//    virtual MathematicalComponent* compute(vector<Tx*> transmitter, Rx* receiver,
+//                                           vector<Building*> buildings) =0;
     virtual MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> m_mathematicalComponents, ReceiverFactory* receiverfactory) =0;
 
     virtual void clearWorkspace() = 0;

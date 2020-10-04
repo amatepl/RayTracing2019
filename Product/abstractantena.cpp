@@ -23,14 +23,14 @@ void AbstractAntena::setRayFactory(AbstractRayFactory *rayFactory)
 };
 
 
-MathematicalBuildingProduct *AbstractAntena::getBuilding() const
+Building *AbstractAntena::getBuilding() const
 {
     return m_building;
 
 };
 
 
-void AbstractAntena::setBuilding(MathematicalBuildingProduct *building)
+void AbstractAntena::setBuilding(Building *building)
 {
     m_building = building;
 }

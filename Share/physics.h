@@ -10,7 +10,7 @@
 constexpr double  eps_air        =   8.864e-12      ;  // A²S⁴kg⁻1m⁻3
 constexpr double  z_0            =   120 * M_PI     ;
 constexpr double  u_air          =   4 * M_PI * 1e-7;  // Tm/A
-constexpr double  C              =   2.998e+8       ;  // m/s
+constexpr double  c              =   2.998e+8       ;  // m/s
 constexpr double  k_b            =   1.379e-23      ;  // Boltzmann's constant
 constexpr double  t_0            =   290            ;  // K; reference temperature T_0
 constexpr double  bw             =   100e+6         ;  // Hz
@@ -90,7 +90,7 @@ std::complex<double> angDistrMPC(const std::complex<double> &h, const double the
  * \param u
  * \return
  */
-double angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u);
+double angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u, const double ampu);
 
 
 /*!
@@ -108,6 +108,14 @@ void normalizePrxSpctr(T &pas)
         p = p / nbrMPCs;
     }
 }
+
+/*!
+ * \fn map<double, double> correlation(vector<double> &spctr)
+ * \brief correlation
+ * \param spctr
+ * \return
+ */
+map<double, double> correlation(const vector<complex<double>> &spctr);
 
 /*!
  * \brief dipoleFactor
@@ -179,6 +187,25 @@ complex <double> totaleArrayFactor(double theta, double phi, double fq, angle an
 complex <double> totaleArrayFactor(double theta, double phi, const TxParams &txParams);
 
 /*!
+ * \fn double electricalGain(double theta, double phi)
+ * \brief Returns the elctrical gain.
+ * \param arrayFactor
+ * \return
+ *
+ * Computes the electrical gain for a antane with a given array factor.
+ *
+ */
+double electricalGain(complex<double> arrayFctr);
+
+/*!
+ * \fn double powerGain(double theta, double phi)
+ * \brief Return the power gain.
+ * \param arrayFctr
+ * \return
+ */
+double powerGain(complex<double> arrayFctr);
+
+/*!
  * \fn computeReflexionPer(double thetaI, double epsilonR)
  * \brief Returns perpendicular reflection coefficient.
  * \param thetaI
@@ -197,6 +224,15 @@ double computeReflexionPer(double thetaI, double epsilonR);
  * \return
  */
 double computeR(WholeRay *wholeRay);
+
+/*!
+ * \fn double currentTx(const double power, const tuple<width, height> antArry);
+ * \brief Computes the current at the transmitter.
+ * \param power
+ * \param antArry
+ * \return
+ */
+double currentTx(const double power, const tuple<width, height> antArry);
 
 /*!
  * \brief computeEMfield

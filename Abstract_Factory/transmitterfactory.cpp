@@ -9,14 +9,16 @@ TransmitterFactory::TransmitterFactory(QMenu* productmenu, QGraphicsScene* scene
 
 
 GraphicsProduct* TransmitterFactory::createGraphicsProduct(int posX, int posY){
-    GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(m_productmenu, m_scene);
-    MathematicalTransmitterProduct* mathematicalProduct = new MathematicalTransmitterProduct(posX, posY);
+    GraphicsTx* graphicsProduct = new GraphicsTx(m_productmenu, m_scene);
+    Tx* mathematicalProduct = new Tx(posX, posY);
     mathematicalProduct->setScale(px_to_meter);
     graphicsProduct->attachObserver(mathematicalProduct);
     graphicsProduct->setX(posX);
     graphicsProduct->setY(posY);
     mathematicalProduct->MathematicalProduct::attachObservable(graphicsProduct);
-
+//    DerivedDialogWinFctry <DialogTx, QDialog, TxInterface> fctry (dynamic_cast<TxInterface*>(mathematicalProduct));//;= new DerivedDialogWinFctry(dynamic_cast<TxInterface*>(mathematicalProduct));
+    DerivedDialogWinFctry <DialogTx, QDialog, TxInterface> *fctry = new DerivedDialogWinFctry <DialogTx, QDialog, TxInterface> (mathematicalProduct);
+    graphicsProduct->setDialogFctry(fctry);
 //    double rad = 1;
 //    vector<QPointF> pl_points = mathematicalProduct->pathLossPoints();
 //    for (unsigned i = 0; i < pl_points.size(); i++)
@@ -29,10 +31,10 @@ GraphicsProduct* TransmitterFactory::createGraphicsProduct(int posX, int posY){
 }
 
 MathematicalProduct* TransmitterFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
-    MathematicalTransmitterProduct* mathematicalProduct = new MathematicalTransmitterProduct(posX,posY);
+    Tx* mathematicalProduct = new Tx(posX,posY);
     mathematicalProduct->setScale(px_to_meter);
     if (linkgraphic){
-        GraphicsTransmitterProduct* graphicsProduct = new GraphicsTransmitterProduct(m_productmenu, m_scene);
+        GraphicsTx* graphicsProduct = new GraphicsTx(m_productmenu, m_scene);
 
         graphicsProduct->attachObserver(mathematicalProduct);
 //        graphicsProduct->setX(posX);

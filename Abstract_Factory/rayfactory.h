@@ -2,8 +2,8 @@
 #define RAYFACTORY_H
 
 //#include "Abstract_Factory/scenefactory.h"
-#include "Product/RayProduct/graphicsrayproduct.h"
-#include "Product/RayProduct/mathematicalrayproduct.h"
+#include "Product/RayProduct/graphicsray.h"
+#include "Product/RayProduct/ray.h"
 
 #include "Abstract_Factory/abstractrayfactory.h"
 
@@ -11,7 +11,7 @@ class RayFactory: public AbstractRayFactory
 {
 public:
     RayFactory(bool visible,QGraphicsScene *scene,const float scale);
-    MathematicalRayProduct* createRay(const QPointF &p1, const QPointF &p2, const double Tetai=0, const double epsilonWall = 5) override;
+    unique_ptr<Ray> createRay(const QPointF &p1, const QPointF &p2, const double Tetai=0, const double epsilonWall = 5) override;
 
 private:
     bool m_visibleRays;

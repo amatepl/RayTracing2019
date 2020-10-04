@@ -37,27 +37,28 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Observer/sceneobserver.h \
     Observer/windowobserver.h \
     Observer/windowomodelbservable.h \
+    Product/BuildingProduct/building.h \
     Product/BuildingProduct/buildingproduct.h \
     Product/BuildingProduct/dialogbuildingproduct.h \
-    Product/BuildingProduct/graphicsbuildingproduct.h \
-    Product/BuildingProduct/mathematicalbuildingproduct.h \
+    Product/BuildingProduct/graphicsbuilding.h \
     Product/CarProduct/carproduct.h \
     Product/CarProduct/dialogcarproduct.h \
     Product/CarProduct/graphicscarproduct.h \
     Product/CarProduct/mathematicalcarproduct.h \
-    Product/RayProduct/graphicsrayproduct.h \
-    Product/RayProduct/mathematicalrayproduct.h \
+    Product/RayProduct/graphicsray.h \
+    Product/RayProduct/ray.h \
     Product/RayProduct/rayproduct.h \
-    Product/ReceiverProduct/dialogreceiverproduct.h \
-    Product/ReceiverProduct/graphicsreceiverproduct.h \
-    Product/ReceiverProduct/mathematicalreceiverproduct.h \
+    Product/ReceiverProduct/dialogrx.h \
+    Product/ReceiverProduct/graphicsrx.h \
     Product/ReceiverProduct/receiverproduct.h \
+    Product/ReceiverProduct/rx.h \
     Product/TransmitterProduct/antenadiffraction.h \
-    Product/TransmitterProduct/dialogtransmitterproduct.h \
-    Product/TransmitterProduct/graphicstransmitterproduct.h \
-    Product/TransmitterProduct/mathematicaltransmitterproduct.h \
-    Product/TransmitterProduct/transmitterimage.h \
-    Product/TransmitterProduct/transmitterproduct.h \
+    Product/TransmitterProduct/dialogfactory.h \
+    Product/TransmitterProduct/dialogtx.h \
+    Product/TransmitterProduct/graphicstx.h \
+    Product/TransmitterProduct/tx.h \
+    Product/TransmitterProduct/tximg.h \
+    Product/TransmitterProduct/txinterface.h \
     Product/TreeProduct/dialogtreeproduct.h \
     Product/TreeProduct/graphicstreeproduct.h \
     Product/TreeProduct/mathematicaltreeproduct.h \
@@ -66,6 +67,8 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/graphicsproduct.h \
     Product/mathematicalproduct.h \
     Product/sceneproduct.h \
+    Share/chdata.h \
+    Share/dialogfctry.h \
     Share/drafts.h \
     Share/line.h \
     Share/moveablegraphics.h \
@@ -97,22 +100,22 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Model/mapgenerator.cpp \
     Model/model.cpp \
     Model/raytracing.cpp \
+    Product/BuildingProduct/building.cpp \
     Product/BuildingProduct/dialogbuildingproduct.cpp \
-    Product/BuildingProduct/graphicsbuildingproduct.cpp \
-    Product/BuildingProduct/mathematicalbuildingproduct.cpp \
+    Product/BuildingProduct/graphicsbuilding.cpp \
     Product/CarProduct/dialogcarproduct.cpp \
     Product/CarProduct/graphicscarproduct.cpp \
     Product/CarProduct/mathematicalcarproduct.cpp \
-    Product/RayProduct/graphicsrayproduct.cpp \
-    Product/RayProduct/mathematicalrayproduct.cpp \
-    Product/ReceiverProduct/dialogreceiverproduct.cpp \
-    Product/ReceiverProduct/graphicsreceiverproduct.cpp \
-    Product/ReceiverProduct/mathematicalreceiverproduct.cpp \
+    Product/RayProduct/graphicsray.cpp \
+    Product/RayProduct/ray.cpp \
+    Product/ReceiverProduct/dialogrx.cpp \
+    Product/ReceiverProduct/graphicsrx.cpp \
+    Product/ReceiverProduct/rx.cpp \
     Product/TransmitterProduct/antenadiffraction.cpp \
-    Product/TransmitterProduct/dialogtransmitterproduct.cpp \
-    Product/TransmitterProduct/graphicstransmitterproduct.cpp \
-    Product/TransmitterProduct/mathematicaltransmitterproduct.cpp \
-    Product/TransmitterProduct/transmitterimage.cpp \
+    Product/TransmitterProduct/dialogtx.cpp \
+    Product/TransmitterProduct/graphicstx.cpp \
+    Product/TransmitterProduct/tx.cpp \
+    Product/TransmitterProduct/tximg.cpp \
     Product/TreeProduct/dialogtreeproduct.cpp \
     Product/TreeProduct/graphicstreeproduct.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
@@ -137,7 +140,9 @@ RESOURCES += \
 DISTFILES +=
 
 INCLUDEPATH += /usr/local/GSL/include \
-    /usr/local/boost_1_74_0
+    /usr/local/boost_1_74_0 \
+    /usr/local/eigen/Eigen \
+    /usr/local/eigen/unsupported/Eigen
 
 QMAKE_CXXFLAGS += -Wno-deprecated
 

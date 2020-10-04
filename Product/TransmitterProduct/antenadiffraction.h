@@ -4,9 +4,11 @@
 #include "Product/abstractantena.h"
 #include "Observer/productobserver.h"
 #include "Observer/productobservable.h"
-#include "Product/RayProduct/mathematicalrayproduct.h"
+#include "Product/RayProduct/ray.h"
 #include "Abstract_Factory/abstractrayfactory.h"
 #include "Product/CarProduct/mathematicalcarproduct.h"
+
+struct Data;
 
 class AntenaDiffraction: public QPointF, public ProductObserver, public AbstractAntena
 {
@@ -32,7 +34,7 @@ public:
     virtual void setIlluminatedZone(const QPolygonF &zone) override;
 
     // Overrides from ProductObserver
-    virtual void update(ProductObservable *productObservable, QLineF const movement) override;
+    virtual Data *update(ProductObservable *productObservable, QLineF const) override;
     void notifyCarDetected() override {};
 //    void updateCarPos(ProductObservable *productObservable) override;
     void attachObservable(ProductObservable *productObservable) override;

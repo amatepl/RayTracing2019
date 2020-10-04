@@ -413,7 +413,7 @@ void MapGenerator::moveCars(MapGenerator &mapGenerator)
     }
 }
 
-vector<MathematicalBuildingProduct *> MapGenerator::getBuildings() const
+vector<Building *> MapGenerator::getBuildings() const
 {
     return m_buildings;
 }

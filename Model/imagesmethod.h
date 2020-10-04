@@ -9,11 +9,11 @@
 #include "Share/wall.h"
 #include "Model/algorithmInterface.h"
 #include "Product/abstractantena.h"
-#include "Product/BuildingProduct/mathematicalbuildingproduct.h"
+#include "Product/BuildingProduct/building.h"
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
-#include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
-#include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
-#include "Product/TransmitterProduct/transmitterimage.h"
+#include "Product/TransmitterProduct/tx.h"
+#include "Product/ReceiverProduct/rx.h"
+#include "Product/TransmitterProduct/tximg.h"
 #include "Product/TransmitterProduct/antenadiffraction.h"
 #include "Product/CarProduct/mathematicalcarproduct.h"
 #include <QGraphicsScene>
@@ -32,12 +32,12 @@ public:
     void connectToCars(AbstractAntena *ant);
     void disconnectCars(AbstractAntena * ant);
     void disconnectAllCars();
-    void clearImages(MathematicalTransmitterProduct *tx);
+    void clearImages(Tx *tx);
     void clearAllImages();
 
 
     void setDiffraction(vector<Wall *> walls, const QPolygonF &zone, AbstractAntena *parent);
-    forImage transmitterIllumination(MathematicalTransmitterProduct *transmitter);
+    forImage transmitterIllumination(Tx *transmitter);
     QPolygonF buildingsInIlluminationZone(AbstractAntena *ant, int nbReflections);
     vector <Line> illuminatedWalls(vector <Wall *> walls, const QPolygonF zone,
                                   int nbReflections, AbstractAntena *parent);
@@ -57,17 +57,17 @@ public:
     void setScene(QGraphicsScene *scene) {m_scene = scene;};
 
 protected:
-    vector<MathematicalTransmitterProduct *> m_transmitters;
-    vector<MathematicalBuildingProduct *> m_buildings;
+    vector<Tx *> m_transmitters;
+    vector<Building *> m_buildings;
     vector<MathematicalCarProduct *> m_cars;
     vector<MathematicalTreeProduct *> m_trees;
 
-    MathematicalReceiverProduct *m_receiver;
-    vector<MathematicalReceiverProduct *> m_receivers;
+    Rx *m_receiver;
+    vector<Rx *> m_receivers;
     int reflectionsNumber;
-    MathematicalTransmitterProduct *m_currentTx;
+    Tx *m_currentTx;
     AbstractRayFactory *m_rayFactory;
-    map<MathematicalTransmitterProduct *, vector<AbstractAntena *>> m_images;
+    map<Tx *, vector<AbstractAntena *>> m_images;
 
 
     QGraphicsScene *m_scene;

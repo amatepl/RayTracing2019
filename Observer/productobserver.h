@@ -22,37 +22,7 @@
 //--------------------------------------------------------------------------------------------
 
 class ProductObservable;
-
-//--------------------------------------------------------------------------------------------
-//
-//          Struct Data
-//
-//--------------------------------------------------------------------------------------------
-
-/*!
- * \brief The Data struct
- * \struct Data
- *
- * Data is a struture used to share the channel data, known by the transmitter,
- * with the receiver in order to display it.
- *
- */
-struct Data {
-    std::map<double /*tau*/, std::complex<double> /*impulseResp*/>  impulseResp;
-    double                                                          pathLossP{0};
-    std::complex<double>                                            interference{0};
-    double                                                          angularSpred{0};
-    double                                                          dopplerSpread{0};
-    std::vector<double>                                             u;
-    std::vector<double>                                             w;
-//    std::map<double /*u*/, std::complex<double> /* a(u) */>         angularDistr;
-    std::vector<std::complex<double> /* a(u) */>                    angularDistr;
-    std::vector<std::complex<double> /* a(w) */>                    dopplerDistr;
-//    std::map<double /*u*/, double /* S(u) */>                       prxAngularSpctr;
-    std::vector<double /* S(u) */>                                  prxAngularSpctr;
-    std::vector<double /* S(w) */>                                  prxDopplerSpctr;
-    double                                                          riceFactor{0};
-};
+struct Data;
 
 //--------------------------------------------------------------------------------------------
 //
@@ -68,7 +38,7 @@ class ProductObserver{
 public:
     virtual ~ProductObserver(){}
     //virtual void update(const QPointF *pos,const float speed, const float direction) = 0;
-    virtual void update(ProductObservable* productObservable,QLineF const movement) = 0;
+    virtual Data *update(ProductObservable* productObservable,QLineF const movement) = 0;
     virtual void drawRays(ProductObservable *, bool){}
     virtual void attachObservable(ProductObservable* productObservable) = 0;
     virtual void compute(ProductObservable*) {};

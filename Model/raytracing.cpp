@@ -1,7 +1,7 @@
 #include "raytracing.h"
 
-RayTracing::RayTracing(MathematicalTransmitterProduct *transmitter,
-                       MathematicalReceiverProduct */*receiver*/, const float scale)
+RayTracing::RayTracing(Tx *transmitter,
+                       Rx */*receiver*/, const float scale)
 {
     RayFactory *rayFactory = new RayFactory(true, m_scene, scale);
     m_rayFactory = rayFactory;
@@ -23,7 +23,7 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 
     m_receiverfactory = receiverfactory;
 
-    reflectionsNumber = 55;
+    reflectionsNumber = 5;
 
     RayFactory* rayFactory = new RayFactory(true, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
@@ -47,8 +47,8 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
     }
 
 //    for (unsigned i = 0; i < m_receivers.size(); i++) {
-    for (MathematicalReceiverProduct * rx: m_receivers) {
-        //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
+    for (Rx * rx: m_receivers) {
+        //((Rx*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
         rx->notifyObservers();
 //        m_receivers.at(i)->notifyObservers();
     }
@@ -75,7 +75,7 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
 {
     if(m_mathematicalComponents.count("Transmitter")) {
         for(unsigned i=0; i<m_mathematicalComponents["Transmitter"].size(); i++) {
-            m_transmitters.push_back(static_cast<MathematicalTransmitterProduct*>
+            m_transmitters.push_back(static_cast<Tx*>
                                      (m_mathematicalComponents["Transmitter"].at(i)) );
 
             // The mediator pattern begins here. The transmitter received the
@@ -90,16 +90,16 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
 
     if(m_mathematicalComponents.count("Receiver")) {
         for(unsigned i = 0; i<m_mathematicalComponents["Receiver"].size(); i++) {
-            m_receiver = static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(
+            m_receiver = static_cast<Rx*>(m_mathematicalComponents["Receiver"].at(
                              0)) ;
-            m_receivers.push_back(static_cast<MathematicalReceiverProduct *>
+            m_receivers.push_back(static_cast<Rx *>
                                   (m_mathematicalComponents["Receiver"].at(i)));
         }
     }
 
     if(m_mathematicalComponents.count("Building")) {
         for(unsigned i = 0; i<m_mathematicalComponents["Building"].size(); i++) {
-            m_buildings.push_back(static_cast<MathematicalBuildingProduct *>
+            m_buildings.push_back(static_cast<Building *>
                                   (m_mathematicalComponents["Building"].at(i)) );
         }
     }
@@ -109,7 +109,7 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
             m_cars.push_back(static_cast<MathematicalCarProduct *>
                                   (m_mathematicalComponents["Car"].at(i)) );
 
-            m_buildings.push_back(static_cast<MathematicalBuildingProduct *>
+            m_buildings.push_back(static_cast<Building *>
                                   (m_mathematicalComponents["Car"].at(i)) );
         }
     }

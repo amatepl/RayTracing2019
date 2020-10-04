@@ -35,7 +35,7 @@ public:
     bool getRunCars() const;
     static void moveCar(MathematicalCarProduct &car, MapGenerator &map, QLineF &street);
     static void moveCars(MapGenerator &mapGenerator);
-    vector<MathematicalBuildingProduct *> getBuildings() const;
+    vector<Building *> getBuildings() const;
     vector<MathematicalCarProduct *> getCars() const;
     vector<MathematicalProduct *> getProducts() const;
 
@@ -50,7 +50,7 @@ protected:
     QRectF m_mapBoundary;
     vector<QLineF *> m_horizontalStreets;
     vector<QLineF *> m_verticalStreets;
-    vector<MathematicalBuildingProduct *> m_buildings;
+    vector<Building *> m_buildings;
     vector<MathematicalCarProduct *> m_cars;
     vector<MathematicalTreeProduct *> m_trees;
     BuildingFactory *m_buildingFactory;
