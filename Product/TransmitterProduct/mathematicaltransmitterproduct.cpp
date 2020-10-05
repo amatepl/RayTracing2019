@@ -118,7 +118,7 @@ double MathematicalTransmitterProduct::computeR(WholeRay *wholeRay) const
     double R = 1;
     for (WholeRay::iterator ray = wholeRay->begin(); ray != wholeRay->end() - 1; ray++ ) {
         double thetaI = abs((*ray)->getTetai());
-        R *= computeReflexionPer(thetaI, epsilonWallRel);
+        R *= computeReflexionPer(thetaI*M_PI/180.0, epsilonWallRel);
     }
     return R;
 }
