@@ -15,8 +15,8 @@ using namespace std;
 
 class QPointF;
 class QPolygonF;
-class  MathematicalBuildingProduct;
-class MathematicalRayProduct;
+class  Building;
+class Ray;
 class AbstractRayFactory;
 class ProductObservable;
 class MathematicalCarProduct;
@@ -38,8 +38,8 @@ public:
     virtual QPolygonF getIlluminatedZone() const;
     virtual void setIlluminatedZone(const QPolygonF &zone);
     virtual void setRayFactory(AbstractRayFactory *rayFactory);
-    virtual MathematicalBuildingProduct *getBuilding() const;
-    virtual void setBuilding(MathematicalBuildingProduct *building);
+    virtual Building *getBuilding() const;
+    virtual void setBuilding(Building *building);
 
     virtual void setWallType(int type);
 
@@ -53,7 +53,7 @@ public:
 
 protected:
 
-    MathematicalBuildingProduct *m_building;
+    Building *m_building;
     QPolygonF m_zone;
     QPolygonF m_tmpZone;
     vector<MathematicalCarProduct *> m_illuminatedCars;

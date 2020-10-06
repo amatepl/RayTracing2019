@@ -2,8 +2,8 @@
 #define BUILDINGFACTORY_H
 
 #include "scenefactory.h"
-#include "Product/BuildingProduct/graphicsbuildingproduct.h"
-#include "Product/BuildingProduct/mathematicalbuildingproduct.h"
+#include "Product/BuildingProduct/graphicsbuilding.h"
+#include "Product/BuildingProduct/building.h"
 
 class BuildingFactory: public SceneFactory
 {

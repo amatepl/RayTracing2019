@@ -14,26 +14,26 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     view->setMouseTracking(true);
-    m_receiverFactory = new ReceiverFactory(m_productmenu,m_info_widget,m_map,px_to_meter);
-    m_transmitterFactory = new TransmitterFactory(m_productmenu,m_map,px_to_meter);
-    m_buildingFactory = new BuildingFactory(m_productmenu,m_map,px_to_meter);
-    m_treeFactory = new TreeFactory(m_productmenu,m_map,px_to_meter);
-    m_carFactory = new CarFactory(m_productmenu,m_map,px_to_meter);
+    m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter);
+    m_transmitterFactory = new TransmitterFactory(m_productmenu, m_map, px_to_meter);
+    m_buildingFactory = new BuildingFactory(m_productmenu, m_map, px_to_meter);
+    m_treeFactory = new TreeFactory(m_productmenu, m_map, px_to_meter);
+    m_carFactory = new CarFactory(m_productmenu, m_map, px_to_meter);
 
     m_model = new Model(this);
-    m_model->setScene(m_map,(BuildingFactory*) m_buildingFactory,
-                      (TreeFactory*) m_treeFactory,
-                      (CarFactory*) m_carFactory,
-                      (ReceiverFactory*) m_receiverFactory);
+    m_model->setScene(m_map, (BuildingFactory *) m_buildingFactory,
+                      (TreeFactory *) m_treeFactory,
+                      (CarFactory *) m_carFactory,
+                      (ReceiverFactory *) m_receiverFactory);
 
     m_rayTracingAlgorithm = new RayTracing(px_to_meter);
     m_rayTracingAlgorithm->setScene(m_map);
 
-    m_coverageAlgorithm = new Coverage(m_receiverFactory,px_to_meter);
+    m_coverageAlgorithm = new Coverage(m_receiverFactory, px_to_meter);
     m_coverageAlgorithm->setScene(m_map);
 
-    addToolBar(Qt::LeftToolBarArea,m_toolbarobject);
-    addToolBar(Qt::TopToolBarArea,m_toolinfo);
+    addToolBar(Qt::LeftToolBarArea, m_toolbarobject);
+    addToolBar(Qt::TopToolBarArea, m_toolinfo);
     setCentralWidget(view);
     setWindowState(Qt::WindowMaximized);
 
@@ -102,7 +102,7 @@ void ApplicationWindow::modelAnswer(vector<MathematicalProduct *> sceneproducts)
     }
 }
 
-void ApplicationWindow::modelAnswer(vector<MathematicalRayProduct> *sceneproducts)
+void ApplicationWindow::modelAnswer(vector<Ray> *sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts->size(); i++) {
 
@@ -121,7 +121,7 @@ void ApplicationWindow::modelNotify(vector<MathematicalProduct *> sceneproducts)
     }
 }
 
-void ApplicationWindow::modelNotify(vector<MathematicalRayProduct > *sceneproducts)
+void ApplicationWindow::modelNotify(vector<Ray > *sceneproducts)
 {
     for(unsigned i = 0; i< sceneproducts->size(); i++) {
 
@@ -153,17 +153,17 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode)
     QIcon icon;
     switch(mode) {
     case int(InsertTransmitter):
-        icon = QIcon(GraphicsTransmitterProduct::getImage());
+        icon = QIcon(GraphicsTx::getImage());
         button->setIcon(icon);
         m_antennagroup->addButton(button,mode);
         break;
     case int(InsertReceiver):
-        icon = QIcon(GraphicsReceiverProduct::getImage());
+        icon = QIcon(GraphicsRx::getImage());
         button->setIcon(icon);
         m_antennagroup->addButton(button,mode);
         break;
     case int(InsertBuilding):
-        icon = QIcon(GraphicsBuildingProduct::getImage());
+        icon = QIcon(GraphicsBuilding::getImage());
         button->setIcon(icon);
         m_obstaclegroup->addButton(button,mode);
         break;

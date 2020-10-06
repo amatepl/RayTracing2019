@@ -9,13 +9,13 @@ DialogFactory::~DialogFactory(){
 
 }
 
-void DialogFactory::receiveTransmitterProduct(TransmitterProduct* /*transmitterproduct*/){
+void DialogFactory::receiveTransmitterProduct(TxInterface* /*transmitterproduct*/){
     /*
-    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPosX(transmitterproduct->getPosX());
-    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPosY(transmitterproduct->getPosY());
-    dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setOrientation(transmitterproduct->getOrientation());
-    //dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setFrequency(transmitterproduct->getFrequency());
-    //dynamic_cast<TransmitterProduct*>(m_graphiccomponent)->setPower(transmitterproduct->getPower());*/
+    dynamic_cast<TxInterface*>(m_graphiccomponent)->setPosX(transmitterproduct->getPosX());
+    dynamic_cast<TxInterface*>(m_graphiccomponent)->setPosY(transmitterproduct->getPosY());
+    dynamic_cast<TxInterface*>(m_graphiccomponent)->setOrientation(transmitterproduct->getOrientation());
+    //dynamic_cast<TxInterface*>(m_graphiccomponent)->setFrequency(transmitterproduct->getFrequency());
+    //dynamic_cast<TxInterface*>(m_graphiccomponent)->setPower(transmitterproduct->getPower());*/
 }
 
 void DialogFactory::receiveReceiverProduct(ReceiverProduct* /*receiverproduct*/){
@@ -42,7 +42,7 @@ void DialogFactory::receiveCarProduct(CarProduct */*carproduct*/){
 void DialogFactory::updateNewProperties(GraphicsProduct* /*graphicscomponent*/){
 //    m_graphiccomponent = graphicscomponent;
 //    switch(int (m_graphiccomponent->getType())){
-//        case int(GraphicsComponent::TransmitterProduct):
+//        case int(GraphicsComponent::TxInterface):
 //            createTransmitterProduct();
 //        break;
 //        case int(GraphicsComponent::BuildingProduct):

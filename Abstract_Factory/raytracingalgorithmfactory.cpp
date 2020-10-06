@@ -5,7 +5,7 @@ RayTracingAlgorithmFactory::RayTracingAlgorithmFactory()
 
 }
 
-AlgorithmInterface* RayTracingAlgorithmFactory::createAlgorithm(MathematicalTransmitterProduct* /*transmitter*/, MathematicalReceiverProduct* /*receiver*/){
+AlgorithmInterface* RayTracingAlgorithmFactory::createAlgorithm(Tx* /*transmitter*/, Rx* /*receiver*/){
     //RayTracing* rayTracing = new RayTracing(transmitter, receiver);
     //return rayTracing;
     return nullptr;

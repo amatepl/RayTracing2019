@@ -26,18 +26,18 @@
 
 #include "surface3d.h"
 
-#include "Product/TransmitterProduct/transmitterproduct.h"
+#include "Product/TransmitterProduct/txinterface.h"
 
 using namespace std;
 
 class PatternWindow
 {
 public:
-    PatternWindow(TransmitterProduct *dialog);
+    PatternWindow(TxInterface *dialog);
     ~PatternWindow();
 
 private:
-    TransmitterProduct *m_dialog;
+    TxInterface *m_dialog;
 };
 
 #endif // PATTERNWINDOW_H

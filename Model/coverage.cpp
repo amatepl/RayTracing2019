@@ -5,8 +5,8 @@ Coverage::Coverage(SceneFactory *receiverFactory,const float scale):m_receiverFa
     px_to_meter = scale;
 }
 
-//MathematicalComponent* Coverage::compute(vector<MathematicalTransmitterProduct*> transmitter, MathematicalReceiverProduct* receiver,
-//                       vector<MathematicalBuildingProduct*> buildings){
+//MathematicalComponent* Coverage::compute(vector<Tx*> transmitter, Rx* receiver,
+//                       vector<Building*> buildings){
 
 //}
 
@@ -14,7 +14,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
                                          ReceiverFactory* /*receiverfactory*/)
 {
     setAttributs(mathematicalComponents);
-    reflectionsNumber = 5;
+    reflectionsNumber = 1;
 
     RayFactory* rayFactory = new RayFactory(false, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
@@ -41,7 +41,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
         receiver = m_receiverFactory->createMathematicalProduct(0,0,true);
 
-        m_receivers.push_back(dynamic_cast<MathematicalReceiverProduct*>(receiver));
+        m_receivers.push_back(dynamic_cast<Rx*>(receiver));
 
         illuminationZones();
 
@@ -49,9 +49,9 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
 
 //    MathematicalProduct* receiver = m_receiverFactory->createMathematicalProduct(0,0,true);
-//    m_receivers.push_back(dynamic_cast<MathematicalReceiverProduct*>(receiver));
+//    m_receivers.push_back(dynamic_cast<Rx*>(receiver));
 
-//    m_receiver = dynamic_cast<MathematicalReceiverProduct*>(receiver);
+//    m_receiver = dynamic_cast<Rx*>(receiver);
 
 //    illuminationZones();
 
@@ -70,13 +70,13 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
          i < workingZone.bottomLeft().y();
          i += workingZone.height() / (200/px_to_meter)){
 
-        dynamic_cast<MathematicalReceiverProduct*>(receiver)->setPosY(i);
+        dynamic_cast<Rx*>(receiver)->setPosY(i);
 
         for(int j = workingZone.topLeft().x();
              j < workingZone.topRight().x();
              j += workingZone.width() / (200/px_to_meter)){
 
-            dynamic_cast<MathematicalReceiverProduct*>(receiver)->setPosX(j);
+            dynamic_cast<Rx*>(receiver)->setPosX(j);
             MathematicalProduct* newReceiver = m_receiverFactory->createMathematicalProduct(receiver,true);
             m_coverageRxs.push_back(newReceiver);
 
@@ -94,7 +94,7 @@ void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathem
 
     if(m_mathematicalComponents.count("Transmitter")){
         for(unsigned int i=0;i<m_mathematicalComponents["Transmitter"].size();i++){
-            m_transmitters.push_back(static_cast<MathematicalTransmitterProduct*>
+            m_transmitters.push_back(static_cast<Tx*>
                                      (m_mathematicalComponents["Transmitter"].at(i)) );
             m_transmitters.at(i)->setMediator(this);
         }
@@ -102,13 +102,13 @@ void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathem
     }
     if(m_mathematicalComponents.count("Receiver")){
         for(unsigned i = 0; i < m_mathematicalComponents["Receiver"].size(); i++){
-//            m_receiver = static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(0)) ;
-            m_receivers.push_back(static_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(i)));
+//            m_receiver = static_cast<Rx*>(m_mathematicalComponents["Receiver"].at(0)) ;
+            m_receivers.push_back(static_cast<Rx*>(m_mathematicalComponents["Receiver"].at(i)));
     }
     }
     if(m_mathematicalComponents.count("Building")){
         for(unsigned int i=0;i<m_mathematicalComponents["Building"].size();i++){
-            m_buildings.push_back(static_cast<MathematicalBuildingProduct*>
+            m_buildings.push_back(static_cast<Building*>
                                   (m_mathematicalComponents["Building"].at(i)));
         }
     }

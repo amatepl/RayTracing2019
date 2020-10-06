@@ -16,7 +16,7 @@
 /* Project Specific */
 
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
-#include "Product/RayProduct/mathematicalrayproduct.h"
+#include "Product/RayProduct/ray.h"
 #include "Share/wholeray.h"
 
 //--------------------------------------------------------------------------------------------

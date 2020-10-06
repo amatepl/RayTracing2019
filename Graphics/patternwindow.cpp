@@ -1,6 +1,6 @@
 #include "patternwindow.h"
 
-PatternWindow::PatternWindow(TransmitterProduct *dialog)
+PatternWindow::PatternWindow(TxInterface *dialog)
 {
     m_dialog = dialog;
     Q3DSurface *graph = new Q3DSurface();

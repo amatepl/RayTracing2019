@@ -34,6 +34,7 @@ public:
     void changeRiceFactor(double rice);
     void changeCoherenceBandwidth(double coherence);
     void changeAngularSpread(double angularSpread);
+    void changeDopplerSpread(double dopplerSpread);
     void reset();
 
 
@@ -52,6 +53,7 @@ private:
     QLabel *coherence_bw;
     QLabel *coherence_time;
     QLabel *angular_spread;
+    QLabel *doppler_spread;
 
     // Antena
     QGroupBox *edit_group;

@@ -112,14 +112,14 @@ void Model::launchAlgorithm(AlgorithmInterface *algorithm)
     m_algorithm->compute(m_mathematicalComponents, m_receiverfactory);
     setModelObservers();
 //    for(int i = 0; i < m_mathematicalComponents.count("Receiver"); i++){
-//        //((MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
-//        dynamic_cast<MathematicalReceiverProduct*>(m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
+//        //((Rx*)m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
+//        dynamic_cast<Rx*>(m_mathematicalComponents["Receiver"].at(i))->notifyObservers();
 //    }
 
 
-//    MathematicalTransmitterProduct* transmitter = selectTransmitter();
+//    Tx* transmitter = selectTransmitter();
 
-//    MathematicalReceiverProduct* receiver = (MathematicalReceiverProduct*)m_mathematicalComponents["Receiver"].at(0);
+//    Rx* receiver = (Rx*)m_mathematicalComponents["Receiver"].at(0);
 
     //m_windowModelObservable->modelAnswer(transmitter->getRays().at(0));
 
@@ -131,14 +131,14 @@ void Model::startCars()
 }
 
 
-MathematicalTransmitterProduct* Model::selectTransmitter()
+Tx* Model::selectTransmitter()
 {
-    MathematicalTransmitterProduct* transmitter = (MathematicalTransmitterProduct*)
+    Tx* transmitter = (Tx*)
             m_mathematicalComponents["Transmitter"].at(0);
     return transmitter;
 }
 
-void Model::notify(MathematicalTransmitterProduct* transmitter)
+void Model::notify(Tx* transmitter)
 {
     //cout<<"Notifies"<<endl;
 //    cout<<"Number of whole rays: "<< (transmitter->getRays()).size()<<endl;
@@ -147,7 +147,7 @@ void Model::notify(MathematicalTransmitterProduct* transmitter)
 //            cout<<"whole rays nr: "<<i <<" "<<(transmitter->getRays()).at(i)->at(j).p1().x()<<endl;
 //        }
 //    }
-//    vector<vector<MathematicalRayProduct>*> raysTest = transmitter->getRays();
+//    vector<vector<Ray>*> raysTest = transmitter->getRays();
 
     m_windowModelObservable->modelNotify(transmitter->getRays());
 }

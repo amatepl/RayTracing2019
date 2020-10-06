@@ -2,8 +2,9 @@
 #define TRANSMITTERFACTORY_H
 
 #include "scenefactory.h"
-#include "Product/TransmitterProduct/graphicstransmitterproduct.h"
-#include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
+#include "Product/TransmitterProduct/graphicstx.h"
+#include "Product/TransmitterProduct/tx.h"
+#include "Share/dialogfctry.h"
 
 class TransmitterFactory: public SceneFactory
 {
@@ -16,6 +17,7 @@ private:
     QMenu *m_productmenu;
     QGraphicsScene *m_scene;
     float px_to_meter;
+    DerivedDialogWinFctry <int, int, int> *p;
 };
 
 #endif // TRANSMITTERFACTORY_H

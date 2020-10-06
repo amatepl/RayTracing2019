@@ -35,7 +35,7 @@ MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, b
 
 MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, QPolygonF poly, bool linkgraphic){
 
-    MathematicalBuildingProduct* mathematicalCarProduct = new MathematicalCarProduct(poly,QPointF(posX,posY));
+    Building* mathematicalCarProduct = new MathematicalCarProduct(poly,QPointF(posX,posY));
     mathematicalCarProduct->setScale(px_to_meter);
     if (linkgraphic){
         GraphicsCarProduct* graphicsCarProduct = new GraphicsCarProduct(poly,m_productmenu, m_scene);

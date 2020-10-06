@@ -3,13 +3,13 @@
 
 #include "Model/algorithmInterface.h"
 
-class MathematicalTransmitterProduct;
-class MathematicalReceiverProduct;
+class Tx;
+class Rx;
 
 
 class AbstractAlgorithmFactory{
 public:
-    virtual AlgorithmInterface* createAlgorithm(MathematicalTransmitterProduct *transmitter, MathematicalReceiverProduct *receiver) = 0;
+    virtual AlgorithmInterface* createAlgorithm(Tx *transmitter, Rx *receiver) = 0;
 };
 
 #endif // ABSTRACTALGORITHMFACTORY_H

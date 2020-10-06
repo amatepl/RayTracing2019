@@ -4,9 +4,9 @@
 #include "scenefactory.h"
 #include "Observer/sceneobserver.h"
 #include "Observer/sceneobservable.h"
-#include "Product/TransmitterProduct/transmitterproduct.h"
-#include "Product/TransmitterProduct/dialogtransmitterproduct.h"
-#include "Product/ReceiverProduct/dialogreceiverproduct.h"
+#include "Product/TransmitterProduct/txinterface.h"
+#include "Product/TransmitterProduct/dialogtx.h"
+#include "Product/ReceiverProduct/dialogrx.h"
 #include "Product/BuildingProduct/dialogbuildingproduct.h"
 #include "Product/TreeProduct/dialogtreeproduct.h"
 #include "Product/CarProduct/dialogcarproduct.h"
@@ -18,7 +18,7 @@ public:
     DialogFactory(SceneObservable *graphicsfactory);
     ~DialogFactory() override;
 
-    void receiveTransmitterProduct(TransmitterProduct* transmitterproduct);
+    void receiveTransmitterProduct(TxInterface* transmitterproduct);
     void receiveReceiverProduct(ReceiverProduct* receiverproduct);
     void receiveTreeProduct(TreeProduct* treeproduct);
     void receiveCarProduct(CarProduct* carproduct);

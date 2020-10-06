@@ -2,8 +2,8 @@
 #define RECEIVERFACTORY_H
 
 #include "scenefactory.h"
-#include "Product/ReceiverProduct/graphicsreceiverproduct.h"
-#include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
+#include "Product/ReceiverProduct/graphicsrx.h"
+#include "Product/ReceiverProduct/rx.h"
 #include "Widget/infowidget.h"
 
 class ReceiverFactory: public SceneFactory

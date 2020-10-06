@@ -9,8 +9,8 @@
 #include "Observer/productobservable.h"
 #include "Observer/windowomodelbservable.h"
 #include "Observer/modelobservable.h"
-#include "Product/TransmitterProduct/mathematicaltransmitterproduct.h"
-#include "Product/ReceiverProduct/mathematicalreceiverproduct.h"
+#include "Product/TransmitterProduct/tx.h"
+#include "Product/ReceiverProduct/rx.h"
 #include "Model/algorithmInterface.h"
 #include "Abstract_Factory/abstractalgorithmfactory.h"
 #include "Model/mapgenerator.h"
@@ -23,14 +23,22 @@ class Model: public ModelObservable
 public:
     Model(WindowModelObservable* windowModelObservable);
     ~Model();
+
+    /*!
+     * \fn void addMathematicalComponent(MathematicalProduct* mathematicalProduct)
+     * \brief addMathematicalComponent
+     * \param mathematicalProduct
+     *
+     * Stores mathematicalProduct in a map according to its type.
+     */
     void addMathematicalComponent(MathematicalProduct* mathematicalProduct);
     void removeMathematicalComponent(MathematicalProduct* mathematicalProduct);
     void setObservableProducts();
     void setModelObservers();
     void launchAlgorithm(AlgorithmInterface* algorithm);
     void startCars();
-    MathematicalTransmitterProduct* selectTransmitter();
-    void notify(MathematicalTransmitterProduct* transmitter) override;
+    Tx* selectTransmitter();
+    void notify(Tx* transmitter) override;
 
     void setScene(QGraphicsScene*scene, BuildingFactory *buildingFactory,
                   TreeFactory *treeFactory = nullptr, CarFactory *carFactory = nullptr,

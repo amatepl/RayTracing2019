@@ -13,7 +13,7 @@
 
 /* Project Specigic */
 
-#include "Product/RayProduct/mathematicalrayproduct.h"
+#include "Product/RayProduct/ray.h"
 
 //--------------------------------------------------------------------------------------------
 //
@@ -40,7 +40,7 @@ using angle = double;
  *
  * vector argument should be a unique_ptr
  */
-class WholeRay: public vector<MathematicalRayProduct *>
+class WholeRay: public vector<unique_ptr<Ray>>
 {
 public:
     WholeRay();

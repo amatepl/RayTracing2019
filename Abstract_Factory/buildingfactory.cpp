@@ -8,9 +8,9 @@ BuildingFactory::BuildingFactory(QMenu *productmenu, QGraphicsScene* scene,const
 }
 
 GraphicsProduct* BuildingFactory::createGraphicsProduct(int posX, int posY){
-    GraphicsBuildingProduct* graphicsProduct = new GraphicsBuildingProduct(m_productmenu,m_scene);
+    GraphicsBuilding* graphicsProduct = new GraphicsBuilding(m_productmenu,m_scene);
     QVector<QPointF> points = graphicsProduct->polygon();
-    MathematicalBuildingProduct* mathematicalProduct = new MathematicalBuildingProduct(points);
+    Building* mathematicalProduct = new Building(points);
     mathematicalProduct->setScale(px_to_meter);
     graphicsProduct->attachObserver(mathematicalProduct);
     graphicsProduct->setX(posX);
@@ -22,10 +22,10 @@ GraphicsProduct* BuildingFactory::createGraphicsProduct(int posX, int posY){
 MathematicalProduct* BuildingFactory::createMathematicalProduct(int posX, int posY, bool linkgraphic){
     QRectF rect(posX,posY,50,50);
     QPolygonF poly(rect);
-    MathematicalBuildingProduct* mathematicalBuildingProduct = new MathematicalBuildingProduct(poly);
+    Building* mathematicalBuildingProduct = new Building(poly);
     mathematicalBuildingProduct->setScale(px_to_meter);
     if (linkgraphic){
-        GraphicsBuildingProduct* graphicsBuildingProduct = new GraphicsBuildingProduct(m_productmenu, m_scene);
+        GraphicsBuilding* graphicsBuildingProduct = new GraphicsBuilding(m_productmenu, m_scene);
         graphicsBuildingProduct->attachObserver(mathematicalBuildingProduct);
     }
     return mathematicalBuildingProduct;
@@ -33,10 +33,10 @@ MathematicalProduct* BuildingFactory::createMathematicalProduct(int posX, int po
 
 MathematicalProduct* BuildingFactory::createMathematicalProduct(QPolygonF poly, bool linkgraphic){
 
-    MathematicalBuildingProduct* mathematicalBuildingProduct = new MathematicalBuildingProduct(poly);
+    Building* mathematicalBuildingProduct = new Building(poly);
     mathematicalBuildingProduct->setScale(px_to_meter);
     if (linkgraphic){
-        GraphicsBuildingProduct* graphicsBuildingProduct = new GraphicsBuildingProduct(poly,m_productmenu, m_scene);
+        GraphicsBuilding* graphicsBuildingProduct = new GraphicsBuilding(poly,m_productmenu, m_scene);
         graphicsBuildingProduct->attachObserver(mathematicalBuildingProduct);
         mathematicalBuildingProduct->attachObservable(graphicsBuildingProduct);
     }

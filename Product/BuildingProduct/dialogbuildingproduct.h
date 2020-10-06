@@ -14,7 +14,7 @@
 #include <QTextEdit>
 
 //#include "mathematicalbuildingproduct.h"
-#include "graphicsbuildingproduct.h"
+#include "graphicsbuilding.h"
 #include "buildingproduct.h"
 
 class DialogBuildingProduct : public QDialog, public BuildingProduct

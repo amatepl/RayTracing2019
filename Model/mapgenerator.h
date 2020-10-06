@@ -21,16 +21,25 @@ class MapGenerator
 {
 public:
     MapGenerator(QRectF mapBoundary);
+
+    /* Generators */
     void generateMap();
+    void generateStreets(const unsigned streetsDistance);
+    void generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth);
     void addCars();
     void addTrees();
+    void egBuilidings();
+
+    /* Dynamics */
     void startCars();
     bool getRunCars() const;
     static void moveCar(MathematicalCarProduct &car, MapGenerator &map, QLineF &street);
     static void moveCars(MapGenerator &mapGenerator);
-    vector<MathematicalBuildingProduct *> getBuildings() const;
+    vector<Building *> getBuildings() const;
     vector<MathematicalCarProduct *> getCars() const;
     vector<MathematicalProduct *> getProducts() const;
+
+    /* Modifiers */
     void setBuildingFactory(BuildingFactory *buildingFactory);
     void setCarFactory(CarFactory *carFactory);
     void setTreeFactory(TreeFactory *treeFactory);
@@ -41,7 +50,7 @@ protected:
     QRectF m_mapBoundary;
     vector<QLineF *> m_horizontalStreets;
     vector<QLineF *> m_verticalStreets;
-    vector<MathematicalBuildingProduct *> m_buildings;
+    vector<Building *> m_buildings;
     vector<MathematicalCarProduct *> m_cars;
     vector<MathematicalTreeProduct *> m_trees;
     BuildingFactory *m_buildingFactory;
