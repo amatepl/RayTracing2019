@@ -71,7 +71,6 @@ public:
     void notifyMap();
     void notifyModel();
 
-
     bool eventFilter(QObject *watched, QEvent *event) override;
 private:
     QGraphicsView *view;
@@ -109,12 +108,13 @@ signals:
 public slots:
     void antennaGroupClicked(int);
     void obstacleGroupClicked(int);
-    void LaunchRayTracing();
+    void LaunchRayTracing(unsigned reflectionsNbr);
     void launchCoverage();
     void startCars();
     void deleteProduct();
     void openProduct();
     void clearWorkspace();
+    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty);
 };
 
 #endif // APPLICATIONWINDOW_H

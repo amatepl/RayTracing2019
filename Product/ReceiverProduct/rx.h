@@ -175,8 +175,8 @@ public:
     complex<double> notifyObserversInterference(QLineF local_region);
     void notify() override;
     void notify(double &, std::vector<double> *, std::complex<double> &) override;
-    void answer(ProductObserver *observer, double frequency, double bandwidth,
-                double &power, std::complex<double> &EMfield) override;
+//    void answer(ProductObserver *observer, double frequency, double bandwidth,
+//                double &power, std::complex<double> &EMfield) override;
     const QPointF *getPos() const override;
 
 private:

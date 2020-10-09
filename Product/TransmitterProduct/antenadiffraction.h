@@ -25,7 +25,7 @@ public:
 //    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
 
     // Overrides from AbstractAntena
-    virtual void notifyParent(ProductObservable *productObservable, double speed,
+    virtual void notifyParent(QPointF *productObservable, double speed,
                               const QPointF &point, WholeRay *wholeRay) override;
     virtual QPointF getPosition() const override;
     virtual QPolygonF getIlluminationZone() const override;
@@ -34,16 +34,16 @@ public:
     virtual void setIlluminatedZone(const QPolygonF &zone) override;
 
     // Overrides from ProductObserver
-    virtual Data *update(ProductObservable *productObservable, QLineF const) override;
+    virtual Data *update(QPointF *productObservable, QLineF const) override;
     void notifyCarDetected() override {};
-//    void updateCarPos(ProductObservable *productObservable) override;
-    void attachObservable(ProductObservable *productObservable) override;
+//    void updateCarPos(QPointF *productObservable) override;
+    void attachObservable(QPointF *productObservable) override;
 
 private:
     AbstractAntena *m_parent;
     QPolygonF m_zone;
     QRectF m_sceneBoundary;
-    vector<ProductObservable *> m_observable;
+    vector<QPointF *> m_observable;
     int m_radius;
 
 public slots:

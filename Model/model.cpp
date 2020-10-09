@@ -29,12 +29,7 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
     map->generateMap();
     m_receiverfactory = receiverfactory;
 
-    vector<MathematicalProduct *> mapProducts = map->getProducts();
-    for (unsigned i = 0; i < mapProducts.size(); i++) {
-        string type = mapProducts.at(i)->getType();
-        m_mathematicalComponents[type].push_back(mapProducts.at(i));
-    }
-
+    generateMap();
 
 //    m_mathematicalComponents["Building"] = map->getProducts();
 
@@ -82,7 +77,7 @@ void Model::setObservableProducts()
             dynamic_cast<ProductObservable*>(m_mathematicalComponents["Receiver"].at(i))->attachObserver(
                 dynamic_cast<ProductObserver*>(m_mathematicalComponents["Transmitter"].at(j)));
             dynamic_cast<ProductObserver*>(m_mathematicalComponents["Transmitter"].at(i))->attachObservable(
-                dynamic_cast<ProductObservable*>(m_mathematicalComponents["Receiver"].at(j)));
+                dynamic_cast<QPointF*>(m_mathematicalComponents["Receiver"].at(j)));
         }
     }
 }
@@ -150,4 +145,32 @@ void Model::notify(Tx* transmitter)
 //    vector<vector<Ray>*> raysTest = transmitter->getRays();
 
     m_windowModelObservable->modelNotify(transmitter->getRays());
+}
+
+void Model::generateMap()
+{
+    m_mapGenerator->generateMap();
+    vector<MathematicalProduct *> mapProducts = m_mapGenerator->getProducts();
+    for (unsigned i = 0; i < mapProducts.size(); i++) {
+        string type = mapProducts.at(i)->getType();
+        m_mathematicalComponents[type].push_back(mapProducts.at(i));
+    }
+}
+
+void Model::clear()
+{
+    m_mathematicalComponents.clear();
+}
+
+void Model::clearWorkspace()
+{
+//    delete m_mapGenerator;
+
+    for (auto &objType: m_mathematicalComponents) {
+        for(auto &obj: objType.second){
+            delete obj;
+        }
+    }
+    m_mathematicalComponents.clear();
+    m_mapGenerator->clear();
 }

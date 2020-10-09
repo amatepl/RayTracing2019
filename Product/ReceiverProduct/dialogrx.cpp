@@ -8,27 +8,26 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct):
     setMinimumSize(1000,900);
     show_tdl = true;
 
-    shadowing_plot = new QCustomPlot();
+//    shadowing_plot = new QCustomPlot();
     m_tabwidget = new QTabWidget;
     m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
     m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
 //    m_tabwidget->addTab(ModelPathLossDialog(),      tr("Model Path-Loss"));
-    m_tabwidget->addTab(RealPathLossDialog(),       tr("Real Path-Loss"));
-    m_tabwidget->addTab(templatePlot(shadowing_plot,
-                                     "Shadowing around transmitter at a reference distance",
-                                     "Angle [rad]",
-                                     "P[dBm]"),
-                        tr("Shadowing"));
-    m_tabwidget->addTab(CellRange(),                tr("Cellule range"));
+//    m_tabwidget->addTab(RealPathLossDialog(),       tr("Real Path-Loss"));
+//    m_tabwidget->addTab(templatePlot(shadowing_plot,
+//                                     "Shadowing around transmitter at a reference distance",
+//                                     "Angle [rad]",
+//                                     "P[dBm]"),
+//                        tr("Shadowing"));
+//    m_tabwidget->addTab(CellRange(),                tr("Cellule range"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
     m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
-    m_tabwidget->addTab(PrxAngularSpctr(),
-                        tr("Power Angular Spectrum"));
-    m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
+    m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
+////    m_tabwidget->addTab(AngularDistr(),             tr("Angular Distrubution"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
-    m_tabwidget->addTab(DopplerDistr(),             tr("Doppler Distribution"));
-    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
+////    m_tabwidget->addTab(DopplerDistr(),             tr("Doppler Distribution"));
+//    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel

@@ -56,6 +56,10 @@ public:
 
     void setScene(QGraphicsScene *scene) {m_scene = scene;};
 
+    void setReflectionsNbr(unsigned reflectionsNbr);
+
+    void clear();
+
 protected:
     vector<Tx *> m_transmitters;
     vector<Building *> m_buildings;

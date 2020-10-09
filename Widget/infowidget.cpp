@@ -208,6 +208,7 @@ void InfoWidget::createMapGroup()
 
     map_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
 
+    connect(generate_map, &QPushButton::clicked, this, &InfoWidget::sendGenerateMap);
 
     map_group->setLayout(map_layout);
 }
@@ -269,7 +270,7 @@ void InfoWidget::reset(){
 
 // ---------- SLOTS ----------
 void InfoWidget::sendLaunchRayTracing(){
-    rayTracing();
+    rayTracing(rflctns_ray->value());
     launch_raytracing->setEnabled(false);
     launch_coverage->setEnabled(false);
 }
@@ -291,3 +292,7 @@ void InfoWidget::sendStartCars()
     startCars();
 }
 
+void InfoWidget::sendGenerateMap()
+{
+    generateMap(height->value(), width->value(), car_dnsty->value(), st_dnsty->value());
+}

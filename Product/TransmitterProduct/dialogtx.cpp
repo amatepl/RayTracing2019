@@ -11,6 +11,11 @@ DialogTx::DialogTx(TxInterface *mathematicalproduct):m_tx(mathematicalproduct)
     m_tabwidget->addTab( createPathLossTab(), tr("Path Loss"));
     /* Shadowing */
     //    m_tabwidget->addTab( create , tr("Shadownig"));
+//    m_tabwidget->addTab(templatePlot(m_shadowingPlot,"Shadowing around transmitter at a reference distance",
+//                                     "Angle [rad]", "P [dBm]"), tr("Shadowing"));
+    m_tabwidget->addTab(createShadowingTab(), tr("Shadowing"));
+    /* Cell Range */
+    m_tabwidget->addTab(createCellRangeTab(), tr("Cell range"));
 
     QVBoxLayout *mainlayout = new QVBoxLayout;
     mainlayout->addWidget(m_tabwidget);
@@ -19,7 +24,32 @@ DialogTx::DialogTx(TxInterface *mathematicalproduct):m_tx(mathematicalproduct)
 }
 
 DialogTx::~DialogTx(){
+}
 
+QWidget* DialogTx::templatePlot(QCustomPlot *plot,
+                                             QString title,
+                                             QString xlabel,
+                                             QString ylabel,
+                                             bool xlog,
+                                             bool ylog)
+{
+    QWidget *widget = new QWidget();
+
+    plot->xAxis->setLabel(xlabel);
+    plot->yAxis->setLabel(ylabel);
+    if (xlog) plot->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    if (ylog) plot->yAxis->setScaleType(QCPAxis::stLogarithmic);
+    plot->yAxis->grid()->setSubGridVisible(true);
+    plot->xAxis->grid()->setSubGridVisible(true);
+    plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    plot->plotLayout()->insertRow(0);
+    plot->plotLayout()->addElement(0, 0, new QCPTextElement(plot, title, QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(plot,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
 }
 
 QWidget *DialogTx::createDialog(){
@@ -152,10 +182,20 @@ QWidget *DialogTx::createPathLossTab()
 {
     QWidget *widget = new QWidget;
     QCustomPlot *customplot = new QCustomPlot;
-    D = QVector<double>(m_tx->distancePathLoss().begin(), m_tx->distancePathLoss().end());
-    Prx = QVector<double>(m_tx->powerPathLoss().begin(), m_tx->powerPathLoss().end());
-    path_loss = QVector<double>(m_tx->linearPathLoss().begin(), m_tx->linearPathLoss().end());
-    friis_loss = QVector<double>(m_tx->friisLoss().begin(), m_tx->friisLoss().end());
+    m_tx->notifyObserversPathLoss();
+
+    vector <double> dpl = m_tx->distancePathLoss();
+    D = QVector<double>(dpl.begin(),dpl.end());
+
+    vector<double> prx = m_tx->powerPathLoss();
+    Prx = QVector<double>(prx.begin(), prx.end());
+
+    vector<double> pl = m_tx->linearPathLoss();
+    path_loss = QVector<double>(pl.begin(), pl.end());
+
+    vector<double> fl = m_tx->friisLoss();
+    friis_loss = QVector<double>(fl.begin(), fl.end());
+
     double n = m_tx->pathLossExponent();
     fading_variability = m_tx->fadingVariability();
 
@@ -216,7 +256,10 @@ void DialogTx::updatePathLossTab()
 
 QWidget *DialogTx::createShadowingTab()
 {
-
+    m_shadowingPlot = new QCustomPlot();
+    shadowing(m_tx->notifyObserversShadowing());
+    return templatePlot(m_shadowingPlot,"Shadowing around transmitter at a reference distance",
+                 "Angle [rad]", "P [dBm]");
 }
 
 void DialogTx::updateShadowingTab()
@@ -224,6 +267,77 @@ void DialogTx::updateShadowingTab()
 
 }
 
+void DialogTx::shadowing(map<double, double> shadow)
+{
+    QVector<double> angle;
+    QVector<double> power;
+    for (auto &sha: shadow){
+        angle.push_back(sha.first);
+        power.push_back(sha.second);
+    }
+    const auto mean = std::accumulate(power.begin(), power.end(), .0) / power.size();
+    QVector<double> mean_vector(power.size(),mean);
+
+    m_shadowingPlot->addGraph();
+    m_shadowingPlot->graph(0)->setPen(QPen(Qt::blue));
+    m_shadowingPlot->graph(0)->setData(angle, power);
+    m_shadowingPlot->graph(0)->setName("Shadowing power");
+
+    m_shadowingPlot->addGraph();
+    m_shadowingPlot->graph(1)->setPen(QPen(Qt::red));
+    m_shadowingPlot->graph(1)->setData(angle, mean_vector);
+    m_shadowingPlot->graph(1)->setName("<Prx(d)>");
+
+    m_shadowingPlot->rescaleAxes();
+    m_shadowingPlot->replot();
+    m_shadowingPlot->xAxis->setTicker(QSharedPointer<QCPAxisTickerPi>(new QCPAxisTickerPi));
+    m_shadowingPlot->legend->setVisible(true);
+}
+
+QWidget *DialogTx::createCellRangeTab()
+{
+    QWidget *widget = new QWidget;
+    QCustomPlot *customplot = new QCustomPlot;
+    m_tx->cellRange();
+
+    min_prx = m_tx->minPower();
+
+    vector<double> proba = m_tx->probabilityConnection();
+    probability = QVector<double>(proba.begin(), proba.end());
+
+    vector<double> cr = m_tx->cellRangeConnection();
+    cell_range = QVector<double>(cr.begin(), cr.end());
+
+    // Plot Range vs Probability
+    customplot->addGraph();
+    customplot->graph(0)->setPen(QPen(Qt::blue));
+    customplot->graph(0)->setData(probability, cell_range);
+
+    // give the axes some labels:
+    customplot->xAxis->setLabel("Connection probability");
+    customplot->yAxis->setLabel("Cell range[m]");
+    customplot->yAxis->setScaleType(QCPAxis::stLogarithmic);
+    customplot->rescaleAxes();
+    customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    customplot->plotLayout()->insertRow(0);
+    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Cell Range For Probability Connection", QFont("sans", 12, QFont::Bold)));
+    customplot->replot();
+
+    // add the text label at the top:
+    QCPItemText *textLabel = new QCPItemText(customplot);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(QString("For a minimal received power of ") + QString::number(min_prx) + QString("dBm"));
+    textLabel->setFont(QFont(font().family(), 10)); // make font a bit larger
+    textLabel->setPen(QPen(Qt::black)); // show black border around text
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(customplot,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
+}
 
 unsigned long DialogTx::getFrequency(){
 //    QString text = m_frequencyorder->currentText();

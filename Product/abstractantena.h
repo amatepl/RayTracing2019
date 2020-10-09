@@ -27,7 +27,7 @@ class AbstractAntena: public QObject
 
 public:
     virtual ~AbstractAntena(){};
-    virtual void notifyParent(ProductObservable *receiver,double speed,
+    virtual void notifyParent(QPointF *receiver,double speed,
                               const QPointF &point, WholeRay *wholeRay) = 0;
     virtual void notifyCarDetected() = 0;
 

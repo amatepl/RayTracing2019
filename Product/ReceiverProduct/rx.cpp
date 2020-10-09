@@ -21,8 +21,7 @@ Rx::Rx(int posX, int posY):
     computeMinPrx();
 }
 
-Rx::Rx(Rx* receiver):
-    QPointF(receiver->getPosX(),receiver->getPosY())
+Rx::Rx(Rx* receiver): QPointF(receiver->getPosX(),receiver->getPosY())
 {
     m_type = "Receiver";
     m_power = receiver->getPower();
@@ -461,6 +460,7 @@ void Rx::cellRange()
     }
 }
 
+
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 4. Doppler:
 void Rx::dopplerSpectrum()
@@ -582,13 +582,13 @@ void Rx::newProperties(){
 
 // From MathematicalProduct
 void Rx::openDialog(){
-    for (unsigned i = 0; i < m_transmitters.size(); i++) {
-        notifyObserversPathLoss(m_transmitters.at(i));
-    }
+//    for (unsigned i = 0; i < m_transmitters.size(); i++) {
+//        notifyObserversPathLoss(m_transmitters.at(i));
+//    }
     m_dialog = new DialogRx(this);
-    for (unsigned i = 0; i < m_transmitters.size(); i++) {
-        m_dialog->shadowing(notifyObservervesShadowing(m_transmitters.at(i)));
-    }
+//    for (unsigned i = 0; i < m_transmitters.size(); i++) {
+//        m_dialog->shadowing(notifyObservervesShadowing(m_transmitters.at(i)));
+//    }
     connect(m_dialog, &DialogRx::save,
             this, &Rx::save);
     connect(m_dialog,&DialogRx::interferenceActivated,this,&Rx::sendInterferencePattern);
@@ -673,89 +673,89 @@ void Rx::notifyObservers()
 
 void Rx::notifyObserversPathLoss(ProductObserver* transmitter)
 {
-    vector<QPointF> pl_points = transmitter->pathLossPoints();
-                                // get the path loss (pl) points of the transmitter
-    Rx* copy_receiver = new Rx(this);
-                                // copy a receiver to compute power
-    std::map<double /*distance*/, double /*power sum*/> sum_power;
-                                // sum of power
-    std::map<double /*distance*/, int /*counter*/> counter;
-                                // counter to compute average
-    QPointF* tx_pos = dynamic_cast<QPointF*>(transmitter);
-    for(unsigned i = 0; i <= pl_points.size(); i++)
-    {
-        if (i == pl_points.size()){
-            copy_receiver->setX(tx_pos->x()+1.0/px_to_meter);
-            copy_receiver->setY(tx_pos->y());
-        }
-        else {
-            copy_receiver->setX(pl_points.at(i).x());
-            copy_receiver->setY(pl_points.at(i).y());
-        }
-        transmitter->update(copy_receiver, m_movement);
-        for (unsigned int l = 0; l < m_observers.size(); l++)
-        {
-            m_observers.at(l)->update(copy_receiver,m_movement);
-        }
-        double power = transmitter->computePathLossPower(copy_receiver);
-        QLineF line(*tx_pos,*static_cast<QPointF*>(copy_receiver));
-        if (i == pl_points.size()){
-            counter[1.0] +=1;
-            sum_power[1.0] += power;
-        }
-        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
-        {
-            counter[line.length()*px_to_meter] +=1;
-            sum_power[line.length()*px_to_meter] += power;
-        }
-    }
-    m_pathloss.clear();
-    m_pathloss = averageOnMap(sum_power,counter);
-    computePathLossFading();
-    modelPathLoss();
-    cellRange();
-    computeMinPrx();
-    delete copy_receiver;
+//    vector<QPointF> pl_points = transmitter->pathLossPoints();
+//                                // get the path loss (pl) points of the transmitter
+//    Rx* copy_receiver = new Rx(this);
+//                                // copy a receiver to compute power
+//    std::map<double /*distance*/, double /*power sum*/> sum_power;
+//                                // sum of power
+//    std::map<double /*distance*/, int /*counter*/> counter;
+//                                // counter to compute average
+//    QPointF* tx_pos = dynamic_cast<QPointF*>(transmitter);
+//    for(unsigned i = 0; i <= pl_points.size(); i++)
+//    {
+//        if (i == pl_points.size()){
+//            copy_receiver->setX(tx_pos->x()+1.0/px_to_meter);
+//            copy_receiver->setY(tx_pos->y());
+//        }
+//        else {
+//            copy_receiver->setX(pl_points.at(i).x());
+//            copy_receiver->setY(pl_points.at(i).y());
+//        }
+//        transmitter->update(copy_receiver, m_movement);
+//        for (unsigned int l = 0; l < m_observers.size(); l++)
+//        {
+//            m_observers.at(l)->update(copy_receiver,m_movement);
+//        }
+//        double power = transmitter->computePathLossPower(copy_receiver);
+//        QLineF line(*tx_pos,*static_cast<QPointF*>(copy_receiver));
+//        if (i == pl_points.size()){
+//            counter[1.0] +=1;
+//            sum_power[1.0] += power;
+//        }
+//        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
+//        {
+//            counter[line.length()*px_to_meter] +=1;
+//            sum_power[line.length()*px_to_meter] += power;
+//        }
+//    }
+//    m_pathloss.clear();
+//    m_pathloss = averageOnMap(sum_power,counter);
+//    computePathLossFading();
+//    modelPathLoss();
+//    cellRange();
+//    computeMinPrx();
+//    delete copy_receiver;
 }
 
 map<double,double>
 Rx::notifyObservervesShadowing(ProductObserver* tx)
 {
-    vector<QPointF> points = circlePoints(*dynamic_cast<QPointF*>(tx),100,1);
-    Rx* copy_receiver = new Rx(this);
-    map <double /*angle*/,double /*power*/> shadow;
-    for(unsigned i = 0; i < points.size(); i++)
-    {
-        copy_receiver->setX(points.at(i).x());
-        copy_receiver->setY(points.at(i).y());
-        tx->update(copy_receiver, m_movement);
-        for (unsigned int l = 0; l < m_observers.size(); l++)
-        {
-            m_observers.at(l)->update(copy_receiver,m_movement);
-        }
-        double power = tx->computePathLossPower(copy_receiver);
-        QLineF line(*dynamic_cast<QPointF*>(tx),*copy_receiver);
-        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
-        {
-            shadow[line.angle()*M_PI/180.0] = power;
-        }
-    }
-    delete copy_receiver;
-    return shadow;
+//    vector<QPointF> points = circlePoints(*dynamic_cast<QPointF*>(tx),100,1);
+//    Rx* copy_receiver = new Rx(this);
+//    map <double /*angle*/,double /*power*/> shadow;
+//    for(unsigned i = 0; i < points.size(); i++)
+//    {
+//        copy_receiver->setX(points.at(i).x());
+//        copy_receiver->setY(points.at(i).y());
+//        tx->update(copy_receiver, m_movement);
+//        for (unsigned int l = 0; l < m_observers.size(); l++)
+//        {
+//            m_observers.at(l)->update(copy_receiver,m_movement);
+//        }
+//        double power = tx->computePathLossPower(copy_receiver);
+//        QLineF line(*dynamic_cast<QPointF*>(tx),*copy_receiver);
+//        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
+//        {
+//            shadow[line.angle()*M_PI/180.0] = power;
+//        }
+//    }
+//    delete copy_receiver;
+//    return shadow;
 }
 
 vector<QPointF>
 Rx::circlePoints(QPointF center, double radius, int rpd)
 {
-    vector<QPointF> points;
-    QPointF point;
-    double range = 1.0/rpd;
-    for (double theta = 0; theta < 360; theta += range){
-        point.setX(radius*cos(theta*M_PI/180.0));
-        point.setY(radius*sin(theta*M_PI/180.0));
-        points.push_back(center+point);
-    }
-    return points;
+//    vector<QPointF> points;
+//    QPointF point;
+//    double range = 1.0/rpd;
+//    for (double theta = 0; theta < 360; theta += range){
+//        point.setX(radius*cos(theta*M_PI/180.0));
+//        point.setY(radius*sin(theta*M_PI/180.0));
+//        points.push_back(center+point);
+//    }
+//    return points;
 }
 
 std::map<double,double>
@@ -771,12 +771,12 @@ Rx::averageOnMap(std::map<double, double> values,
 
 complex<double> Rx::notifyObserversInterference(QLineF local_region)
 {
-    complex<double> impulse_r;
-    for (unsigned i = 0; i < m_transmitters.size(); i++)
-    {
-        impulse_r = m_transmitters.at(i)->computeInterference(this, local_region);
-    }
-    return impulse_r;
+//    complex<double> impulse_r;
+//    for (unsigned i = 0; i < m_transmitters.size(); i++)
+//    {
+//        impulse_r = m_transmitters.at(i)->computeInterference(this, local_region);
+//    }
+//    return impulse_r;
 }
 
 void Rx::detachObservers() {
@@ -800,50 +800,50 @@ void Rx::notify(double &/*power*/,
 }
 
 
-void Rx::answer(ProductObserver *observer, double frequency,
-                                         double bandwidth, double &power,
-                                         std::complex<double> &EMfield)
-{
-    m_e_field += EMfield;
-    m_power = power;
-//    record();
-//    save("/Users/amate/Documents/Polytech/Thesis/dataOnlyBetweenCar.csv");
-    m_transmitterbandwidth = bandwidth;
-    m_transmitterfrequency = frequency;
-    if (m_graphic != nullptr){
-        m_graphic->notifyToGraphic(this,m_power);
-
-        m_transmitter = observer;
-//        m_transmitters.at(0)->drawRays(this, true);
-
-        for(unsigned i = 0; i < m_transmitters.size(); i++) {
-            m_transmitters.at(i)->drawRays(this, true);
-        }
-
-        computeSnr();
-
-    }
-//    if(m_power < power - 20 && observer != m_transmitter){
-//        m_power = power;
+//void Rx::answer(ProductObserver *observer, double frequency,
+//                                         double bandwidth, double &power,
+//                                         std::complex<double> &EMfield)
+//{
+//    m_e_field += EMfield;
+//    m_power = power;
+////    record();
+////    save("/Users/amate/Documents/Polytech/Thesis/dataOnlyBetweenCar.csv");
+//    m_transmitterbandwidth = bandwidth;
+//    m_transmitterfrequency = frequency;
+//    if (m_graphic != nullptr){
 //        m_graphic->notifyToGraphic(this,m_power);
-////        if(m_transmitter!=nullptr){
-////            //m_transmitter->drawRays(this,false);
-////        }
+
 //        m_transmitter = observer;
-//        m_transmitter->drawRays(this,true);
-//    }
-//    else{
-//        m_power = power;
-//        m_graphic->notifyToGraphic(this,m_power);
-//        if(m_transmitter != 0){
-//            m_transmitter->drawRays(this,true);
-//        }
-//        else{
-//            m_transmitter = observer;
-//        }
-//    }
+////        m_transmitters.at(0)->drawRays(this, true);
 
-}
+//        for(unsigned i = 0; i < m_transmitters.size(); i++) {
+//            m_transmitters.at(i)->drawRays(this, true);
+//        }
+
+//        computeSnr();
+
+//    }
+////    if(m_power < power - 20 && observer != m_transmitter){
+////        m_power = power;
+////        m_graphic->notifyToGraphic(this,m_power);
+//////        if(m_transmitter!=nullptr){
+//////            //m_transmitter->drawRays(this,false);
+//////        }
+////        m_transmitter = observer;
+////        m_transmitter->drawRays(this,true);
+////    }
+////    else{
+////        m_power = power;
+////        m_graphic->notifyToGraphic(this,m_power);
+////        if(m_transmitter != 0){
+////            m_transmitter->drawRays(this,true);
+////        }
+////        else{
+////            m_transmitter = observer;
+////        }
+////    }
+
+//}
 
 
 const QPointF * Rx::getPos() const

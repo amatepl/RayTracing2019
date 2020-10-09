@@ -23,6 +23,9 @@ public:
     DialogTx(TxInterface* mathematicalproduct);
     ~DialogTx() ;
 
+    QWidget *templatePlot(QCustomPlot *plot, QString title, QString xlabel,
+                          QString ylabel, bool xlog = false, bool ylog = false);
+
     /* General Parameters */
     QWidget *createDialog();
     void updateGeneralTab();
@@ -34,6 +37,10 @@ public:
     /* Shadowing Tab */
     QWidget *createShadowingTab();
     void updateShadowingTab();
+    void shadowing(map<double, double> shadow);
+
+    /* Cell Range Tab */
+    QWidget *createCellRangeTab();
 
     int getPosX()  {return m_posx->value();}
     int getPosY()  {return m_posy->value();}
@@ -88,6 +95,10 @@ private:
 
     /* Shadowing Tab */
     QCustomPlot *m_shadowingPlot;
+
+    /* Cell Range */
+    QVector<double> probability;
+    QVector<double> cell_range;
 
     TxInterface* m_tx;
 

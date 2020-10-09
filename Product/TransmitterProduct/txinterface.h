@@ -29,12 +29,16 @@ public:
     virtual vector<double> distancePathLoss() = 0;
     virtual vector<double> linearPathLoss() = 0;
     virtual vector<double> friisLoss() = 0;
-    virtual vector<double> powerPathLossModel() = 0;
-    virtual vector<double> distancePathLossModel() = 0;
-    virtual vector<double> linearPathLossModel() = 0;
     virtual double pathLossExponent() = 0;
     virtual double fadingVariability() = 0;
     virtual double minPower() = 0;
+    virtual void notifyObserversPathLoss() = 0;
+
+    virtual map<double, double> notifyObserversShadowing() = 0;
+
+    virtual vector<double> probabilityConnection() = 0;
+    virtual vector<double> cellRangeConnection() = 0;
+    virtual void cellRange() = 0;
 
     /* Setters */
     virtual void setPosX(int posX) = 0;

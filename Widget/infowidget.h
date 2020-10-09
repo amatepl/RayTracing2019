@@ -87,10 +87,11 @@ private:
     QSpinBox *width;
 
 signals:
-    void rayTracing();
+    void rayTracing(unsigned reflectionsNbr);
     void coverage();
     void clear();
     void startCars();
+    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs);
 
 public slots:
     void sendLaunchRayTracing();
@@ -98,6 +99,7 @@ public slots:
     void sendClear();
     void sendStartCars();
     void printValue(double value);  // For tests
+    void sendGenerateMap();
 };
 
 #endif // INFOWIDGET_H

@@ -44,6 +44,23 @@ public:
                   TreeFactory *treeFactory = nullptr, CarFactory *carFactory = nullptr,
                   ReceiverFactory* receiverfactory = nullptr);           // For tests only
 
+    void generateMap();
+
+    /*!
+     * \brief clear
+     *
+     * Clears all the data.
+     */
+    void clear();
+
+    /*!
+     *
+     * \brief clearWorkspace
+     *
+     * DEPRECATED !!
+     */
+    void clearWorkspace();
+
 private:
     map<string,vector<MathematicalProduct*>> m_mathematicalComponents;
     WindowModelObservable* m_windowModelObservable;
