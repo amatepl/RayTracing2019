@@ -92,6 +92,7 @@ signals:
     void clear();
     void startCars();
     void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs);
+//    void antenas(double fq, double bw, bool modifyAll);
 
 public slots:
     void sendLaunchRayTracing();
@@ -100,6 +101,7 @@ public slots:
     void sendStartCars();
     void printValue(double value);  // For tests
     void sendGenerateMap();
+//    void sendAntennas();
 };
 
 #endif // INFOWIDGET_H

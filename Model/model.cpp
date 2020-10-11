@@ -26,7 +26,7 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
     map->setCarFactory(carFactory);
     map->setTreeFactory(treeFactory);
 
-    map->generateMap();
+//    map->generateMap();
     m_receiverfactory = receiverfactory;
 
     generateMap();

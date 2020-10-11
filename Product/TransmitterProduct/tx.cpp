@@ -168,6 +168,7 @@ void Tx::estimateCh(QPointF *rx)
 
     }
 
+
 //    normalizePrxSpctr(m_chsData.at(rx).prxAngularSpctr);
 //    normalizePrxSpctr(m_chsData.at(rx).prxDopplerSpctr);
 
@@ -478,6 +479,8 @@ Tx::comput4FixedBeam(QPointF *receiver)
     }
 
     estimateCh(receiver);
+
+//    ph::normalizeMap<map<double, double>(m_chsData.at(receiver).impulseResp);
 }
 
 void Tx::dontChoseBeam(QPointF *receiver)
@@ -816,7 +819,7 @@ Data * Tx::getChData(QPointF *rx)
 
 //    map<double, double> spaceCorr = ph::correlation(test);
 
-    m_chsData[rx].prxDopplerSpctr = out2;
+    m_chsData[rx].spaceCrltn = out2;
 //    m_chsData[rx].w = vector <double>(u2.begin(), u2.end() -1 );
     m_chsData[rx].w = omega;
     return &m_chsData[rx];

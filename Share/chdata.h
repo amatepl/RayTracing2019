@@ -46,6 +46,8 @@ struct Data {
     std::vector<double /* S(u) */>                                  prxAngularSpctr;
     std::vector<double /* S(w) */>                                  prxDopplerSpctr;
     double                                                          riceFactor{0};
+    std::vector<double>                                             spaceCrltn;
+    std::vector<double>                                             timeCrltn;
 
 };
 #endif // CHDATA_H

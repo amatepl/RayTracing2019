@@ -7,8 +7,8 @@ MapGenerator::MapGenerator(QRectF mapBoundary): m_mapBoundary(mapBoundary)
 
 void MapGenerator::generateMap()
 {
-    m_horizontalStreets.clear();
-    m_verticalStreets.clear();
+//    m_horizontalStreets.clear();
+//    m_verticalStreets.clear();
 
 //    unsigned streetsDistance = 100;
 

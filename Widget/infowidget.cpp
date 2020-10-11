@@ -93,6 +93,12 @@ void InfoWidget::createEditGeneral(){
     edit_layout->addWidget(clear_workspace,2,1);
 
     edit_group->setLayout(edit_layout);
+
+    /* Initial values */
+    frequency->setValue(26);
+    frequency_order->setCurrentIndex(2);
+    bandwidth->setValue(100);
+    bandwidth_order->setCurrentIndex(1);
 }
 
 void InfoWidget::createRayGroup(){
@@ -115,6 +121,9 @@ void InfoWidget::createRayGroup(){
 
 
     ray_group->setLayout(ray_layout);
+
+    /* Initial values */
+    rflctns_ray->setValue(3);
 }
 
 void InfoWidget::createCoverageGroup(){

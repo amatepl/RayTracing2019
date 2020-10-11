@@ -372,20 +372,68 @@ public:
     void linearRegressionPathLoss();
     void computePathLossFading();
     double standardDeviation();
-    void notifyObserversPathLoss() override;
+
+     /*!
+     * \fn notifyObserversPathLoss(ProductObserver* transmitter)
+     * \brief Fill the map m_pathloss to compute the path loss.
+     * \param transmitter
+     *
+     * This function calls two other functions that are only used
+     * in MathTxProduct but are virtualized in ProductObserver (bad choice).
+     * The first one is MathTxProduct::pointsPathLoss which gives
+     * the points where the power should be calculated.
+     * The second one is MathTxProduct::computePathLossPower which
+     * calculates the power from the receiver copied to the point.
+     * The m_pathloss map is then filled with the Euclidean distance
+     * from the point and the power in dBm at this point.
+     * An average is computed if the same distance is calculated.
+     *
+     */
+   void notifyObserversPathLoss() override;
     double inputNoise();
     void computeMinPrx();
 
     // 2. Shadowing Computation:
     void clearShadowing();
+
+     /*!
+     * \brief notifyObservervesShadowing
+     * \param tx
+     * \return Coresponding angle with power receiver as a map
+     *
+     * The shadowing is computed at the same distance as transmitter
+     * but around 360°. The shadowing represent the variability around
+     * the transmitter.
+     *
+     */
     map<double, double> notifyObserversShadowing() override;
-    vector<QPointF> circlePoints(QPointF center, double radius, int rpd);
+
+     /*!
+     * \brief circlePoints
+     * \param center
+     * \param radius
+     * \param rpd: Range per degree (number of samples per degree)
+     * \return Vector of QPointF in the perimeter of a circle
+     */
+   vector<QPointF> circlePoints(QPointF center, double radius, int rpd);
 
     // 3. Cell Range
     void clearCellRange();
     vector<double> probabilityConnection() override;
     vector<double> cellRangeConnection() override;
 
+    /*!
+     * \fn averageOnMap(std::map<double,double> values,
+                                                     std::map<double,int> counter);
+     * \brief Average value inside a map by the number of keyword iteration
+     * \param values
+     * \param counter
+     *
+     * The keyword is the same. The value of the counter is the iteration
+     * number of the same value. The value of values is the sum of all
+     * value that the map found for the same key.
+     *
+     */
     map<double, double> averageOnMap(map<double, double> values, map<double, int> counter) const;
     void cellRange() override;
 

@@ -6,6 +6,7 @@
 #include <vector>
 #include <Share/wholeray.h>
 #include <gsl/gsl>
+#include "boost/compute/algorithm/max_element.hpp"
 
 constexpr double  eps_air        =   8.864e-12      ;  // A²S⁴kg⁻1m⁻3
 constexpr double  z_0            =   120 * M_PI     ;
@@ -92,23 +93,46 @@ std::complex<double> angDistrMPC(const std::complex<double> &h, const double the
  */
 double angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u, const double ampu);
 
+//BOOST_COMPUTE_FUNCTION(bool, compare_first, (const double &a, const double &b),
+//{
+//    return a < b;
+//});
 
-/*!
- * \fn void normalizePAS(vector<double> &pas)
- * \brief Normalizes the PAS.
- * \param pas
- *
- * For now its for tests
- */
-template <class T>
-void normalizePrxSpctr(T &pas)
-{
-    double nbrMPCs = pas.size();
-    for (auto &p: pas) {
-        p = p / nbrMPCs;
-    }
-}
+//BOOST_COMPUTE_FUNCTION(bool, compare_map, (const pair<double, double> &a, const pair<double, double> &b),
+//{
+//    return a.second < b.second;
+//});
 
+///*!
+// * \fn void normalizePAS(vector<double> &pas)
+// * \brief Normalizes the PAS.
+// * \param pas
+// *
+// * For now its for tests
+// */
+//template <class T>
+//void normalizePrxSpctr(T &pas)
+//{
+//    boost::compute::vector<double>::iterator max = max_element(pas.begin(), pas.end(), compare_first);
+//    for (auto &p: pas) {
+//        p = p / max;
+//    }
+//}
+///*!
+// * \fn void normalizePAS(vector<double> &pas)
+// * \brief Normalizes the PAS.
+// * \param pas
+// *
+// * For now its for tests
+// */
+//template <class T, typename C>
+//void normalizeMap(map<T, C> &pas)
+//{
+//    boost::compute::vector<complex>::iterator max = max_element(pas.begin(), pas.end(), compare_first);
+//    for (auto &p: pas) {
+//        p = p / abs(max);
+//    }
+//}
 /*!
  * \fn map<double, double> correlation(vector<double> &spctr)
  * \brief correlation

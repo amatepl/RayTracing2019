@@ -3,8 +3,7 @@
 #include <algorithm>
 #include "Share/physics.h"
 
-Rx::Rx(int posX, int posY):
-    QPointF(posX,posY)
+Rx::Rx(int posX, int posY): QPointF(posX,posY)
 {
     m_type                  = "Receiver";
     m_power                 = 0.0;
@@ -169,7 +168,7 @@ void Rx::save(string path)
 
     vector<unsigned> vectorSizes;
 
-    vectorSizes.push_back(path_loss.size());
+//    vectorSizes.push_back(path_loss.size());
     vectorSizes.push_back(h.size());
     vectorSizes.push_back(tau.size());
     vectorSizes.push_back(h_tdl.size());
@@ -196,11 +195,11 @@ void Rx::save(string path)
     int vsize = vectorSizes.back();
     for (int n = 0; n < vsize; n++)
     {
-        if (n < path_loss.size()) {
-            ofs << path_loss[n]<<";" ;
-        } else {
-            ofs << ";" ;
-        }
+//        if (n < path_loss.size()) {
+//            ofs << path_loss[n]<<";" ;
+//        } else {
+//            ofs << ";" ;
+//        }
 
         if (n < h.size()) {
             ofs << h[n]<<";" ;
@@ -275,114 +274,10 @@ void Rx::riceFactor(double rice)
     }
 }
 
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// 1. Path Loss Computation:
-
-void Rx::computePathLossFading()
-{
-    path_loss.resize(m_pathloss.size());
-    fading.resize(m_pathloss.size());
-    friis_loss.resize(m_pathloss.size());
-    linearRegressionPathLoss();
-    for (unsigned long i=0; i<m_pathloss.size(); i++){
-            path_loss[i] = m*logD[i]+b;
-            fading[i] = Prx[i]-path_loss[i];
-            friis_loss[i] = -20*logD[i] + m_pathloss[1.0];
-    }
-    fading_variability = standardDeviation();
-}
-
-void Rx::linearRegressionPathLoss()
-{
-    /*
-    *   b = output intercept
-    *   m  = output slope
-    *   r = output correlation coefficient (can be NULL if you don't want it)
-    */
-
-    logD.resize(m_pathloss.size());
-    Prx.resize(m_pathloss.size());
-    D.resize(m_pathloss.size());
-    int i = 0;
-    for(const auto &path : m_pathloss){
-        D[i] = path.first;
-        logD[i] = log10(D[i]);
-        Prx[i] = path.second;
-        i++;
-    }
-
-    double   sumx = 0.0;                      /* sum of x     */
-    double   sumx2 = 0.0;                     /* sum of x**2  */
-    double   sumxy = 0.0;                     /* sum of x * y */
-    double   sumy = 0.0;                      /* sum of y     */
-    double   sumy2 = 0.0;                     /* sum of y**2  */
-
-    for (unsigned long i=0;i<m_pathloss.size();i++){
-        sumx  += logD[i];
-        sumx2 += pow(logD[i],2);
-        sumxy += logD[i] * Prx[i];
-        sumy  += Prx[i];
-        sumy2 += pow(Prx[i],2);
-    }
-
-    double denom = (m_pathloss.size() * sumx2 - pow(sumx,2));
-    if (denom == 0) {
-        // singular matrix. can't solve the problem.
-        m = 0;
-        b = 0;
-        if (r) r = 0;
-    }
-    else{
-        m = (m_pathloss.size() * sumxy  -  sumx * sumy) / denom;
-        b = (sumy * sumx2  -  sumx * sumxy) / denom;
-        if (r != 0.0) {
-            r = (sumxy - sumx * sumy / m_pathloss.size()) /    /* compute correlation coeff */
-            sqrt((sumx2 - pow(sumx,2)/m_pathloss.size()) *
-            (sumy2 - pow(sumy,2)/m_pathloss.size()));
-        }
-    }
-}
-
-double Rx::standardDeviation(){
-    double sum = 0.0, sDeviation = 0.0, mean;
-    int count = fading.size();
-    int i;
-    for(i = 0; i < count; i++) {
-        sum += fading[i];
-    }
-    // Calculating mean
-    mean = sum/count;
-    for(i = 0; i < count; ++i) {
-        sDeviation += pow(fading[i] - mean, 2);
-    }
-    double res = sqrt(sDeviation/count);
-    if(res<1e-5){res = 0;}
-    return res;
-}
-
-void Rx::modelPathLoss(){
-    std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0, fading_variability);
-    double minDist = log10(10); //10m
-    double maxDist = log10(5000);// 5km
-    double step = 0.01;
-    int lengthData = (maxDist-minDist)/step;
-    D_model.resize(lengthData);
-    logD_model.resize(lengthData);
-    Prx_model.resize(lengthData);
-    path_loss_model.resize(lengthData);
-    double L_fading_model;
-    for (int i=0; i<lengthData; ++i){
-        logD_model[i] = minDist + i*step;
-        D_model[i] = pow(10, logD_model[i]);
-        path_loss_model[i] =  m*logD_model[i] + b;
-        L_fading_model = distribution(generator);
-        Prx_model[i] = path_loss_model[i] + L_fading_model;
-    }
-}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 2. Impulse Resoonse and TDL Computation:
-void Rx::computeImpulseTDL(){
+void Rx::computeImpulseTDL()
+{
    // Number of rays = Number of powers received:
     unsigned long indepentant_rays = m_impulse.size();
     // Creation of two vectors (impusle) and time of each impulse
@@ -403,7 +298,10 @@ void Rx::computeImpulseTDL(){
     for(const auto &imp : m_impulse){
         // Compute attenuation factor
         tmpPrx += pow(abs(imp.second), 2);
-        h[i] = 20*log10(abs(imp.second));
+        double s = 20*log10(abs(m_impulse.begin()->second));
+        double s1 =20*log10(abs(imp.second)) ;
+//        h[i] = 1 + 20*log10(abs(imp.second) / abs(m_impulse.begin()->second));
+        h[i] = (abs(imp.second) / abs(m_impulse.begin()->second));
         // Compute time of arrival in ns
         tau[i] = imp.first; // tau
 
@@ -427,39 +325,14 @@ void Rx::computeImpulseTDL(){
     tau_tdl.resize(map_tau_tdl.size());
     i = 0;
     for (const auto &tdl : map_tau_tdl){
-        h_tdl[i] = 20*log10(abs(tdl.second));
+//        h_tdl[i] = 20*log10(abs(tdl.second));
+        h_tdl[i] = (abs(tdl.second) / abs(map_tau_tdl.begin()->second));
         tau_tdl[i] = tdl.first;
         i++;
     }
 
 
 }
-
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// 3. Cell Range Computation:
-void Rx::cellRange()
-{
-    // minPrx = <Prx> - L_fading
-    // <Prx> = mx + b; where x = log10(d)
-    // Pr[L_fading<gamma] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)))
-
-    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma
-    // => Compute R such that minPrx> = <Prx(R)> - gamma
-    int lengthData = 100;
-    double step = (3*fading_variability)/lengthData;
-    double gamma;
-    probability.resize(lengthData);
-    cell_range.resize(lengthData);
-    for (int i=0; i<lengthData; ++i){
-        gamma = i*step;
-        probability[i] = 1 - 0.5*erfc(gamma/(fading_variability * sqrt(2)));// Pr[L_fading<gamma]
-
-        // minPrx = mx + b - gamma[dBm] => x = (minPrx + gamma - b)/m
-        // => log10(d) = (-102 + gamma - b)/m => d = 10((minPrx + gamma - b)/m)
-        cell_range[i] = pow(10,(min_prx + gamma - b)/m);
-    }
-}
-
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 4. Doppler:
@@ -477,7 +350,8 @@ void Rx::dopplerSpectrum()
     }
 }
 
-void Rx::sendInterferencePattern(){
+void Rx::sendInterferencePattern()
+{
     vector<double> impulse_r(80*80);
     vector<double> tmp_vect_h(80*80);
     QVector<double> rice_distribution;
@@ -540,20 +414,24 @@ double Rx::getPower() {return m_power;}
 complex <double> Rx::getEField() {return m_e_field;}
 bool Rx::getEnable() {return enable;}
 
-void Rx::setSpeed(float speed){
+void Rx::setSpeed(float speed)
+{
     if (m_movement.length() == 0.0){m_movement = QLineF(0,0,0,50);}
     m_movement.setLength(speed);
 }
 
-void Rx::setOrientation(float orientation){
+void Rx::setOrientation(float orientation)
+{
     m_movement.setAngle(orientation);
 }
 
-void Rx::setMovement(const QLineF movement){
+void Rx::setMovement(const QLineF movement)
+{
     m_movement = movement;
 }
 
-void Rx::setPosX(int posX) {
+void Rx::setPosX(int posX)
+{
     clearData();
     setX(posX);
     if (m_graphic != nullptr){
@@ -561,7 +439,8 @@ void Rx::setPosX(int posX) {
     }
     notifyObservers();
 }
-void Rx::setPosY(int posY) {
+void Rx::setPosY(int posY)
+{
     clearData();
     setY(posY);
     if (m_graphic != nullptr){
@@ -573,15 +452,32 @@ void Rx::setPower(double p) {m_power = p;}
 void Rx::setEField(complex<double> e) {m_e_field = e;}
 void Rx::setEnable(bool enable) {this->enable = enable;}
 
-void Rx::newProperties(){
+vector<double> Rx::spaceCrltn()
+{
+    vector<double> sc = m_chData->spaceCrltn;
+    double max = *sc.begin();
+    for (auto &d: sc){
+        d = d / max;
+    }
+    return sc;
+}
+
+void Rx::newProperties()
+{
     computeMinPrx();
     if (m_graphic != nullptr){
         m_graphic->notifyToGraphic(this,getOrientation());
     }
 }
 
+void Rx::dialogDeleted()
+{
+    m_dialog = nullptr;
+}
+
 // From MathematicalProduct
-void Rx::openDialog(){
+void Rx::openDialog()
+{
 //    for (unsigned i = 0; i < m_transmitters.size(); i++) {
 //        notifyObserversPathLoss(m_transmitters.at(i));
 //    }
@@ -589,23 +485,28 @@ void Rx::openDialog(){
 //    for (unsigned i = 0; i < m_transmitters.size(); i++) {
 //        m_dialog->shadowing(notifyObservervesShadowing(m_transmitters.at(i)));
 //    }
-    connect(m_dialog, &DialogRx::save,
-            this, &Rx::save);
-    connect(m_dialog,&DialogRx::interferenceActivated,this,&Rx::sendInterferencePattern);
+    connect(m_dialog, &DialogRx::save, this, &Rx::save);
+    connect(m_dialog, &DialogRx::interferenceActivated, this, &Rx::sendInterferencePattern);
 }
 
-void Rx::update(QGraphicsItem* graphic){
+void Rx::update(QGraphicsItem* graphic)
+{
     setX(graphic->scenePos().x());
     setY(graphic->scenePos().y());
     notifyObservers();
+    if (m_dialog != nullptr) {
+        m_dialog->update();
+    }
 }
 
-void Rx::attachObservable(GraphicsProduct *graphic){
+void Rx::attachObservable(GraphicsProduct *graphic)
+{
     m_graphic = graphic;
     m_graphic->notifyToGraphic(this,m_power);
 }
 
-void Rx::updateInformation(){
+void Rx::updateInformation()
+{
     m_info_widget->changePower(m_power);
     m_info_widget->changeDistance(m_transmitter_distance);
     m_info_widget->changeSnr(snr_received);
@@ -618,7 +519,8 @@ void Rx::updateInformation(){
 }
 
 // From ProductObservable
-void Rx::attachObserver(ProductObserver *productObserver){
+void Rx::attachObserver(ProductObserver *productObserver)
+{
 //    cout<<"Observevr attached"<<endl;
     m_observers.push_back(productObserver);
 }
@@ -671,104 +573,6 @@ void Rx::notifyObservers()
 
 }
 
-void Rx::notifyObserversPathLoss(ProductObserver* transmitter)
-{
-//    vector<QPointF> pl_points = transmitter->pathLossPoints();
-//                                // get the path loss (pl) points of the transmitter
-//    Rx* copy_receiver = new Rx(this);
-//                                // copy a receiver to compute power
-//    std::map<double /*distance*/, double /*power sum*/> sum_power;
-//                                // sum of power
-//    std::map<double /*distance*/, int /*counter*/> counter;
-//                                // counter to compute average
-//    QPointF* tx_pos = dynamic_cast<QPointF*>(transmitter);
-//    for(unsigned i = 0; i <= pl_points.size(); i++)
-//    {
-//        if (i == pl_points.size()){
-//            copy_receiver->setX(tx_pos->x()+1.0/px_to_meter);
-//            copy_receiver->setY(tx_pos->y());
-//        }
-//        else {
-//            copy_receiver->setX(pl_points.at(i).x());
-//            copy_receiver->setY(pl_points.at(i).y());
-//        }
-//        transmitter->update(copy_receiver, m_movement);
-//        for (unsigned int l = 0; l < m_observers.size(); l++)
-//        {
-//            m_observers.at(l)->update(copy_receiver,m_movement);
-//        }
-//        double power = transmitter->computePathLossPower(copy_receiver);
-//        QLineF line(*tx_pos,*static_cast<QPointF*>(copy_receiver));
-//        if (i == pl_points.size()){
-//            counter[1.0] +=1;
-//            sum_power[1.0] += power;
-//        }
-//        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
-//        {
-//            counter[line.length()*px_to_meter] +=1;
-//            sum_power[line.length()*px_to_meter] += power;
-//        }
-//    }
-//    m_pathloss.clear();
-//    m_pathloss = averageOnMap(sum_power,counter);
-//    computePathLossFading();
-//    modelPathLoss();
-//    cellRange();
-//    computeMinPrx();
-//    delete copy_receiver;
-}
-
-map<double,double>
-Rx::notifyObservervesShadowing(ProductObserver* tx)
-{
-//    vector<QPointF> points = circlePoints(*dynamic_cast<QPointF*>(tx),100,1);
-//    Rx* copy_receiver = new Rx(this);
-//    map <double /*angle*/,double /*power*/> shadow;
-//    for(unsigned i = 0; i < points.size(); i++)
-//    {
-//        copy_receiver->setX(points.at(i).x());
-//        copy_receiver->setY(points.at(i).y());
-//        tx->update(copy_receiver, m_movement);
-//        for (unsigned int l = 0; l < m_observers.size(); l++)
-//        {
-//            m_observers.at(l)->update(copy_receiver,m_movement);
-//        }
-//        double power = tx->computePathLossPower(copy_receiver);
-//        QLineF line(*dynamic_cast<QPointF*>(tx),*copy_receiver);
-//        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
-//        {
-//            shadow[line.angle()*M_PI/180.0] = power;
-//        }
-//    }
-//    delete copy_receiver;
-//    return shadow;
-}
-
-vector<QPointF>
-Rx::circlePoints(QPointF center, double radius, int rpd)
-{
-//    vector<QPointF> points;
-//    QPointF point;
-//    double range = 1.0/rpd;
-//    for (double theta = 0; theta < 360; theta += range){
-//        point.setX(radius*cos(theta*M_PI/180.0));
-//        point.setY(radius*sin(theta*M_PI/180.0));
-//        points.push_back(center+point);
-//    }
-//    return points;
-}
-
-std::map<double,double>
-Rx::averageOnMap(std::map<double, double> values,
-                                          std::map<double, int> counter) const
-{
-    std::map<double,double> average_map;
-    for(const auto &value: values){
-        average_map[value.first] = value.second/counter[value.first];
-    }
-    return average_map;
-}
-
 complex<double> Rx::notifyObserversInterference(QLineF local_region)
 {
 //    complex<double> impulse_r;
@@ -779,7 +583,8 @@ complex<double> Rx::notifyObserversInterference(QLineF local_region)
 //    return impulse_r;
 }
 
-void Rx::detachObservers() {
+void Rx::detachObservers()
+{
     for (unsigned int i = 0; i < m_observers.size(); i++) {
         delete m_observers.at(i);
     }
@@ -787,63 +592,16 @@ void Rx::detachObservers() {
     m_transmitters.clear();
 }
 
-void Rx::notify(){
+void Rx::notify()
+{
     notifyObservers();
 }
 
 
-void Rx::notify(double &/*power*/,
-                                         std::vector<double> */*powers*/,
-                                         std::complex<double> &/*EMfiled*/)
+void Rx::notify(double &/*power*/, std::vector<double> */*powers*/, std::complex<double> &/*EMfiled*/)
 {
 
 }
-
-
-//void Rx::answer(ProductObserver *observer, double frequency,
-//                                         double bandwidth, double &power,
-//                                         std::complex<double> &EMfield)
-//{
-//    m_e_field += EMfield;
-//    m_power = power;
-////    record();
-////    save("/Users/amate/Documents/Polytech/Thesis/dataOnlyBetweenCar.csv");
-//    m_transmitterbandwidth = bandwidth;
-//    m_transmitterfrequency = frequency;
-//    if (m_graphic != nullptr){
-//        m_graphic->notifyToGraphic(this,m_power);
-
-//        m_transmitter = observer;
-////        m_transmitters.at(0)->drawRays(this, true);
-
-//        for(unsigned i = 0; i < m_transmitters.size(); i++) {
-//            m_transmitters.at(i)->drawRays(this, true);
-//        }
-
-//        computeSnr();
-
-//    }
-////    if(m_power < power - 20 && observer != m_transmitter){
-////        m_power = power;
-////        m_graphic->notifyToGraphic(this,m_power);
-//////        if(m_transmitter!=nullptr){
-//////            //m_transmitter->drawRays(this,false);
-//////        }
-////        m_transmitter = observer;
-////        m_transmitter->drawRays(this,true);
-////    }
-////    else{
-////        m_power = power;
-////        m_graphic->notifyToGraphic(this,m_power);
-////        if(m_transmitter != 0){
-////            m_transmitter->drawRays(this,true);
-////        }
-////        else{
-////            m_transmitter = observer;
-////        }
-////    }
-
-//}
 
 
 const QPointF * Rx::getPos() const
