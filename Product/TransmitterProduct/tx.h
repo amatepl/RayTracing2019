@@ -194,6 +194,8 @@ public:
      */
     void link(const QPointF &p, WholeRay *wholeRay);
 
+    complex<double> computeEField(QPointF *rx);
+
     /*
      * ProductObserver
      *
@@ -330,7 +332,7 @@ public:
 
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
-    void openDialog() override;
+    void openDialog(QWidget *) override;
     void setScale(float scale) override;
 
     /*!
@@ -339,6 +341,8 @@ public:
      * \param rx
      */
     void clearChData(QPointF *rx);
+
+    void deleteRays(QPointF *rx);
 
 //    // From ProductObserver
 //    void notify(const QPointF &pos) override;

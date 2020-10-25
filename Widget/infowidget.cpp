@@ -28,26 +28,26 @@ void InfoWidget::createInfoGroup(){
     info_group->setFixedWidth(300);
     QFormLayout* info_layout = new QFormLayout(info_group);
     scene_pos = new QLabel("Map position: ( " + QString::number(0) + " , " + QString::number(0) + " )", info_group);
-    power_rx = new QLabel("Power received [dBm]: " + QString::number(0), info_group);
-    distance = new QLabel("Transmitter distance [m]: " + QString::number(0), info_group);
-    snr = new QLabel("Signal-to-noise ration [dB]: " + QString::number(0), info_group);
-    delay_spread = new QLabel("Delay spread [ns]: " + QString::number(0), info_group);
-    rice_factor = new QLabel("Rice factor [dB]: " + QString::number(0), info_group);
-    coherence_bw = new QLabel("Coherence bandwidth [MHz]: " + QString::number(0), info_group);
-    coherence_time = new QLabel("Coherence time [\u03bcs]: " + QString::number(0), info_group);
-    angular_spread = new QLabel("Angular spread [rad]: " + QString::number(0), info_group);
-    doppler_spread = new QLabel("Doppler Spread [rad/s]: " + QString::number(0), info_group);
+//    power_rx = new QLabel("Power received [dBm]: " + QString::number(0), info_group);
+//    distance = new QLabel("Transmitter distance [m]: " + QString::number(0), info_group);
+//    snr = new QLabel("Signal-to-noise ration [dB]: " + QString::number(0), info_group);
+//    delay_spread = new QLabel("Delay spread [ns]: " + QString::number(0), info_group);
+//    rice_factor = new QLabel("Rice factor [dB]: " + QString::number(0), info_group);
+//    coherence_bw = new QLabel("Coherence bandwidth [MHz]: " + QString::number(0), info_group);
+//    coherence_time = new QLabel("Coherence time [\u03bcs]: " + QString::number(0), info_group);
+//    angular_spread = new QLabel("Angular spread [rad]: " + QString::number(0), info_group);
+//    doppler_spread = new QLabel("Doppler Spread [rad/s]: " + QString::number(0), info_group);
 
     info_layout->addRow(scene_pos);
-    info_layout->addRow(power_rx);
-    info_layout->addRow(distance);
-    info_layout->addRow(snr);
-    info_layout->addRow(delay_spread);
-    info_layout->addRow(rice_factor);
-    info_layout->addRow(coherence_bw);
-    info_layout->addRow(coherence_time);
-    info_layout->addRow(angular_spread);
-    info_layout->addRow(doppler_spread);
+//    info_layout->addRow(power_rx);
+//    info_layout->addRow(distance);
+//    info_layout->addRow(snr);
+//    info_layout->addRow(delay_spread);
+//    info_layout->addRow(rice_factor);
+//    info_layout->addRow(coherence_bw);
+//    info_layout->addRow(coherence_time);
+//    info_layout->addRow(angular_spread);
+//    info_layout->addRow(doppler_spread);
 
     info_group->setLayout(info_layout);
 }
@@ -268,13 +268,13 @@ void InfoWidget::changeDopplerSpread (double dopplerSpread)
 }
 
 void InfoWidget::reset(){
-    power_rx->setText("Power received [dBm]: " + QString::number(0));
-    this->distance->setText("Transmitter distance [m]: " + QString::number(0));
-    this->snr->setText("Signal-to-noise ration [dB]: " + QString::number(0));
-    delay_spread->setText("Delay spread [ns]: " + QString::number(0));
-    rice_factor->setText("Rice factor [dB]: " + QString::number(0));
-    coherence_bw->setText("Coherence bandwidth [MHz]: " + QString::number(0));
-    angular_spread->setText("Angular spread: " + QString::number(0));
+//    power_rx->setText("Power received [dBm]: " + QString::number(0));
+//    this->distance->setText("Transmitter distance [m]: " + QString::number(0));
+//    this->snr->setText("Signal-to-noise ration [dB]: " + QString::number(0));
+//    delay_spread->setText("Delay spread [ns]: " + QString::number(0));
+//    rice_factor->setText("Rice factor [dB]: " + QString::number(0));
+//    coherence_bw->setText("Coherence bandwidth [MHz]: " + QString::number(0));
+//    angular_spread->setText("Angular spread: " + QString::number(0));
 }
 
 // ---------- SLOTS ----------

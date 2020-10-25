@@ -1,6 +1,6 @@
 #include "receiverfactory.h"
 
-ReceiverFactory::ReceiverFactory(QMenu* productmenu, InfoWidget *info, QGraphicsScene* scene,const float scale)
+ReceiverFactory::ReceiverFactory(QMenu* productmenu, InfoWidget *info, QGraphicsScene* scene,const float scale, QWidget *parent):m_parent(parent)
 {
     m_productmenu = productmenu;
     m_scene = scene;
@@ -12,7 +12,7 @@ ReceiverFactory::ReceiverFactory(QMenu* productmenu, InfoWidget *info, QGraphics
 // Overrides
 
 GraphicsProduct* ReceiverFactory::createGraphicsProduct(int posX, int posY){
-    GraphicsRx* graphicsReceiverProduct = new GraphicsRx(true,m_productmenu, m_scene);
+    GraphicsRx* graphicsReceiverProduct = new GraphicsRx(true,m_productmenu, m_scene, m_parent);
     Rx* mathematicalReceiverProduct = new Rx(posX, posY);
     mathematicalReceiverProduct->setScale(px_to_meter);
     mathematicalReceiverProduct->setInfoWidget(info_widget);
@@ -37,7 +37,7 @@ MathematicalProduct* ReceiverFactory::createMathematicalProduct(int posX, int po
     mathematicalReceiverProduct->setScale(px_to_meter);
     mathematicalReceiverProduct->setInfoWidget(info_widget);
     if (linkgraphic){
-        GraphicsRx* graphicsReceiverProduct = new GraphicsRx(false,m_productmenu, m_scene);
+        GraphicsRx* graphicsReceiverProduct = new GraphicsRx(false,m_productmenu, m_scene, m_parent);
         graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
         graphicsReceiverProduct->setX(posX);
         graphicsReceiverProduct->setY(posY);
@@ -51,7 +51,7 @@ MathematicalProduct* ReceiverFactory::createMathematicalProduct(MathematicalProd
     mathematicalReceiverProduct->setInfoWidget(info_widget);
     mathematicalReceiverProduct->setScale(px_to_meter);
     if (linkgraphic){
-        GraphicsRx* graphicsReceiverProduct = new GraphicsRx(false,m_productmenu, m_scene);
+        GraphicsRx* graphicsReceiverProduct = new GraphicsRx(false,m_productmenu, m_scene, m_parent);
         graphicsReceiverProduct->attachObserver(mathematicalReceiverProduct);
         graphicsReceiverProduct->setX(mathematicalReceiverProduct->getPosX());
         graphicsReceiverProduct->setY(mathematicalReceiverProduct->getPosY());

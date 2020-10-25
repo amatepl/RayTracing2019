@@ -26,6 +26,7 @@ struct forImage;
 
 class ImagesMethod: public QObject
 {
+//    Q_OBJECT
 public:
     void createImages();
     void setObservers();

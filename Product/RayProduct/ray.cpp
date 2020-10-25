@@ -110,7 +110,7 @@ void Ray::update(QGraphicsItem */*graphic*/)
 }
 
 
-void Ray::openDialog()
+void Ray::openDialog(QWidget *)
 {
 
 }

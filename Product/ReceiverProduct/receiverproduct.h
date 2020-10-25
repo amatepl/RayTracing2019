@@ -41,6 +41,13 @@ public:
     virtual bool getEnable() = 0;
     virtual std::complex<double> getEField() = 0;
     virtual double getPower() = 0;
+    virtual double getDstnc() = 0;
+    virtual double getDlySprd() = 0;
+    virtual double getRiceFctr() = 0;
+    virtual double getCoherenceBw() = 0;
+    virtual double getCoherenceTm() = 0;
+    virtual double getAngSprd() = 0;
+    virtual double getDopplerSprd() = 0;
     virtual int targetSNR() = 0;
     virtual int noiseFigure() = 0;
     virtual int interFerenceMargin() = 0;

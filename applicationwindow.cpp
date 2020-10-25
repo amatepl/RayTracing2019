@@ -2,10 +2,11 @@
 #include "Share/wholeray.h"
 #include "Share/params.h"
 
-float px_to_meter = 0.1;
+float px_to_meter = 1;
 
-ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
+ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::WindowStaysOnBottomHint)
 {
+//    setWindowFlag(Qt::WindowStaysOnBottomHint);
     createToolBox();
     createToolInfo();
     createActions();
@@ -14,7 +15,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     view->setMouseTracking(true);
-    m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter);
+    m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter, this);
     m_transmitterFactory = new TransmitterFactory(m_productmenu, m_map, px_to_meter);
     m_buildingFactory = new BuildingFactory(m_productmenu, m_map, px_to_meter);
     m_treeFactory = new TreeFactory(m_productmenu, m_map, px_to_meter);
@@ -31,6 +32,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
     m_coverageAlgorithm = new Coverage(m_receiverFactory, px_to_meter);
     m_coverageAlgorithm->setScene(m_map);
+    connect(m_coverageAlgorithm, &Coverage::computed, this, &ApplicationWindow::addHeatMap);
 
     addToolBar(Qt::LeftToolBarArea, m_toolbarobject);
     addToolBar(Qt::TopToolBarArea, m_toolinfo);
@@ -198,8 +200,8 @@ void ApplicationWindow::createActions(){
     propertiesaction = new QAction(QIcon(":/Images/Properties.png"), tr("&Properties"), this);
     propertiesaction->setShortcut(tr("Open"));
 
-    connect(deleteaction, SIGNAL(triggered()), this, SLOT(deleteProduct()));
-    connect(propertiesaction, SIGNAL(triggered()), this, SLOT(openProduct()));
+    connect(deleteaction, &QAction::triggered, this, &ApplicationWindow::deleteProduct);
+    connect(propertiesaction, &QAction::triggered, this, &ApplicationWindow::openProduct);
 
 }
 
@@ -396,4 +398,9 @@ void ApplicationWindow::clearWorkspace()
 void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty)
 {
     m_model->generateMap();
+}
+
+void ApplicationWindow::addHeatMap(HeatMap *heatMap)
+{
+    m_map->addHeatMap(heatMap);
 }

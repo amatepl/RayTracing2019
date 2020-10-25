@@ -26,7 +26,7 @@ public:
     void attachObservable(GraphicsProduct *graphic) override;
 
     void update(QGraphicsItem *graphic) override;
-    void openDialog() override;
+    void openDialog(QWidget *) override;
 
 private:
     QPointF m_center;

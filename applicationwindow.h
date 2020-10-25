@@ -115,6 +115,7 @@ public slots:
     void openProduct();
     void clearWorkspace();
     void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty);
+    void addHeatMap(HeatMap *heatMap);
 };
 
 #endif // APPLICATIONWINDOW_H

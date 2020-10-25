@@ -93,6 +93,7 @@ Tx::computeImpulseReflection(WholeRay *ray_line, QLineF local_region)
 
 void Tx::estimateCh(QPointF *rx)
 {
+    m_chsData.at(rx).dstnc = QLineF(*this, *rx).length();
     complex <double> i(0.0, 1.0);
     m_los_factor[rx] = 0;
     double pwr = 0;
@@ -652,7 +653,7 @@ void Tx::update(QGraphicsItem *graphic)
 }
 
 
-void Tx::openDialog()
+void Tx::openDialog(QWidget *)
 {
     new DialogTx(this);
 }
@@ -660,7 +661,7 @@ void Tx::openDialog()
 void Tx::setScale(float scale)
 {
     MathematicalProduct::setScale(scale);
-    m_radius = m_radius/px_to_meter;
+    m_radius = m_radius * px_to_meter;
     m_zone  = buildCoverage();
 }
 
@@ -684,6 +685,18 @@ void Tx::clearChData(QPointF *rx)
     m_chsData[rx].dopplerDistr.clear();
     m_chsData[rx].prxDopplerSpctr.clear();
     m_chsData[rx].riceFactor = 0;
+
+}
+
+
+void Tx::deleteRays(QPointF *rx)
+{
+     if (m_receiversRays.count(rx)) {
+        for (unsigned int i = 0; i < m_receiversRays[rx].size(); i++) {
+            delete m_receiversRays[rx].at(i);
+        }
+        m_receiversRays[rx].clear();
+    }
 
 }
 
@@ -905,6 +918,41 @@ double Tx::computePathLossPower(QPointF* copy_receiver)
     powerAtReceiver = dBm(totalPower);
 
     return powerAtReceiver;
+}
+
+complex<double> Tx::computeEField(QPointF *rx)
+{
+    complex<double> emField = 0;
+    complex<double> groundField = 0;
+
+    for (unsigned i = 0; i < m_receiversRays[rx].size(); i++)
+    {
+        WholeRay *wholeRay = m_receiversRays[rx].at(i);
+
+        if (wholeRay->at(0)->getDiffracted())
+        {
+            map<QPointF *, map<double, double>>::iterator it;
+            complex<double>EMfield = computeDiffractedEfield(rx, wholeRay, false);
+            emField += EMfield;
+        }
+        else
+        {
+//            complex<double> EMfield = computeEMfield(wholeRay, copy_receiver,false);
+            tuple<int, int> arrSize = {m_column, m_row};
+            complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+                                                         m_orientation, m_pr_orientation,
+                                                         static_cast<ph::TxType>(m_kind));
+            if (wholeRay->size() == 1) {
+                // Adding the ground component
+                double angle_transmitter = wholeRay->back()->angle();
+                groundField = computeEfieldGround(rx ,angle_transmitter, false); // Compute the electrical field from the ray reflected off the ground
+                emField += groundField;
+            }
+            emField += EMfield;
+        }
+    }
+
+    return emField;
 }
 
 complex<double> Tx::computeInterference(QPointF* copy_receiver,QLineF local_region)

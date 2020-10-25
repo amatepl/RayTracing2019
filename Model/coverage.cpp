@@ -14,7 +14,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
                                          ReceiverFactory* /*receiverfactory*/)
 {
     setAttributs(mathematicalComponents);
-    reflectionsNumber = 1;
+    reflectionsNumber = 10;
 
     RayFactory* rayFactory = new RayFactory(false, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
@@ -66,22 +66,24 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
 //    m_scene->addRect(workingZone,QPen(),illumination1);
 
-    for(int i = workingZone.topLeft().y();
-         i < workingZone.bottomLeft().y();
-         i += workingZone.height() / (200/px_to_meter)){
+    emit(computed(buildCoverageZone(workingZone.toRect())));
 
-        dynamic_cast<Rx*>(receiver)->setPosY(i);
+//    for(int i = workingZone.topLeft().y();
+//         i < workingZone.bottomLeft().y();
+//         i += workingZone.height() / (200/px_to_meter)){
 
-        for(int j = workingZone.topLeft().x();
-             j < workingZone.topRight().x();
-             j += workingZone.width() / (200/px_to_meter)){
+//        dynamic_cast<Rx*>(receiver)->setPosY(i);
 
-            dynamic_cast<Rx*>(receiver)->setPosX(j);
-            MathematicalProduct* newReceiver = m_receiverFactory->createMathematicalProduct(receiver,true);
-            m_coverageRxs.push_back(newReceiver);
+//        for(int j = workingZone.topLeft().x();
+//             j < workingZone.topRight().x();
+//             j += workingZone.width() / (200/px_to_meter)){
 
-        }
-    }
+//            dynamic_cast<Rx*>(receiver)->setPosX(j);
+//            MathematicalProduct* newReceiver = m_receiverFactory->createMathematicalProduct(receiver,true);
+//            m_coverageRxs.push_back(newReceiver);
+
+//        }
+//    }
     return nullptr;
 }
 
@@ -126,11 +128,39 @@ void Coverage::choseBeams()
 }
 
 
-vector<QRectF> Coverage::buildCoverageZone()
+HeatMap *Coverage::buildCoverageZone(const QRect &workingZone)
 {
-    for(unsigned int i=0; i<m_transmitters.size();i++){
+    QPointF rx;
+    unsigned h = workingZone.height();
+    unsigned w = workingZone.width();
+    int maxY = workingZone.bottomLeft().y();
+    int maxX = workingZone.topRight().x();
+
+    for(int i = workingZone.topLeft().y(); i < maxY; i += (int) (1 / m_dnsty)){
+        rx.setY(i);
+
+        for(int j = workingZone.topLeft().x(); j < maxX; j += (int) (1 / m_dnsty)){
+
+                rx.setX(j);
+
+                notifyTxs(&rx);
+        }
+    }
+    return &m_heatMap;
+}
+
+void Coverage::notifyTxs(QPointF *rx)
+{
+    complex<double> eField(0,0);
+    for (auto &tx: m_transmitters){
+        tx->deleteRays(rx);
+        tx->detectAndLink(*rx);
+        tx->notifyObservers(rx, tx->movement());
+        eField += tx->computeEField(rx);
 
     }
-    vector<QRectF> res;
-    return res;
+
+    m_heatMap.push_back(Tile{rx->toPoint(), eField, (int) (1 / m_dnsty)});
 }
+//-------SIGNALS-----------------------------------------------------------------------------------
+

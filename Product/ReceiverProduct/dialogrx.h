@@ -60,6 +60,7 @@ public:
     void updateImpulseResponse();
     QWidget* TDLImpulseResponse();
     QWidget* GeneralTabDialog();
+    void updateChInfo();
     QWidget* InterferencePattern();
     QWidget* DistributionInterference();
     QWidget* PrxAngularSpctr();
@@ -135,6 +136,16 @@ private:
     bool enable;
     InterfererencePattern *m_interferencepattern;
     QCustomPlot *m_distribution;
+
+    // 1. Channel
+    QLabel *m_prx;
+    QLabel *m_dstnc;
+    QLabel *m_dlySprd;
+    QLabel *m_riceFactor;
+    QLabel *m_coherenceBw;
+    QLabel *m_coherenceTm;
+    QLabel *m_angSpdr;
+    QLabel *m_dopplerSpdr;
 
      // 2. Impulse and TDL vVariables
     QVector<double> h,h_tdl,tau, tau_tdl;

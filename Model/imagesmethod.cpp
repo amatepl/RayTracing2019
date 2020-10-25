@@ -37,6 +37,7 @@ void ImagesMethod::launchAlgorithm()
 
         m_totalIlluminationZone = m_totalIlluminationZone.united(data.zone.boundingRect());
 
+//        m_scene->addPolygon(m_totalIlluminationZone, illumination1);
         // Launches the methods to compute siple and double diffraction
 
         setDiffraction(data.walls, data.zone, transmitter);
@@ -521,7 +522,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                 illuminatedWalls.push_back(Line(zone.at(i), zone.at(i+1)));
                 usedWalls.push_back(walls.at(j));
 
-                //addLine(Line(zone.at(i),zone.at(i+1)),redPen);
+//                addLine(Line(zone.at(i),zone.at(i+1)),redPen);
 
                 //Creation of the trasmitter image
                 TxImg *image = new TxImg(Line(zone.at(i), zone.at(i+1)),
