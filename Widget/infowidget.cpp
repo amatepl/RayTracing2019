@@ -110,6 +110,10 @@ void InfoWidget::createRayGroup(){
     ray_layout->addWidget(launch_raytracing, 0, 0, Qt::AlignTop);
     connect(launch_raytracing,&QPushButton::clicked,this,&InfoWidget::sendLaunchRayTracing);
 
+    clear_raytracing = new QPushButton(QIcon(QPixmap(":/Images/Delete.png")),"Clear");
+    connect(clear_raytracing, &QPushButton::clicked, this, &InfoWidget::sendClearRayTracing);
+    ray_layout->addWidget(clear_raytracing, 1, 0, Qt::AlignTop);
+
     rflctns_ray = new QSpinBox(ray_group);
     rflctns_ray->setRange(0.00,999.00);
     rflctns_ray->setAccelerated(true);
@@ -117,7 +121,7 @@ void InfoWidget::createRayGroup(){
     f->addWidget(rflctns_ray);
     QFormLayout *f_layout = new QFormLayout;
     f_layout->addRow("Reflections: ", f);
-    ray_layout->addLayout(f_layout, 1, 0, Qt::AlignTop);
+    ray_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
 
 
     ray_group->setLayout(ray_layout);
@@ -136,6 +140,10 @@ void InfoWidget::createCoverageGroup(){
     coverage_layout->addWidget(launch_coverage, 0, 0, Qt::AlignTop);
     connect(launch_coverage,&QPushButton::clicked,this,&InfoWidget::sendLaunchCoverage);
 
+    clear_coverage = new QPushButton(QIcon(QPixmap(":/Images/Delete.png")),"Clear");
+    connect(clear_coverage, &QPushButton::clicked, this, &InfoWidget::sendClearCoverage);
+    coverage_layout->addWidget(clear_coverage, 1, 0, Qt::AlignTop);
+
     rflctns_cov = new QSpinBox(ray_group);
     rflctns_cov->setRange(0.00,999.00);
     rflctns_cov->setAccelerated(true);
@@ -150,7 +158,7 @@ void InfoWidget::createCoverageGroup(){
 
     f_layout->addRow("Reflections: ", cov_dnsty);
 
-    coverage_layout->addLayout(f_layout, 1, 0, Qt::AlignTop);
+    coverage_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
 
     coverage_group->setLayout(coverage_layout);
 }
@@ -284,10 +292,24 @@ void InfoWidget::sendLaunchRayTracing(){
     launch_coverage->setEnabled(false);
 }
 
+void InfoWidget::sendClearRayTracing()
+{
+    clearRayTracing();
+    launch_raytracing->setEnabled(true);
+    launch_coverage->setEnabled(true);
+}
+
 void InfoWidget::sendLaunchCoverage(){
     coverage();
     launch_raytracing->setEnabled(false);
     launch_coverage->setEnabled(false);
+}
+
+void InfoWidget::sendClearCoverage()
+{
+    clearCoverage();
+    launch_raytracing->setEnabled(true);
+    launch_coverage->setEnabled(true);
 }
 
 void InfoWidget::sendClear(){

@@ -265,7 +265,9 @@ void ApplicationWindow::createToolInfo()
     m_toolinfo->addWidget(m_info_widget);
 
     connect(m_info_widget, &InfoWidget::rayTracing, this, &ApplicationWindow::LaunchRayTracing);
+    connect(m_info_widget, &InfoWidget::clearRayTracing, this, &ApplicationWindow::clearRayTracing);
     connect(m_info_widget, &InfoWidget::coverage, this, &ApplicationWindow::launchCoverage);
+    connect(m_info_widget, &InfoWidget::clearCoverage, this, &ApplicationWindow::clearCoverage);
     connect(m_info_widget, &InfoWidget::startCars, this, &ApplicationWindow::startCars);
     connect(m_info_widget, &InfoWidget::clear, this, &ApplicationWindow::clearWorkspace);
     connect(m_info_widget, &InfoWidget::generateMap, this, &ApplicationWindow::generateMap);
@@ -362,12 +364,20 @@ void ApplicationWindow::LaunchRayTracing(unsigned reflectionsNbr)
 {
     m_rayTracingAlgorithm->setReflectionsNbr(reflectionsNbr);
     m_model->launchAlgorithm(m_rayTracingAlgorithm);
+}
 
+void ApplicationWindow::clearRayTracing()
+{
+    m_rayTracingAlgorithm->clear();
 }
 
 void ApplicationWindow::launchCoverage()
 {
     m_model->launchAlgorithm(m_coverageAlgorithm);
+}
+
+void ApplicationWindow::clearCoverage()
+{
 
 }
 

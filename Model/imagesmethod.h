@@ -59,6 +59,10 @@ public:
 
     void setReflectionsNbr(unsigned reflectionsNbr);
 
+    void clearTxs();
+
+    void clearRxs();
+
     void clear();
 
 protected:

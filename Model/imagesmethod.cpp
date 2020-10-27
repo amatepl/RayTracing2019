@@ -582,8 +582,25 @@ void ImagesMethod::setReflectionsNbr(unsigned int reflectionsNbr)
     reflectionsNumber = reflectionsNbr;
 }
 
+void ImagesMethod::clearTxs()
+{
+    for (auto &tx: m_transmitters) {
+        tx->clearAll();
+    }
+}
+
+void ImagesMethod::clearRxs()
+{
+    for (auto &rx: m_receivers) {
+        rx->detachObservers();
+    }
+}
+
 void ImagesMethod::clear()
 {
+    clearAllImages();
+    clearTxs();
+    clearRxs();
     m_transmitters.clear();
     m_buildings.clear();
     m_cars.clear();

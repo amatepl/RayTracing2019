@@ -109,7 +109,9 @@ public slots:
     void antennaGroupClicked(int);
     void obstacleGroupClicked(int);
     void LaunchRayTracing(unsigned reflectionsNbr);
+    void clearRayTracing();
     void launchCoverage();
+    void clearCoverage();
     void startCars();
     void deleteProduct();
     void openProduct();

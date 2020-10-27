@@ -565,9 +565,13 @@ void Tx::clearAll(){
 //            }
 //            delete whole_rays.at(i);
 //        }
+        for (auto &wholeRay: whole_rays) {
+            wholeRay->clear();
+        }
         whole_rays.clear();
     }
     m_receiversRays.clear();
+    m_txImgs.clear();
 }
 
 void Tx::addTxImg(ProductObserver *txImg)
