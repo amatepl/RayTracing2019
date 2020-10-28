@@ -34,6 +34,11 @@ void GraphicsMap::addHeatMap(HeatMap *heatMap)
     m_heatMap = unique_ptr<GraphicsHeatMap>(new GraphicsHeatMap(heatMap, this));
 }
 
+void GraphicsMap::clearHeatMap()
+{
+    m_heatMap->clear();
+}
+
 // Overrides
 
 void GraphicsMap::mousePressEvent(QGraphicsSceneMouseEvent *event)

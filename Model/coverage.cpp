@@ -92,6 +92,12 @@ void Coverage::clearWorkspace()
 
 }
 
+void Coverage::clear()
+{
+    ImagesMethod::clear();
+    m_heatMap.clear();
+}
+
 void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathematicalComponents){
 
     if(m_mathematicalComponents.count("Transmitter")){

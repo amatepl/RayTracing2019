@@ -24,6 +24,8 @@ public:
 
     void clearWorkspace() override;
 
+    void clear();
+
     HeatMap *buildCoverageZone(const QRect &workingZone);
     void notifyTxs(QPointF *rx);
 

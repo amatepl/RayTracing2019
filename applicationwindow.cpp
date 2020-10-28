@@ -378,7 +378,8 @@ void ApplicationWindow::launchCoverage()
 
 void ApplicationWindow::clearCoverage()
 {
-
+    m_coverageAlgorithm->clear();
+    m_map->clearHeatMap();
 }
 
 void ApplicationWindow::startCars()

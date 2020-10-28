@@ -37,6 +37,9 @@ GraphicsHeatMap::GraphicsHeatMap(HeatMap *heatMap, QGraphicsScene *scene): m_hea
 
 void GraphicsHeatMap::clear()
 {
+    for (auto &tile: m_tiles){
+        delete tile;
+    }
     m_tiles.clear();
     m_heatMap->clear();
 }

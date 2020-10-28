@@ -29,6 +29,7 @@ public:
     void setSceneFactory(SceneFactory *sceneFactory);
     void deleteItem();
     void addHeatMap(HeatMap *heatMap);
+    void clearHeatMap();
 
     // Overdrives
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

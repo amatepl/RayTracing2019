@@ -134,9 +134,12 @@ void ImagesMethod::clearAllImages()
 //        m_images[m_transmitters.at(i)].shrink_to_fit();
     }
 
-    for (unsigned i = 0; i < m_receivers.size(); i++) {
-        m_receiver->clearObeservers();
-    }
+//    cout << "Size m_receivers: " << m_receivers.size()<<endl;
+
+//    for (unsigned i = 0; i < m_receivers.size(); i++) {
+
+//        m_receiver->clearObeservers();
+//    }
 }
 
 
