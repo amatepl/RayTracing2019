@@ -21,7 +21,7 @@ Tx::Tx(int posX, int posY) : QPointF(posX, posY)
     // !!!!!!!!!!!!!!!! Relative Permittivity is on the wall !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!                                      !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    epsilonWallRel      = 5;
+    epsilonWallRel      = 4.5;
 }
 
 Tx::~Tx()
@@ -90,7 +90,8 @@ Tx::computeImpulseReflection(WholeRay *ray_line, QLineF local_region)
     return impulse_r;
 }
 
-void Tx::estimateCh(ProductObservable *rx)
+
+void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
 {
     complex <double> i(0.0, 1.0);
     m_los_factor[rx] = 0;
@@ -99,32 +100,37 @@ void Tx::estimateCh(ProductObservable *rx)
     QLineF receiver_speed = receivers_speed[rx];
     QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
 
-    for (const auto wholeRay: m_receiversRays[rx]) {
-
-        const double completeLength = wholeRay->totalLength();
-        const double angleRx = wholeRay->angleRx();
-        const double angleTx = wholeRay->angleTx();
+//    for (const auto wholeRay: m_receiversRays[rx]) {
+        const double completeLength = ray->totalLength();
+        const double angleRx = ray->angleRx();
+        const double angleTx = ray->angleTx();
         Data &chData = m_chsData.at(rx);
-        complex<double> array_factor = ph::totaleArrayFactor(angleTx, 90,
-                                                             m_frequency, m_orientation,
-                                                             m_pr_orientation, m_column,
-                                                             m_row, static_cast<ph::TxType>(m_kind));
-        const double R = ph::computeR(wholeRay);
-        complex<double> a =  R * array_factor / completeLength;
-        complex<double> h = a * exp(-i * (wvNbr) * completeLength);
-        pwr += norm(h);
-        hMax = abs(h) > hMax ? abs(h): hMax;
+//        complex<double> array_factor = ph::totaleArrayFactor(angleTx, 90,
+//                                                             m_frequency, m_orientation,
+//                                                             m_pr_orientation, m_column,
+//                                                             m_row, static_cast<ph::TxType>(m_kind));
+//        const double R = ph::computeR(wholeRay);
+//        complex<double> a =  R * array_factor / completeLength;
+//        complex<double> h = a * exp(-i * (wvNbr) * completeLength);
 
-        if (wholeRay->size() == 1) m_los_factor[rx] = norm(h);
-        m_nlos_factor[rx] += norm(h);
+//        tuple<int, int> arrSize = {m_column, m_row};
+//        complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+//                                                     m_orientation, m_pr_orientation,
+//                                                     static_cast<ph::TxType>(m_kind));
+//        pwr += norm(h);
+//        hMax = abs(h) > hMax ? abs(h): hMax;
+
+//        if (wholeRay->size() == 1) m_los_factor[rx] = norm(h);
+//        m_nlos_factor[rx] += norm(h);
 
         // Tau
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau * 1e4) / 1e4; // [precision of 0.1 ps]
 
         // Impulse response
-        m_receiversImpulse[rx][tau] += h; // To change
-        chData.impulseResp[tau] += h;
+//        m_receiversImpulse[rx][tau] += lambda*EMfield/M_PI; // To change
+        complex <double> voltage = ph::inducedVoltage(field,M_PI/2,lambda);
+        chData.impulseResp[tau] += voltage;
 
         beta.setAngle(angleRx);
 
@@ -140,32 +146,33 @@ void Tx::estimateCh(ProductObservable *rx)
         double u = ph::uMPC(wvNbr, theta);
         double w = receiver_speed.length()*u;
 
-        complex<double> angularDistr = ph::angDistrMPC(h, theta, u);
-        complex<double> dopplerDistr = ph::angDistrMPC(h, theta, w);
-        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
-        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
+//        complex<double> angularDistr = ph::angDistrMPC(h, theta, u);
+//        complex<double> dopplerDistr = ph::angDistrMPC(h, theta, w);
+//        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
+//        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
-        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
+//        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
 
         // Save Data
         chData.u.push_back(u);
         chData.w.push_back(w);
-        chData.angularDistr.push_back(angularDistr);
-        chData.dopplerDistr.push_back(dopplerDistr);
-        chData.prxAngularSpctr.push_back(prxAngSpctr);
-        chData.prxDopplerSpctr.push_back(prxDopSpctr);
+//        chData.angularDistr.push_back(angularDistr);
+//        chData.dopplerDistr.push_back(dopplerDistr);
+//        chData.prxAngularSpctr.push_back(prxAngSpctr);
+//        chData.prxDopplerSpctr.push_back(prxDopSpctr);
 
         //receivers_speed.translate(- m_receiver_speed.p1());
         // m_ray_speed.translate(- m_ray_speed.p1());
         //QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
         //double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
-        double omega = 2.0 * M_PI / lambda * rays_speed[wholeRay];
-        omega = round(omega * 1e4) / 1e4;
+//        double omega = 2.0 * M_PI / lambda * rays_speed[wholeRay];
+//        omega = round(omega * 1e4) / 1e4;
         //m_dopplerSpectrum[rx][omega] += h;
-        chData.dopplerSpctr[omega] += h;
+//        chData.dopplerSpctr[omega] += h;
         //chData.dopplerDistr[omega] += h;
 
-    }
+//    }
+
 
 //    normalizePrxSpctr(m_chsData.at(rx).prxAngularSpctr);
 //    normalizePrxSpctr(m_chsData.at(rx).prxDopplerSpctr);
@@ -194,7 +201,7 @@ Tx::resultant(QLineF line1, QLineF line2)
 }
 
 complex <double>
-Tx::computeImpulseGroundReflection(ProductObservable *copy_receiver,
+Tx::computeImpulseGroundReflection(QPointF *copy_receiver,
                                                                double direction,
                                                                QLineF local_region)
 {
@@ -209,6 +216,7 @@ Tx::computeImpulseGroundReflection(ProductObservable *copy_receiver,
                                                          m_frequency, m_orientation,
                                                          m_pr_orientation, m_column,
                                                          m_row, static_cast<ph::TxType>(m_kind));
+
     double tau = completeLength/c;
     double local_region_angle = local_region.angle() + 180.0;
     local_region_angle = fmod(local_region_angle, 360.0);
@@ -219,7 +227,7 @@ Tx::computeImpulseGroundReflection(ProductObservable *copy_receiver,
     return impulse_r;
 }
 
-complex <double> Tx::computeEfieldGround(const ProductObservable *receiver,
+complex <double> Tx::computeEfieldGround(const QPointF *receiver,
                                                                     const double direction,
                                                                     const bool properties)
 {
@@ -248,8 +256,8 @@ complex <double> Tx::computeEfieldGround(const ProductObservable *receiver,
     {
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
-        m_receiversImpulse[receiver][tau] += a;
-        m_chsData[receiver].impulseResp[tau] += a;
+//        m_receiversImpulse[receiver][tau] += lambda*Efield*cos(M_PI/2*cos(thetaI))/(M_PI*sin(thetaI));
+        m_chsData[receiver].impulseResp[tau] += ph::inducedVoltage(Efield,thetaI,lambda);
         m_nlos_factor[receiver] += pow(abs(a),2);
 //        double shift = (direction - m_receiver_speed.angle()) * M_PI / 180.0;
 //        double omega = -2.0 * M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
@@ -281,7 +289,7 @@ complex <double> Tx::computeEfieldGround(const ProductObservable *receiver,
     return Efield;
 }
 
-double Tx::distance(const ProductObservable *receiver)
+double Tx::distance(const QPointF *receiver)
 {
 
     // ??????
@@ -291,8 +299,8 @@ double Tx::distance(const ProductObservable *receiver)
 
     double x1 = x();
     double y1 = y();
-    double x2 = receiver->getPos()->x();
-    double y2 = receiver->getPos()->y();
+    double x2 = receiver->x();
+    double y2 = receiver->y();
 
     return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2)) * px_to_meter; // conversion (1px == 1dm)
 }
@@ -333,7 +341,7 @@ Tx::computeImpulseDiffraction(WholeRay *ray_line, QLineF local_region)
     return impulse_r;
 }
 
-complex<double> Tx::computeDiffractedEfield(ProductObservable *receiver,
+complex<double> Tx::computeDiffractedEfield(QPointF *receiver,
                                                                         WholeRay *rayLine,
                                                                         bool properties)
 {
@@ -374,15 +382,15 @@ complex<double> Tx::computeDiffractedEfield(ProductObservable *receiver,
         double completeLength = rayLine->at(1)->getMeterLength() + rayLine->at(0)->getMeterLength();
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
-        m_receiversImpulse[receiver][tau] = a;
-        m_chsData[receiver].impulseResp[tau] = a;
+        m_receiversImpulse[receiver][tau] = Efield*lambda/M_PI;
+        m_chsData[receiver].impulseResp[tau] = Efield*lambda/M_PI;
 
     }
     return Efield;
 }
 
 
-void Tx::chooseBeam(ProductObservable *receiver)
+void Tx::chooseBeam(QPointF *receiver)
 {
 
     double powerAtReceiver = 0;
@@ -437,20 +445,21 @@ void Tx::chooseBeam(ProductObservable *receiver)
 
 
 void
-Tx::comput4FixedBeam(ProductObservable *receiver)
+Tx::comput4FixedBeam(QPointF *receiver)
 {
     bool diffracted = false;
     m_receiversField[receiver] = 0;
     m_receiversGroundField[receiver] = 0;
+    complex<double> EMfield;
     for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++)
     {
         WholeRay *wholeRay = m_receiversRays[receiver].at(i);
 
         if (wholeRay->at(0)->getDiffracted())
         {
-            map<ProductObservable *, map<double, double>>::iterator it;
+            map<QPointF *, map<double, double>>::iterator it;
             //m_ray_speed = ray_speeds[wholeRay];
-            complex<double>EMfield = computeDiffractedEfield(receiver,wholeRay,true);
+            EMfield = computeDiffractedEfield(receiver,wholeRay,true);
             m_receiversField[receiver] += EMfield;
 
             diffracted = true;
@@ -462,7 +471,7 @@ Tx::comput4FixedBeam(ProductObservable *receiver)
             tuple<int, int> arrSize = {m_column, m_row};
 //            double wvNbr = 2.0 * M_PI / lambda;
 //            complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
-            complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+            EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
                                                      m_orientation, m_pr_orientation,
                                                          static_cast<ph::TxType>(m_kind));
 
@@ -474,12 +483,14 @@ Tx::comput4FixedBeam(ProductObservable *receiver)
             m_receiversField[receiver] += EMfield;
 
         }
+        estimateCh(receiver,EMfield,wholeRay);
     }
 
-    estimateCh(receiver);
+
+//    ph::normalizeMap<map<double, double>(m_chsData.at(receiver).impulseResp);
 }
 
-void Tx::dontChoseBeam(ProductObservable *receiver)
+void Tx::dontChoseBeam(QPointF *receiver)
 {
     m_chosenBeams[receiver] = true;
 }
@@ -491,7 +502,7 @@ void Tx::freazeBeams()
 }
 
 
-double Tx::computePrx(complex <double> totalEfield, complex<double> groundField, ProductObservable* receiver)
+double Tx::computePrx(complex <double> totalEfield, complex<double> groundField, QPointF* receiver)
 {
     // Compute the power at the receive antenna with the total electric field induced by all MPC
     double distance = this->distance(receiver);
@@ -541,14 +552,14 @@ vector<WholeRay *> Tx::getRays()
 
 void Tx::notifyObservables()
 {
-    for (unsigned int i = 0; i < m_productObservable.size(); i++) {
-        m_productObservable.at(i)->notify();
-    }
+//    for (unsigned int i = 0; i < m_productObservable.size(); i++) {
+//        m_productObservable.at(i)->notify();
+//    }
 }
 
 
 void Tx::clearAll(){
-    //map<ProductObservable *,vector<vector<Ray *>*>>::iterator rays;
+    //map<QPointF *,vector<vector<Ray *>*>>::iterator rays;
     vector<WholeRay *> whole_rays;
     WholeRay *tmp;
     for (const auto  &rays: m_receiversRays){
@@ -601,6 +612,25 @@ vector<QPointF> Tx::pathLossPoints() const
     return pl_points;
 }
 
+bool Tx::detect(const QPointF &p)
+{
+    return m_zone.containsPoint(p, Qt::OddEvenFill);
+}
+
+void Tx::link(const QPointF &p, WholeRay *wholeRay)
+{
+    wholeRay->push_back(m_rayFactory->createRay(*this, p));
+    m_receiversRays[&p].push_back(wholeRay);
+
+}
+
+void Tx::detectAndLink(const QPointF &p)
+{
+    if(detect(p) && m_rayFactory != nullptr){
+        WholeRay *wholeRay = new WholeRay;
+        link(p, wholeRay);
+    }
+}
 // ---------------------------------------------------- TxInterface -------------------------------------------------------------------
 
 
@@ -642,7 +672,7 @@ void Tx::setScale(float scale)
     m_zone  = buildCoverage();
 }
 
-void Tx::clearChData(ProductObservable *rx)
+void Tx::clearChData(QPointF *rx)
 {
     m_chsData[rx].fq = 0;
     m_chsData[rx].bw = 0;
@@ -668,7 +698,7 @@ void Tx::clearChData(ProductObservable *rx)
 // ---------------------------------------------------- ProductObserver -------------------------------------------------------------------
 
 
-Data *Tx::update(ProductObservable *receiver, const QLineF movement)
+Data *Tx::update(QPointF *receiver, const QLineF movement)
 {
     //      The trasnmitter is updated every time an receiver moves
 
@@ -703,16 +733,17 @@ Data *Tx::update(ProductObservable *receiver, const QLineF movement)
     }
 
 
-    const QPointF &pos = *receiver->getPos();
+    const QPointF &pos = *receiver;
 
-    if (m_zone.containsPoint(pos, Qt::OddEvenFill)) {
-        //      The receiver is in the illumination zone
+    detectAndLink(pos);
 
-        WholeRay *wholeRay = new WholeRay;
-//        QPointF m_pos(int(this->x()), int(this->y()));
-        wholeRay->push_back(m_rayFactory->createRay(*this, pos));
-        m_receiversRays[receiver].push_back(wholeRay);
-    }
+//    if (m_zone.containsPoint(pos, Qt::OddEvenFill)) {
+//        //      The receiver is in the illumination zone
+
+//        WholeRay *wholeRay = new WholeRay;
+//        wholeRay->push_back(m_rayFactory->createRay(*this, pos));
+//        m_receiversRays[receiver].push_back(wholeRay);
+//    }
 
     notifyObservers(receiver, movement);
 
@@ -721,21 +752,21 @@ Data *Tx::update(ProductObservable *receiver, const QLineF movement)
     return getChData(receiver);
 }
 
-void Tx::notifyObservers(ProductObservable *rx, const QLineF mvmnt)
+void Tx::notifyObservers(QPointF *rx, const QLineF mvmnt)
 {
     for (auto &txImg: m_txImgs) {
         txImg->update(rx, mvmnt);
     }
 }
 
-void Tx::attachObservable(ProductObservable *productObservable)
+void Tx::attachObservable(QPointF *productObservable)
 {
     m_productObservable.push_back(productObservable);
     m_chosenBeams[productObservable] = false;
 }
 
 
-void Tx::drawRays(ProductObservable *productObservable, bool draw)
+void Tx::drawRays(QPointF *productObservable, bool draw)
 {
     if (draw) {
         for (unsigned int i = 0; i < m_receiversRays[productObservable].size(); i++) {
@@ -753,7 +784,7 @@ void Tx::drawRays(ProductObservable *productObservable, bool draw)
 }
 
 
-Data * Tx::getChData(ProductObservable *rx)
+Data * Tx::getChData(QPointF *rx)
 {
     // Rice Factor
     m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
@@ -796,13 +827,13 @@ Data * Tx::getChData(ProductObservable *rx)
 
 //    map<double, double> spaceCorr = ph::correlation(test);
 
-    m_chsData[rx].prxDopplerSpctr = out2;
+    m_chsData[rx].spaceCrltn = out2;
 //    m_chsData[rx].w = vector <double>(u2.begin(), u2.end() -1 );
     m_chsData[rx].w = omega;
     return &m_chsData[rx];
 }
 
-void Tx::angularSpread(ProductObservable *rx)
+void Tx::angularSpread(QPointF *rx)
 {
     double prx = 0;
     double variance = 0;
@@ -820,7 +851,7 @@ void Tx::angularSpread(ProductObservable *rx)
     m_chsData.at(rx).angularSpred = sqrt(variance/prx - pow(mean, 2));
 }
 
-void Tx::compute(ProductObservable *receiver)
+void Tx::compute(QPointF *receiver)
 {
     if (!m_beamsFrozen && !m_chosenBeams[receiver]) {
 
@@ -846,8 +877,7 @@ void Tx::compute(ProductObservable *receiver)
 }
 
 
-double
-Tx::computePathLossPower(ProductObservable* copy_receiver)
+double Tx::computePathLossPower(QPointF* copy_receiver)
 {
     double powerAtReceiver = 0;
     complex<double> emField = 0;
@@ -859,7 +889,7 @@ Tx::computePathLossPower(ProductObservable* copy_receiver)
 
         if (wholeRay->at(0)->getDiffracted())
         {
-            map<ProductObservable *, map<double, double>>::iterator it;
+            map<QPointF *, map<double, double>>::iterator it;
             complex<double>EMfield = computeDiffractedEfield(copy_receiver,wholeRay,false);
             emField += EMfield;
         }
@@ -885,7 +915,7 @@ Tx::computePathLossPower(ProductObservable* copy_receiver)
     return powerAtReceiver;
 }
 
-complex<double> Tx::computeInterference(ProductObservable* copy_receiver,QLineF local_region)
+complex<double> Tx::computeInterference(QPointF* copy_receiver,QLineF local_region)
 {
     complex<double> impulse_r = 0;
     vector<WholeRay *> wholeRays = m_receiversRays[copy_receiver];
@@ -925,7 +955,7 @@ void Tx::attachObservable(ModelObservable *modelObservable)
 // ---------------------------------------------------- AbstractAntenna ---------------------------
 
 
-void Tx::notifyParent(ProductObservable *receiver,
+void Tx::notifyParent(QPointF *receiver,
                                                   double speed,
                                                   const QPointF &point,
                                                   WholeRay *wholeRay)
@@ -995,3 +1025,256 @@ void Tx::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*or
     }
 }
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 1. Path Loss Computation:
+
+void Tx::clearPathLoss()
+{
+    m_pathloss.clear();
+    Prx.clear();
+    D.clear();
+    logD.clear();
+    path_loss.clear();
+    friis_loss.clear();
+    fading.clear();
+    m = 0;
+    fading_variability = 0;
+    min_prx = 0;
+}
+
+void Tx::computePathLossFading()
+{
+    linearRegressionPathLoss();
+    for (unsigned i = 0; i < m_pathloss.size(); i++){
+        path_loss.push_back(m * logD[i] + b);
+        fading.push_back(Prx[i] - path_loss[i]);
+        friis_loss.push_back(-20 * logD[i] + m_pathloss[1]);
+    }
+
+    fading_variability = standardDeviation();
+}
+
+void Tx::linearRegressionPathLoss()
+{
+    /*
+    *   b = output intercept
+    *   m  = output slope
+    *   r = output correlation coefficient (can be NULL if you don't want it)
+    */
+
+    for (auto &path: m_pathloss){
+        D.push_back(path.first);
+        logD.push_back(log10(path.first));
+        Prx.push_back(path.second);
+    }
+
+    double   sumx = 0.0;                      /* sum of x     */
+    double   sumx2 = 0.0;                     /* sum of x**2  */
+    double   sumxy = 0.0;                     /* sum of x * y */
+    double   sumy = 0.0;                      /* sum of y     */
+    double   sumy2 = 0.0;                     /* sum of y**2  */
+
+    for (unsigned long i=0;i<m_pathloss.size();i++){
+        sumx  += logD[i];
+        sumx2 += pow(logD[i],2);
+        sumxy += logD[i] * Prx[i];
+        sumy  += Prx[i];
+        sumy2 += pow(Prx[i],2);
+    }
+
+    double denom = (m_pathloss.size() * sumx2 - pow(sumx,2));
+    if (denom == 0) {
+        // singular matrix. can't solve the problem.
+        m = 0;
+        b = 0;
+        if (r) r = 0;
+    }
+    else{
+        m = (m_pathloss.size() * sumxy  -  sumx * sumy) / denom;
+        b = (sumy * sumx2  -  sumx * sumxy) / denom;
+        if (r != 0.0) {
+            r = (sumxy - sumx * sumy / m_pathloss.size()) /    /* compute correlation coeff */
+            sqrt((sumx2 - pow(sumx,2)/m_pathloss.size()) *
+            (sumy2 - pow(sumy,2)/m_pathloss.size()));
+        }
+    }
+}
+
+double Tx::standardDeviation(){
+    double sum = 0.0, sDeviation = 0.0, mean;
+    int count = fading.size();
+    int i;
+    for(i = 0; i < count; i++) {
+        sum += fading[i];
+    }
+    // Calculating mean
+    mean = sum/count;
+    for(i = 0; i < count; ++i) {
+        sDeviation += pow(fading[i] - mean, 2);
+    }
+    double res = sqrt(sDeviation/count);
+    if(res<1e-5){res = 0;}
+    return res;
+}
+
+void Tx::notifyObserversPathLoss()
+{
+    clearPathLoss();
+    vector<QPointF> pl_points = pathLossPoints();   // get the path loss (pl) points of the transmitter
+    QPointF copy_receiver;   // copy a receiver to compute power
+    std::map<double /*distance*/, double /*power sum*/> sum_power;  // sum of power
+    std::map<double /*distance*/, int /*counter*/> counter;     // counter to compute average
+
+    for(unsigned i = 0; i <= pl_points.size(); i++)
+    {
+        if (i == pl_points.size()){
+            copy_receiver.setX(this->x()+1.0/px_to_meter);
+            copy_receiver.setY(this->y());
+        }
+        else {
+            copy_receiver.setX(pl_points.at(i).x());
+            copy_receiver.setY(pl_points.at(i).y());
+        }
+        clearChData(&copy_receiver);
+        if (m_receiversRays.count(&copy_receiver)) {
+            for (unsigned int i = 0; i < m_receiversRays[&copy_receiver].size(); i++) {
+                delete m_receiversRays[&copy_receiver].at(i);
+            }
+            m_receiversRays[&copy_receiver].clear();
+        }
+        detectAndLink(copy_receiver);
+        notifyObservers(&copy_receiver, m_movement);
+
+        double power = computePathLossPower(&copy_receiver);
+        QLineF line(*this, copy_receiver);
+        if (i == pl_points.size()){
+            counter[1.0] +=1;
+            sum_power[1.0] += power;
+        }
+        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
+        {
+            counter[line.length()*px_to_meter] +=1;
+            sum_power[line.length()*px_to_meter] += power;
+        }
+    }
+    m_pathloss.clear();
+    m_pathloss = averageOnMap(sum_power,counter);
+    computePathLossFading();
+//    modelPathLoss();
+//    cellRange();
+    computeMinPrx();
+}
+
+double Tx::inputNoise()
+{
+    return 10 * log10(k_b * t_0 * m_bandwidth);
+}
+
+void Tx::computeMinPrx()
+{
+    min_prx = m_target_snr + m_noise_figure + inputNoise() + m_interferencemargin + 30; // [dBm]
+}
+
+
+//-----------------------------------------------------------------------------------------------------------
+// Shadowing computation
+
+void Tx::clearShadowing()
+{
+
+}
+
+map<double,double> Tx::notifyObserversShadowing()
+{
+    vector<QPointF> points = circlePoints(*this, 100, 1);
+    QPointF copy_receiver;
+    map <double /*angle*/,double /*power*/> shadow;
+    for(unsigned i = 0; i < points.size(); i++)
+    {
+        copy_receiver.setX(points.at(i).x());
+        copy_receiver.setY(points.at(i).y());
+
+        clearChData(&copy_receiver);
+        if (m_receiversRays.count(&copy_receiver)) {
+            for (unsigned int i = 0; i < m_receiversRays[&copy_receiver].size(); i++) {
+                delete m_receiversRays[&copy_receiver].at(i);
+            }
+            m_receiversRays[&copy_receiver].clear();
+        }
+
+        detectAndLink(copy_receiver);
+        notifyObservers(&copy_receiver, m_movement);
+
+        double power = computePathLossPower(&copy_receiver);
+        QLineF line(*this, copy_receiver);
+        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
+        {
+            shadow[line.angle()*M_PI/180.0] = power;
+        }
+    }
+    return shadow;
+}
+
+vector<QPointF> Tx::circlePoints(QPointF center, double radius, int rpd)
+{
+    vector<QPointF> points;
+    QPointF point;
+    double range = 1.0/rpd;
+    for (double theta = 0; theta < 360; theta += range){
+        point.setX(radius*cos(theta*M_PI/180.0));
+        point.setY(radius*sin(theta*M_PI/180.0));
+        points.push_back(center+point);
+    }
+    return points;
+}
+
+std::map<double,double> Tx::averageOnMap(std::map<double, double> values,
+                                          std::map<double, int> counter) const
+{
+    std::map<double,double> average_map;
+    for(const auto &value: values){
+        average_map[value.first] = value.second/counter[value.first];
+    }
+    return average_map;
+}
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 3. Cell Range Computation:
+void Tx::cellRange()
+{
+    // minPrx = <Prx> - L_fading
+    // <Prx> = mx + b; where x = log10(d)
+    // Pr[L_fading<gamma] = 1 - 1/2* erfc(gamma/(fadingVariability * sqrt(2)))
+
+    // Sweep gamma [0; 3*fadingVariability] => Compute probability Pr[L_fading<gamma] for each gamma
+    // => Compute R such that minPrx> = <Prx(R)> - gamma
+    clearCellRange();
+    int lengthData = 100;
+    double step = (3*fading_variability)/lengthData;
+    double gamma;
+    probability.resize(lengthData);
+    cell_range.resize(lengthData);
+    for (int i=0; i<lengthData; ++i){
+        gamma = i*step;
+        probability[i] = 1 - 0.5*erfc(gamma/(fading_variability * sqrt(2)));// Pr[L_fading<gamma]
+
+        // minPrx = mx + b - gamma[dBm] => x = (minPrx + gamma - b)/m
+        // => log10(d) = (-102 + gamma - b)/m => d = 10((minPrx + gamma - b)/m)
+        cell_range[i] = pow(10,(min_prx + gamma - b)/m);
+    }
+}
+
+void Tx::clearCellRange()
+{
+    probability.clear();
+    cell_range.clear();
+}
+
+vector<double> Tx::probabilityConnection()
+{
+    return probability;
+}
+
+vector<double> Tx::cellRangeConnection()
+{
+    return cell_range;
+}

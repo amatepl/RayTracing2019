@@ -128,24 +128,24 @@ QPolygonF TxImg::getIlluminationZone(const QRectF & /*rect*/) const
     return zone;
 }
 
-Data *TxImg::update(ProductObservable *productObservable, QLineF const /*movement*/)
+Data *TxImg::update(QPointF *productObservable, QLineF const /*movement*/)
 {
 
-    if(m_zone.containsPoint(*productObservable->getPos(),Qt::OddEvenFill)){
+    if(m_zone.containsPoint(*productObservable,Qt::OddEvenFill)){
 
         WholeRay *wholeRay = new WholeRay;
-        QLineF line(*this,*productObservable->getPos());
+        QLineF line(*this,*productObservable);
         QPointF reflectionPoint;
         m_wall.intersects(line, &reflectionPoint);
 
 //        Ray ray(*m_rayFactory->createRay(reflectionPoint, *productObservable->getPos(),
 //                                                            line.angleTo(m_wall)));
 
-        double angle = m_movement.angleTo(QLineF(reflectionPoint,*productObservable->getPos()));
+        double angle = m_movement.angleTo(QLineF(reflectionPoint,*productObservable));
         double speed = m_movement.length()*cos(angle*M_PI/180.0);
 
         wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,
-                                                    *productObservable->getPos(),
+                                                    *productObservable,
                                                     line.angleTo(m_wall),
                                                     m_epsilonWall));
 
@@ -156,7 +156,7 @@ Data *TxImg::update(ProductObservable *productObservable, QLineF const /*movemen
 }
 
 
-//void TxImg::updateCarPos(ProductObservable *productObservable)
+//void TxImg::updateCarPos(QPointF *productObservable)
 //{
 //    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
 
@@ -176,12 +176,12 @@ Data *TxImg::update(ProductObservable *productObservable, QLineF const /*movemen
 //}
 
 
-void TxImg::attachObservable(ProductObservable* productObservable){
+void TxImg::attachObservable(QPointF* productObservable){
     m_observable.push_back(productObservable);
 }
 
 
-void TxImg::notifyParent(ProductObservable *productObservable,
+void TxImg::notifyParent(QPointF *productObservable,
                                     double speed, const QPointF &point,
                                     WholeRay *wholeRay)
 {

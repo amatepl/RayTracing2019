@@ -27,22 +27,13 @@ void ImagesMethod::launchAlgorithm()
 
     int recursionDepth = reflectionsNumber;
 
-//    for (unsigned i = 0; i < m_receivers.size(); i++) {
-//        m_receivers.at(i)->eraseObservers();
-//    }
-
     foreach (Tx *transmitter, m_transmitters) {
 
         m_currentTx = transmitter;
 
-//        m_currentTransmitterRange = transmitter->getIlluminationZone();
         m_currentTransmitterRange = transmitter->buildCoverage();
 
-//        m_scene->addPolygon(m_currentTransmitterRange, QPen(), illumination1);
-
         forImage data = transmitterIllumination(transmitter);
-
-//        m_scene->addPolygon(data.zone, QPen(), illumination1);
 
         m_totalIlluminationZone = m_totalIlluminationZone.united(data.zone.boundingRect());
 
@@ -583,4 +574,19 @@ void ImagesMethod::connectTxsCars()
 //    for (unsigned i = 0; i < images) {
 
 //    }
+}
+
+void ImagesMethod::setReflectionsNbr(unsigned int reflectionsNbr)
+{
+    reflectionsNumber = reflectionsNbr;
+}
+
+void ImagesMethod::clear()
+{
+    m_transmitters.clear();
+    m_buildings.clear();
+    m_cars.clear();
+    m_trees.clear();
+    m_receivers.clear();
+    m_images.clear();
 }

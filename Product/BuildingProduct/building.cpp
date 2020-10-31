@@ -16,9 +16,12 @@ Building::Building(QVector<QPointF> points) : QPolygonF(points),
 
 Building::~Building(){
     cout << "Mathematical Building Product Deleted." << endl;
-    for(int i = 0;i < size()-1; i++) {
-        delete m_walls.at(i);
+
+    for (Wall *wall: m_walls) {
+        delete wall;
     }
+
+//    delete m_graphic;
 }
 
 void Building::setExtremities(QVector<QPointF> extremities){

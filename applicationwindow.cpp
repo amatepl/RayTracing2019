@@ -265,6 +265,9 @@ void ApplicationWindow::createToolInfo()
     connect(m_info_widget, &InfoWidget::rayTracing, this, &ApplicationWindow::LaunchRayTracing);
     connect(m_info_widget, &InfoWidget::coverage, this, &ApplicationWindow::launchCoverage);
     connect(m_info_widget, &InfoWidget::startCars, this, &ApplicationWindow::startCars);
+    connect(m_info_widget, &InfoWidget::clear, this, &ApplicationWindow::clearWorkspace);
+    connect(m_info_widget, &InfoWidget::generateMap, this, &ApplicationWindow::generateMap);
+
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode)
@@ -353,8 +356,9 @@ void ApplicationWindow::obstacleGroupClicked(int mode)
     notifyMap();
 }
 
-void ApplicationWindow::LaunchRayTracing()
+void ApplicationWindow::LaunchRayTracing(unsigned reflectionsNbr)
 {
+    m_rayTracingAlgorithm->setReflectionsNbr(reflectionsNbr);
     m_model->launchAlgorithm(m_rayTracingAlgorithm);
 
 }
@@ -382,5 +386,14 @@ void ApplicationWindow::openProduct()
 
 void ApplicationWindow::clearWorkspace()
 {
-    m_rayTracingAlgorithm->clearWorkspace();
+//    m_model->clearWorkspace();
+//    m_rayTracingAlgorithm->clearWorkspace();
+    m_rayTracingAlgorithm->clear();
+    m_map->clear();
+    m_model->clear();
+}
+
+void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty)
+{
+    m_model->generateMap();
 }

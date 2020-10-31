@@ -32,11 +32,11 @@
 
 using namespace QtDataVisualization;
 
-class DialogRx : public QDialog, public ReceiverProduct
+class DialogRx : public QDialog/*, public ReceiverProduct*/
 {
     Q_OBJECT
 public:
-    DialogRx(ReceiverProduct* mathematicalproduct);
+    DialogRx(ReceiverProduct* mathematicalproduct, QWidget *parent=nullptr);
     ~DialogRx() override;
 
     /*!
@@ -55,69 +55,65 @@ public:
                           QString ylabel,
                           bool xlog = false,
                           bool ylog = false);
-    /*!
-     * \brief shadowing
-     * \param shadow
-     *
-     * New plot in shadowing tab
-     *
-     */
-    void shadowing(map<double /*angle*/, double /*power*/> shadow);
 
     QWidget* PhysicalImpulseResponse();
+    void updateImpulseResponse();
     QWidget* TDLImpulseResponse();
     QWidget* GeneralTabDialog();
-    QWidget* RealPathLossDialog();
-    QWidget* ModelPathLossDialog();
-    QWidget* CellRange();
-//    QWidget* DopplerSpectrum();
     QWidget* InterferencePattern();
     QWidget* DistributionInterference();
     QWidget* PrxAngularSpctr();
     QWidget* AngularDistr();
     QWidget* PrxDopplerSpctr();
+    void updatePrxAngularSpctr();
     QWidget* DopplerDistr();
     QWidget *SpcCrltn();
+    void updateSpcCrltn();
 
     void changeGraph();
     void setInterferencePattern(vector<double> impulse_r, double min, double max);
     void setDistributionInterference(map<double,double> impulse, QVector<double> rice_distribution);
 
-    float getSpeed() override
-    {
-        return m_speed->value();
-    }
-    float getOrientation() override
-    {
-        return m_orientation->value();
-    }
-    int getPosX() override {return m_posx->value();}
-    int getPosY() override {return m_posy->value();}
-    double getPower() override {return m_power->text().toDouble();}
-    complex <double> getEField() override {return m_e_field->text().toDouble();}
-    bool getEnable() override {return enable;}
-    int targetSNR() override {return m_target_snr->value();}
-    int noiseFigure() override {return m_noise_figure->value();}
-    int interFerenceMargin() override {return m_interferencemargin->value();}
+//    float getSpeed() override
+//    {
+//        return m_speed->value();
+//    }
+//    float getOrientation() override
+//    {
+//        return m_orientation->value();
+//    }
+//    int getPosX() override {return m_posx->value();}
+//    int getPosY() override {return m_posy->value();}
+//    double getPower() override {return m_power->text().toDouble();}
+//    complex <double> getEField() override {return m_e_field->text().toDouble();}
+//    bool getEnable() override {return enable;}
+//    int targetSNR() override {return m_target_snr->value();}
+//    int noiseFigure() override {return m_noise_figure->value();}
+//    int interFerenceMargin() override {return m_interferencemargin->value();}
 
-    void setSpeed(float speed) override
-    {
-        m_speed->setValue(speed);
-    }
-    void setOrientation(float orientation) override
-    {
-        m_orientation->setValue(orientation);
-    }
-    void setPosX(int posX) override {m_posx->setValue(posX);}
-    void setPosY(int posY) override {m_posy->setValue(posY);}
-    void setPower(double p) override {m_power->insert(QString::number(p));}
-    void setEField(complex<double> e) override {m_e_field->insert(QString::number(norm(e)));}
-    void setEnable(bool enable) override;
-    void setTargetSNR(int target) override {m_target_snr->setValue(target);}
-    void setNoiseFigure(int figure) override {m_noise_figure->setValue(figure);}
-    void setInterferecenceMargin(int interference) override {m_interferencemargin->setValue(interference);}
+//    void setSpeed(float speed) override
+//    {
+//        m_speed->setValue(speed);
+//    }
+//    void setOrientation(float orientation) override
+//    {
+//        m_orientation->setValue(orientation);
+//    }
+//    void setPosX(int posX) override {m_posx->setValue(posX);}
+//    void setPosY(int posY) override {m_posy->setValue(posY);}
+//    void setPower(double p) override {m_power->insert(QString::number(p));}
+//    void setEField(complex<double> e) override {m_e_field->insert(QString::number(norm(e)));}
+    void setEnable(bool enable);
+//    void setTargetSNR(int target) override {m_target_snr->setValue(target);}
+//    void setNoiseFigure(int figure) override {m_noise_figure->setValue(figure);}
+//    void setInterferecenceMargin(int interference) override {m_interferencemargin->setValue(interference);}
 
-    void newProperties() override;
+    void newProperties();
+    void update();
+    void updateGeneralTab();
+
+    /* To delete */
+//    vector<double> spaceCrltn() override {};
 private:
     ReceiverProduct *m_mathematicalproduct;
     QSpinBox *m_posx,*m_posy, *m_target_snr, *m_noise_figure,* m_interferencemargin;
@@ -132,7 +128,6 @@ private:
     QCustomPlot *pds_ploot;
     QCustomPlot *angular_distr_plot;
     QCustomPlot *doppler_distr_plot;
-    QCustomPlot *shadowing_plot;
     QCustomPlot *spc_crltn_plot;
     QCustomPlot *tm_crltn_plot;
 
@@ -140,6 +135,27 @@ private:
     bool enable;
     InterfererencePattern *m_interferencepattern;
     QCustomPlot *m_distribution;
+
+     // 2. Impulse and TDL vVariables
+    QVector<double> h,h_tdl,tau, tau_tdl;
+
+    // 4. Doppler
+    PrxDopplerSpread pds;
+    QVector<double> doppler_distr;
+    double doppler_spread {0};
+    QVector<double> w;
+
+    QVector<double> omega;
+    QVector<double> doppler;
+
+    // 5. Spatial correlation
+    PrxAngularSpread pas;
+    QVector<double> angular_distr;
+    double angular_spread {0};
+    QVector <double> u;
+
+    unsigned long m_transmitterfrequency;
+    unsigned long m_transmitterbandwidth;
 
 signals:
     void save(string path);

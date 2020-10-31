@@ -54,6 +54,7 @@ QVariant GraphicsTx::itemChange(GraphicsItemChange change, const QVariant &value
 
 void GraphicsTx::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
 //    m_observer->openDialog();
+    m_dialog.release();
     m_dialog = m_dialogFctry->create();
 }
 

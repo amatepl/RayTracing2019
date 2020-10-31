@@ -30,7 +30,7 @@ public:
 //    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
 
     //AbstractAntena
-    void notifyParent(ProductObservable *productObservable, double speed,
+    void notifyParent(QPointF *productObservable, double speed,
                       const QPointF &point, WholeRay *wholeRay) override;
     void notifyCarDetected() override;
     QPolygonF getIlluminationZone() const override;
@@ -39,15 +39,15 @@ public:
 
 
     //ProductObserver
-    Data *update(ProductObservable *productObservable, QLineF const) override;
-//    void updateCarPos(ProductObservable *productObservable) override;
-    void attachObservable(ProductObservable *productObservable) override;
+    Data *update(QPointF *productObservable, QLineF const) override;
+//    void updateCarPos(QPointF *productObservable) override;
+    void attachObservable(QPointF *productObservable) override;
 
 private:
     Line m_wall;
     AbstractAntena *m_parent;
     QRectF m_sceneBoundary;
-    vector<ProductObservable *> m_observable;
+    vector<QPointF *> m_observable;
     int m_radius;
     double m_epsilonWall;
 

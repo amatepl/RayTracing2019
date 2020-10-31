@@ -90,11 +90,16 @@ void GraphicsRx::notifyToGraphic(QPointF *point, double power){
 
     setPos(*point);
     QColor color;
-    if((-20 - power)*3>=0){color.setHsv((-20 - power)*3,255,255 - (-20 - power),255);}
-    else if(power == 0){
-        color.setHsv(240,150,80,255);
+
+    if(power < -130) {
+        color.setHsv(240, 150, 80, 255);
     }
-    else{color.setHsv(0,255,255,255);}
+    else if ((-20 - power) * 3 >= 0) {
+        color.setHsv((-20 - power)*3,255,255 - (-20 - power),255);
+    }
+    else {
+        color.setHsv(0, 255, 255, 255);
+    }
 
     QPixmap pixmap(m_sizex,m_sizey);
     pixmap.fill(color);

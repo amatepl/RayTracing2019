@@ -93,6 +93,12 @@ void InfoWidget::createEditGeneral(){
     edit_layout->addWidget(clear_workspace,2,1);
 
     edit_group->setLayout(edit_layout);
+
+    /* Initial values */
+    frequency->setValue(26);
+    frequency_order->setCurrentIndex(2);
+    bandwidth->setValue(100);
+    bandwidth_order->setCurrentIndex(1);
 }
 
 void InfoWidget::createRayGroup(){
@@ -115,6 +121,9 @@ void InfoWidget::createRayGroup(){
 
 
     ray_group->setLayout(ray_layout);
+
+    /* Initial values */
+    rflctns_ray->setValue(3);
 }
 
 void InfoWidget::createCoverageGroup(){
@@ -208,6 +217,7 @@ void InfoWidget::createMapGroup()
 
     map_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
 
+    connect(generate_map, &QPushButton::clicked, this, &InfoWidget::sendGenerateMap);
 
     map_group->setLayout(map_layout);
 }
@@ -269,7 +279,7 @@ void InfoWidget::reset(){
 
 // ---------- SLOTS ----------
 void InfoWidget::sendLaunchRayTracing(){
-    rayTracing();
+    rayTracing(rflctns_ray->value());
     launch_raytracing->setEnabled(false);
     launch_coverage->setEnabled(false);
 }
@@ -291,3 +301,7 @@ void InfoWidget::sendStartCars()
     startCars();
 }
 
+void InfoWidget::sendGenerateMap()
+{
+    generateMap(height->value(), width->value(), car_dnsty->value(), st_dnsty->value());
+}

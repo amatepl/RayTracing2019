@@ -362,3 +362,7 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay*> rayLine,
     return Efield;
 }
 
+std::complex <double> ph::inducedVoltage(const std::complex <double> field, const double anglerx, const double lambda)
+{
+    return lambda*field*cos(M_PI*cos(anglerx)/2)/(M_PI*sin(anglerx));
+}

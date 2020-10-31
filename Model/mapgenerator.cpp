@@ -7,8 +7,8 @@ MapGenerator::MapGenerator(QRectF mapBoundary): m_mapBoundary(mapBoundary)
 
 void MapGenerator::generateMap()
 {
-    m_horizontalStreets.clear();
-    m_verticalStreets.clear();
+//    m_horizontalStreets.clear();
+//    m_verticalStreets.clear();
 
 //    unsigned streetsDistance = 100;
 
@@ -19,7 +19,7 @@ void MapGenerator::generateMap()
 //    generateBuidlings(streetsDistance, streetWidth);
 
 
-    egBuilidings();
+//    egBuilidings();
 
 //    addCars();
 //    addCars();
@@ -342,6 +342,7 @@ void MapGenerator::egBuilidings()
     m_products.push_back(building2);
 }
 
+
 void MapGenerator::startCars()
 {
     m_runCars = !m_runCars;
@@ -441,4 +442,21 @@ void MapGenerator::setCarFactory(CarFactory *carFactory)
 void MapGenerator::setTreeFactory(TreeFactory *treeFactory)
 {
     m_treeFactory = treeFactory;
+}
+
+void MapGenerator::clear()
+{
+    deleteElmnts<QLineF>(m_horizontalStreets);
+    m_horizontalStreets.clear();
+
+    deleteElmnts<QLineF>(m_verticalStreets);
+    m_verticalStreets.clear();
+
+    deleteElmnts<thread>(m_threads);
+    m_threads.clear();
+
+    m_buildings.clear();
+    m_cars.clear();
+    m_trees.clear();
+    m_products.clear();
 }

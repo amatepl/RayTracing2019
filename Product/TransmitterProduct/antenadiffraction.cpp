@@ -88,14 +88,14 @@ void AntenaDiffraction::setIlluminatedZone(const QPolygonF &zone)
 }
 
 
-Data *AntenaDiffraction::update(ProductObservable *productObservable, QLineF const /*movement*/)
+Data *AntenaDiffraction::update(QPointF *productObservable, QLineF const /*movement*/)
 {
-    if (m_zone.containsPoint(*productObservable->getPos(), Qt::OddEvenFill)) {
+    if (m_zone.containsPoint(*productObservable, Qt::OddEvenFill)) {
         WholeRay *wholeRay = new WholeRay;
-        QLineF line(*this, *productObservable->getPos());
+        QLineF line(*this, *productObservable);
 
         //ray newRay(*this,pos);
-        unique_ptr<Ray> newRay = m_rayFactory->createRay(*this, *productObservable->getPos());
+        unique_ptr<Ray> newRay = m_rayFactory->createRay(*this, *productObservable);
         newRay->setDiffracted(true);
         wholeRay->push_back(move(newRay));
         m_parent->notifyParent(productObservable,0.0 , *this, wholeRay);
@@ -103,7 +103,7 @@ Data *AntenaDiffraction::update(ProductObservable *productObservable, QLineF con
     return nullptr;
 }
 
-//void AntenaDiffraction::updateCarPos(ProductObservable *productObservable)
+//void AntenaDiffraction::updateCarPos(QPointF *productObservable)
 //{
 //    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
 
@@ -123,7 +123,7 @@ Data *AntenaDiffraction::update(ProductObservable *productObservable, QLineF con
 //}
 
 
-void AntenaDiffraction::notifyParent(ProductObservable *productObservable,
+void AntenaDiffraction::notifyParent(QPointF *productObservable,
                                      double speed,
                                      const QPointF &point, WholeRay *wholeRay)
 {
@@ -142,7 +142,7 @@ QPointF AntenaDiffraction::getPosition() const
 }
 
 
-void AntenaDiffraction::attachObservable(ProductObservable *productObservable)
+void AntenaDiffraction::attachObservable(QPointF *productObservable)
 {
     m_observable.push_back(productObservable);
 }

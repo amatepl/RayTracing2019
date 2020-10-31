@@ -45,6 +45,15 @@ public:
     void setTreeFactory(TreeFactory *treeFactory);
 
     void setScene(QGraphicsScene *scene){m_scene = scene;}      // For tests
+    void clear();
+
+    template<class T>
+    void deleteElmnts(vector<T *> vec)
+    {
+        for(T* t: vec){
+            delete t;
+        }
+    }
 
 protected:
     QRectF m_mapBoundary;
