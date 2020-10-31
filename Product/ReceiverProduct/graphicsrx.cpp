@@ -1,6 +1,6 @@
 #include "graphicsrx.h"
 
-GraphicsRx::GraphicsRx(bool enable, QMenu *menuproduct, QGraphicsScene *scene)
+GraphicsRx::GraphicsRx(bool enable, QMenu *menuproduct, QGraphicsScene *scene, QWidget *parent): m_parent(parent)
 {
     m_productmenu = menuproduct;
     m_sizex = 10;
@@ -63,7 +63,7 @@ QVariant GraphicsRx::itemChange(GraphicsItemChange change, const QVariant &value
 }
 
 void GraphicsRx::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
-    m_observer->openDialog();
+    m_observer->openDialog(m_parent);
 }
 
 bool GraphicsRx::graphicsSelected() {
@@ -113,16 +113,16 @@ void GraphicsRx::notifyToGraphic(QPointF *point, double power){
 }
 
 void GraphicsRx::sendInformation(){
-    m_observer->updateInformation();
+//    m_observer->updateInformation();
 }
 
 void GraphicsRx::mousePressEvent(QGraphicsSceneMouseEvent* event){
     if (event->button() != Qt::LeftButton){
         return;
     }
-    else{
-        sendInformation();
-    }
+//    else{
+//        sendInformation();
+//    }
     QGraphicsItem::mousePressEvent(event);
 }
 

@@ -26,6 +26,7 @@ struct forImage;
 
 class ImagesMethod: public QObject
 {
+//    Q_OBJECT
 public:
     void createImages();
     void setObservers();
@@ -57,6 +58,10 @@ public:
     void setScene(QGraphicsScene *scene) {m_scene = scene;};
 
     void setReflectionsNbr(unsigned reflectionsNbr);
+
+    void clearTxs();
+
+    void clearRxs();
 
     void clear();
 

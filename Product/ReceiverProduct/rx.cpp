@@ -413,6 +413,41 @@ QLineF Rx::movement() const {return m_movement;}
 int Rx::getPosX(){return x();}
 int Rx::getPosY(){return y();}
 double Rx::getPower() {return m_power;}
+
+double Rx::getDstnc()
+{
+    return m_chData->dstnc;
+}
+
+double Rx::getDlySprd()
+{
+    return delay_spread;
+}
+
+double Rx::getRiceFctr()
+{
+    return rice_factor;
+}
+
+double Rx::getCoherenceBw()
+{
+    return coherence_bandwidth;
+}
+
+double Rx::getCoherenceTm()
+{
+    return 0;
+}
+
+double Rx::getAngSprd()
+{
+    return angular_spread;
+}
+
+double Rx::getDopplerSprd()
+{
+    return doppler_spread;
+}
 complex <double> Rx::getEField() {return m_e_field;}
 bool Rx::getEnable() {return enable;}
 
@@ -478,12 +513,12 @@ void Rx::dialogDeleted()
 }
 
 // From MathematicalProduct
-void Rx::openDialog()
+void Rx::openDialog(QWidget *parent)
 {
 //    for (unsigned i = 0; i < m_transmitters.size(); i++) {
 //        notifyObserversPathLoss(m_transmitters.at(i));
 //    }
-    m_dialog = new DialogRx(this);
+    m_dialog = new DialogRx(this/*, parent*/);
 //    for (unsigned i = 0; i < m_transmitters.size(); i++) {
 //        m_dialog->shadowing(notifyObservervesShadowing(m_transmitters.at(i)));
 //    }
@@ -509,14 +544,14 @@ void Rx::attachObservable(GraphicsProduct *graphic)
 
 void Rx::updateInformation()
 {
-    m_info_widget->changePower(m_power);
-    m_info_widget->changeDistance(m_transmitter_distance);
-    m_info_widget->changeSnr(snr_received);
-    m_info_widget->changeDelaySpread(delay_spread);
-    m_info_widget->changeRiceFactor(rice_factor);
-    m_info_widget->changeCoherenceBandwidth(coherence_bandwidth);
-    m_info_widget->changeAngularSpread(angular_spread);
-    m_info_widget->changeDopplerSpread(doppler_spread);
+//    m_info_widget->changePower(m_power);
+//    m_info_widget->changeDistance(m_transmitter_distance);
+//    m_info_widget->changeSnr(snr_received);
+//    m_info_widget->changeDelaySpread(delay_spread);
+//    m_info_widget->changeRiceFactor(rice_factor);
+//    m_info_widget->changeCoherenceBandwidth(coherence_bandwidth);
+//    m_info_widget->changeAngularSpread(angular_spread);
+//    m_info_widget->changeDopplerSpread(doppler_spread);
 
 }
 

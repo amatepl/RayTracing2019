@@ -37,6 +37,7 @@ void ImagesMethod::launchAlgorithm()
 
         m_totalIlluminationZone = m_totalIlluminationZone.united(data.zone.boundingRect());
 
+//        m_scene->addPolygon(m_totalIlluminationZone, illumination1);
         // Launches the methods to compute siple and double diffraction
 
         setDiffraction(data.walls, data.zone, transmitter);
@@ -133,9 +134,12 @@ void ImagesMethod::clearAllImages()
 //        m_images[m_transmitters.at(i)].shrink_to_fit();
     }
 
-    for (unsigned i = 0; i < m_receivers.size(); i++) {
-        m_receiver->clearObeservers();
-    }
+//    cout << "Size m_receivers: " << m_receivers.size()<<endl;
+
+//    for (unsigned i = 0; i < m_receivers.size(); i++) {
+
+//        m_receiver->clearObeservers();
+//    }
 }
 
 
@@ -521,7 +525,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                 illuminatedWalls.push_back(Line(zone.at(i), zone.at(i+1)));
                 usedWalls.push_back(walls.at(j));
 
-                //addLine(Line(zone.at(i),zone.at(i+1)),redPen);
+//                addLine(Line(zone.at(i),zone.at(i+1)),redPen);
 
                 //Creation of the trasmitter image
                 TxImg *image = new TxImg(Line(zone.at(i), zone.at(i+1)),
@@ -581,8 +585,25 @@ void ImagesMethod::setReflectionsNbr(unsigned int reflectionsNbr)
     reflectionsNumber = reflectionsNbr;
 }
 
+void ImagesMethod::clearTxs()
+{
+    for (auto &tx: m_transmitters) {
+        tx->clearAll();
+    }
+}
+
+void ImagesMethod::clearRxs()
+{
+    for (auto &rx: m_receivers) {
+        rx->detachObservers();
+    }
+}
+
 void ImagesMethod::clear()
 {
+    clearAllImages();
+    clearTxs();
+    clearRxs();
     m_transmitters.clear();
     m_buildings.clear();
     m_cars.clear();

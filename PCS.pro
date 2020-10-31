@@ -64,7 +64,9 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/TreeProduct/mathematicaltreeproduct.h \
     Product/TreeProduct/treeproduct.h \
     Product/abstractantena.h \
+    Product/graphicsheatmap.h \
     Product/graphicsproduct.h \
+    Product/heatmap.h \
     Product/mathematicalproduct.h \
     Product/sceneproduct.h \
     Share/chdata.h \
@@ -121,6 +123,8 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/TreeProduct/mathematicaltreeproduct.cpp \
     Product/TreeProduct/treeparams.cpp \
     Product/abstractantena.cpp \
+    Product/graphicsheatmap.cpp \
+    Product/heatmap.cpp \
     Share/line.cpp \
     Share/physics.cpp \
     Share/reflectiveobstacle.cpp \

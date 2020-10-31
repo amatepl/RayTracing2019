@@ -10,7 +10,7 @@ class MathematicalProduct//: public QObject
 {
 public:
     virtual ~MathematicalProduct(){}
-    virtual void openDialog() = 0;
+    virtual void openDialog(QWidget *parent=nullptr) = 0;
     std::string getType(){return m_type;}
     virtual std::string changeAppearance() {return "no appearance";}
     virtual void setScale(float scale) {px_to_meter = scale;}

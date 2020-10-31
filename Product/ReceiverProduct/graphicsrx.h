@@ -12,7 +12,7 @@
 class GraphicsRx : public QGraphicsPixmapItem, public GraphicsProduct
 {
 public:
-    GraphicsRx(bool enable, QMenu *menuproduct, QGraphicsScene *scene);
+    GraphicsRx(bool enable, QMenu *menuproduct, QGraphicsScene *scene, QWidget *parent=nullptr);
     ~GraphicsRx() override;
 
     void enableReceiver(bool enable);
@@ -40,5 +40,6 @@ private:
     QGraphicsScene *m_scene;
     QMenu *m_productmenu;
     int m_sizex, m_sizey; // Size of the cell if enable false
+    QWidget *m_parent;
 };
 #endif // GRAPHICSRX_H

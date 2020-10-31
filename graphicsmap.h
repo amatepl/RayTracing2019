@@ -15,6 +15,7 @@
 #include "Observer/sceneobservable.h"
 #include "Observer/AppInterface.h"
 #include "Product/graphicsproduct.h"
+#include "Product/graphicsheatmap.h"
 
 using namespace std;
 
@@ -27,6 +28,8 @@ public:
 
     void setSceneFactory(SceneFactory *sceneFactory);
     void deleteItem();
+    void addHeatMap(HeatMap *heatMap);
+    void clearHeatMap();
 
     // Overdrives
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -38,6 +41,7 @@ private:
     QGraphicsView* m_view;
     QMenu *m_productmenu;
     AppInterface *m_app;
+    unique_ptr<GraphicsHeatMap> m_heatMap;
 
     SceneFactory *m_sceneFactory = 0;
 };

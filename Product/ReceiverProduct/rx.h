@@ -84,6 +84,13 @@ public:
     int getPosX() override;
     int getPosY() override;
     double getPower() override;
+    double getDstnc() override;
+    double getDlySprd() override;
+    double getRiceFctr() override;
+    double getCoherenceBw() override;
+    double getCoherenceTm() override;
+    double getAngSprd() override;
+    double getDopplerSprd() override;
     complex<double> getEField() override;
     bool getEnable() override;
     int targetSNR() override {return m_target_snr;}
@@ -109,7 +116,7 @@ public:
     // From MathematicalProduct
     void update(QGraphicsItem *graphic) override;
     void attachObservable(GraphicsProduct* graphic) override;
-    void openDialog() override;
+    void openDialog(QWidget *parent) override;
     void updateInformation() override;
 
 

@@ -1,8 +1,9 @@
 #include "dialogrx.h"
 
-DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialog(parent),
+DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialog(parent, Qt::WindowStaysOnTopHint | Qt::Tool),
     m_mathematicalproduct(mathematicalproduct)
 {
+//    setWindowFlag(Qt::WindowStaysOnTopHint);
     setWindowTitle("Receiver properties: ");
     setWindowIcon(QIcon(GraphicsRx::getImage()));
     setMinimumSize(1000,900);
@@ -35,7 +36,8 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
 
     update();
 
-    open();
+//    open();
+    show();
 }
 
 
@@ -128,15 +130,71 @@ QWidget* DialogRx::GeneralTabDialog(){
     phyProperties->addRow("Target SNR [dB]: ", m_target_snr);
     phyProperties->addRow("Noise Figure [dB]: ", m_noise_figure);
     phyProperties->addRow("Interference Margin [dB]: ", m_interferencemargin);
-    phyProperties->addRow(m_power);
-    phyProperties->addRow(m_e_field);
+    phyProperties->addRow("Received power [dB]: ", m_power);
+    phyProperties->addRow("Electric fiedl [V/m]: ", m_e_field);
 
     QGroupBox *phy = new QGroupBox("Physical properties");
     phy->setLayout(phyProperties);
 
+    /* Channel */
+
+    QGroupBox *chBox = new QGroupBox("Channel");
+    QGridLayout *chLayout = new QGridLayout(this);
+
+    QLabel *prxLabel = new QLabel("Received power [dBm]: ",this);
+    chLayout->addWidget(prxLabel, 0, 0);
+
+    m_prx = new QLabel(QString::number(m_mathematicalproduct->getPower()), this);
+    chLayout->addWidget(m_prx, 0, 1);
+
+    QLabel *dstLabel = new QLabel("Transmitter distance: ", this);
+    chLayout->addWidget(dstLabel, 1, 0);
+
+    m_dstnc = new QLabel(QString::number(m_mathematicalproduct->getDstnc()), this);
+    chLayout->addWidget(m_dstnc, 1, 1);
+
+    QLabel *dlySprdLabel = new QLabel("Delay Spread [ns]: ", this);
+    chLayout->addWidget(dlySprdLabel, 3, 0);
+
+    m_dlySprd = new QLabel(QString::number(m_mathematicalproduct->getDlySprd()) , this);
+    chLayout->addWidget(m_dlySprd, 3, 1);
+
+    QLabel *riceFctrLabel = new QLabel("Rice Factor [dB]: ", this);
+    chLayout->addWidget(riceFctrLabel, 4, 0);
+
+    m_riceFactor = new QLabel(QString::number(m_mathematicalproduct->getRiceFctr()), this);
+    chLayout->addWidget(m_riceFactor, 4, 1);
+
+    QLabel *coherenceBwLabel = new QLabel("Coherence Bandwidth [MHz]: ", this);
+    chLayout->addWidget(coherenceBwLabel, 5, 0);
+
+    m_coherenceBw = new QLabel(QString::number(m_mathematicalproduct->getCoherenceBw()), this);
+    chLayout->addWidget(m_coherenceBw, 5, 1);
+
+    QLabel *coherenceTmLabel = new QLabel("Coherence Time [\u03bcs]: ", this);
+    chLayout->addWidget(coherenceTmLabel, 6, 0);
+
+    m_coherenceTm = new QLabel(QString::number(m_mathematicalproduct->getCoherenceTm()), this);
+    chLayout->addWidget(m_coherenceTm, 6, 1);
+
+    QLabel *angSprdLabel = new QLabel("Angular Spread [rad]: ", this);
+    chLayout->addWidget(angSprdLabel, 7, 0);
+
+    m_angSpdr = new QLabel(QString::number(m_mathematicalproduct->getAngSprd()), this);
+    chLayout->addWidget(m_angSpdr, 7, 1);
+
+    QLabel *dopplerSprdLabel = new QLabel("Doppler Spread [rad/s]: ", this);
+    chLayout->addWidget(dopplerSprdLabel, 8, 0);
+
+    m_dopplerSpdr = new QLabel(QString::number(m_mathematicalproduct->getDopplerSprd()), this);
+    chLayout->addWidget(m_dopplerSpdr, 8, 1);
+
+    chBox->setLayout(chLayout);
+
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(geo,0,0);
     firstLayout->addWidget(phy,1,0);
+    firstLayout->addWidget(chBox, 2, 0);
 
     widget->setLayout(firstLayout);
 
@@ -173,7 +231,27 @@ void DialogRx::updateGeneralTab()
     m_target_snr->setValue(m_mathematicalproduct->targetSNR());
     m_noise_figure->setValue(m_mathematicalproduct->noiseFigure());
     m_interferencemargin->setValue(m_mathematicalproduct->interFerenceMargin());
+    updateChInfo();
 
+}
+
+void DialogRx::updateChInfo()
+{
+    m_prx->setText(QString::number(m_mathematicalproduct->getPower()));
+
+    m_dstnc->setText(QString::number(m_mathematicalproduct->getDstnc()));
+
+    m_dlySprd->setText(QString::number(m_mathematicalproduct->getDlySprd()));
+
+    m_riceFactor->setText(QString::number(m_mathematicalproduct->getRiceFctr()));
+
+    m_coherenceBw->setText(QString::number(m_mathematicalproduct->getCoherenceBw()));
+
+    m_coherenceTm->setText(QString::number(m_mathematicalproduct->getCoherenceTm()));
+
+    m_angSpdr->setText(QString::number(m_mathematicalproduct->getAngSprd()));
+
+    m_dopplerSpdr->setText(QString::number(m_mathematicalproduct->getDopplerSprd()));
 }
 
 QWidget* DialogRx::PhysicalImpulseResponse(){

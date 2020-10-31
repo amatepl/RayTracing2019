@@ -8,6 +8,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <vector>
 #include <QDialog>
+#include <QObject>
 
 #include "txinterface.h"
 #include "Product/graphicsproduct.h"
@@ -15,8 +16,9 @@
 
 using namespace std;
 
-class GraphicsTx :public QGraphicsPixmapItem, public GraphicsProduct
+class GraphicsTx :public QObject, public QGraphicsPixmapItem, public GraphicsProduct
 {
+    Q_OBJECT
 public:
     GraphicsTx(QMenu* productmenu, QGraphicsScene *scene);
     ~GraphicsTx() override;
@@ -46,6 +48,9 @@ private:
     QMenu* m_productmenu;
     DialogWinFctry<QDialog> *m_dialogFctry;
     unique_ptr<QDialog> m_dialog;
+
+public slots:
+    void dialogDeleted();
 };
 
 #endif // GRAPHICSTX_H

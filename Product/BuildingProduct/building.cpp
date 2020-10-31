@@ -51,7 +51,7 @@ void Building::update(QGraphicsItem *graphic){
     setExtremities(*this);
 }
 
-void Building::openDialog(){
+void Building::openDialog(QWidget *){
     new DialogBuildingProduct(this);
 }
 

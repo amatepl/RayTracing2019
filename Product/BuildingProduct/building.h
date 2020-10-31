@@ -47,7 +47,7 @@ public:
     // From MathematicalProduct
     std::string changeAppearance() override {return m_model;}
     void update(QGraphicsItem* graphic) override;
-    void openDialog() override;
+    void openDialog(QWidget *) override;
 
 protected:
     QVector<QPointF> m_extremities;

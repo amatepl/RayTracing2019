@@ -69,11 +69,13 @@ private:
     // Ray Tracing
     QGroupBox *ray_group;
     QPushButton *launch_raytracing;
+    QPushButton *clear_raytracing;
     QSpinBox *rflctns_ray;
 
     // Coverage
     QGroupBox *coverage_group;
     QPushButton *launch_coverage;
+    QPushButton *clear_coverage;
     QSpinBox *rflctns_cov;
     QSpinBox *cov_dnsty;
 
@@ -88,7 +90,9 @@ private:
 
 signals:
     void rayTracing(unsigned reflectionsNbr);
+    void clearRayTracing();
     void coverage();
+    void clearCoverage();
     void clear();
     void startCars();
     void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs);
@@ -96,7 +100,9 @@ signals:
 
 public slots:
     void sendLaunchRayTracing();
+    void sendClearRayTracing();
     void sendLaunchCoverage();
+    void sendClearCoverage();
     void sendClear();
     void sendStartCars();
     void printValue(double value);  // For tests

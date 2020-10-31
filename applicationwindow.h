@@ -109,12 +109,15 @@ public slots:
     void antennaGroupClicked(int);
     void obstacleGroupClicked(int);
     void LaunchRayTracing(unsigned reflectionsNbr);
+    void clearRayTracing();
     void launchCoverage();
+    void clearCoverage();
     void startCars();
     void deleteProduct();
     void openProduct();
     void clearWorkspace();
     void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty);
+    void addHeatMap(HeatMap *heatMap);
 };
 
 #endif // APPLICATIONWINDOW_H

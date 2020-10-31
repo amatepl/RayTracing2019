@@ -4,8 +4,9 @@
 
 float px_to_meter = 1;
 
-ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
+ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::WindowStaysOnBottomHint)
 {
+//    setWindowFlag(Qt::WindowStaysOnBottomHint);
     createToolBox();
     createToolInfo();
     createActions();
@@ -14,7 +15,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     view->setMouseTracking(true);
-    m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter);
+    m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter, this);
     m_transmitterFactory = new TransmitterFactory(m_productmenu, m_map, px_to_meter);
     m_buildingFactory = new BuildingFactory(m_productmenu, m_map, px_to_meter);
     m_treeFactory = new TreeFactory(m_productmenu, m_map, px_to_meter);
@@ -31,6 +32,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent)
 
     m_coverageAlgorithm = new Coverage(m_receiverFactory, px_to_meter);
     m_coverageAlgorithm->setScene(m_map);
+    connect(m_coverageAlgorithm, &Coverage::computed, this, &ApplicationWindow::addHeatMap);
 
     addToolBar(Qt::LeftToolBarArea, m_toolbarobject);
     addToolBar(Qt::TopToolBarArea, m_toolinfo);
@@ -198,8 +200,8 @@ void ApplicationWindow::createActions(){
     propertiesaction = new QAction(QIcon(":/Images/Properties.png"), tr("&Properties"), this);
     propertiesaction->setShortcut(tr("Open"));
 
-    connect(deleteaction, SIGNAL(triggered()), this, SLOT(deleteProduct()));
-    connect(propertiesaction, SIGNAL(triggered()), this, SLOT(openProduct()));
+    connect(deleteaction, &QAction::triggered, this, &ApplicationWindow::deleteProduct);
+    connect(propertiesaction, &QAction::triggered, this, &ApplicationWindow::openProduct);
 
 }
 
@@ -263,7 +265,9 @@ void ApplicationWindow::createToolInfo()
     m_toolinfo->addWidget(m_info_widget);
 
     connect(m_info_widget, &InfoWidget::rayTracing, this, &ApplicationWindow::LaunchRayTracing);
+    connect(m_info_widget, &InfoWidget::clearRayTracing, this, &ApplicationWindow::clearRayTracing);
     connect(m_info_widget, &InfoWidget::coverage, this, &ApplicationWindow::launchCoverage);
+    connect(m_info_widget, &InfoWidget::clearCoverage, this, &ApplicationWindow::clearCoverage);
     connect(m_info_widget, &InfoWidget::startCars, this, &ApplicationWindow::startCars);
     connect(m_info_widget, &InfoWidget::clear, this, &ApplicationWindow::clearWorkspace);
     connect(m_info_widget, &InfoWidget::generateMap, this, &ApplicationWindow::generateMap);
@@ -360,13 +364,22 @@ void ApplicationWindow::LaunchRayTracing(unsigned reflectionsNbr)
 {
     m_rayTracingAlgorithm->setReflectionsNbr(reflectionsNbr);
     m_model->launchAlgorithm(m_rayTracingAlgorithm);
+}
 
+void ApplicationWindow::clearRayTracing()
+{
+    m_rayTracingAlgorithm->clear();
 }
 
 void ApplicationWindow::launchCoverage()
 {
     m_model->launchAlgorithm(m_coverageAlgorithm);
+}
 
+void ApplicationWindow::clearCoverage()
+{
+    m_coverageAlgorithm->clear();
+    m_map->clearHeatMap();
 }
 
 void ApplicationWindow::startCars()
@@ -396,4 +409,9 @@ void ApplicationWindow::clearWorkspace()
 void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty)
 {
     m_model->generateMap();
+}
+
+void ApplicationWindow::addHeatMap(HeatMap *heatMap)
+{
+    m_map->addHeatMap(heatMap);
 }

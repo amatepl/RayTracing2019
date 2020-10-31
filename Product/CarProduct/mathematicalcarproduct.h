@@ -43,7 +43,7 @@ public:
     void setPosX(int posX) override;
     void setPosY(int posY) override;
     void update(QGraphicsItem *graphic) override;
-    void openDialog() override;
+    void openDialog(QWidget *) override;
     void newProperties() override;
 
 private:

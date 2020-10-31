@@ -52,7 +52,7 @@ public:
 
     /* Miscellaneous */
     MathematicalProduct* toMathematicalComponent();
-    void openDialog() override;
+    void openDialog(QWidget *) override;
 };
 
 #endif // RAY_H

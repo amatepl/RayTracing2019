@@ -175,7 +175,7 @@ void MathematicalCarProduct::update(QGraphicsItem *graphic){
 }
 
 
-void MathematicalCarProduct::openDialog(){
+void MathematicalCarProduct::openDialog(QWidget *){
     new DialogCarProduct(this);
 }
 

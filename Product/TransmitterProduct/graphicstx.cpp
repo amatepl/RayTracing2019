@@ -19,7 +19,8 @@ GraphicsTx::GraphicsTx(QMenu* productmenu, QGraphicsScene *scene)
 
 }
 
-GraphicsTx::~GraphicsTx(){
+GraphicsTx::~GraphicsTx()
+{
     cout << "Graphics Transmitter Product Deleted." << endl;
     delete m_observer;
 }
@@ -56,6 +57,7 @@ void GraphicsTx::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/){
 //    m_observer->openDialog();
     m_dialog.release();
     m_dialog = m_dialogFctry->create();
+    connect(m_dialog.get(), &QDialog::finished, this, &GraphicsTx::dialogDeleted);
 }
 
 void GraphicsTx::notifyToGraphic(QPointF *point, double orientation){
@@ -67,4 +69,9 @@ void GraphicsTx::notifyToGraphic(QPointF *point, double orientation){
 void GraphicsTx::setDialogFctry(DialogWinFctry<QDialog> *dialogFctry)
 {
     m_dialogFctry = dialogFctry;
+}
+
+void GraphicsTx::dialogDeleted()
+{
+    m_dialog.release();
 }

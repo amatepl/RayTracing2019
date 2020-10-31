@@ -93,7 +93,7 @@ void MathematicalTreeProduct::update(QGraphicsItem */*graphic*/){
 }
 
 
-void MathematicalTreeProduct::openDialog(){
+void MathematicalTreeProduct::openDialog(QWidget *){
     new DialogTreeProduct(this);
 }
 
