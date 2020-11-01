@@ -160,7 +160,18 @@ void InfoWidget::createCoverageGroup(){
 
     coverage_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
 
+    m_eFieldDisp = new QLabel("|E| [...]: ", this);
+    coverage_layout->addWidget(m_eFieldDisp, 3, 0);
+
+//    m_eFieldDisp = new QLabel("",this);
+//    coverage_layout->addWidget(m_eFieldDisp, 3, 1);
+
     coverage_group->setLayout(coverage_layout);
+}
+
+void InfoWidget::updateCoverageGroup(double eField)
+{
+    m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
 }
 
 void InfoWidget::printValue(double value)
@@ -326,4 +337,9 @@ void InfoWidget::sendStartCars()
 void InfoWidget::sendGenerateMap()
 {
     generateMap(height->value(), width->value(), car_dnsty->value(), st_dnsty->value());
+}
+
+void InfoWidget::updateEField(double eField)
+{
+    updateCoverageGroup(eField);
 }

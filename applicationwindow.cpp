@@ -14,6 +14,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
     view = new QGraphicsView();
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
+    connect(m_map, &GraphicsMap::eField, m_info_widget, &InfoWidget::updateEField);
     view->setMouseTracking(true);
     m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter, this);
     m_transmitterFactory = new TransmitterFactory(m_productmenu, m_map, px_to_meter);

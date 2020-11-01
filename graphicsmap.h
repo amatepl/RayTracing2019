@@ -21,6 +21,7 @@ using namespace std;
 
 class GraphicsMap: public QGraphicsScene
 {
+    Q_OBJECT
 public:
     enum Mode{MoveItem,InsertItem};
     GraphicsMap(QGraphicsView *view, AppInterface *windowobservable, QMenu* productmenu);
@@ -35,6 +36,12 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+
+signals:
+    void eField(double eField);
+
+public slots:
+    void updateEField(double eField);
 
 private:
     Mode m_mode;
