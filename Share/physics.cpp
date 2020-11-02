@@ -326,6 +326,7 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine
     complex<double> array_fctr = ph::totaleArrayFactor(angle_transmitter, 90, wvNbr * c / (2 * M_PI),
                                                    antOrien, beam, std::get<0>(antArry), std::get<1>(antArry),
                                                    txType);
+    cout << "AF: " << array_fctr << endl;
     double Ia = currentTx(power, antArry);
     complex<double> a = R * array_fctr * exp(-i * wvNbr * totalLength) / totalLength;
 

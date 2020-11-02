@@ -416,7 +416,8 @@ double Rx::getPower() {return m_power;}
 
 double Rx::getDstnc()
 {
-    return m_chData->dstnc;
+    if (m_chData != nullptr) return m_chData->dstnc;
+    else return 0;
 }
 
 double Rx::getDlySprd()

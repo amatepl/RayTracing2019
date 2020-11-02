@@ -236,10 +236,14 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
     // TO DO: check if there is a wall between the TX and RX
     double distance = this->distance(receiver); // conversion (1px == 2cm)
     double thetaG = atan((distance / 2) / ant_hght);
+    cout << "Theta_ig: " << thetaG << endl;
     double thetaI = M_PI - thetaG;
     double R = computeReflexionPar(thetaG, epsilonWallRel);
+    cout << "Gamma_par: " << R << endl;
     double completeLength = sqrt(4 * pow(ant_hght, 2) + pow(distance, 2)); //distance / sin(thetaG);
 
+    cout << "distance: " << distance << endl;
+    cout << "d_g: " << completeLength << endl;
     complex <double> i(0.0, 1.0);
 
     double Ia = sqrt(2 * m_power / (m_row * m_column * r_a)); // Ia could be changed for Beamforming application
@@ -247,11 +251,15 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
                                                          m_frequency, m_orientation,
                                                          m_pr_orientation, m_column,
                                                          m_row, static_cast<ph::TxType>(m_kind));
-    complex<double> a = R * array_factor * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
+    cout << "AF_g: " << array_factor << endl;
+    double beta = 2*M_PI/lambda;
+    cout << "beta*dg: " << beta*completeLength << endl;
+    cout << "exp_g: " << exp(-i * beta * completeLength) / completeLength << endl;
+    complex<double> a = R * array_factor * exp(-i * beta * completeLength) / completeLength;
     complex <double> Efield = -i * a * (z_0 * Ia) / (2 * M_PI);
 
     QLineF receiver_speed = receivers_speed[receiver];
-    QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
+    QLineF betavec(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
 
     if (properties)
     {
@@ -268,11 +276,11 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         double angleRx = 180 + direction;
         Data &chData = m_chsData[receiver];
 
-        beta.setAngle(angleRx + 180);
+        betavec.setAngle(angleRx + 180);
 
         double theta = angleRx;
         if (receiver_speed.length() > 0.0){
-            theta = beta.angleTo(receiver_speed);
+            theta = betavec.angleTo(receiver_speed);
         }
         // Put computed data into channels data.
         double u = ph::uMPC(wvNbr, angleRx);
@@ -475,11 +483,13 @@ Tx::comput4FixedBeam(QPointF *receiver)
             EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
                                                      m_orientation, m_pr_orientation,
                                                          static_cast<ph::TxType>(m_kind));
+            cout << "E_o: " << EMfield << endl;
 
             if (wholeRay->size() == 1) {
                 // Adding the ground component
                 double angle_transmitter = wholeRay->back()->angle();
                 m_receiversGroundField[receiver] = computeEfieldGround(receiver, angle_transmitter, true); // Compute the electrical field from the ray reflected off the ground
+                cout << "E_g: " << m_receiversGroundField[receiver] << endl;
             }
             m_receiversField[receiver] += EMfield;
 
