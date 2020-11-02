@@ -372,8 +372,10 @@ void ApplicationWindow::clearRayTracing()
     m_rayTracingAlgorithm->clear();
 }
 
-void ApplicationWindow::launchCoverage()
+void ApplicationWindow::launchCoverage(unsigned reflectionsNbr, double dnsty)
 {
+    m_coverageAlgorithm->setReflectionsNbr(reflectionsNbr);
+    m_coverageAlgorithm->setDnsty(dnsty);
     m_model->launchAlgorithm(m_coverageAlgorithm);
 }
 

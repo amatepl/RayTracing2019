@@ -4,7 +4,8 @@ QT       += core gui \
 greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
     datavisualization
 
-CONFIG += c++1z
+CONFIG += c++1z \
+    app_bundle
 
 HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/abstractalgorithmfactory.h \

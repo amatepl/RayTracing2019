@@ -78,7 +78,7 @@ private:
     QPushButton *launch_coverage;
     QPushButton *clear_coverage;
     QSpinBox *rflctns_cov;
-    QSpinBox *cov_dnsty;
+    QDoubleSpinBox *cov_dnsty;
     QLabel *m_eFieldDisp;
 
     // Map
@@ -93,7 +93,7 @@ private:
 signals:
     void rayTracing(unsigned reflectionsNbr);
     void clearRayTracing();
-    void coverage();
+    void coverage(unsigned reflectionsNbr, double dnsty);
     void clearCoverage();
     void clear();
     void startCars();
