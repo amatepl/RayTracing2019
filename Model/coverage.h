@@ -28,6 +28,7 @@ public:
 
     HeatMap *buildCoverageZone(const QRect &workingZone);
     void notifyTxs(QPointF *rx);
+    void setDnsty(const double dnsty);
 
 protected:
     SceneFactory* m_receiverFactory;

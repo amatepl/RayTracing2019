@@ -110,7 +110,7 @@ public slots:
     void obstacleGroupClicked(int);
     void LaunchRayTracing(unsigned reflectionsNbr);
     void clearRayTracing();
-    void launchCoverage();
+    void launchCoverage(unsigned reflectionsNbr, double dnsty);
     void clearCoverage();
     void startCars();
     void deleteProduct();

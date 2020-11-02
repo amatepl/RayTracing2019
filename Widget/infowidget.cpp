@@ -147,16 +147,17 @@ void InfoWidget::createCoverageGroup(){
     rflctns_cov = new QSpinBox(ray_group);
     rflctns_cov->setRange(0.00,999.00);
     rflctns_cov->setAccelerated(true);
-    connect(rflctns_cov, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
+//    connect(rflctns_cov, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
 
     QFormLayout *f_layout = new QFormLayout;
-    f_layout->addRow("Density: ", rflctns_cov);
+    f_layout->addRow("Reflections: ", rflctns_cov);
 
-    cov_dnsty = new QSpinBox(ray_group);
-    cov_dnsty->setRange(0.00,999.00);
+    cov_dnsty = new QDoubleSpinBox(ray_group);
+    cov_dnsty->setRange(0.00,1.00);
+    cov_dnsty->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
     cov_dnsty->setAccelerated(true);
 
-    f_layout->addRow("Reflections: ", cov_dnsty);
+    f_layout->addRow("Density [1/m]: ", cov_dnsty);
 
     coverage_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
 
@@ -167,6 +168,9 @@ void InfoWidget::createCoverageGroup(){
 //    coverage_layout->addWidget(m_eFieldDisp, 3, 1);
 
     coverage_group->setLayout(coverage_layout);
+
+    rflctns_cov->setValue(3);
+    cov_dnsty->setValue(0.5);
 }
 
 void InfoWidget::updateCoverageGroup(double eField)
@@ -311,7 +315,7 @@ void InfoWidget::sendClearRayTracing()
 }
 
 void InfoWidget::sendLaunchCoverage(){
-    coverage();
+    coverage(rflctns_cov->value(), cov_dnsty->value());
     launch_raytracing->setEnabled(false);
     launch_coverage->setEnabled(false);
 }

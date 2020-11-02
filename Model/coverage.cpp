@@ -14,7 +14,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
                                          ReceiverFactory* /*receiverfactory*/)
 {
     setAttributs(mathematicalComponents);
-    reflectionsNumber = 10;
+//    reflectionsNumber = 10;
 
     RayFactory* rayFactory = new RayFactory(false, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
@@ -167,6 +167,11 @@ void Coverage::notifyTxs(QPointF *rx)
     }
 
     m_heatMap.push_back(Tile{rx->toPoint(), eField, (int) (1 / m_dnsty)});
+}
+
+void Coverage::setDnsty(const double dnsty)
+{
+    m_dnsty = dnsty;
 }
 //-------SIGNALS-----------------------------------------------------------------------------------
 
