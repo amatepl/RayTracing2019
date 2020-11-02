@@ -32,6 +32,7 @@ void GraphicsMap::deleteItem(){
 void GraphicsMap::addHeatMap(HeatMap *heatMap)
 {
     m_heatMap = unique_ptr<GraphicsHeatMap>(new GraphicsHeatMap(heatMap, this));
+    connect(m_heatMap.get(), &GraphicsHeatMap::eField, this, &GraphicsMap::updateEField);
 }
 
 void GraphicsMap::clearHeatMap()
@@ -63,4 +64,9 @@ void GraphicsMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
 void GraphicsMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsScene::mouseDoubleClickEvent(event);
+}
+
+void GraphicsMap::updateEField(double e)
+{
+    eField(e);
 }

@@ -24,6 +24,7 @@ public:
     void createEditGeneral();
     void createRayGroup();
     void createCoverageGroup();
+    void updateCoverageGroup(double eField);
     void createMapGroup();
 
     void changeScenePos(int x, int y);
@@ -78,6 +79,7 @@ private:
     QPushButton *clear_coverage;
     QSpinBox *rflctns_cov;
     QSpinBox *cov_dnsty;
+    QLabel *m_eFieldDisp;
 
     // Map
     QGroupBox *map_group;
@@ -107,6 +109,7 @@ public slots:
     void sendStartCars();
     void printValue(double value);  // For tests
     void sendGenerateMap();
+    void updateEField(double eField);
 //    void sendAntennas();
 };
 
