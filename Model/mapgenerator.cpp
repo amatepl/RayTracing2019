@@ -5,21 +5,21 @@ MapGenerator::MapGenerator(QRectF mapBoundary): m_mapBoundary(mapBoundary)
 
 }
 
-void MapGenerator::generateMap()
+void MapGenerator::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap, double px_to_meter)
 {
-//    m_horizontalStreets.clear();
-//    m_verticalStreets.clear();
+    m_horizontalStreets.clear();
+    m_verticalStreets.clear();
+    m_mapBoundary.setHeight(h);
+    m_mapBoundary.setWidth(w);
 
+    this->px_to_meter = px_to_meter;
 //    unsigned streetsDistance = 100;
 
-//    generateStreets(streetsDistance);
+    generateStreets(strGap);
 
-//    unsigned streetWidth = 10;
+    generateBuidlings(strGap, strWidth);
 
-//    generateBuidlings(streetsDistance, streetWidth);
-
-
-    egBuilidings();
+//    egBuilidings();
 
 //    addCars();
 //    addCars();
@@ -29,19 +29,19 @@ void MapGenerator::generateMap()
 
 void MapGenerator::generateStreets(const unsigned streetsDistance)
 {
-    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance); i++) {
+    for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)); i++) {
         int random1 = 0;//= rand() % 100;
         int random2 = 0;//= rand() % 100;
-        QLineF *horizontalLine = new QLineF(0, i*streetsDistance + random1,
-                                            m_mapBoundary.right(),
-                                            i*streetsDistance + random2);
+        QLineF *horizontalLine = new QLineF(0, i*streetsDistance / px_to_meter + random1,
+                                            m_mapBoundary.right() / px_to_meter,
+                                            i*streetsDistance / px_to_meter + random2);
 
         int random3 = 0;//rand() % 100;
         int random4 = 0;//rand() % 100;
-        QLineF *verticalLine = new QLineF(i*streetsDistance + random3,
-                                          m_mapBoundary.top(),
-                                          i*streetsDistance + random4,
-                                          m_mapBoundary.bottom());
+        QLineF *verticalLine = new QLineF(i*streetsDistance / px_to_meter + random3,
+                                          m_mapBoundary.top() / px_to_meter,
+                                          i*streetsDistance / px_to_meter + random4,
+                                          m_mapBoundary.bottom() / px_to_meter);
 
         m_horizontalStreets.push_back(horizontalLine);
         m_verticalStreets.push_back(verticalLine);
@@ -51,8 +51,8 @@ void MapGenerator::generateStreets(const unsigned streetsDistance)
 
 void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth)
 {
-    for (int i = 0; i < round(m_mapBoundary.height()/streetsDistance) - 1; i++) {
-        for (int j = 0; j < round(m_mapBoundary.width()/streetsDistance) - 1; j++) {
+    for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance )) - 1; i++) {
+        for (int j = 0; j < round(m_mapBoundary.width()/(streetsDistance )) - 1; j++) {
             QPointF intersectionPoint1;
             m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),
                                                   &intersectionPoint1);
@@ -69,17 +69,17 @@ void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsig
             m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i + 1),
                                                       &intersectionPoint4);
 
-            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth));
-            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth));
+            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth / px_to_meter));
+            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth / px_to_meter));
 
-            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth));
-            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth));
+            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth / px_to_meter));
+            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth / px_to_meter));
 
-            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth));
-            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth));
+            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth / px_to_meter));
+            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth / px_to_meter));
 
-            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth));
-            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth));
+            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth / px_to_meter));
+            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth / px_to_meter));
 
             //            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
             //            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
@@ -93,17 +93,17 @@ void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsig
             //            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
             //            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
 
-//            QPolygonF buildingForm;
-//            buildingForm << intersectionPoint1
-//                         << intersectionPoint2
-//                         << intersectionPoint4
-//                         << intersectionPoint3
-//                         << intersectionPoint1;
+            QPolygonF buildingForm;
+            buildingForm << intersectionPoint1
+                         << intersectionPoint2
+                         << intersectionPoint4
+                         << intersectionPoint3
+                         << intersectionPoint1;
 
-//            MathematicalProduct *building = m_buildingFactory
-//                                                ->createMathematicalProduct(buildingForm);
+            MathematicalProduct *building = m_buildingFactory
+                                                ->createMathematicalProduct(buildingForm);
 
-//            m_products.push_back(building);
+            m_products.push_back(building);
 
         }
     }

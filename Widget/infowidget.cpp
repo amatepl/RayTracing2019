@@ -202,7 +202,13 @@ void InfoWidget::createMapGroup()
     connect(st_dnsty, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
 
     QFormLayout *f_layout = new QFormLayout;
-    f_layout->addRow("Streets Density: ", st_dnsty);
+    f_layout->addRow("Distance Between Streets: ", st_dnsty);
+
+    st_width = new QSpinBox(map_group);
+    st_width->setRange(0, 999);
+    st_width->setAccelerated(true);
+
+    f_layout->addRow("Street's width: ", st_width);
 
     car_dnsty = new QSpinBox(map_group);
     car_dnsty->setRange(0, 999);
@@ -243,6 +249,12 @@ void InfoWidget::createMapGroup()
     connect(generate_map, &QPushButton::clicked, this, &InfoWidget::sendGenerateMap);
 
     map_group->setLayout(map_layout);
+
+    height->setValue(500);
+    width->setValue(500);
+    st_dnsty->setValue(200);
+    st_width->setValue(20);
+
 }
 
 void InfoWidget::changeScenePos(int x, int y)
@@ -340,7 +352,7 @@ void InfoWidget::sendStartCars()
 
 void InfoWidget::sendGenerateMap()
 {
-    generateMap(height->value(), width->value(), car_dnsty->value(), st_dnsty->value());
+    generateMap(height->value(), width->value(), car_dnsty->value(), st_width->value(), st_dnsty->value());
 }
 
 void InfoWidget::updateEField(double eField)

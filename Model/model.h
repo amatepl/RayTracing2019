@@ -44,7 +44,6 @@ public:
                   TreeFactory *treeFactory = nullptr, CarFactory *carFactory = nullptr,
                   ReceiverFactory* receiverfactory = nullptr);           // For tests only
 
-    void generateMap();
 
     /*!
      * \brief clear
@@ -60,6 +59,8 @@ public:
      * DEPRECATED !!
      */
     void clearWorkspace();
+
+    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned wstrs, unsigned strsGap, double px_to_meter);
 
 private:
     map<string,vector<MathematicalProduct*>> m_mathematicalComponents;

@@ -393,7 +393,7 @@ forImage ImagesMethod::transmitterIllumination(Tx *transmitter)
     }
 
     transmitter->setIlluminatedZone(illuminationZone);
-    //m_scene->addPolygon(illuminationZone,QPen(),illumination);
+//    m_scene->addPolygon(illuminationZone,QPen(),illumination);
 
     forImage result{nearestWalls, illuminationZone};
 
@@ -445,7 +445,7 @@ QPolygonF ImagesMethod::buildingsInIlluminationZone(AbstractAntena *ant, int nbR
     // Painting tools
     QColor illumination;
     illumination.setBlue(255);
-    illumination.setAlpha(100);
+    illumination.setAlpha(50);
     QColor illumination2;
     illumination2.setRed(255);
     illumination2.setAlpha(50);
@@ -509,7 +509,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
 
     vector <TxImg *> images; // vector for tests
 
-    for (int i = 1; i < zone.length() - 1; i++) {
+    for (int i = 0; i < zone.length() - 1; i++) {
 
         //
         //      Here we go thorough the sides of the illumination zone and check if
@@ -521,7 +521,9 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
         bool cont = true;
 //        bool contDiffraction = true;
         while (j < walls.size() && cont) {
+
             if (walls.at(j)->onLine(zone.at(i)) && walls.at(j)->onLine(zone.at(i+1))) {
+
                 illuminatedWalls.push_back(Line(zone.at(i), zone.at(i+1)));
                 usedWalls.push_back(walls.at(j));
 

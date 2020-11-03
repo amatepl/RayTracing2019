@@ -511,7 +511,7 @@ void Rx::dialogDeleted()
 }
 
 // From MathematicalProduct
-void Rx::openDialog(QWidget *parent)
+void Rx::openDialog(QWidget */*parent*/)
 {
 //    for (unsigned i = 0; i < m_transmitters.size(); i++) {
 //        notifyObserversPathLoss(m_transmitters.at(i));

@@ -64,9 +64,9 @@ public:
     QWidget* InterferencePattern();
     QWidget* DistributionInterference();
     QWidget* PrxAngularSpctr();
+    void updatePrxAngularSpctr();
     QWidget* AngularDistr();
     QWidget* PrxDopplerSpctr();
-    void updatePrxAngularSpctr();
     QWidget* DopplerDistr();
     QWidget *SpcCrltn();
     void updateSpcCrltn();
@@ -178,5 +178,15 @@ public slots:
     void saveToDisk();
     void showTDL();
 };
+
+template<class T>
+QVector<double> normalise(T &vec, double coef)
+{
+    QVector<double> res;
+    for(const auto &e: vec){
+        res.push_back(e / coef);
+    }
+    return res;
+}
 
 #endif // DIALOGRX_H

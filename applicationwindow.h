@@ -116,7 +116,7 @@ public slots:
     void deleteProduct();
     void openProduct();
     void clearWorkspace();
-    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty);
+    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap);
     void addHeatMap(HeatMap *heatMap);
 };
 

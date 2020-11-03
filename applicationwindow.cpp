@@ -2,7 +2,7 @@
 #include "Share/wholeray.h"
 #include "Share/params.h"
 
-float px_to_meter = 1;
+float px_to_meter = 0.7;
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::WindowStaysOnBottomHint)
 {
@@ -27,6 +27,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
                       (TreeFactory *) m_treeFactory,
                       (CarFactory *) m_carFactory,
                       (ReceiverFactory *) m_receiverFactory);
+    m_info_widget->sendGenerateMap();
 
     m_rayTracingAlgorithm = new RayTracing(px_to_meter);
     m_rayTracingAlgorithm->setScene(m_map);
@@ -272,6 +273,7 @@ void ApplicationWindow::createToolInfo()
     connect(m_info_widget, &InfoWidget::startCars, this, &ApplicationWindow::startCars);
     connect(m_info_widget, &InfoWidget::clear, this, &ApplicationWindow::clearWorkspace);
     connect(m_info_widget, &InfoWidget::generateMap, this, &ApplicationWindow::generateMap);
+//    connect(m_info_widget, &InfoWidget::generateMap, m_model, &Model::generateMap);
 
 }
 
@@ -409,9 +411,9 @@ void ApplicationWindow::clearWorkspace()
     m_model->clear();
 }
 
-void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned stDnsty)
+void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap)
 {
-    m_model->generateMap();
+    m_model->generateMap(h, w, carDnsty, strWidth, strGap, px_to_meter);
 }
 
 void ApplicationWindow::addHeatMap(HeatMap *heatMap)

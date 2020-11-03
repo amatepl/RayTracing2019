@@ -535,9 +535,22 @@ DialogRx::PrxAngularSpctr()
     return widget;
 }
 
+
 void DialogRx::updatePrxAngularSpctr()
 {
-
+    pas_plot->clearItems();
+    pas = m_mathematicalproduct->prxAngularSpread();
+    u = m_mathematicalproduct->getu();
+    for (int i = 0; i < pas.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pas_plot);
+        line_impulse->start->setCoords(u[i], pas[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(u[i], -1500);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+//    QVector npas = normalise<QVector<double>>(pas, m_mathematicalproduct->getPower());
+//    void updatePrxAngularSpctr();
+    pas_plot->graph(0)->setData(u, pas);
+    pas_plot->replot();
 }
 
 QWidget*
@@ -878,6 +891,7 @@ void DialogRx::showTDL(){
 void DialogRx::update()
 {
     updateImpulseResponse();
+    updatePrxAngularSpctr();
     updateGeneralTab();
 //    updateSpcCrltn();
 }

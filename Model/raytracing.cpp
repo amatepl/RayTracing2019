@@ -21,8 +21,6 @@ MathematicalComponent* RayTracing::compute(map<string,vector<MathematicalProduct
 {
     setAttributs(mathematicalComponents);
 
-    cout << "Number of reflections: " << reflectionsNumber << endl;
-
     m_receiverfactory = receiverfactory;
 
 //    reflectionsNumber = 0;

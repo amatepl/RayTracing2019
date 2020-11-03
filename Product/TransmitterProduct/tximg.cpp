@@ -79,8 +79,8 @@ QPolygonF TxImg::buildCoverage(){
 //    }
 
     for(int i=0;i<16;i++){
-        coverage<<QPointF(line.p2().x()+m_radius*cos(M_PI*i/8),
-                          line.p2().y()+m_radius*sin(M_PI*i/8));
+        coverage<<QPointF(round(line.p2().x()+m_radius*cos(M_PI*i/8)),
+                            round(line.p2().y()+m_radius*sin(M_PI*i/8)));
     }
     return coverage;
 }
