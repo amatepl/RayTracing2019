@@ -17,7 +17,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
-    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
+//    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -273,7 +273,7 @@ QWidget* DialogRx::PhysicalImpulseResponse(){
     impulse_plot->graph(1)->setName("TDL");
 
     impulse_plot->xAxis->setLabel("\u03C4[ns]");
-    impulse_plot->yAxis->setLabel("h(\u03C4)[dB]");
+    impulse_plot->yAxis->setLabel("Normalized induced voltage V_OC");
     impulse_plot->yAxis->grid()->setSubGridVisible(true);
     impulse_plot->xAxis->grid()->setSubGridVisible(true);
 
@@ -284,7 +284,7 @@ QWidget* DialogRx::PhysicalImpulseResponse(){
 //    impulse_plot->replot();
     impulse_plot->legend->setVisible(true);
     impulse_plot->plotLayout()->insertRow(0);
-    impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Physical impulse response (and TDL model under US assumption)", QFont("sans", 12, QFont::Bold)));
+    impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Normalized induced voltage as impulse response (and normalized TDL model under US assumption)", QFont("sans", 12, QFont::Bold)));
     QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
@@ -328,7 +328,7 @@ QWidget* DialogRx::TDLImpulseResponse(){
     customplot->graph(0)->setName("TDL");
 
     customplot->xAxis->setLabel("\u03C4[ns]");
-    customplot->yAxis->setLabel("h_TDL(\u03C4)[dB]");
+    customplot->yAxis->setLabel("Normalized TDL impulse response");
     customplot->yAxis->grid()->setSubGridVisible(true);
     customplot->xAxis->grid()->setSubGridVisible(true);
     customplot->rescaleAxes();

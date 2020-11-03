@@ -69,8 +69,8 @@ QWidget *DialogTx::createDialog(){
     m_modelBox = new QComboBox(this);
     m_modelBox->addItem("Half-wave dipole antenna");
     m_modelBox->addItem("Array dipole antenna");
-    m_modelBox->addItem("Half-wave dipole antenna with reflector");
-    m_modelBox->addItem("Array dipole antenna with reflector");
+    //m_modelBox->addItem("Half-wave dipole antenna with reflector");
+    //m_modelBox->addItem("Array dipole antenna with reflector");
 
     m_rowBox = new QSpinBox(this);
     m_columnBox = new QSpinBox(this);
@@ -171,9 +171,9 @@ void DialogTx::updateGeneralTab()
     setBandwidth(m_tx->getBandwidth());
     setOrientation(m_tx->getOrientation());
     setPrincipalOrientation(m_tx->principalOrientation());
-//    setKind(m_tx->getKind());
-//    setRow(m_tx->getRow());
-//    setColumn(m_tx->getColumn());
+    setTxType(m_tx->getKind());
+    setRow(m_tx->getRow());
+    setColumn(m_tx->getColumn());
     setAttribute(Qt::WA_DeleteOnClose,true);
 
 }
@@ -340,17 +340,18 @@ QWidget *DialogTx::createCellRangeTab()
 }
 
 unsigned long DialogTx::getFrequency(){
-//    QString text = m_frequencyorder->currentText();
-//    if (text == "kHz"){
-//        m_frequency = m_frequencyValue->value()*1.0e3;
-//    }
-//    else if (text == "MHz"){
-//        m_frequency = m_frequencyValue->value()*1.0e6;
-//    }
-//    else {
-//        m_frequency = m_frequencyValue->value()*1.0e9;
-//    }
-//    return m_frequency;
+    double frequency;
+    QString text = m_frequencyorder->currentText();
+    if (text == "kHz"){
+        frequency = m_frequencyValue->value()*1.0e3;
+    }
+    else if (text == "MHz"){
+        frequency = m_frequencyValue->value()*1.0e6;
+    }
+    else {
+        frequency = m_frequencyValue->value()*1.0e9;
+    }
+    return frequency;
 }
 
 double DialogTx::getOrientation(){
@@ -360,21 +361,27 @@ double DialogTx::getOrientation(){
 
 unsigned long DialogTx::getBandwidth(){
     QString text = m_bworder->currentText();
-//    if (text == "kHz"){
-//        m_bandwidth = unsigned(long(m_bwvalue->value()*1e3));
-//    }
-//    else if (text == "MHz"){
-//        m_bandwidth = unsigned(long(m_bwvalue->value()*1e6));
-//    }
-//    else {
-//        m_bandwidth = unsigned(long(m_bwvalue->value()*1e9));
-//    }
-//    return m_bandwidth;
+    double bandwidth;
+    if (text == "kHz"){
+        bandwidth = unsigned(long(m_bwvalue->value()*1e3));
+    }
+    else if (text == "MHz"){
+        bandwidth = unsigned(long(m_bwvalue->value()*1e6));
+    }
+    else {
+        bandwidth = unsigned(long(m_bwvalue->value()*1e9));
+    }
+    return bandwidth;
+}
+
+TxInterface::Kind DialogTx::getKind(){
+    QString model = m_modelBox->currentText();
+    if (model == "Half-wave dipole antenna")return TxInterface::dipole;
+    else if (model == "Array dipole antenna") return TxInterface::array;
 }
 
 char DialogTx::principalOrientation(){
-//    m_pr_orientation = m_pr_orientationValue->value();
-//    return m_pr_orientation;
+    return m_pr_orientationValue->value();
 }
 
 void DialogTx::setFrequency(unsigned long frequency){
@@ -443,34 +450,34 @@ void DialogTx::setPrincipalOrientation(char orientation){
 //    }
 //}
 
-void DialogTx::setTxType(ph::TxType type)
+void DialogTx::setTxType(TxInterface::Kind kind)
 {
-    if (type == ph::TxType::dipole){
+    if (kind == TxInterface::dipole){
         m_modelBox->setCurrentText("Half-wave dipole antenna");
         m_rowBox->setEnabled(false);
         m_columnBox->setEnabled(false);
     }
-    else if (type == ph::TxType::dipoleRefl){
-        m_modelBox->setCurrentText("Half-wave dipole antenna with reflector");
-        m_rowBox->setEnabled(false);
-        m_columnBox->setEnabled(false);
-    }
-    else if (type == ph::TxType::array) {
+//    else if (type == ph::TxType::dipoleRefl){
+//        m_modelBox->setCurrentText("Half-wave dipole antenna with reflector");
+//        m_rowBox->setEnabled(false);
+//        m_columnBox->setEnabled(false);
+//    }
+    else if (kind == TxInterface::array) {
         m_modelBox->setCurrentText("Array dipole antenna");
         m_rowBox->setEnabled(true);
         m_columnBox->setEnabled(true);
     }
-    else if (type == ph::TxType::arrayRefl) {
-        m_modelBox->setCurrentText("Array dipole antenna with reflector");
-        m_rowBox->setEnabled(true);
-        m_columnBox->setEnabled(true);
-        }
+//    else if (type == ph::TxType::arrayRefl) {
+//        m_modelBox->setCurrentText("Array dipole antenna with reflector");
+//        m_rowBox->setEnabled(true);
+//        m_columnBox->setEnabled(true);
+//    }
 }
 
 void DialogTx::newProperties(){
     m_tx->setRow(getRow());
     m_tx->setColumn(getColumn());
-//    m_tx->setKind(getKind());
+    m_tx->setKind(getKind());
     m_tx->setFrequency(getFrequency());
     m_tx->setBandwidth(getBandwidth());
     m_tx->setPower(getPower());
@@ -484,18 +491,19 @@ void DialogTx::saveProperties(){
 }
 
 void DialogTx::openPlot(){
-    getFrequency();
+//    getFrequency();
 //    m_row = getRow();
 //    m_column = getColumn();
 //    m_orientation = getOrientation();
 //    m_pr_orientation = principalOrientation();
-//    new PatternWindow(this);
+    newProperties();
+    new PatternWindow(m_tx);
 }
 
 void DialogTx::changeModel(QString model)
 {
-//    if (model == "Half-wave dipole antenna")setKind(dipole);
-//    else if (model == "Array dipole antenna")setKind(array);
+    if (model == "Half-wave dipole antenna")setTxType(TxInterface::dipole);
+    else if (model == "Array dipole antenna")setTxType(TxInterface::array);
 //    else if (model == "Half-wave dipole antenna with reflector")setKind(dipolereflector);
 //    else if (model == "Array dipole antenna with reflector")setKind(arrayreflector);
 }

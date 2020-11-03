@@ -5,8 +5,8 @@
 #include <complex>
 #include <vector>
 #include <Share/wholeray.h>
-#include <gsl/gsl>
-#include "boost/compute/algorithm/max_element.hpp"
+#include <gsl/pointers>
+// #include "boost/compute/algorithm/max_element.hpp"
 
 constexpr double  eps_air        =   8.864e-12      ;  // A²S⁴kg⁻1m⁻3
 constexpr double  z_0            =   120 * M_PI     ;
@@ -286,5 +286,13 @@ std::complex <double> computeEMfield(const gsl::not_null<WholeRay*> rayLine,
  */
 std::complex <double> computeEMfield(const gsl::not_null<WholeRay*> rayLine, const TxParams &txParams);
 
+/*!
+ * \brief inducedVoltage
+ * \param field due to reflections and diffraction
+ * \param anglerx [rad]
+ * \return Induced voltage at receiver due to EM field
+ */
+std::complex <double> inducedVoltage(const std::complex <double> field,
+                                     const double anglerx,const double lambda);
 }
 #endif // PHYSICS_H

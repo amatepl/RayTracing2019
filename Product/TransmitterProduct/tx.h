@@ -113,8 +113,10 @@ public:
      * \fn Tx::estimateCh(QPointF *rx)
      * \brief Estimates channel characteristics for a given receiver
      * \param rx
+     * \param field (EM field received)
+     * \param ray considered ray
      */
-    void estimateCh(QPointF *rx);
+    void estimateCh(QPointF *rx, complex <double> field, WholeRay *ray);
 
     /*!
      * \brief Tx::vecSpeed

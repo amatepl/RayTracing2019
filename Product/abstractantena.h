@@ -57,7 +57,7 @@ protected:
     QPolygonF m_zone;
     QPolygonF m_tmpZone;
     vector<MathematicalCarProduct *> m_illuminatedCars;
-    AbstractRayFactory *m_rayFactory;
+    AbstractRayFactory *m_rayFactory = nullptr;
     QLineF m_movement {QLineF(.0,.0,.0,.0)};
     int m_wallType{wall};
 

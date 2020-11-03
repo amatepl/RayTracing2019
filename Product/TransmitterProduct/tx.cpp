@@ -21,7 +21,7 @@ Tx::Tx(int posX, int posY) : QPointF(posX, posY)
     // !!!!!!!!!!!!!!!! Relative Permittivity is on the wall !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!                                      !!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    epsilonWallRel      = 5;
+    epsilonWallRel      = 4.5;
 }
 
 Tx::~Tx()
@@ -91,7 +91,7 @@ Tx::computeImpulseReflection(WholeRay *ray_line, QLineF local_region)
 }
 
 
-void Tx::estimateCh(QPointF *rx)
+void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
 {
     m_chsData.at(rx).dstnc = QLineF(*this, *rx).length();
     complex <double> i(0.0, 1.0);
@@ -101,32 +101,37 @@ void Tx::estimateCh(QPointF *rx)
     QLineF receiver_speed = receivers_speed[rx];
     QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
 
-    for (const auto wholeRay: m_receiversRays[rx]) {
-
-        const double completeLength = wholeRay->totalLength();
-        const double angleRx = wholeRay->angleRx();
-        const double angleTx = wholeRay->angleTx();
+//    for (const auto wholeRay: m_receiversRays[rx]) {
+        const double completeLength = ray->totalLength();
+        const double angleRx = ray->angleRx();
+        const double angleTx = ray->angleTx();
         Data &chData = m_chsData.at(rx);
-        complex<double> array_factor = ph::totaleArrayFactor(angleTx, 90,
-                                                             m_frequency, m_orientation,
-                                                             m_pr_orientation, m_column,
-                                                             m_row, static_cast<ph::TxType>(m_kind));
-        const double R = ph::computeR(wholeRay);
-        complex<double> a =  R * array_factor / completeLength;
-        complex<double> h = a * exp(-i * (wvNbr) * completeLength);
-        pwr += norm(h);
-        hMax = abs(h) > hMax ? abs(h): hMax;
+//        complex<double> array_factor = ph::totaleArrayFactor(angleTx, 90,
+//                                                             m_frequency, m_orientation,
+//                                                             m_pr_orientation, m_column,
+//                                                             m_row, static_cast<ph::TxType>(m_kind));
+//        const double R = ph::computeR(wholeRay);
+//        complex<double> a =  R * array_factor / completeLength;
+//        complex<double> h = a * exp(-i * (wvNbr) * completeLength);
 
-        if (wholeRay->size() == 1) m_los_factor[rx] = norm(h);
-        m_nlos_factor[rx] += norm(h);
+//        tuple<int, int> arrSize = {m_column, m_row};
+//        complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+//                                                     m_orientation, m_pr_orientation,
+//                                                     static_cast<ph::TxType>(m_kind));
+//        pwr += norm(h);
+//        hMax = abs(h) > hMax ? abs(h): hMax;
+
+//        if (wholeRay->size() == 1) m_los_factor[rx] = norm(h);
+//        m_nlos_factor[rx] += norm(h);
 
         // Tau
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau * 1e4) / 1e4; // [precision of 0.1 ps]
 
         // Impulse response
-        m_receiversImpulse[rx][tau] += h; // To change
-        chData.impulseResp[tau] += h;
+//        m_receiversImpulse[rx][tau] += lambda*EMfield/M_PI; // To change
+        complex <double> voltage = ph::inducedVoltage(field,M_PI/2,lambda);
+        chData.impulseResp[tau] += voltage;
 
         beta.setAngle(angleRx);
 
@@ -142,32 +147,32 @@ void Tx::estimateCh(QPointF *rx)
         double u = ph::uMPC(wvNbr, theta);
         double w = receiver_speed.length()*u;
 
-        complex<double> angularDistr = ph::angDistrMPC(h, theta, u);
-        complex<double> dopplerDistr = ph::angDistrMPC(h, theta, w);
-        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
-        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
+//        complex<double> angularDistr = ph::angDistrMPC(h, theta, u);
+//        complex<double> dopplerDistr = ph::angDistrMPC(h, theta, w);
+//        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
+//        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
-        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
+//        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
 
         // Save Data
         chData.u.push_back(u);
         chData.w.push_back(w);
-        chData.angularDistr.push_back(angularDistr);
-        chData.dopplerDistr.push_back(dopplerDistr);
-        chData.prxAngularSpctr.push_back(prxAngSpctr);
-        chData.prxDopplerSpctr.push_back(prxDopSpctr);
+//        chData.angularDistr.push_back(angularDistr);
+//        chData.dopplerDistr.push_back(dopplerDistr);
+//        chData.prxAngularSpctr.push_back(prxAngSpctr);
+//        chData.prxDopplerSpctr.push_back(prxDopSpctr);
 
         //receivers_speed.translate(- m_receiver_speed.p1());
         // m_ray_speed.translate(- m_ray_speed.p1());
         //QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
         //double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
-        double omega = 2.0 * M_PI / lambda * rays_speed[wholeRay];
-        omega = round(omega * 1e4) / 1e4;
+//        double omega = 2.0 * M_PI / lambda * rays_speed[wholeRay];
+//        omega = round(omega * 1e4) / 1e4;
         //m_dopplerSpectrum[rx][omega] += h;
-        chData.dopplerSpctr[omega] += h;
+//        chData.dopplerSpctr[omega] += h;
         //chData.dopplerDistr[omega] += h;
 
-    }
+//    }
 
 
 //    normalizePrxSpctr(m_chsData.at(rx).prxAngularSpctr);
@@ -212,6 +217,7 @@ Tx::computeImpulseGroundReflection(QPointF *copy_receiver,
                                                          m_frequency, m_orientation,
                                                          m_pr_orientation, m_column,
                                                          m_row, static_cast<ph::TxType>(m_kind));
+
     double tau = completeLength/c;
     double local_region_angle = local_region.angle() + 180.0;
     local_region_angle = fmod(local_region_angle, 360.0);
@@ -230,10 +236,14 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
     // TO DO: check if there is a wall between the TX and RX
     double distance = this->distance(receiver); // conversion (1px == 2cm)
     double thetaG = atan((distance / 2) / ant_hght);
+//    cout << "Theta_ig: " << thetaG << endl;
     double thetaI = M_PI - thetaG;
     double R = computeReflexionPar(thetaG, epsilonWallRel);
+//    cout << "Gamma_par: " << R << endl;
     double completeLength = sqrt(4 * pow(ant_hght, 2) + pow(distance, 2)); //distance / sin(thetaG);
 
+//    cout << "distance: " << distance << endl;
+//    cout << "d_g: " << completeLength << endl;
     complex <double> i(0.0, 1.0);
 
     double Ia = sqrt(2 * m_power / (m_row * m_column * r_a)); // Ia could be changed for Beamforming application
@@ -241,18 +251,22 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
                                                          m_frequency, m_orientation,
                                                          m_pr_orientation, m_column,
                                                          m_row, static_cast<ph::TxType>(m_kind));
-    complex<double> a = R * array_factor * exp(-i * (2.0 * M_PI / lambda) * completeLength) / completeLength;
+//    cout << "AF_g: " << array_factor << endl;
+    double beta = 2*M_PI/lambda;
+//    cout << "beta*dg: " << beta*completeLength << endl;
+//    cout << "exp_g: " << exp(-i * beta * completeLength) / completeLength << endl;
+    complex<double> a = R * array_factor * exp(-i * beta * completeLength) / completeLength;
     complex <double> Efield = -i * a * (z_0 * Ia) / (2 * M_PI);
 
     QLineF receiver_speed = receivers_speed[receiver];
-    QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
+    QLineF betavec(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
 
     if (properties)
     {
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
-        m_receiversImpulse[receiver][tau] += a;
-        m_chsData[receiver].impulseResp[tau] += a;
+//        m_receiversImpulse[receiver][tau] += lambda*Efield*cos(M_PI/2*cos(thetaI))/(M_PI*sin(thetaI));
+        m_chsData[receiver].impulseResp[tau] += ph::inducedVoltage(Efield,thetaI,lambda);
         m_nlos_factor[receiver] += pow(abs(a),2);
 //        double shift = (direction - m_receiver_speed.angle()) * M_PI / 180.0;
 //        double omega = -2.0 * M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
@@ -262,11 +276,11 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         double angleRx = 180 + direction;
         Data &chData = m_chsData[receiver];
 
-        beta.setAngle(angleRx + 180);
+        betavec.setAngle(angleRx + 180);
 
         double theta = angleRx;
         if (receiver_speed.length() > 0.0){
-            theta = beta.angleTo(receiver_speed);
+            theta = betavec.angleTo(receiver_speed);
         }
         // Put computed data into channels data.
         double u = ph::uMPC(wvNbr, angleRx);
@@ -377,8 +391,8 @@ complex<double> Tx::computeDiffractedEfield(QPointF *receiver,
         double completeLength = rayLine->at(1)->getMeterLength() + rayLine->at(0)->getMeterLength();
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
-        m_receiversImpulse[receiver][tau] = a;
-        m_chsData[receiver].impulseResp[tau] = a;
+        m_receiversImpulse[receiver][tau] = Efield*lambda/M_PI;
+        m_chsData[receiver].impulseResp[tau] = Efield*lambda/M_PI;
 
     }
     return Efield;
@@ -445,6 +459,7 @@ Tx::comput4FixedBeam(QPointF *receiver)
     bool diffracted = false;
     m_receiversField[receiver] = 0;
     m_receiversGroundField[receiver] = 0;
+    complex<double> EMfield;
     for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++)
     {
         WholeRay *wholeRay = m_receiversRays[receiver].at(i);
@@ -453,7 +468,7 @@ Tx::comput4FixedBeam(QPointF *receiver)
         {
             map<QPointF *, map<double, double>>::iterator it;
             //m_ray_speed = ray_speeds[wholeRay];
-            complex<double>EMfield = computeDiffractedEfield(receiver,wholeRay,true);
+            EMfield = computeDiffractedEfield(receiver,wholeRay,true);
             m_receiversField[receiver] += EMfield;
 
             diffracted = true;
@@ -465,21 +480,23 @@ Tx::comput4FixedBeam(QPointF *receiver)
             tuple<int, int> arrSize = {m_column, m_row};
 //            double wvNbr = 2.0 * M_PI / lambda;
 //            complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
-            complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+            EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
                                                      m_orientation, m_pr_orientation,
                                                          static_cast<ph::TxType>(m_kind));
+//            cout << "E_o: " << EMfield << endl;
 
             if (wholeRay->size() == 1) {
                 // Adding the ground component
                 double angle_transmitter = wholeRay->back()->angle();
                 m_receiversGroundField[receiver] = computeEfieldGround(receiver, angle_transmitter, true); // Compute the electrical field from the ray reflected off the ground
+//                cout << "E_g: " << m_receiversGroundField[receiver] << endl;
             }
             m_receiversField[receiver] += EMfield;
 
         }
+        estimateCh(receiver,EMfield,wholeRay);
     }
 
-    estimateCh(receiver);
 
 //    ph::normalizeMap<map<double, double>(m_chsData.at(receiver).impulseResp);
 }
@@ -619,11 +636,12 @@ void Tx::link(const QPointF &p, WholeRay *wholeRay)
 {
     wholeRay->push_back(m_rayFactory->createRay(*this, p));
     m_receiversRays[&p].push_back(wholeRay);
+
 }
 
 void Tx::detectAndLink(const QPointF &p)
 {
-    if(detect(p)){
+    if(detect(p) && m_rayFactory != nullptr){
         WholeRay *wholeRay = new WholeRay;
         link(p, wholeRay);
     }
