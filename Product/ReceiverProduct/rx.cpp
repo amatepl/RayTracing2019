@@ -302,7 +302,7 @@ void Rx::computeImpulseTDL()
         double s1 =20*log10(abs(imp.second)) ;
 //        h[i] = 1 + 20*log10(abs(imp.second) / abs(m_impulse.begin()->second));
 //        h[i] = (abs(imp.second) / abs(m_impulse.begin()->second));
-        h[i] = abs(imp.second);
+        h[i] = abs(imp.second)/abs(m_impulse.begin()->second);
         // Compute time of arrival in ns
         tau[i] = imp.first; // tau
 
@@ -317,8 +317,10 @@ void Rx::computeImpulseTDL()
 
 
     std::map<double,std::complex<double>> map_tau_tdl;
+    double max = abs(y[0]);
     for (unsigned long i=0; i<indepentant_rays; ++i){
         map_tau_tdl[x.at(i)] += y[i];
+        if (max < abs(map_tau_tdl[x.at(i)])) max = abs(map_tau_tdl[x.at(i)]);
     }
     h_tdl.clear();
     tau_tdl.clear();
@@ -328,7 +330,7 @@ void Rx::computeImpulseTDL()
     for (const auto &tdl : map_tau_tdl){
 //        h_tdl[i] = 20*log10(abs(tdl.second));
 //        h_tdl[i] = (abs(tdl.second) / abs(map_tau_tdl.begin()->second));
-        h_tdl[i] = abs(tdl.second);
+        h_tdl[i] = abs(tdl.second)/max;
         tau_tdl[i] = tdl.first;
         i++;
     }

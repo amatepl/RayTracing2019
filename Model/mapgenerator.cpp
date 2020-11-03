@@ -19,7 +19,7 @@ void MapGenerator::generateMap()
 //    generateBuidlings(streetsDistance, streetWidth);
 
 
-//    egBuilidings();
+    egBuilidings();
 
 //    addCars();
 //    addCars();

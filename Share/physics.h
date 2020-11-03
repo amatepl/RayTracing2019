@@ -288,10 +288,11 @@ std::complex <double> computeEMfield(const gsl::not_null<WholeRay*> rayLine, con
 
 /*!
  * \brief inducedVoltage
- * \param field
+ * \param field due to reflections and diffraction
  * \param anglerx [rad]
  * \return Induced voltage at receiver due to EM field
  */
-std::complex <double> inducedVoltage(const std::complex <double> field, const double anglerx,const double lambda);
+std::complex <double> inducedVoltage(const std::complex <double> field,
+                                     const double anglerx,const double lambda);
 }
 #endif // PHYSICS_H

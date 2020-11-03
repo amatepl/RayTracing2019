@@ -11,7 +11,7 @@
 using namespace std;
 class TxInterface{
 public:
-    enum Kind{dipole,array,dipolereflector,arrayreflector};
+    enum Kind{dipole,array}; // dipolereflector,arrayreflector};
     virtual ~TxInterface() {}
 
     /* Getters */

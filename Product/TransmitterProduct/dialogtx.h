@@ -51,7 +51,7 @@ public:
     double getPower()  {return m_power->value();}
     int getRow()  {return m_rowBox->value();}
     int getColumn()  {return m_columnBox->value();}
-//    Kind getKind()  {return m_kind;}
+    TxInterface::Kind getKind();
 
     void setPosX(int posX)  {m_posx->setValue(posX);}
     void setPosY(int posY)  {m_posy->setValue(posY);}
@@ -60,10 +60,10 @@ public:
     void setPower(double power)  {m_power->setValue(power);}
     void setFrequency(unsigned long frequency) ;
     void setBandwidth(unsigned long bandwidth) ;
-//    void setRow(int row)  {m_rowBox->setValue(row); m_row = row;}
-//    void setColumn(int column)  {m_columnBox->setValue(column); m_column = column;}
+    void setRow(int row)  {m_rowBox->setValue(row);}
+    void setColumn(int column)  {m_columnBox->setValue(column);}
 //    virtual void setKind(Kind kind) ;
-    void setTxType(ph::TxType type);
+    void setTxType(TxInterface::Kind kind);
     void newProperties() ;
 
 private:
