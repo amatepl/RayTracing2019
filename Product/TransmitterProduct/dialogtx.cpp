@@ -13,7 +13,7 @@ DialogTx::DialogTx(TxInterface *mathematicalproduct):m_tx(mathematicalproduct)
     //    m_tabwidget->addTab( create , tr("Shadownig"));
 //    m_tabwidget->addTab(templatePlot(m_shadowingPlot,"Shadowing around transmitter at a reference distance",
 //                                     "Angle [rad]", "P [dBm]"), tr("Shadowing"));
-    m_tabwidget->addTab(createShadowingTab(), tr("Shadowing"));
+//    m_tabwidget->addTab(createShadowingTab(), tr("Shadowing"));
     /* Cell Range */
     m_tabwidget->addTab(createCellRangeTab(), tr("Cell range"));
 
@@ -184,6 +184,14 @@ QWidget *DialogTx::createPathLossTab()
     QCustomPlot *customplot = new QCustomPlot;
     m_tx->notifyObserversPathLoss();
 
+    map<double, double> shadow = m_tx->notifyObserversShadowing();
+    QVector<double> distance_sha;
+    QVector<double> power_sha;
+    for (auto &sha: shadow){
+        distance_sha.push_back(log10(sha.first));
+        power_sha.push_back(sha.second);
+    }
+
     vector <double> dpl = m_tx->distancePathLoss();
     D = QVector<double>(dpl.begin(),dpl.end());
 
@@ -206,22 +214,27 @@ QWidget *DialogTx::createPathLossTab()
 
     QCPGraph *path_loss_graph = new QCPGraph(customplot->xAxis, customplot->yAxis);
 
-    path_loss_graph->setPen(QColor(Qt::blue));
+    path_loss_graph->setPen(QColor(Qt::darkCyan));
     path_loss_graph->setName("Power received");
     path_loss_graph->setLineStyle(QCPGraph::lsLine);
     path_loss_graph->setData(logD, Prx);
 
     customplot->addGraph();
-    customplot->graph(1)->setPen(QPen(Qt::red));
-    customplot->graph(1)->setData(logD, path_loss);
-    customplot->graph(1)->setName("Path Loss");
+    customplot->graph(1)->setPen(QPen(Qt::darkBlue));
+    customplot->graph(1)->setData(distance_sha, power_sha);
+    customplot->graph(1)->setName("Shadowing power");
 
     customplot->addGraph();
-    customplot->graph(2)->setPen(QPen(Qt::darkGreen));
-    customplot->graph(2)->setData(logD, friis_loss);
-    customplot->graph(2)->setName("Free propagation loss");
+    customplot->graph(2)->setPen(QPen(Qt::red));
+    customplot->graph(2)->setData(logD, path_loss);
+    customplot->graph(2)->setName("Path Loss");
 
-    customplot->xAxis->setLabel("Distance log(d/1m)]");
+    customplot->addGraph();
+    customplot->graph(3)->setPen(QPen(Qt::darkGreen));
+    customplot->graph(3)->setData(logD, friis_loss);
+    customplot->graph(3)->setName("Free propagation loss");
+
+    customplot->xAxis->setLabel("Distance log(d/1m)");
     customplot->yAxis->setLabel("Prx[dbm]");
     //customplot->xAxis->setScaleType(QCPAxis::stLogarithmic);
     customplot->yAxis->grid()->setSubGridVisible(true);
@@ -258,8 +271,8 @@ QWidget *DialogTx::createShadowingTab()
 {
     m_shadowingPlot = new QCustomPlot();
     shadowing(m_tx->notifyObserversShadowing());
-    return templatePlot(m_shadowingPlot,"Shadowing around transmitter at a reference distance",
-                 "Angle [rad]", "P [dBm]");
+    return templatePlot(m_shadowingPlot,"Shadowing",
+                 "Distance log(d/1m)", "P [dBm]");
 }
 
 void DialogTx::updateShadowingTab()
@@ -269,28 +282,28 @@ void DialogTx::updateShadowingTab()
 
 void DialogTx::shadowing(map<double, double> shadow)
 {
-    QVector<double> angle;
+    QVector<double> distance;
     QVector<double> power;
     for (auto &sha: shadow){
-        angle.push_back(sha.first);
+        distance.push_back(log10(sha.first));
         power.push_back(sha.second);
     }
-    const auto mean = std::accumulate(power.begin(), power.end(), .0) / power.size();
-    QVector<double> mean_vector(power.size(),mean);
+    //const auto mean = std::accumulate(power.begin(), power.end(), .0) / power.size();
+    //QVector<double> mean_vector(power.size(),mean);
 
     m_shadowingPlot->addGraph();
     m_shadowingPlot->graph(0)->setPen(QPen(Qt::blue));
-    m_shadowingPlot->graph(0)->setData(angle, power);
+    m_shadowingPlot->graph(0)->setData(distance, power);
     m_shadowingPlot->graph(0)->setName("Shadowing power");
 
-    m_shadowingPlot->addGraph();
-    m_shadowingPlot->graph(1)->setPen(QPen(Qt::red));
-    m_shadowingPlot->graph(1)->setData(angle, mean_vector);
-    m_shadowingPlot->graph(1)->setName("<Prx(d)>");
+//    m_shadowingPlot->addGraph();
+//    m_shadowingPlot->graph(1)->setPen(QPen(Qt::red));
+//    m_shadowingPlot->graph(1)->setData(angle, mean_vector);
+//    m_shadowingPlot->graph(1)->setName("<Prx(d)>");
 
     m_shadowingPlot->rescaleAxes();
     m_shadowingPlot->replot();
-    m_shadowingPlot->xAxis->setTicker(QSharedPointer<QCPAxisTickerPi>(new QCPAxisTickerPi));
+//    m_shadowingPlot->xAxis->setTicker(QSharedPointer<QCPAxisTickerPi>(new QCPAxisTickerPi));
     m_shadowingPlot->legend->setVisible(true);
 }
 

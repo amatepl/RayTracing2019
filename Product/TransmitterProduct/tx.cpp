@@ -133,6 +133,9 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
         complex <double> voltage = ph::inducedVoltage(field,M_PI/2,lambda);
         chData.impulseResp[tau] += voltage;
 
+        if (ray->size() == 1) m_los_factor[rx] = norm(voltage);
+        else m_nlos_factor[rx] += norm(voltage);
+
         beta.setAngle(angleRx);
 
 //=======
@@ -154,6 +157,13 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
 
 //        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
 
+        complex<double> angularDistr = ph::angDistrMPC(voltage, theta, u);
+        complex<double> dopplerDistr = ph::angDistrMPC(voltage, theta, w);
+        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
+        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
+
+        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
+
         // Save Data
         chData.u.push_back(u);
         chData.w.push_back(w);
@@ -161,6 +171,10 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
 //        chData.dopplerDistr.push_back(dopplerDistr);
 //        chData.prxAngularSpctr.push_back(prxAngSpctr);
 //        chData.prxDopplerSpctr.push_back(prxDopSpctr);
+        chData.angularDistr.push_back(angularDistr);
+        chData.dopplerDistr.push_back(dopplerDistr);
+        chData.prxAngularSpctr.push_back(prxAngSpctr);
+        chData.prxDopplerSpctr.push_back(prxDopSpctr);
 
         //receivers_speed.translate(- m_receiver_speed.p1());
         // m_ray_speed.translate(- m_ray_speed.p1());
@@ -1248,31 +1262,48 @@ void Tx::clearShadowing()
 
 map<double,double> Tx::notifyObserversShadowing()
 {
-    vector<QPointF> points = circlePoints(*this, 100, 1);
-    QPointF copy_receiver;
-    map <double /*angle*/,double /*power*/> shadow;
-    for(unsigned i = 0; i < points.size(); i++)
-    {
-        copy_receiver.setX(points.at(i).x());
-        copy_receiver.setY(points.at(i).y());
+//    vector<QPointF> points = circlePoints(*this, 100, 1);
+//    QPointF copy_receiver;
+//    map <double /*angle*/,double /*power*/> shadow;
+//    for(unsigned i = 0; i < points.size(); i++)
+//    {
+//        copy_receiver.setX(points.at(i).x());
+//        copy_receiver.setY(points.at(i).y());
 
-        clearChData(&copy_receiver);
-        if (m_receiversRays.count(&copy_receiver)) {
-            for (unsigned int i = 0; i < m_receiversRays[&copy_receiver].size(); i++) {
-                delete m_receiversRays[&copy_receiver].at(i);
+//        clearChData(&copy_receiver);
+//        if (m_receiversRays.count(&copy_receiver)) {
+//            for (unsigned int i = 0; i < m_receiversRays[&copy_receiver].size(); i++) {
+//                delete m_receiversRays[&copy_receiver].at(i);
+//            }
+//            m_receiversRays[&copy_receiver].clear();
+//        }
+
+//        detectAndLink(copy_receiver);
+//        notifyObservers(&copy_receiver, m_movement);
+
+//        double power = computePathLossPower(&copy_receiver);
+//        QLineF line(*this, copy_receiver);
+//        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
+//        {
+//            shadow[line.angle()*M_PI/180.0] = power;
+//        }
+//    }
+//    return shadow;
+    map <double /*distance*/,double /*power_mean*/> shadow;
+    int sample_mean = 27;
+    std::map<double,double>::iterator it;
+    double power_mean = 0;
+    vector<double> prx = powerPathLoss();
+    vector <double> dpl = distancePathLoss();
+    for (int j = 0; j < prx.size(); j ++){
+        if (j >= sample_mean && j <= m_pathloss.size()-sample_mean){
+            for (int i = -sample_mean ; i <=0 ; i++){
+                power_mean += prx[j+i];
             }
-            m_receiversRays[&copy_receiver].clear();
-        }
-
-        detectAndLink(copy_receiver);
-        notifyObservers(&copy_receiver, m_movement);
-
-        double power = computePathLossPower(&copy_receiver);
-        QLineF line(*this, copy_receiver);
-        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
-        {
-            shadow[line.angle()*M_PI/180.0] = power;
-        }
+            power_mean = power_mean/sample_mean;
+            shadow[dpl[j]] = power_mean;
+         }
+    power_mean = 0;
     }
     return shadow;
 }
