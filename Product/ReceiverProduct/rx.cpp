@@ -295,14 +295,18 @@ void Rx::computeImpulseTDL()
 
     double tmpPrx = 0;
     int i = 0;
+    cout << "New TDL: " << endl;
+    double max_h = abs(m_impulse.begin()->second);
     for(const auto &imp : m_impulse){
         // Compute attenuation factor
         tmpPrx += pow(abs(imp.second), 2);
-        double s = 20*log10(abs(m_impulse.begin()->second));
-        double s1 =20*log10(abs(imp.second)) ;
+//        double s = 20*log10(abs(m_impulse.begin()->second));
+//        double s1 =20*log10(abs(imp.second)) ;
 //        h[i] = 1 + 20*log10(abs(imp.second) / abs(m_impulse.begin()->second));
 //        h[i] = (abs(imp.second) / abs(m_impulse.begin()->second));
-        h[i] = abs(imp.second)/abs(m_impulse.begin()->second);
+//        h[i] = abs(imp.second)/abs(m_impulse.begin()->second);
+        h[i] = abs(imp.second);
+        if (max_h < h[i]) max_h = h[i];
         // Compute time of arrival in ns
         tau[i] = imp.first; // tau
 
@@ -317,10 +321,13 @@ void Rx::computeImpulseTDL()
 
 
     std::map<double,std::complex<double>> map_tau_tdl;
-    double max = abs(y[0]);
+    double max_tdl = abs(y[0]);
     for (unsigned long i=0; i<indepentant_rays; ++i){
+        h[i] = h[i]/max_h;
         map_tau_tdl[x.at(i)] += y[i];
-        if (max < abs(map_tau_tdl[x.at(i)])) max = abs(map_tau_tdl[x.at(i)]);
+        if (max_tdl < abs(map_tau_tdl[x.at(i)])) {
+            max_tdl = abs(map_tau_tdl[x.at(i)]);
+        }
     }
     h_tdl.clear();
     tau_tdl.clear();
@@ -330,7 +337,9 @@ void Rx::computeImpulseTDL()
     for (const auto &tdl : map_tau_tdl){
 //        h_tdl[i] = 20*log10(abs(tdl.second));
 //        h_tdl[i] = (abs(tdl.second) / abs(map_tau_tdl.begin()->second));
-        h_tdl[i] = abs(tdl.second)/max;
+        h_tdl[i] = abs(tdl.second)/max_tdl;
+        cout << "Maximum tdl: " << max_tdl << endl;
+        cout << "h_TDL: " << h_tdl[i] << endl;
         tau_tdl[i] = tdl.first;
         i++;
     }
