@@ -87,6 +87,7 @@ private:
     QPushButton * start_cars;
     QSpinBox *car_dnsty;
     QSpinBox *st_dnsty;
+    QSpinBox *st_width;
     QSpinBox *height;
     QSpinBox *width;
 
@@ -97,7 +98,7 @@ signals:
     void clearCoverage();
     void clear();
     void startCars();
-    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs);
+    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs, unsigned strsGap);
 //    void antenas(double fq, double bw, bool modifyAll);
 
 public slots:

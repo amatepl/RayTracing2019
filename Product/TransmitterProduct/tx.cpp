@@ -46,7 +46,7 @@ QPolygonF Tx::buildCoverage() const
 {
     QPolygonF coverage;
     for (int i = 0; i < 16; i++) {
-        coverage << QPointF(x() + m_radius * cos(M_PI * i / 8), y() + m_radius * sin(M_PI * i / 8));
+        coverage << QPointF(round(x() + m_radius * cos(M_PI * i / 8)), round(y() + m_radius * sin(M_PI * i / 8)));
     }
     return coverage;
 }
@@ -683,7 +683,7 @@ void Tx::openDialog(QWidget *)
 void Tx::setScale(float scale)
 {
     MathematicalProduct::setScale(scale);
-    m_radius = m_radius * px_to_meter;
+    m_radius = m_radius / px_to_meter;
     m_zone  = buildCoverage();
 }
 

@@ -23,7 +23,7 @@ public:
     MapGenerator(QRectF mapBoundary);
 
     /* Generators */
-    void generateMap();
+    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap, double px_to_meter);
     void generateStreets(const unsigned streetsDistance);
     void generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth);
     void addCars();
@@ -56,6 +56,7 @@ public:
     }
 
 protected:
+    double px_to_meter;
     QRectF m_mapBoundary;
     vector<QLineF *> m_horizontalStreets;
     vector<QLineF *> m_verticalStreets;

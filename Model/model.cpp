@@ -29,7 +29,7 @@ void Model::setScene(QGraphicsScene*scene, BuildingFactory* buildingFactory,
 //    map->generateMap();
     m_receiverfactory = receiverfactory;
 
-    generateMap();
+//    generateMap();
 
 //    m_mathematicalComponents["Building"] = map->getProducts();
 
@@ -147,9 +147,9 @@ void Model::notify(Tx* transmitter)
     m_windowModelObservable->modelNotify(transmitter->getRays());
 }
 
-void Model::generateMap()
+void Model::generateMap(unsigned h, unsigned w, unsigned cars, unsigned wstrs, unsigned strsGap, double px_to_meter)
 {
-    m_mapGenerator->generateMap();
+    m_mapGenerator->generateMap(h, w, cars, wstrs, strsGap, px_to_meter);
     vector<MathematicalProduct *> mapProducts = m_mapGenerator->getProducts();
     for (unsigned i = 0; i < mapProducts.size(); i++) {
         string type = mapProducts.at(i)->getType();
