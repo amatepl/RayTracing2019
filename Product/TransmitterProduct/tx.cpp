@@ -853,8 +853,14 @@ Data * Tx::getChData(QPointF *rx)
         test.push_back(key.second);
     }
 
-    if (test.size() > 1){
-        fft.inv(out2, test);
+//    if (test.size() > 1){
+//        fft.inv(out2, test);
+//    }
+
+    vector<complex<double>> out3 = ph::idft(test);
+
+    for (const auto &e: out3) {
+        out2.push_back(e.real());
     }
 
     for (auto & val: out2){
@@ -1051,6 +1057,7 @@ void Tx::notifyParent(QPointF *receiver,
 
 void Tx::notifyCarDetected()
 {
+    m_txImgs.clear();
     emit detectsCar(this);
 }
 
@@ -1087,16 +1094,18 @@ void Tx::setIlluminatedZone(const QPolygonF &zone)
 
 void Tx::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
+    cout << "Illuminated cars: " << m_illuminatedCars.size() << endl;
     int idx = 0;
     if (m_zone.intersects(*car)) {
-
-        m_illuminatedCars.push_back(car);
+        if (!inIlluminatedCars(car, &idx)) m_illuminatedCars.push_back(car);
+        m_txImgs.clear();
         emit detectsCar(this);
     }
 
     else if (inIlluminatedCars(car, &idx)) {
 
         m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+        m_txImgs.clear();
         emit detectsCar(this);
     }
 }

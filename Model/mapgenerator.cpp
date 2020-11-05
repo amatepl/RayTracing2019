@@ -32,16 +32,16 @@ void MapGenerator::generateStreets(const unsigned streetsDistance)
     for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)); i++) {
         int random1 = 0;//= rand() % 100;
         int random2 = 0;//= rand() % 100;
-        QLineF *horizontalLine = new QLineF(0, i*streetsDistance / px_to_meter + random1,
-                                            m_mapBoundary.right() / px_to_meter,
-                                            i*streetsDistance / px_to_meter + random2);
+        QLineF *horizontalLine = new QLineF(0, round(i*streetsDistance / px_to_meter + random1),
+                                            round(m_mapBoundary.right() / px_to_meter),
+                                            round(i*streetsDistance / px_to_meter + random2));
 
         int random3 = 0;//rand() % 100;
         int random4 = 0;//rand() % 100;
-        QLineF *verticalLine = new QLineF(i*streetsDistance / px_to_meter + random3,
-                                          m_mapBoundary.top() / px_to_meter,
-                                          i*streetsDistance / px_to_meter + random4,
-                                          m_mapBoundary.bottom() / px_to_meter);
+        QLineF *verticalLine = new QLineF(round(i*streetsDistance / px_to_meter + random3),
+                                          round(m_mapBoundary.top() / px_to_meter),
+                                          round(i*streetsDistance / px_to_meter + random4),
+                                          round(m_mapBoundary.bottom() / px_to_meter));
 
         m_horizontalStreets.push_back(horizontalLine);
         m_verticalStreets.push_back(verticalLine);
@@ -133,7 +133,7 @@ void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsig
 
 //                m_products.push_back(building2);
 
-//    addCars();
+    addCars();
 //    addCars();
 
     //addTrees();
@@ -193,6 +193,7 @@ void MapGenerator::addCars()
 
         m_products.push_back(car);
         m_cars.push_back(static_cast<MathematicalCarProduct *>(car));
+        QLineF *l1 = m_horizontalStreets.at(i);
         ((MathematicalCarProduct *)car)->setRoad(m_horizontalStreets.at(i));
 
 //        thread *thread_obj = new thread (&MapGenerator::moveCar,

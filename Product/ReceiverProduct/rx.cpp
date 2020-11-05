@@ -615,9 +615,10 @@ void Rx::notifyObservers()
         computeDelaySpread();
         coherenceBandwidth();
 ////        dopplerSpectrum();
-
     }
-
+    if (m_dialog != nullptr) {
+        m_dialog->update();
+    }
 }
 
 complex<double> Rx::notifyObserversInterference(QLineF local_region)

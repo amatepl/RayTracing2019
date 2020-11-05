@@ -294,5 +294,42 @@ std::complex <double> computeEMfield(const gsl::not_null<WholeRay*> rayLine, con
  */
 std::complex <double> inducedVoltage(const std::complex <double> field,
                                      const double anglerx,const double lambda);
+
+template <typename T>
+vector<complex<double>> dft(vector<T> &in)
+{
+    vector<complex<double>> out;
+
+    complex<double> j (0., 1.);
+
+    unsigned N = in.size();
+    for (unsigned n = 0; n < N; n++) {
+        out.push_back(0);
+        for (unsigned m = 0; m < N; m++) {
+            out.at(n) += in.at(m) * exp(-j * 2. * M_PI * (double) n * (double) m / (double) N);
+        }
+    }
+
+    return out;
+}
+
+template <typename T>
+vector<complex<double>> idft(vector<T> &in)
+{
+    vector<complex<double>> out;
+
+    complex<double> j (0., 1.);
+
+    unsigned N = in.size();
+    for (unsigned n = 0; n < N; n++) {
+        out.push_back(0);
+        for (unsigned m = 0; m < N; m++) {
+            out.at(n) += in.at(m) * exp(j * 2. * M_PI * (double) n * (double) m / (double) N) / (double) N;
+        }
+    }
+
+    return out;
+}
+
 }
 #endif // PHYSICS_H

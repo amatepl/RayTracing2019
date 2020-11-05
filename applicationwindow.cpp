@@ -413,6 +413,7 @@ void ApplicationWindow::clearWorkspace()
 
 void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap)
 {
+    m_map->setSceneRect(0, 0, w, h);
     m_model->generateMap(h, w, carDnsty, strWidth, strGap, px_to_meter);
 }
 

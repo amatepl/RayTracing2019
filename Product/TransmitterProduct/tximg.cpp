@@ -226,14 +226,15 @@ void TxImg::notifyCarDetected()
 void TxImg::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
     int idx = 0;
-    if (m_zone.intersects(*car)) {
+//    if (m_zone.intersects(*car)) {
 
-        m_illuminatedCars.push_back(car);
-        m_parent->notifyCarDetected();
+//        m_illuminatedCars.push_back(car);
+//        m_parent->notifyCarDetected();
 
-    } else if (inIlluminatedCars(car, &idx)) {
+//    } else if (inIlluminatedCars(car, &idx)) {
 
-        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
-        m_parent->notifyCarDetected();
-    }
+//        m_illuminatedCars.erase(m_illuminatedCars.begin() + idx);
+//        m_parent->notifyCarDetected();
+//    }
+//    cout << "Car moved!" << endl;
 }

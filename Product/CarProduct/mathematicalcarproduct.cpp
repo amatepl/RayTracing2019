@@ -69,7 +69,7 @@ void MathematicalCarProduct::setPos(QPointF pos)
     m_center = pos;
     translate(offset);
     moveWalls(offset);
-    emit positionChanged(this,getPosX(),getPosY(),getOrientation());
+    positionChanged(this,getPosX(),getPosY(),getOrientation());
 }
 
 QPointF MathematicalCarProduct::getPos() const

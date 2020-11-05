@@ -17,7 +17,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
-//    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
+    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -892,6 +892,7 @@ void DialogRx::update()
 {
     updateImpulseResponse();
     updatePrxAngularSpctr();
+    updateSpcCrltn();
     updateGeneralTab();
 //    updateSpcCrltn();
 }
