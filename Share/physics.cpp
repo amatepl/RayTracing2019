@@ -37,6 +37,15 @@ std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double
 //    return 2 * M_PI * 1 / (spectrum * sin(theta * M_PI / 180.0)/ cos(theta * M_PI / 180));
 }
 
+template <typename T>
+void sample(vector<T> &vec, T range){
+    T s = -range;
+    for (auto &e: vec) {
+        while (e > s) {
+
+        }
+    }
+}
 
 double ph::angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u, const double ampu)
 {

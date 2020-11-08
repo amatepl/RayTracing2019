@@ -5,7 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
     datavisualization
 
 CONFIG += c++1z \
-    app_bundle
+    debug
 
 HEADERS += Abstract_Factory/dialogfactory.h \
     Abstract_Factory/abstractalgorithmfactory.h \

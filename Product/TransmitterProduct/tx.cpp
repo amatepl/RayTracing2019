@@ -853,9 +853,33 @@ Data * Tx::getChData(QPointF *rx)
         test.push_back(key.second);
     }
 
+    for (double i = -wvNbr; i <= wvNbr; i+= 0.01) {
+
+    }
+
+    vector <double> ulocal = m_chsData[rx].u;
+
+    double s = -wvNbr;
+    unsigned imax = ulocal.size();
+    for (unsigned idx = 0; idx < imax; idx++) {
+        while (s < ulocal.at(idx)) {
+            test.insert(test.begin() + idx, complex<double >(0,0));
+            s += 1;
+        }
+    }
+
+    double uend = ulocal.back();
+    while (uend <= wvNbr) {
+        test.push_back(0);
+        uend += 1;
+    }
+
+//    cout << "Test size: " << test.size() << endl;
+
 //    if (test.size() > 1){
 //        fft.inv(out2, test);
 //    }
+
 
     vector<complex<double>> out3 = ph::idft(test);
 
@@ -868,14 +892,25 @@ Data * Tx::getChData(QPointF *rx)
     }
 
     vector<double> omega;
-    for (unsigned i = 0; i <= u2.size(); i++) {
+    for (unsigned i = 0; i <= out2.size(); i++) {
         omega.push_back(i);
     }
 
+//    cout << "Angles: ---------------------------------" << endl;
+//    for (const auto &e: omega) {
+//        cout << e << endl;
+//    }
 //    map<double, double> spaceCorr = ph::correlation(test);
 
+//    cout << "out2 size: " << out2.size() << endl;
+//    unsigned f = 0;
+//    for (const auto &e: out2){
+//        cout << e <<", "<< test.at(f)<<", " << ulocal.at(f) << endl;
+//        f++;
+//    }
     m_chsData[rx].spaceCrltn = out2;
 //    m_chsData[rx].w = vector <double>(u2.begin(), u2.end() -1 );
+//    cout << "Size w: " << m_chsData[rx].w.size() << endl;
     m_chsData[rx].w = omega;
     return &m_chsData[rx];
 }
