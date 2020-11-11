@@ -210,6 +210,7 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
     // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
     // TO DO: check if there is a wall between the TX and RX
     double distance = this->distance(receiver); // conversion (1px == 2cm)
+    cout << "Distance in tx.cpp for ground: " << distance << endl;
     double thetaG = atan((distance / 2) / ant_hght);
     cout << "Theta_ig in tx.cpp for ground: " << thetaG << endl;
     double thetaI = M_PI - thetaG;
@@ -217,7 +218,7 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
     double R = computeReflexionPar(thetaG, epsilonWallRel);
     cout << "Gamma_par in tx.cpp for ground: " << R << endl;
     double completeLength = sqrt(4 * pow(ant_hght, 2) + pow(distance, 2)); //distance / sin(thetaG);
-
+    cout << "d_g in tx.cpp for ground: " << completeLength << endl;
     complex <double> i(0.0, 1.0);
 
     double Ia = sqrt(2 * m_power / (m_row * m_column * r_a)); // Ia could be changed for Beamforming application
@@ -867,15 +868,15 @@ Data * Tx::getChData(QPointF *rx)
 
 //    cout << "out2 size: " << out2.size() << endl;
     unsigned f = 0;
-    for (const auto &e: out2){
-        cout << e <<", "<< test.at(f) << endl;
-        f++;
-    }
+//    for (const auto &e: out2){
+//        cout << e <<", "<< test.at(f) << endl;
+//        f++;
+//    }
 
-    cout << "u ----------" << endl;
-    for (auto &e: ulocal) {
-        cout << e << endl;
-    }
+//    cout << "u ----------" << endl;
+//    for (auto &e: ulocal) {
+//        cout << e << endl;
+//    }
 
     int i = 0;
     for (auto e: out2) {

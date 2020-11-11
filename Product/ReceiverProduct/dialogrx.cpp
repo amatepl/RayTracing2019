@@ -17,7 +17,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
-//    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
+    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -227,7 +227,7 @@ void DialogRx::updateGeneralTab()
     m_e_field->clear();
     m_e_field->setText("Electric fiedl [V/m]: ");
     m_e_field->insert(QString::number(norm(m_mathematicalproduct->getEField())));
-    setEnable(m_mathematicalproduct->getEnable());
+//    setEnable(m_mathematicalproduct->getEnable());
     m_target_snr->setValue(m_mathematicalproduct->targetSNR());
     m_noise_figure->setValue(m_mathematicalproduct->noiseFigure());
     m_interferencemargin->setValue(m_mathematicalproduct->interFerenceMargin());
@@ -824,7 +824,9 @@ void DialogRx::setEnable(bool enable){
 void DialogRx::newProperties(){
     m_mathematicalproduct->setSpeed(m_speed->value());
     m_mathematicalproduct->setOrientation(m_orientation->value());
+    cout << "pos_x: " << m_posx->value() << endl;
     m_mathematicalproduct->setPosX(m_posx->value());
+    cout << "pos_y: " << m_posy->value() << endl;
     m_mathematicalproduct->setPosY(m_posy->value());
     m_mathematicalproduct->setTargetSNR(m_target_snr->value());
     m_mathematicalproduct->setNoiseFigure(m_noise_figure->value());
@@ -894,5 +896,5 @@ void DialogRx::update()
     updatePrxAngularSpctr();
 //    updateSpcCrltn();
     updateGeneralTab();
-//    updateSpcCrltn();
+    updateSpcCrltn();
 }

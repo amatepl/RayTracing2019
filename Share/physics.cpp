@@ -327,6 +327,7 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine
 
     complex <double> i(0.0, 1.0);
     double totalLength = rayLine->totalLength();
+    cout << "Distance in physics.cpp: " << totalLength << endl;
     double R = ph::computeR(rayLine);
     complex <double> Efield = 0.0;
 
