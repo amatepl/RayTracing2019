@@ -96,6 +96,8 @@ public:
     int targetSNR() override {return m_target_snr;}
     int noiseFigure() override {return m_noise_figure;}
     int interFerenceMargin() override {return m_interferencemargin;}
+    vector<double> getDoppler() override;
+    vector<double> getOmega() override;
 
     void setSpeed(float speed) override;
     void setOrientation(float orientation) override;

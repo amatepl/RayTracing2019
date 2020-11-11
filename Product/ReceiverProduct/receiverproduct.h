@@ -84,8 +84,8 @@ public:
     double dopplerSpread(){return doppler_spread;}
     QVector<double> getw() {return w;}
 
-    virtual QVector<double> getDoppler() {return doppler;}
-    virtual QVector<double> getOmega() {return omega;}
+    virtual std::vector<double> getDoppler() = 0;
+    virtual std::vector<double> getOmega() = 0;
 
     // 6. Spatial correlation
     virtual QVector<double> prxAngularSpread(){return pas;}
@@ -107,9 +107,6 @@ protected:
     QVector<double> doppler_distr;
     double doppler_spread {0};
     QVector<double> w;
-
-    QVector<double> omega;
-    QVector<double> doppler;
 
     // 5. Spatial correlation
     PrxAngularSpread pas;

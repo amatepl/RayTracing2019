@@ -14,7 +14,8 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
     m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
-    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
+//    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
+    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
     m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
@@ -686,44 +687,62 @@ DialogRx::DopplerDistr()
     return widget;
 }
 
-//QWidget* DialogRx::DopplerSpectrum(){
-//    QWidget *widget = new QWidget;
+QWidget* DialogRx::DopplerSpectrum(){
+    QWidget *widget = new QWidget;
+    doppler_spctr_plot = new QCustomPlot;
 //    QCustomPlot *customplot = new QCustomPlot;
 
-//    doppler = m_mathematicalproduct->getDoppler();
-//    omega = m_mathematicalproduct->getOmega();
+    vector<double> dp = m_mathematicalproduct->getDoppler();
+    doppler = QVector(dp.begin(), dp.end());
+    vector<double> omg = m_mathematicalproduct->getOmega();
+    omega = QVector(omg.begin(), omg.end());
+
+    cout << "Doppler spectrum:" << endl;
+    for (auto a: doppler) {
+        cout << abs(a) << endl;
+    }
 
 //    for(int i = 0; i < doppler.size(); i++){
-//        QCPItemLine *line_doppler = new QCPItemLine(customplot);
+//        QCPItemLine *line_doppler = new QCPItemLine(doppler_spctr_plot);
 //        line_doppler->start->setCoords(omega[i], doppler[i]);  // location of point 1 in plot coordinate
 //        line_doppler->end->setCoords(omega[i], -130);  // location of point 2 in plot coordinate
 //        line_doppler->setPen(QPen(Qt::blue));
 //    }
 
-//    customplot->addGraph();
-//    customplot->graph(0)->setPen(QPen(Qt::red));
-//    customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
-//    customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-//    customplot->graph(0)->setData(omega, doppler);
-//    customplot->graph(0)->setName("Doppler spectrum");
+    doppler_spctr_plot->addGraph();
+    doppler_spctr_plot->graph(0)->setPen(QPen(Qt::red));
+    doppler_spctr_plot->graph(0)->setLineStyle(QCPGraph::lsImpulse);
+    doppler_spctr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    doppler_spctr_plot->graph(0)->setData(omega, doppler);
+    doppler_spctr_plot->graph(0)->setName("Doppler spectrum");
 
-//    customplot->xAxis->setLabel("\u03C9[rad/s]");
-//    customplot->yAxis->setLabel("a(\u03c9)[dB]");
-//    customplot->yAxis->grid()->setSubGridVisible(true);
-//    customplot->xAxis->grid()->setSubGridVisible(true);
-//    customplot->rescaleAxes();
-//    customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//    customplot->replot();
+    doppler_spctr_plot->xAxis->setLabel("\u03C9[rad/s]");
+    doppler_spctr_plot->yAxis->setLabel("a(\u03c9)[dB]");
+    doppler_spctr_plot->yAxis->grid()->setSubGridVisible(true);
+    doppler_spctr_plot->xAxis->grid()->setSubGridVisible(true);
+    doppler_spctr_plot->rescaleAxes();
+    doppler_spctr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    doppler_spctr_plot->replot();
 
-//    customplot->plotLayout()->insertRow(0);
-//    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Dopler spectrum", QFont("sans", 12, QFont::Bold)));
+    doppler_spctr_plot->plotLayout()->insertRow(0);
+    doppler_spctr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(doppler_spctr_plot, "Dopler spectrum", QFont("sans", 12, QFont::Bold)));
 
-//    QGridLayout *firstLayout = new QGridLayout;
-//    firstLayout->addWidget(customplot,0,0);
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(doppler_spctr_plot,0,0);
 
-//    widget->setLayout(firstLayout);
-//    return widget;
-//}
+    widget->setLayout(firstLayout);
+    return widget;
+}
+
+void DialogRx::updateDopplerSpctr()
+{
+    vector<double> dp = m_mathematicalproduct->getDoppler();
+    doppler = QVector(dp.begin(), dp.end());
+    vector<double> omg = m_mathematicalproduct->getOmega();
+    omega = QVector(omg.begin(), omg.end());
+    doppler_spctr_plot->graph(0)->setData(omega, doppler);
+    doppler_spctr_plot->replot();
+}
 
 QWidget *DialogRx::SpcCrltn()
 {
@@ -896,5 +915,5 @@ void DialogRx::update()
     updatePrxAngularSpctr();
     updateSpcCrltn();
     updateGeneralTab();
-//    updateSpcCrltn();
+    updateDopplerSpctr();
 }

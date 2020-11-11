@@ -143,13 +143,15 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     // m_ray_speed.translate(- m_ray_speed.p1());       Chack if necessary
 
     // A REVOIRE
+    double angle = receiver_speed.angleTo(*ray->front());
+    rays_speed[ray] += receiver_speed.length()*cos(angle*M_PI/180.0);
     // QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
     //double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
 
-//        double omega = 2.0 * M_PI / lambda * rays_speed[wholeRay];
-//        omega = round(omega * 1e4) / 1e4;
+    double omega = 2.0 * M_PI / lambda * rays_speed[ray];
+    omega = round(omega * 1e4) / 1e4;
 
-//        chData.dopplerSpctr[omega] += h;
+    chData.dopplerSpctr[omega] += voltage;
 
 //    normalizePrxSpctr(m_chsData.at(rx).prxDopplerSpctr);
 
@@ -835,10 +837,12 @@ Data * Tx::getChData(QPointF *rx)
         }
     }
 
-    double uend = ulocal.back();
-    while (uend <= wvNbr) {
-        test.push_back(0);
-        uend += 1;
+    if (ulocal.size() != 0) {
+        double uend = ulocal.back();
+        while (uend <= wvNbr) {
+            test.push_back(0);
+            uend += 1;
+        }
     }
 
 //    cout << "Test size: " << test.size() << endl;
@@ -1051,12 +1055,8 @@ void Tx::attachObservable(ModelObservable *modelObservable)
 // ---------------------------------------------------- AbstractAntenna ---------------------------
 
 
-void Tx::notifyParent(QPointF *receiver,
-                                                  double speed,
-                                                  const QPointF &point,
-                                                  WholeRay *wholeRay)
+void Tx::notifyParent(QPointF *receiver, double speed, const QPointF &point, WholeRay *wholeRay)
 {
-
     //
     //      Called by the transmitter images and the diffraction points.
     //

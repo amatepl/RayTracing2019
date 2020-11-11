@@ -117,7 +117,13 @@ void Rx::extractChData()
 {
 
     m_impulse = m_chData->impulseResp;
-    m_doppler = m_chData->dopplerSpctr;
+//    m_doppler = m_chData->dopplerSpctr;
+
+//    for (const auto e: m_doppler) {
+//        doppler.push_back(abs(e.second));
+//        omega.push_back(e.first);
+//    }
+
     riceFactor(m_chData->riceFactor);
 
     for (vector<complex<double>>::iterator ang = m_chData->angularDistr.begin();
@@ -176,7 +182,12 @@ void Rx::save(string path)
     vectorSizes.push_back(logD.size());
     vectorSizes.push_back(fading.size());
     vectorSizes.push_back(logD_model.size());
-    vectorSizes.push_back(doppler.size());
+    vectorSizes.push_back(m_chData->dopplerSpctr.size());
+
+    vector<double> doppler;
+    for (const auto &e: m_chData->dopplerSpctr) {
+        doppler.push_back(abs(e.second));
+    }
 
     sort(vectorSizes.begin(), vectorSizes.end());
 
@@ -243,7 +254,7 @@ void Rx::save(string path)
             ofs << ";" ;
         }
 
-        if (n < doppler.size()) {
+        if (n < m_chData->dopplerSpctr.size()) {
             ofs << doppler[n];
         } else {
             ofs << ";" ;
@@ -349,16 +360,16 @@ void Rx::computeImpulseTDL()
 // 4. Doppler:
 void Rx::dopplerSpectrum()
 {
-    omega.clear();
-    doppler.clear();
-    omega.resize(m_doppler.size());
-    doppler.resize(m_doppler.size());
-    int i = 0;
-    for(const auto &dop : m_doppler){
-        omega[i] = dop.first;
-        doppler[i] = 20*log10(abs(dop.second));
-        i++;
-    }
+//    omega.clear();
+//    doppler.clear();
+//    omega.resize(m_doppler.size());
+//    doppler.resize(m_doppler.size());
+//    int i = 0;
+//    for(const auto &dop : m_doppler){
+//        omega[i] = dop.first;
+//        doppler[i] = 20*log10(abs(dop.second));
+//        i++;
+//    }
 }
 
 void Rx::sendInterferencePattern()
@@ -460,6 +471,29 @@ double Rx::getDopplerSprd()
 }
 complex <double> Rx::getEField() {return m_e_field;}
 bool Rx::getEnable() {return enable;}
+
+
+vector<double> Rx::getDoppler()
+{
+    vector<double> doppler;
+    if (m_chData != nullptr) {
+        for (auto e: m_chData->dopplerSpctr) {
+            doppler.push_back(abs(e.second));
+        }
+    }
+    return doppler;
+}
+
+vector<double> Rx::getOmega()
+{
+    vector<double> omega;
+    if (m_chData != nullptr) {
+        for (auto e: m_chData->dopplerSpctr) {
+            omega.push_back(e.first);
+        }
+    }
+    return omega;
+}
 
 void Rx::setSpeed(float speed)
 {

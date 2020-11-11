@@ -69,6 +69,8 @@ public:
     QWidget* PrxDopplerSpctr();
     QWidget* DopplerDistr();
     QWidget *SpcCrltn();
+    QWidget *DopplerSpectrum();
+    void updateDopplerSpctr();
     void updateSpcCrltn();
 
     void changeGraph();
@@ -155,6 +157,7 @@ private:
     QVector<double> doppler_distr;
     double doppler_spread {0};
     QVector<double> w;
+    QCustomPlot *doppler_spctr_plot;
 
     QVector<double> omega;
     QVector<double> doppler;
