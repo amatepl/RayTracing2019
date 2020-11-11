@@ -40,7 +40,7 @@ void ImagesMethod::launchAlgorithm()
 //        m_scene->addPolygon(m_totalIlluminationZone, illumination1);
         // Launches the methods to compute siple and double diffraction
 
-//        setDiffraction(data.walls, data.zone, transmitter);
+        setDiffraction(data.walls, data.zone, transmitter);
         if (recursionDepth > 0) {
             createImages(data.walls, data.zone, recursionDepth - 1, transmitter);
         }
