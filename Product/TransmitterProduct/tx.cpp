@@ -94,102 +94,63 @@ Tx::computeImpulseReflection(WholeRay *ray_line, QLineF local_region)
 void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
 {
     m_chsData.at(rx).dstnc = QLineF(*this, *rx).length();
-    complex <double> i(0.0, 1.0);
     m_los_factor[rx] = 0;
-    double pwr = 0;
-    double hMax = 0;
     QLineF receiver_speed = receivers_speed[rx];
     QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
 
-//    for (const auto wholeRay: m_receiversRays[rx]) {
-        const double completeLength = ray->totalLength();
-        const double angleRx = ray->angleRx();
-        const double angleTx = ray->angleTx();
-        Data &chData = m_chsData.at(rx);
-//        complex<double> array_factor = ph::totaleArrayFactor(angleTx, 90,
-//                                                             m_frequency, m_orientation,
-//                                                             m_pr_orientation, m_column,
-//                                                             m_row, static_cast<ph::TxType>(m_kind));
-//        const double R = ph::computeR(wholeRay);
-//        complex<double> a =  R * array_factor / completeLength;
-//        complex<double> h = a * exp(-i * (wvNbr) * completeLength);
+    const double completeLength = ray->totalLength();
+    const double angleRx = ray->angleRx();
+    Data &chData = m_chsData.at(rx);
 
-//        tuple<int, int> arrSize = {m_column, m_row};
-//        complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
-//                                                     m_orientation, m_pr_orientation,
-//                                                     static_cast<ph::TxType>(m_kind));
-//        pwr += norm(h);
-//        hMax = abs(h) > hMax ? abs(h): hMax;
+    // Tau
+    double tau = completeLength * 1e9/c; // [ns]
+    tau = round(tau * 1e4) / 1e4; // [precision of 0.1 ps]
 
-//        if (wholeRay->size() == 1) m_los_factor[rx] = norm(h);
-//        m_nlos_factor[rx] += norm(h);
+    // Impulse response
+    complex <double> voltage = ph::inducedVoltage(field,M_PI/2,lambda);
+    chData.impulseResp[tau] += voltage;
 
-        // Tau
-        double tau = completeLength * 1e9/c; // [ns]
-        tau = round(tau * 1e4) / 1e4; // [precision of 0.1 ps]
+    if (ray->size() == 1) m_los_factor[rx] = norm(voltage);
+    else m_nlos_factor[rx] += norm(voltage);
 
-        // Impulse response
-//        m_receiversImpulse[rx][tau] += lambda*EMfield/M_PI; // To change
-        complex <double> voltage = ph::inducedVoltage(field,M_PI/2,lambda);
-        chData.impulseResp[tau] += voltage;
+    beta.setAngle(angleRx);
+//        beta.setAngle(angleRx + 180); ???
 
-        if (ray->size() == 1) m_los_factor[rx] = norm(voltage);
-        else m_nlos_factor[rx] += norm(voltage);
+    double theta = angleRx;
+    if (receiver_speed.length() > 0.0){
+        theta = beta.angleTo(receiver_speed);
+    }
 
-        beta.setAngle(angleRx);
+    double u = ph::uMPC(wvNbr, theta);
+    double w = receiver_speed.length()*u;
 
-//=======
-//        beta.setAngle(angleRx + 180);
-//>>>>>>> 2559737b96b8d5fcf7922120950f26c76a027b78
+    complex<double> angularDistr = ph::angDistrMPC(voltage, theta, u);
+    complex<double> dopplerDistr = ph::angDistrMPC(voltage, theta, w);
+    double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
+    double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
-        double theta = angleRx;
-        if (receiver_speed.length() > 0.0){
-            theta = beta.angleTo(receiver_speed);
-        }
+    chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
 
-        double u = ph::uMPC(wvNbr, theta);
-        double w = receiver_speed.length()*u;
+    // Save Data
+    chData.u.push_back(u);
+    chData.w.push_back(w);
+    chData.angularDistr.push_back(angularDistr);
+    chData.dopplerDistr.push_back(dopplerDistr);
+    chData.prxAngularSpctr.push_back(prxAngSpctr);
+    chData.prxDopplerSpctr.push_back(prxDopSpctr);
 
-//        complex<double> angularDistr = ph::angDistrMPC(h, theta, u);
-//        complex<double> dopplerDistr = ph::angDistrMPC(h, theta, w);
-//        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
-//        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
+    // receivers_speed.translate(- m_receiver_speed.p1());   Check if necessary
+    // m_ray_speed.translate(- m_ray_speed.p1());       Chack if necessary
 
-//        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
+    // A REVOIRE
+    // QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
+    //double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
 
-        complex<double> angularDistr = ph::angDistrMPC(voltage, theta, u);
-        complex<double> dopplerDistr = ph::angDistrMPC(voltage, theta, w);
-        double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
-        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
-
-        chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
-
-        // Save Data
-        chData.u.push_back(u);
-        chData.w.push_back(w);
-//        chData.angularDistr.push_back(angularDistr);
-//        chData.dopplerDistr.push_back(dopplerDistr);
-//        chData.prxAngularSpctr.push_back(prxAngSpctr);
-//        chData.prxDopplerSpctr.push_back(prxDopSpctr);
-        chData.angularDistr.push_back(angularDistr);
-        chData.dopplerDistr.push_back(dopplerDistr);
-        chData.prxAngularSpctr.push_back(prxAngSpctr);
-        chData.prxDopplerSpctr.push_back(prxDopSpctr);
-
-        //receivers_speed.translate(- m_receiver_speed.p1());
-        // m_ray_speed.translate(- m_ray_speed.p1());
-        //QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
-        //double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
 //        double omega = 2.0 * M_PI / lambda * rays_speed[wholeRay];
 //        omega = round(omega * 1e4) / 1e4;
-        //m_dopplerSpectrum[rx][omega] += h;
+
 //        chData.dopplerSpctr[omega] += h;
-        //chData.dopplerDistr[omega] += h;
 
-//    }
-
-
-//    normalizePrxSpctr(m_chsData.at(rx).prxAngularSpctr);
 //    normalizePrxSpctr(m_chsData.at(rx).prxDopplerSpctr);
 
 }
@@ -849,15 +810,17 @@ Data * Tx::getChData(QPointF *rx)
 
     vector <double> out2;
 
+    vector <double> ulocal;
     for (auto &key: m_chsData[rx].prxAngularSpctrMap) {
         test.push_back(key.second);
+        ulocal.push_back(key.first);
     }
 
-    for (double i = -wvNbr; i <= wvNbr; i+= 0.01) {
+//    for (double i = -wvNbr; i <= wvNbr; i+= 0.01) {
 
-    }
+//    }
 
-    vector <double> ulocal = m_chsData[rx].u;
+//    vector <double> ulocal = m_chsData[rx].u;
 
     double s = -wvNbr;
     unsigned imax = ulocal.size();
@@ -880,7 +843,7 @@ Data * Tx::getChData(QPointF *rx)
 //        fft.inv(out2, test);
 //    }
 
-
+//    ph::fft(test, true);
     vector<complex<double>> out3 = ph::idft(test);
 
     for (const auto &e: out3) {
@@ -903,15 +866,27 @@ Data * Tx::getChData(QPointF *rx)
 //    map<double, double> spaceCorr = ph::correlation(test);
 
 //    cout << "out2 size: " << out2.size() << endl;
-//    unsigned f = 0;
-//    for (const auto &e: out2){
-//        cout << e <<", "<< test.at(f)<<", " << ulocal.at(f) << endl;
-//        f++;
-//    }
+    unsigned f = 0;
+    for (const auto &e: out2){
+        cout << e <<", "<< test.at(f) << endl;
+        f++;
+    }
+
+    cout << "u ----------" << endl;
+    for (auto &e: ulocal) {
+        cout << e << endl;
+    }
+
+    int i = 0;
+    for (auto e: out2) {
+        m_chsData[rx].spaceCrltnMap[i] = e;
+        i++;
+    }
     m_chsData[rx].spaceCrltn = out2;
 //    m_chsData[rx].w = vector <double>(u2.begin(), u2.end() -1 );
 //    cout << "Size w: " << m_chsData[rx].w.size() << endl;
-    m_chsData[rx].w = omega;
+    m_chsData[rx].deltaZ = omega;
+//    m_chsData[rx].w = omega;
     return &m_chsData[rx];
 }
 

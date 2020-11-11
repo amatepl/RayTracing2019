@@ -331,5 +331,9 @@ vector<complex<double>> idft(vector<T> &in)
     return out;
 }
 
+using cd = complex<double>;
+
+void fft(vector<cd> &a, bool invert);
+
 }
 #endif // PHYSICS_H

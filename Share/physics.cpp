@@ -377,3 +377,39 @@ std::complex <double> ph::inducedVoltage(const std::complex <double> field,
 {
     return lambda*field*cos(M_PI*cos(anglerx)/2)/(M_PI*sin(anglerx));
 }
+
+void ph::fft(vector<cd> & a, bool invert) {
+    int n = a.size();
+
+    complex<double> comp(0,1);
+
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        for (; j & bit; bit >>= 1)
+            j ^= bit;
+        j ^= bit;
+
+        if (i < j)
+            swap(a[i], a[j]);
+    }
+
+    for (int len = 2; len <= n; len <<= 1) {
+        double ang = 2 * M_PI / len * (invert ? -1 : 1);
+//        cd wlen(cos(ang), sin(ang));
+        cd wlen = exp(comp * ang);
+        for (int i = 0; i < n; i += len) {
+            cd w(1);
+            for (int j = 0; j < len / 2; j++) {
+                cd u = a[i+j], v = a[i+j+len/2] * w;
+                a[i+j] = u + v;
+                a[i+j+len/2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+
+    if (invert) {
+        for (cd & x : a)
+            x /= n;
+    }
+}

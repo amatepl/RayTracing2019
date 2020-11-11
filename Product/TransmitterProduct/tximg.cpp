@@ -141,8 +141,12 @@ Data *TxImg::update(QPointF *productObservable, QLineF const /*movement*/)
 //        Ray ray(*m_rayFactory->createRay(reflectionPoint, *productObservable->getPos(),
 //                                                            line.angleTo(m_wall)));
 
-        double angle = m_movement.angleTo(QLineF(reflectionPoint,*productObservable));
-        double speed = m_movement.length()*cos(angle*M_PI/180.0);
+        double speed = 0;
+        if (m_wall.intersects(m_movement, nullptr) != QLineF::IntersectionType::NoIntersection) {
+            double angle = m_movement.angleTo(QLineF(reflectionPoint,*productObservable));
+            speed = m_movement.length()*cos(angle*M_PI/180.0);
+        }
+
 
         wholeRay->push_back(m_rayFactory->createRay(reflectionPoint,
                                                     *productObservable,
