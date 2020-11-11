@@ -332,13 +332,15 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine
 
     // Angle in degrees
     double angle_transmitter = rayLine->angleTx();
+    cout << "phi in physics.cpp: " << angle_transmitter << endl;
     complex<double> array_fctr = ph::totaleArrayFactor(angle_transmitter, 90, wvNbr * c / (2 * M_PI),
                                                    antOrien, beam, std::get<0>(antArry), std::get<1>(antArry),
                                                    txType);
-//    cout << "AF: " << array_fctr << endl;
+    cout << "AF in physics.cpp: " << array_fctr << endl;
     double Ia = currentTx(power, antArry);
+    cout << "Ia in physics.cpp: " << Ia << endl;
     complex<double> a = R * array_fctr * exp(-i * wvNbr * totalLength) / totalLength;
-
+    cout << "Beta in physics.cpp: " << wvNbr << endl;
     Efield = - i * ((z_0 * Ia) * a / (2.0 * M_PI));
 
     return Efield;
