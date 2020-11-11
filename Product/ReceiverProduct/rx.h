@@ -109,6 +109,7 @@ public:
     void setNoiseFigure(int figure) override {m_noise_figure = figure;}
     void setInterferecenceMargin(int interference) override {m_interferencemargin = interference;}
     vector<double> spaceCrltn() override;
+    vector<double> deltaZ() override;
 
     void newProperties() override;
     void dialogDeleted() override;
@@ -166,6 +167,9 @@ private:
 
     // 5. Doppler
     std::map<double,std::complex<double>> m_doppler;
+
+    // 6. Correlations
+
 
 public slots:
     void save(string path);

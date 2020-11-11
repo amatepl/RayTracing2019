@@ -93,6 +93,7 @@ public:
     double angularSpread(){return angular_spread;}
     QVector<double> getu() {return u;}
     virtual std::vector<double> spaceCrltn() = 0;
+    virtual std::vector<double> deltaZ() = 0;
 
     virtual void newProperties() = 0;
 

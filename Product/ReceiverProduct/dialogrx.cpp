@@ -732,7 +732,7 @@ QWidget *DialogRx::SpcCrltn()
 
 //    pds = m_mathematicalproduct->prxDopplerSpread();
 //    doppler_distr = m_mathematicalproduct->dopplerDistr();
-    w = m_mathematicalproduct->getw();
+    QVector<double> dz = QVector(m_mathematicalproduct->deltaZ().begin(), m_mathematicalproduct->deltaZ().end());
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
     QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
 
@@ -742,7 +742,7 @@ QWidget *DialogRx::SpcCrltn()
     // Plot physiscal impulse response
     spc_crltn_plot->addGraph();
     spc_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
-    spc_crltn_plot->graph(0)->setData(w, spaceCrltn);
+    spc_crltn_plot->graph(0)->setData(dz, spaceCrltn);
     spc_crltn_plot->graph(0)->setName("Spatial Correlation");
 
     spc_crltn_plot->xAxis->setLabel("z");
@@ -768,10 +768,10 @@ QWidget *DialogRx::SpcCrltn()
 
 void DialogRx::updateSpcCrltn()
 {
-    w = m_mathematicalproduct->getw();
+    QVector<double> dz = QVector(m_mathematicalproduct->deltaZ().begin(), m_mathematicalproduct->deltaZ().end());
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
     QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
-    spc_crltn_plot->graph(0)->setData(w, spaceCrltn);
+    spc_crltn_plot->graph(0)->setData(dz, spaceCrltn);
     spc_crltn_plot->replot();
 }
 

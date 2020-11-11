@@ -501,12 +501,22 @@ void Rx::setEnable(bool enable) {this->enable = enable;}
 
 vector<double> Rx::spaceCrltn()
 {
-    vector<double> sc = m_chData->spaceCrltn;
-    double max = *sc.begin();
-    for (auto &d: sc){
-        d = d / max;
+    vector<double> sc;
+    if (m_chData != nullptr) {
+        sc = m_chData->spaceCrltn;
+        double max = *sc.begin();
+        for (auto &d: sc){
+            d = d / max;
+        }
     }
     return sc;
+}
+
+vector<double> Rx::deltaZ()
+{
+    vector<double> dz;
+    if (m_chData != nullptr) dz = m_chData->deltaZ;
+    return dz;
 }
 
 void Rx::newProperties()

@@ -51,7 +51,10 @@ struct Data {
     std::vector<double /* S(w) */>                                  prxDopplerSpctr;
     double                                                          riceFactor{0};
     std::vector<double>                                             spaceCrltn;
+    std::map<double, double>                                        spaceCrltnMap;
     std::vector<double>                                             timeCrltn;
+    std::map<double, double>                                        timeCrltnMap;
+    std::vector<double>                                             deltaZ;
 
 };
 #endif // CHDATA_H
