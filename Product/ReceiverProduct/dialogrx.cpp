@@ -13,6 +13,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
     m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
+    m_tabwidget->addTab(fqResp(),                   tr("Frequency Response"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
 //    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
     m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
@@ -34,7 +35,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogRx::saveProperties);
 //    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogRx::saveToDisk);
     connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogRx::buttonBoxClicked);
-
+    connect(m_tabwidget, &QTabWidget::currentChanged, this, &DialogRx::tabOpened);
     update();
 
 //    open();
@@ -347,6 +348,48 @@ QWidget* DialogRx::TDLImpulseResponse(){
     return widget;
 }
 
+QWidget* DialogRx::fqResp(){
+    QWidget *widget = new QWidget;
+    fq_resp_plot = new QCustomPlot;
+
+
+    // Plot physiscal impulse response
+    fq_resp_plot->addGraph();
+    fq_resp_plot->graph(0)->setPen(QPen(Qt::blue));
+//    fq_resp_plot->graph(0)->setLineStyle(QCPGraph::lsImpulse);
+//    fq_resp_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    fq_resp_plot->graph(0)->setName("Impulse");
+
+    fq_resp_plot->xAxis->setLabel("\u03C4[ns]");
+    fq_resp_plot->yAxis->setLabel("Normalized induced voltage V_OC");
+    fq_resp_plot->yAxis->grid()->setSubGridVisible(true);
+    fq_resp_plot->xAxis->grid()->setSubGridVisible(true);
+
+    updateFqResp();
+
+    fq_resp_plot->rescaleAxes();
+    fq_resp_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    fq_resp_plot->legend->setVisible(true);
+    fq_resp_plot->plotLayout()->insertRow(0);
+    fq_resp_plot->plotLayout()->addElement(0, 0, new QCPTextElement(fq_resp_plot, "Frequency Response", QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(fq_resp_plot,0,0);
+
+    widget->setLayout(firstLayout);
+
+    return widget;
+}
+
+void DialogRx::updateFqResp()
+{
+//    fq_resp_plot->graph(0)->data().clear();
+    QVector<double> fqResp = vec2QVec<double>(m_mathematicalproduct->fqResp());
+    fq_resp_plot->graph(0)->setData(vec2QVec<double>(m_mathematicalproduct->fq()),
+                                    fqResp);
+    fq_resp_plot->replot();
+}
+
 QWidget* DialogRx::InterferencePattern()
 {
     Q3DSurface *graph = new Q3DSurface();
@@ -601,52 +644,66 @@ QWidget*
 DialogRx::PrxDopplerSpctr()
 {
     QWidget *widget = new QWidget;
-    doppler_distr_plot = new QCustomPlot;
+    pds_plot = new QCustomPlot;
 
     pds = m_mathematicalproduct->prxDopplerSpread();
     doppler_distr = m_mathematicalproduct->dopplerDistr();
     w = m_mathematicalproduct->getw();
 
-    cout << "pds size: " <<pds.size() << endl;
-    cout << "w size: " <<w.size() << endl;
-
     QVector<double> localpds = pds;
     QVector<double> localw = w;
 
-//    for (int i = 0; i < pds.size(); i++) {
-//        QCPItemLine *line_impulse = new QCPItemLine(doppler_distr_plot);
-//        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
-//        line_impulse->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
-//        line_impulse->setPen(QPen(Qt::blue));
-//    }
+    for (int i = 0; i < pds.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pds_plot);
+        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
 
     // Plot physiscal impulse response
-    doppler_distr_plot->addGraph();
-    doppler_distr_plot->graph(0)->setPen(QPen(Qt::blue));
-//    doppler_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-//    doppler_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    doppler_distr_plot->graph(0)->setData(w, pds);
-    doppler_distr_plot->graph(0)->setName("PDS");
+    pds_plot->addGraph();
+    pds_plot->graph(0)->setPen(QPen(Qt::blue));
+    pds_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    pds_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    pds_plot->graph(0)->setData(w, pds);
+    pds_plot->graph(0)->setName("PDS");
 
-    doppler_distr_plot->xAxis->setLabel("w[rad/s]");
-    doppler_distr_plot->yAxis->setLabel("S(w)[dB]");
-    doppler_distr_plot->yAxis->grid()->setSubGridVisible(true);
-    doppler_distr_plot->xAxis->grid()->setSubGridVisible(true);
-    doppler_distr_plot->rescaleAxes();
-    doppler_distr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    doppler_distr_plot->replot();
-    doppler_distr_plot->legend->setVisible(true);
-    doppler_distr_plot->plotLayout()->insertRow(0);
-    doppler_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(doppler_distr_plot,
+    pds_plot->xAxis->setLabel("w[rad/s]");
+    pds_plot->yAxis->setLabel("S(w)[dB]");
+    pds_plot->yAxis->grid()->setSubGridVisible(true);
+    pds_plot->xAxis->grid()->setSubGridVisible(true);
+    pds_plot->rescaleAxes();
+    pds_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    pds_plot->replot();
+    pds_plot->legend->setVisible(true);
+    pds_plot->plotLayout()->insertRow(0);
+    pds_plot->plotLayout()->addElement(0, 0, new QCPTextElement(pds_plot,
                                                                           "Power Doppler Density (PAS) and Doppler Distribution",
                                                                           QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(doppler_distr_plot,0,0);
+    firstLayout->addWidget(pds_plot,0,0);
 
     widget->setLayout(firstLayout);
 
     return widget;
+}
+
+void DialogRx::updatePrxDopplerSpctr()
+{
+    pds_plot->clearItems();
+    pds = m_mathematicalproduct->prxDopplerSpread();
+    w = m_mathematicalproduct->getw();
+    for (int i = 0; i < pds.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pds_plot);
+        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(w[i], -1500);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+//    QVector npas = normalise<QVector<double>>(pas, m_mathematicalproduct->getPower());
+//    void updatePrxAngularSpctr();
+    pds_plot->graph(0)->setData(w, pds);
+    pds_plot->replot();
 }
 
 QWidget*
@@ -692,22 +749,11 @@ QWidget* DialogRx::DopplerSpectrum(){
     doppler_spctr_plot = new QCustomPlot;
 //    QCustomPlot *customplot = new QCustomPlot;
 
-    vector<double> dp = m_mathematicalproduct->getDoppler();
-    doppler = QVector(dp.begin(), dp.end());
+//    vector<double> dp = m_mathematicalproduct->getDoppler();
+//    doppler = QVector(dp.begin(), dp.end());
+    doppler = vec2QVec<double>(m_mathematicalproduct->getDoppler());
     vector<double> omg = m_mathematicalproduct->getOmega();
     omega = QVector(omg.begin(), omg.end());
-
-    cout << "Doppler spectrum:" << endl;
-    for (auto a: doppler) {
-        cout << abs(a) << endl;
-    }
-
-//    for(int i = 0; i < doppler.size(); i++){
-//        QCPItemLine *line_doppler = new QCPItemLine(doppler_spctr_plot);
-//        line_doppler->start->setCoords(omega[i], doppler[i]);  // location of point 1 in plot coordinate
-//        line_doppler->end->setCoords(omega[i], -130);  // location of point 2 in plot coordinate
-//        line_doppler->setPen(QPen(Qt::blue));
-//    }
 
     doppler_spctr_plot->addGraph();
     doppler_spctr_plot->graph(0)->setPen(QPen(Qt::red));
@@ -788,10 +834,10 @@ QWidget *DialogRx::SpcCrltn()
 
 void DialogRx::updateSpcCrltn()
 {
-    vector<double> dz = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
     QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
+    vector<double> dz = m_mathematicalproduct->deltaZ();
+    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
     spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->replot();
 }
@@ -912,8 +958,24 @@ void DialogRx::showTDL(){
 void DialogRx::update()
 {
     updateImpulseResponse();
+    if (idxTab == 3) updateFqResp();
     updatePrxAngularSpctr();
-    updateSpcCrltn();
+    updatePrxDopplerSpctr();
+    if (idxTab == 8) updateSpcCrltn();
     updateGeneralTab();
     updateDopplerSpctr();
+}
+
+void DialogRx::tabOpened(int index)
+{
+    idxTab = index;
+    if (idxTab == 3) {
+        updateFqResp();
+        fq_resp_plot->graph(0)->rescaleAxes();
+    }
+    if (idxTab == 8) {
+        updateSpcCrltn();
+        spc_crltn_plot->graph(0)->rescaleAxes();
+    }
+
 }

@@ -66,11 +66,15 @@ public:
 
     // Physical Result and parameters
 
-    // 3. Impulse and TDL Results:
+    // 1. Impulse and TDL Results:
     virtual QVector<double> impulse(){return h;}
     virtual QVector<double> impulseTDL(){return h_tdl;}
     virtual QVector<double> impulseTau() {return tau;}
     virtual QVector<double> impulseTauTDL() {return tau_tdl;}
+
+    // 2. Frequency Response
+    virtual std::vector<double> fqResp() const = 0;
+    virtual std::vector<double> fq() const = 0;
 
     // 4. Cell Range Results:
     virtual unsigned long frequency() {return m_transmitterfrequency;}

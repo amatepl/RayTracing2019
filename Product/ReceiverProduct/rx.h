@@ -10,6 +10,13 @@
 //#define GetCurrentDir getcwd
 //#endif
 
+//--------------------------------------------------------------------------------------------
+//
+//          Includes
+//
+//--------------------------------------------------------------------------------------------
+
+/* General Includes */
 
 #include <QPointF>
 #include <iostream>
@@ -18,6 +25,7 @@
 #include <cmath>
 #include <random>
 
+/* Project Specific */
 
 #include "Product/mathematicalproduct.h"
 #include "Product/graphicsproduct.h"
@@ -27,11 +35,19 @@
 #include "Widget/infowidget.h"
 #include "Share/chdata.h"
 
-//const double kb = 1.379e-23;
-//const double To = 290.0;
-//const double c = 2.998e+8;
+//--------------------------------------------------------------------------------------------
+//
+//          Defines
+//
+//--------------------------------------------------------------------------------------------
 
 using namespace std;
+
+//--------------------------------------------------------------------------------------------
+//
+//          Class Rx
+//
+//--------------------------------------------------------------------------------------------
 
 class Rx: public QPointF, public MathematicalProduct,
                                    public ProductObservable, public ReceiverProduct,
@@ -73,6 +89,9 @@ public:
 
     // 3. Cell Range Computation:
 //    void cellRange();
+    // Frequecy Response
+    vector<double> fqResp() const override;
+    vector<double> fq() const override;
 
     // 4. Doppler
     void dopplerSpectrum();

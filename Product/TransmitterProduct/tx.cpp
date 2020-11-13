@@ -687,6 +687,7 @@ void Tx::clearChData(QPointF *rx)
     m_chsData[rx].spaceCrltnMap.clear();
     m_chsData[rx].deltaZ.clear();
     m_chsData[rx].spaceCrltn.clear();
+    m_chsData[rx].fqResp.clear();
 
 }
 
@@ -793,6 +794,16 @@ void Tx::drawRays(QPointF *productObservable, bool draw)
 
 Data * Tx::getChData(QPointF *rx)
 {
+    // Normalize PAS
+    double max = 0;
+    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
+        if (max < e.second) max = e.second;
+    }
+
+    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
+        e.second = e.second / max;
+    }
+
     // Rice Factor
     m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
 
@@ -803,80 +814,61 @@ Data * Tx::getChData(QPointF *rx)
     double speed = receivers_speed[rx].length();
     m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
 
-    // FFT
-    vector<double> pas2 = m_chsData[rx].prxAngularSpctr;
-    vector<double> u2 = m_chsData[rx].u;
     Eigen::FFT<double> fft;
-    vector<complex<double>> pas =  vector<complex<double>>(pas2.begin(), pas2.end());
-    vector<complex<double>> pas3 =  vector<complex<double>>(m_chsData[rx].prxAngularSpctr.begin(), m_chsData[rx].prxAngularSpctr.end());
-    vector<complex<double>> out;
 
-    vector <complex <double>> test;
+    // Frequency response
+    vector<double> h;
+    vector<double> t;
+    for (auto e: m_chsData[rx].impulseResp) {
+        t.push_back(e.first);
+        h.push_back(abs(e.second));
+    }
+    if (t.size()) h = ph::upsample<double, double>(t, h, 0, t.back(), 1);
+    vector<complex<double>> fqResp ;
 
-    vector <double> out2;
+    if ( h.size() > 1) fft.fwd(fqResp, h);
 
-    vector <double> ulocal;
-    for (auto &key: m_chsData[rx].prxAngularSpctrMap) {
-        test.push_back(key.second);
-        ulocal.push_back(key.first);
+    double fq = 0;
+    for (const auto &e: fqResp) {
+        m_chsData[rx].fqResp[fq] = e;
+        fq++;
     }
 
-//    for (double i = -wvNbr; i <= wvNbr; i+= 0.01) {
+    // FFT
+//    vector <complex <double>> test;
+//    vector <double> out2;
 
+//    vector <double> ulocal;
+//    for (auto &key: m_chsData[rx].prxAngularSpctrMap) {
+//        test.push_back(key.second);
+//        ulocal.push_back(key.first);
 //    }
 
-//    vector <double> ulocal = m_chsData[rx].u;
+//    vector<complex<double>> upsampledPAS = ph::upsample<double, complex<double>>(ulocal, test, -wvNbr, wvNbr, 1);
 
-    /* Upsampling */
-    double s = -wvNbr;
-    unsigned imax = ulocal.size();
-    for (unsigned idx = 0; idx < imax; idx++) {
-        while (s < ulocal.at(idx)) {
-            test.insert(test.begin() + idx, complex<double >(0,0));
-            s += 1;
-        }
-    }
-
-    if (ulocal.size() != 0) {
-        double uend = ulocal.back();
-        while (uend <= wvNbr) {
-            test.push_back(0);
-            uend += 1;
-        }
-    }
-
-//    cout << "Test size: " << test.size() << endl;
-
-//    if (test.size() > 1){
-//        fft.inv(out2, test);
+//    if (upsampledPAS.size() > 1){
+//        fft.inv(out2, upsampledPAS);
 //    }
 
-//    ph::fft(test, true);
-    vector<complex<double>> out3 = ph::idft(test);
+//    ph::fft(upsampledPAS, true);
+//    vector<complex<double>> out3 = ph::idft(upsampledPAS);
+//    vector<complex<double>> out3 = ph::idft(test);
 
-    for (const auto &e: out3) {
-        out2.push_back(e.real());
-    }
-
-    for (auto & val: out2){
-        val = (float)(val);
-    }
-
-    vector<double> omega;
-    for (unsigned i = 0; i <= out2.size(); i++) {
-        omega.push_back(i);
-    }
-
-//    cout << "Angles: ---------------------------------" << endl;
-//    for (const auto &e: omega) {
-//        cout << e << endl;
+//    for (const auto &e: out3) {
+//        out2.push_back((float)e.real());
 //    }
+
+//    vector<double> omega;
+//    for (unsigned i = 0; i < out2.size(); i++) {
+//        omega.push_back(i);
+//    }
+
 //    map<double, double> spaceCorr = ph::correlation(test);
 
 //    cout << "out2 size: " << out2.size() << endl;
 //    unsigned f = 0;
 //    for (const auto &e: out2){
-//        cout << e <<", "<< test.at(f) << endl;
+//        cout << e <<", "<< upsampledPAS.at(f) << endl;
 //        f++;
 //    }
 
@@ -885,16 +877,13 @@ Data * Tx::getChData(QPointF *rx)
 //        cout << e << endl;
 //    }
 
-    int i = 0;
-    for (auto e: out2) {
-        m_chsData[rx].spaceCrltnMap[i] = e;
-        i++;
-    }
-    m_chsData[rx].spaceCrltn = out2;
-//    m_chsData[rx].w = vector <double>(u2.begin(), u2.end() -1 );
-//    cout << "Size w: " << m_chsData[rx].w.size() << endl;
-    m_chsData[rx].deltaZ = omega;
-//    m_chsData[rx].w = omega;
+//    int i = 0;
+//    for (auto e: out2) {
+//        m_chsData[rx].spaceCrltnMap[i] = e;
+//        i++;
+//    }
+//    m_chsData[rx].spaceCrltn = out2;
+//    m_chsData[rx].deltaZ = omega;
     return &m_chsData[rx];
 }
 

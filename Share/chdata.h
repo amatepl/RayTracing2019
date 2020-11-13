@@ -36,6 +36,7 @@ struct Data {
 //    double                                                          coherenceTm{0};
     std::complex<double>                                            eField{0};
     std::map<double /*tau*/, std::complex<double> /*impulseResp*/>  impulseResp;
+    std::map<double, std::complex<double>>                          fqResp;
     std::map<double, std::complex<double>>                          dopplerSpctr;
     double                                                          pathLossP{0};
     std::complex<double>                                            interference{0};

@@ -327,13 +327,46 @@ vector<complex<double>> idft(vector<T> &in)
             out.at(n) += in.at(m) * exp(j * 2. * M_PI * (double) n * (double) m / (double) N) / (double) N;
         }
     }
-
     return out;
 }
 
 using cd = complex<double>;
 
 void fft(vector<cd> &a, bool invert);
+
+/*!
+ * \fn upsample()(const vector<Tx> &x, const vector<Ty> &y, const double min,
+ * const double max, const double step)
+ *
+ * \brief Upsample a vector.
+ *
+ * Upsample vector y function of x in a range [min, max] and with the given step.
+ *
+ */
+template <typename Tx, typename Ty>
+vector<Ty> upsample(const vector<Tx> &x, const vector<Ty> &y, const double min,
+                   const double max, const double step=1)
+{
+    vector<Ty> res;
+    double val = min;
+    unsigned imax = x.size();
+    for (unsigned idx = 0; idx < imax; idx++) {
+        while (val < x.at(idx)) {
+            res.push_back(Ty(0));
+            val += step;
+        }
+        res.push_back(y.at(idx));
+    }
+
+    if (x.size() != 0) {
+        double xend = x.back();
+        while (xend <= max) {
+            res.push_back(Ty(0));
+            xend += step;
+        }
+    }
+    return res;
+}
 
 }
 #endif // PHYSICS_H

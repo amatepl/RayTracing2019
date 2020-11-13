@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include "Share/physics.h"
+#include <FFT>
 
 Rx::Rx(int posX, int posY): QPointF(posX,posY)
 {
@@ -356,6 +357,44 @@ void Rx::computeImpulseTDL()
 
 }
 
+// Frequency Response
+vector<double> Rx::fqResp() const
+{
+    vector<double> res;
+    if (m_chData != nullptr && m_chData->impulseResp.size() != 0){
+//        vector<double> h;
+//        vector<double> t;
+//        for (auto e: m_chData->impulseResp) {
+//            t.push_back(e.first);
+//            h.push_back(abs(e.second));
+//        }
+//        vector<double> uph = ph::upsample<double, double>(t, h, 0, t.back(), 1);
+//        vector<complex<double>> fqResp = ph::dft(uph);
+
+//        double fq = 0;
+//        for (const auto &e: fqResp) {
+//            m_chData->fqResp[fq] = e;
+//            res.push_back(abs(e));
+//            fq++;
+//        }
+        for (const auto e: m_chData->fqResp) {
+            res.push_back(abs(e.second));
+        }
+    }
+    return res;
+}
+
+vector<double> Rx::fq() const
+{
+    vector<double> res;
+    if (m_chData != nullptr) {
+        for (auto e: m_chData->fqResp) {
+            res.push_back(e.first);
+        }
+    }
+    return res;
+}
+
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 4. Doppler:
 void Rx::dopplerSpectrum()
@@ -536,8 +575,27 @@ void Rx::setEnable(bool enable) {this->enable = enable;}
 vector<double> Rx::spaceCrltn()
 {
     vector<double> sc;
-    if (m_chData != nullptr) {
-        sc = m_chData->spaceCrltn;
+    if (m_chData != nullptr && m_chData->prxAngularSpctrMap.size()){
+        vector<double> pas;
+        vector<double> u;
+        for (auto e: m_chData->prxAngularSpctrMap) {
+            u.push_back(e.first);
+            pas.push_back(e.second);
+        }
+        double wvNbr = 2. * M_PI * m_chData->fq / c;
+        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 1);
+        vector<complex<double>> fqResp = ph::idft(upPAS);
+
+        m_chData->deltaZ.clear();
+        double deltaZ = 0;
+        for (const auto &e: fqResp) {
+            m_chData->spaceCrltnMap[deltaZ] = e.real();
+            m_chData->deltaZ.push_back(deltaZ);
+            sc.push_back(e.real());
+            deltaZ++;
+        }
+
+//        sc = m_chData->spaceCrltn;
         double max = *sc.begin();
         for (auto &d: sc){
             d = d / max;

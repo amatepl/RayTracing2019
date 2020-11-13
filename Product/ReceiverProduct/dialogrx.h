@@ -67,12 +67,20 @@ public:
     void updatePrxAngularSpctr();
     QWidget* AngularDistr();
     QWidget* PrxDopplerSpctr();
+    void updatePrxDopplerSpctr();
     QWidget* DopplerDistr();
     QWidget *SpcCrltn();
+    void updateSpcCrltn();
     QWidget *DopplerSpectrum();
     void updateDopplerSpctr();
-    void updateSpcCrltn();
+    QWidget *fqResp();
+    void updateFqResp();
 
+    template<typename T>
+    QVector<T> vec2QVec(vector<T> vec)
+    {
+        return QVector(vec.begin(), vec.end());
+    }
     void changeGraph();
     void setInterferencePattern(vector<double> impulse_r, double min, double max);
     void setDistributionInterference(map<double,double> impulse, QVector<double> rice_distribution);
@@ -118,6 +126,8 @@ public:
     /* To delete */
 //    vector<double> spaceCrltn() override {};
 private:
+
+    int idxTab {0};
     ReceiverProduct *m_mathematicalproduct;
     QSpinBox *m_posx,*m_posy, *m_target_snr, *m_noise_figure,* m_interferencemargin;
     QDoubleSpinBox *m_speed, *m_orientation;
@@ -128,7 +138,7 @@ private:
     QVector<QCPItemLine*> impulse_tdl;
     QCustomPlot *impulse_plot;
     QCustomPlot *pas_plot;
-    QCustomPlot *pds_ploot;
+    QCustomPlot *pds_plot;
     QCustomPlot *angular_distr_plot;
     QCustomPlot *doppler_distr_plot;
     QCustomPlot *spc_crltn_plot;
@@ -149,8 +159,11 @@ private:
     QLabel *m_angSpdr;
     QLabel *m_dopplerSpdr;
 
-     // 2. Impulse and TDL vVariables
+    // 2. Impulse and TDL vVariables
     QVector<double> h,h_tdl,tau, tau_tdl;
+
+    // 3. Frequency Response
+    QCustomPlot *fq_resp_plot;
 
     // 4. Doppler
     PrxDopplerSpread pds;
@@ -180,6 +193,7 @@ public slots:
     void saveProperties();
     void saveToDisk();
     void showTDL();
+    void tabOpened(int index);
 };
 
 template<class T>
