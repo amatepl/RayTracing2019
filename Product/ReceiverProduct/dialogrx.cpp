@@ -732,7 +732,8 @@ QWidget *DialogRx::SpcCrltn()
 
 //    pds = m_mathematicalproduct->prxDopplerSpread();
 //    doppler_distr = m_mathematicalproduct->dopplerDistr();
-    QVector<double> dz = QVector(m_mathematicalproduct->deltaZ().begin(), m_mathematicalproduct->deltaZ().end());
+    vector<double> dz = m_mathematicalproduct->deltaZ();
+    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
     QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
 
@@ -742,7 +743,7 @@ QWidget *DialogRx::SpcCrltn()
     // Plot physiscal impulse response
     spc_crltn_plot->addGraph();
     spc_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
-    spc_crltn_plot->graph(0)->setData(dz, spaceCrltn);
+    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->graph(0)->setName("Spatial Correlation");
 
     spc_crltn_plot->xAxis->setLabel("z");
@@ -768,10 +769,11 @@ QWidget *DialogRx::SpcCrltn()
 
 void DialogRx::updateSpcCrltn()
 {
-    QVector<double> dz = QVector(m_mathematicalproduct->deltaZ().begin(), m_mathematicalproduct->deltaZ().end());
+    vector<double> dz = m_mathematicalproduct->deltaZ();
+    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
     QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
-    spc_crltn_plot->graph(0)->setData(dz, spaceCrltn);
+    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->replot();
 }
 
@@ -824,10 +826,10 @@ void DialogRx::setEnable(bool enable){
 void DialogRx::newProperties(){
     m_mathematicalproduct->setSpeed(m_speed->value());
     m_mathematicalproduct->setOrientation(m_orientation->value());
-    cout << "pos_x: " << m_posx->value() << endl;
-    m_mathematicalproduct->setPosX(m_posx->value());
-    cout << "pos_y: " << m_posy->value() << endl;
-    m_mathematicalproduct->setPosY(m_posy->value());
+    int posx = m_posx->value();
+    int posy = m_posy->value();
+    m_mathematicalproduct->setPosY(posy);
+    m_mathematicalproduct->setPosX(posx);
     m_mathematicalproduct->setTargetSNR(m_target_snr->value());
     m_mathematicalproduct->setNoiseFigure(m_noise_figure->value());
     m_mathematicalproduct->setInterferecenceMargin(m_interferencemargin->value());
@@ -895,6 +897,6 @@ void DialogRx::update()
     updateImpulseResponse();
     updatePrxAngularSpctr();
 //    updateSpcCrltn();
-    updateGeneralTab();
+//    updateGeneralTab();
     updateSpcCrltn();
 }

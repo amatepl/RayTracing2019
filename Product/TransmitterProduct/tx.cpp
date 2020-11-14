@@ -683,6 +683,9 @@ void Tx::clearChData(QPointF *rx)
     m_chsData[rx].dopplerDistr.clear();
     m_chsData[rx].prxDopplerSpctr.clear();
     m_chsData[rx].riceFactor = 0;
+    m_chsData[rx].spaceCrltnMap.clear();
+    m_chsData[rx].deltaZ.clear();
+    m_chsData[rx].spaceCrltn.clear();
 
 }
 
@@ -823,6 +826,7 @@ Data * Tx::getChData(QPointF *rx)
 
 //    vector <double> ulocal = m_chsData[rx].u;
 
+    /* Upsampling */
     double s = -wvNbr;
     unsigned imax = ulocal.size();
     for (unsigned idx = 0; idx < imax; idx++) {
@@ -867,7 +871,7 @@ Data * Tx::getChData(QPointF *rx)
 //    map<double, double> spaceCorr = ph::correlation(test);
 
 //    cout << "out2 size: " << out2.size() << endl;
-    unsigned f = 0;
+//    unsigned f = 0;
 //    for (const auto &e: out2){
 //        cout << e <<", "<< test.at(f) << endl;
 //        f++;
@@ -913,7 +917,7 @@ void Tx::compute(QPointF *receiver)
 {
     if (!m_beamsFrozen && !m_chosenBeams[receiver]) {
 
-        chooseBeam(receiver);
+//        chooseBeam(receiver);
         comput4FixedBeam(receiver);
 
     } else {
