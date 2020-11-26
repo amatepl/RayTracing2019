@@ -80,6 +80,7 @@ private:
     QSpinBox *rflctns_cov;
     QDoubleSpinBox *cov_dnsty;
     QLabel *m_eFieldDisp;
+    QComboBox *cov_type;
 
     // Map
     QGroupBox *map_group;

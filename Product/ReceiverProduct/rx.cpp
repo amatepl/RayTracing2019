@@ -117,6 +117,8 @@ void Rx::attachTransmitter(ProductObserver *transmitter)
 void Rx::extractChData()
 {
 
+    angular_distr.clear();
+    doppler_distr.clear();
     m_impulse = m_chData->impulseResp;
 //    m_doppler = m_chData->dopplerSpctr;
 
@@ -144,12 +146,16 @@ void Rx::extractChData()
 //        angular_distr = QVector<complex<double>>(m_chData->angularDistr.begin(), m_chData->angularDistr.end());
 //    }
 
+    pas.clear();
+    pds.clear();
     if (m_chData->prxAngularSpctr.size() > 0) {
-        pas = QVector<double>(m_chData->prxAngularSpctr.begin(), m_chData->prxAngularSpctr.end());
-        pds = QVector<double>(m_chData->prxDopplerSpctr.begin(), m_chData->prxDopplerSpctr.end());
+        vector<double> pasLocal = m_chData->prxAngularSpctr;
+        pas = QVector<double>(pasLocal.begin(), pasLocal.end());
+        vector<double> pdsLocal = m_chData->prxDopplerSpctr;
+        pds = QVector<double>(pdsLocal.begin(), pdsLocal.end());
     }
 
-    dB(pas);
+    dB<QVector<double>>(pas);
 //    dB(pds);
 
 //    cout<<"Tmp prx [dB]: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
@@ -361,25 +367,28 @@ void Rx::computeImpulseTDL()
 vector<double> Rx::fqResp() const
 {
     vector<double> res;
-    if (m_chData != nullptr && m_chData->impulseResp.size() != 0){
-//        vector<double> h;
-//        vector<double> t;
-//        for (auto e: m_chData->impulseResp) {
-//            t.push_back(e.first);
-//            h.push_back(abs(e.second));
-//        }
-//        vector<double> uph = ph::upsample<double, double>(t, h, 0, t.back(), 1);
-//        vector<complex<double>> fqResp = ph::dft(uph);
-
-//        double fq = 0;
-//        for (const auto &e: fqResp) {
-//            m_chData->fqResp[fq] = e;
-//            res.push_back(abs(e));
-//            fq++;
-//        }
-        for (const auto e: m_chData->fqResp) {
-            res.push_back(abs(e.second));
+    if (m_chData != nullptr && m_chData->impulseResp.size() > 1){
+        vector<double> h;
+        vector<double> t;
+        for (auto e: m_chData->impulseResp) {
+            t.push_back(e.first);
+            h.push_back(abs(e.second));
         }
+        vector<double> uph = ph::upsample<double, double>(t, h, 0, t.back(), 1);
+//        vector<complex<double>> fqResp = ph::dft(uph);
+        Eigen::FFT<double> fft;
+        vector<complex<double>> fqResp;
+        fft.fwd(fqResp, uph);
+
+        double fq = 0;
+        for (const auto &e: fqResp) {
+            m_chData->fqResp[fq] = e;
+            res.push_back(abs(e));
+            fq++;
+        }
+//        for (const auto e: m_chData->fqResp) {
+//            res.push_back(abs(e.second));
+//        }
     }
     return res;
 }
@@ -584,7 +593,14 @@ vector<double> Rx::spaceCrltn()
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
         vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 1);
-        vector<complex<double>> fqResp = ph::idft(upPAS);
+        vector<complex<double>> compUpPAS;
+        for (double &e: upPAS) {
+            compUpPAS.push_back(complex<double>(e, 0));
+        }
+//        vector<complex<double>> fqResp = ph::idft(upPAS);
+        Eigen::FFT<double> fft;
+        vector<complex<double>> fqResp;
+        fft.inv(fqResp, compUpPAS);
 
         m_chData->deltaZ.clear();
         double deltaZ = 0;
@@ -609,6 +625,57 @@ vector<double> Rx::deltaZ()
     vector<double> dz;
     if (m_chData != nullptr) dz = m_chData->deltaZ;
     return dz;
+}
+
+vector<double> Rx::timeCrltn() const
+{
+    m_chData->timeCrltnMap.clear();
+    vector<double> tc;
+    if (m_chData != nullptr && m_chData->prxDopplerSpctrMap.size() > 1){
+        vector<double> pds;
+        vector<double> w;
+        for (auto e: m_chData->prxDopplerSpctrMap) {
+            w.push_back(e.first);
+            pds.push_back(e.second);
+        }
+        double wvNbr = 2. * M_PI * m_chData->fq / c;
+        vector<double> upPDS = ph::upsample<double, double>(w, pds, -wvNbr, wvNbr, 1);
+//        vector<complex<double>> fqResp = ph::idft(upPDS);
+
+        vector<complex<double>> complexPDS;
+        for (const auto &e: upPDS) {
+            complexPDS.push_back(e);
+        }
+
+        Eigen::FFT<double> fft;
+        vector<complex<double>> ifftPDS;
+        fft.inv(ifftPDS, complexPDS);
+
+        double deltaT = 0;
+        for (const auto &e: ifftPDS) {
+            m_chData->timeCrltnMap[deltaT] = e.real();
+            tc.push_back(e.real());
+            deltaT++;
+        }
+
+//        sc = m_chData->spaceCrltn;
+        double max = *tc.begin();
+        for (auto &d: tc){
+            d = d / max;
+        }
+    }
+    return tc;
+}
+
+vector<double> Rx::timeCrltnT() const
+{
+    vector<double> t;
+    if (m_chData && m_chData->timeCrltnMap.size()) {
+        for (const auto &e: m_chData->timeCrltnMap) {
+            t.push_back(e.first);
+        }
+    }
+    return t;
 }
 
 void Rx::newProperties()

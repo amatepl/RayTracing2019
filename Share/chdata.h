@@ -49,6 +49,7 @@ struct Data {
     std::vector<std::complex<double> /* a(w) */>                    dopplerDistr;
     std::map<double /*u*/, double /* S(u) */>                       prxAngularSpctrMap;
     std::vector<double /* S(u) */>                                  prxAngularSpctr;
+    std::map<double, double>                                        prxDopplerSpctrMap;
     std::vector<double /* S(w) */>                                  prxDopplerSpctr;
     double                                                          riceFactor{0};
     std::vector<double>                                             spaceCrltn;

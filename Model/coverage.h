@@ -1,12 +1,35 @@
 #ifndef COVERAGE_H
 #define COVERAGE_H
 
+//--------------------------------------------------------------------------------------------
+//
+//          Includes
+//
+//--------------------------------------------------------------------------------------------
+
+/* General Includes */
+
+/* Project Specific */
 #include "Model/algorithmInterface.h"
 #include "Model/imagesmethod.h"
 #include "Abstract_Factory/rayfactory.h"
 #include "Abstract_Factory/scenefactory.h"
 #include "Widget/infowidget.h"
 #include "Product/heatmap.h"
+
+//--------------------------------------------------------------------------------------------
+//
+//          Defines
+//
+//--------------------------------------------------------------------------------------------
+
+enum HeatmapMode {complexE, sumAbsE, prx};
+
+//--------------------------------------------------------------------------------------------
+//
+//          Class Coverage
+//
+//--------------------------------------------------------------------------------------------
 
 class Coverage: public ImagesMethod, public AlgorithmInterface
 {
@@ -27,16 +50,24 @@ public:
     void clear();
 
     HeatMap *buildCoverageZone(const QRect &workingZone);
-    void notifyTxs(QPointF *rx);
+    typedef complex<double>(Coverage::*fptr)(Tx *, QPointF *);
+    void notifyTxs(QPointF *rx, fptr f);
     void setDnsty(const double dnsty);
 
+    complex<double> complexE(Tx *tx, QPointF *rx);
+    complex<double> sumAbsE(Tx *tx, QPointF *rx);
+    complex<double> prx(Tx *tx, QPointF *rx);
+
+    fptr selectFct();
 protected:
+
     SceneFactory* m_receiverFactory;
     float px_to_meter;
     vector <MathematicalProduct *> m_coverageRxs;
     //QPolygonF totalIlluminationZone;
     HeatMap m_heatMap;
     double m_dnsty{0.5};
+    HeatmapMode m_mode {HeatmapMode::complexE};
 
 signals:
     void computed(HeatMap *heatMap);
