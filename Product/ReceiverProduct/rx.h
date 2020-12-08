@@ -10,6 +10,13 @@
 //#define GetCurrentDir getcwd
 //#endif
 
+//--------------------------------------------------------------------------------------------
+//
+//          Includes
+//
+//--------------------------------------------------------------------------------------------
+
+/* General Includes */
 
 #include <QPointF>
 #include <iostream>
@@ -18,6 +25,7 @@
 #include <cmath>
 #include <random>
 
+/* Project Specific */
 
 #include "Product/mathematicalproduct.h"
 #include "Product/graphicsproduct.h"
@@ -27,11 +35,19 @@
 #include "Widget/infowidget.h"
 #include "Share/chdata.h"
 
-//const double kb = 1.379e-23;
-//const double To = 290.0;
-//const double c = 2.998e+8;
+//--------------------------------------------------------------------------------------------
+//
+//          Defines
+//
+//--------------------------------------------------------------------------------------------
 
 using namespace std;
+
+//--------------------------------------------------------------------------------------------
+//
+//          Class Rx
+//
+//--------------------------------------------------------------------------------------------
 
 class Rx: public QPointF, public MathematicalProduct,
                                    public ProductObservable, public ReceiverProduct,
@@ -73,6 +89,9 @@ public:
 
     // 3. Cell Range Computation:
 //    void cellRange();
+    // Frequecy Response
+    vector<double> fqResp() const override;
+    vector<double> fq() const override;
 
     // 4. Doppler
     void dopplerSpectrum();
@@ -92,10 +111,13 @@ public:
     double getAngSprd() override;
     double getDopplerSprd() override;
     complex<double> getEField() override;
+    complex<double> getVoltage() override;
     bool getEnable() override;
     int targetSNR() override {return m_target_snr;}
     int noiseFigure() override {return m_noise_figure;}
     int interFerenceMargin() override {return m_interferencemargin;}
+    vector<double> getDoppler() override;
+    vector<double> getOmega() override;
 
     void setSpeed(float speed) override;
     void setOrientation(float orientation) override;
@@ -150,6 +172,7 @@ private:
     Data *m_chData {nullptr};
 
     // 2. For E Field And Power Computation
+    complex <double> m_ind_voltage;
     complex <double> m_e_field;
     double m_power = 0;
     double m_transmitter_distance;

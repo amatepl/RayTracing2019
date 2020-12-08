@@ -12,7 +12,7 @@ WholeRay::~WholeRay()
 
 length WholeRay::directDistance() const
 {
-    QLineF dirPath(this->front()->p1(), this->back()->p2());
+    QLineF dirPath(this->front()->p2(), this->back()->p1());
     return dirPath.length();
 }
 

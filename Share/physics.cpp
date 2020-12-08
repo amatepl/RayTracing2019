@@ -283,8 +283,8 @@ double ph::computeReflexionPer(double thetaI, double epsilonR)
     //  Basicly thetai = pi/2 - thetai.
     //  Because of that cos and sin are inverted and we take their absolute value because of the angles given by Qt.
 
-    return (abs(sin(thetaI)) - sqrt(epsilonR) * sqrt(1 - (1 / epsilonR) * pow(cos(thetaI), 2))) /
-               (abs(sin(thetaI)) + sqrt(epsilonR) * sqrt(1 - (1 / epsilonR) * pow(cos(thetaI), 2)));
+    return (abs(cos(thetaI)) - sqrt(epsilonR) * sqrt(1 - (1 / epsilonR) * pow(sin(thetaI), 2))) /
+               (abs(cos(thetaI)) + sqrt(epsilonR) * sqrt(1 - (1 / epsilonR) * pow(sin(thetaI), 2)));
 }
 
 
@@ -294,9 +294,11 @@ double ph::computeR(WholeRay *wholeRay)
 //    for (WholeRay::iterator ray = wholeRay->begin(); ray != wholeRay->end() - 1; ray++ ) {
     for (WholeRay::iterator ray = wholeRay->begin(); ray != wholeRay->end() - 1; ray++){
 
-        double thetaI = abs((*ray)->getTetai());
+        double thetaI = abs((*ray)->getTetai()-90);
+//        cout << "thetaI [rad]: " << thetaI*M_PI/180 << endl;
         double epsilonWallRel = (*ray)->getEpsilon();
-        R *= ph::computeReflexionPer(thetaI * 2 * M_PI / 180 , epsilonWallRel);
+//        cout << "Initial R: " << ph::computeReflexionPer(thetaI * M_PI / 180 , epsilonWallRel) << endl;
+        R *= ph::computeReflexionPer(thetaI * M_PI / 180 , epsilonWallRel);
     }
     return R;
 }
@@ -326,22 +328,24 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine
     //  though. This is taken into account in the function computePrx.
 
     complex <double> i(0.0, 1.0);
+//    cout << "Number of rays in physics.cpp: " << rayLine->size() << endl;
     double totalLength = rayLine->totalLength();
-    cout << "Distance in physics.cpp: " << totalLength << endl;
+//    cout << "Distance in physics.cpp: " << totalLength << endl;
     double R = ph::computeR(rayLine);
+//    cout << "Perpendicular coeff in physics.cpp: " << R << endl;
     complex <double> Efield = 0.0;
 
     // Angle in degrees
     double angle_transmitter = rayLine->angleTx();
-    cout << "phi in physics.cpp: " << angle_transmitter << endl;
+//    cout << "phi in physics.cpp rad: " << angle_transmitter*M_PI/180.0 << endl;
     complex<double> array_fctr = ph::totaleArrayFactor(angle_transmitter, 90, wvNbr * c / (2 * M_PI),
                                                    antOrien, beam, std::get<0>(antArry), std::get<1>(antArry),
                                                    txType);
-    cout << "AF in physics.cpp: " << array_fctr << endl;
+//    cout << "AF in physics.cpp: " << array_fctr << endl;
     double Ia = currentTx(power, antArry);
-    cout << "Ia in physics.cpp: " << Ia << endl;
+//    cout << "Ia in physics.cpp: " << Ia << endl;
     complex<double> a = R * array_fctr * exp(-i * wvNbr * totalLength) / totalLength;
-    cout << "Beta in physics.cpp: " << wvNbr << endl;
+//    cout << "Beta in physics.cpp: " << wvNbr << endl;
     Efield = - i * ((z_0 * Ia) * a / (2.0 * M_PI));
 
     return Efield;
@@ -378,7 +382,8 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay*> rayLine,
 std::complex <double> ph::inducedVoltage(const std::complex <double> field,
                                          const double anglerx,const double lambda)
 {
-    return lambda*field*cos(M_PI*cos(anglerx)/2)/(M_PI*sin(anglerx));
+    complex <double> voltage = lambda/M_PI*field*cos(M_PI/2*cos(anglerx))/sin(anglerx);
+    return voltage;
 }
 
 void ph::fft(vector<cd> & a, bool invert) {

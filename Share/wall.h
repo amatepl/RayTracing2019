@@ -33,6 +33,7 @@ public:
     void setBuilding(Building *building) {m_building = building;}
     void setMovement(QLineF const movement);
     void setPoints(const QPointF &p0, const QPointF &p1);
+    void setEpsilon(double epsilon) {m_epsilon = epsilon;}
 
     /* Miscellaneous */
     QPointF symetricalPoint(const QPointF &point); 

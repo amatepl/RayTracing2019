@@ -13,8 +13,10 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
     m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
+    m_tabwidget->addTab(fqResp(),                   tr("Frequency Response"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
-    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
+//    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
+    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
     m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
@@ -33,7 +35,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogRx::saveProperties);
 //    connect(m_buttonbox, &QDialogButtonBox::accepted, this, &DialogRx::saveToDisk);
     connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogRx::buttonBoxClicked);
-
+    connect(m_tabwidget, &QTabWidget::currentChanged, this, &DialogRx::tabOpened);
     update();
 
 //    open();
@@ -102,10 +104,6 @@ QWidget* DialogRx::GeneralTabDialog(){
     m_target_snr->setRange(0,20);
     m_noise_figure->setRange(0,20);
     m_interferencemargin->setRange(0,20);
-    m_power = new QLineEdit("Received power [dB]: ", this);
-    m_power->setEnabled(false);
-    m_e_field = new QLineEdit("Electric fiedl [V/m]: ", this);
-    m_e_field->setEnabled(false);
 
     QFormLayout *geoProperties = new QFormLayout(this);
     geoProperties->addRow("X center: ",m_posx);
@@ -130,8 +128,6 @@ QWidget* DialogRx::GeneralTabDialog(){
     phyProperties->addRow("Target SNR [dB]: ", m_target_snr);
     phyProperties->addRow("Noise Figure [dB]: ", m_noise_figure);
     phyProperties->addRow("Interference Margin [dB]: ", m_interferencemargin);
-    phyProperties->addRow("Received power [dB]: ", m_power);
-    phyProperties->addRow("Electric fiedl [V/m]: ", m_e_field);
 
     QGroupBox *phy = new QGroupBox("Physical properties");
     phy->setLayout(phyProperties);
@@ -141,53 +137,84 @@ QWidget* DialogRx::GeneralTabDialog(){
     QGroupBox *chBox = new QGroupBox("Channel");
     QGridLayout *chLayout = new QGridLayout(this);
 
-    QLabel *prxLabel = new QLabel("Received power [dBm]: ",this);
-    chLayout->addWidget(prxLabel, 0, 0);
+    QLabel *eFieldLabel = new QLabel("Electric filed [V/m]: ",this);
+    chLayout->addWidget(eFieldLabel, 0, 0);
+    complex<double> eField = m_mathematicalproduct->getEField();
+    if (eField.imag() <0){
+        m_eField = new QLabel(QString::number(eField.real())
+                              +QString::number(eField.imag())
+                              +"i", this);
+    }
+    else {
+        m_eField = new QLabel(QString::number(eField.real())
+                              +"+"
+                              +QString::number(eField.imag())
+                              +"i", this);
+    }
+    chLayout->addWidget(m_eField, 0, 1);
 
+    QLabel *voltageLabel = new QLabel("Induced voltage [V]: ",this);
+    chLayout->addWidget(voltageLabel, 1, 0);
+    complex<double> voltage = m_mathematicalproduct->getVoltage();
+    if (voltage.imag() <0){
+        m_indVoltage = new QLabel(QString::number(voltage.real())
+                                  +QString::number(voltage.imag())
+                                  +"i", this);
+    }
+    else {
+        m_indVoltage = new QLabel(QString::number(voltage.real())
+                                  +"+"
+                                  +QString::number(voltage.imag())
+                                  +"i", this);
+    }
+    chLayout->addWidget(m_indVoltage, 1, 1);
+
+    QLabel *prxLabel = new QLabel("Received power [dBm]: ",this);
+    chLayout->addWidget(prxLabel, 2, 0);
     m_prx = new QLabel(QString::number(m_mathematicalproduct->getPower()), this);
-    chLayout->addWidget(m_prx, 0, 1);
+    chLayout->addWidget(m_prx, 2, 1);
 
     QLabel *dstLabel = new QLabel("Transmitter distance: ", this);
-    chLayout->addWidget(dstLabel, 1, 0);
+    chLayout->addWidget(dstLabel, 3, 0);
 
     m_dstnc = new QLabel(QString::number(m_mathematicalproduct->getDstnc()), this);
-    chLayout->addWidget(m_dstnc, 1, 1);
+    chLayout->addWidget(m_dstnc, 3, 1);
 
     QLabel *dlySprdLabel = new QLabel("Delay Spread [ns]: ", this);
-    chLayout->addWidget(dlySprdLabel, 3, 0);
+    chLayout->addWidget(dlySprdLabel, 4, 0);
 
     m_dlySprd = new QLabel(QString::number(m_mathematicalproduct->getDlySprd()) , this);
-    chLayout->addWidget(m_dlySprd, 3, 1);
+    chLayout->addWidget(m_dlySprd, 4, 1);
 
     QLabel *riceFctrLabel = new QLabel("Rice Factor [dB]: ", this);
-    chLayout->addWidget(riceFctrLabel, 4, 0);
+    chLayout->addWidget(riceFctrLabel, 5, 0);
 
     m_riceFactor = new QLabel(QString::number(m_mathematicalproduct->getRiceFctr()), this);
-    chLayout->addWidget(m_riceFactor, 4, 1);
+    chLayout->addWidget(m_riceFactor, 5, 1);
 
     QLabel *coherenceBwLabel = new QLabel("Coherence Bandwidth [MHz]: ", this);
-    chLayout->addWidget(coherenceBwLabel, 5, 0);
+    chLayout->addWidget(coherenceBwLabel, 6, 0);
 
     m_coherenceBw = new QLabel(QString::number(m_mathematicalproduct->getCoherenceBw()), this);
-    chLayout->addWidget(m_coherenceBw, 5, 1);
+    chLayout->addWidget(m_coherenceBw, 6, 1);
 
     QLabel *coherenceTmLabel = new QLabel("Coherence Time [\u03bcs]: ", this);
-    chLayout->addWidget(coherenceTmLabel, 6, 0);
+    chLayout->addWidget(coherenceTmLabel, 7, 0);
 
     m_coherenceTm = new QLabel(QString::number(m_mathematicalproduct->getCoherenceTm()), this);
-    chLayout->addWidget(m_coherenceTm, 6, 1);
+    chLayout->addWidget(m_coherenceTm, 7, 1);
 
     QLabel *angSprdLabel = new QLabel("Angular Spread [rad]: ", this);
-    chLayout->addWidget(angSprdLabel, 7, 0);
+    chLayout->addWidget(angSprdLabel, 8, 0);
 
     m_angSpdr = new QLabel(QString::number(m_mathematicalproduct->getAngSprd()), this);
-    chLayout->addWidget(m_angSpdr, 7, 1);
+    chLayout->addWidget(m_angSpdr, 8, 1);
 
     QLabel *dopplerSprdLabel = new QLabel("Doppler Spread [rad/s]: ", this);
-    chLayout->addWidget(dopplerSprdLabel, 8, 0);
+    chLayout->addWidget(dopplerSprdLabel, 9, 0);
 
     m_dopplerSpdr = new QLabel(QString::number(m_mathematicalproduct->getDopplerSprd()), this);
-    chLayout->addWidget(m_dopplerSpdr, 8, 1);
+    chLayout->addWidget(m_dopplerSpdr, 9, 1);
 
     chBox->setLayout(chLayout);
 
@@ -220,13 +247,7 @@ void DialogRx::updateGeneralTab()
     m_speed->setValue(m_mathematicalproduct->getSpeed());
     m_posx->setValue(m_mathematicalproduct->getPosX());
     m_posy->setValue(m_mathematicalproduct->getPosY());
-    m_power->clear();
-    m_power->setText("Received power [dB]: ");
-    m_power->insert(QString::number(m_mathematicalproduct->getPower()));
 
-    m_e_field->clear();
-    m_e_field->setText("Electric fiedl [V/m]: ");
-    m_e_field->insert(QString::number(norm(m_mathematicalproduct->getEField())));
 //    setEnable(m_mathematicalproduct->getEnable());
     m_target_snr->setValue(m_mathematicalproduct->targetSNR());
     m_noise_figure->setValue(m_mathematicalproduct->noiseFigure());
@@ -237,6 +258,32 @@ void DialogRx::updateGeneralTab()
 
 void DialogRx::updateChInfo()
 {
+    complex<double> eField = m_mathematicalproduct->getEField();
+    if (eField.imag() <0){
+        m_eField->setText(QString::number(eField.real())
+                          +QString::number(eField.imag())
+                          +"i");
+    }
+    else {
+        m_eField->setText(QString::number(eField.real())
+                          +"+"
+                          +QString::number(eField.imag())
+                          +"i");
+    }
+
+    complex<double> voltage = m_mathematicalproduct->getVoltage();
+    if (voltage.imag() <0){
+        m_indVoltage->setText(QString::number(voltage.real())
+                              +QString::number(voltage.imag())
+                              +"i");
+    }
+    else {
+        m_indVoltage->setText(QString::number(voltage.real())
+                              +"+"
+                              +QString::number(voltage.imag())
+                              +"i");
+    }
+
     m_prx->setText(QString::number(m_mathematicalproduct->getPower()));
 
     m_dstnc->setText(QString::number(m_mathematicalproduct->getDstnc()));
@@ -344,6 +391,54 @@ QWidget* DialogRx::TDLImpulseResponse(){
 
     widget->setLayout(firstLayout);
     return widget;
+}
+
+QWidget* DialogRx::fqResp(){
+    QWidget *widget = new QWidget;
+    fq_resp_plot = new QCustomPlot;
+
+    vector<double> resp = m_mathematicalproduct->fqResp();
+    QVector<double> freqResp = QVector(resp.begin(), resp.end());
+    vector<double> f = m_mathematicalproduct->fq();
+    QVector<double> freq = QVector(f.begin(), f.end());
+
+    fq_resp_plot->addGraph();
+    fq_resp_plot->graph(0)->setData(freq, freqResp);
+    fq_resp_plot->graph(0)->setPen(QPen(Qt::blue));
+//    fq_resp_plot->graph(0)->setLineStyle(QCPGraph::lsImpulse);
+//    fq_resp_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    fq_resp_plot->graph(0)->setName("Impulse");
+
+    fq_resp_plot->xAxis->setLabel("f[Hz]");
+    fq_resp_plot->yAxis->setLabel("|H(f)|");
+    fq_resp_plot->yAxis->grid()->setSubGridVisible(true);
+    fq_resp_plot->xAxis->grid()->setSubGridVisible(true);
+
+    updateFqResp();
+
+    fq_resp_plot->rescaleAxes();
+    fq_resp_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    fq_resp_plot->legend->setVisible(true);
+    fq_resp_plot->plotLayout()->insertRow(0);
+    fq_resp_plot->plotLayout()->addElement(0, 0, new QCPTextElement(fq_resp_plot, "Frequency Response", QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(fq_resp_plot,0,0);
+
+    widget->setLayout(firstLayout);
+
+    return widget;
+}
+
+void DialogRx::updateFqResp()
+{
+//    fq_resp_plot->graph(0)->data().clear();
+    vector<double> f = m_mathematicalproduct->fq();
+    QVector<double> freq = QVector(f.begin(), f.end());
+    vector<double> resp = m_mathematicalproduct->fqResp();
+    QVector<double> freqResp = QVector(resp.begin(), resp.end());
+    fq_resp_plot->graph(0)->setData(freq, freqResp);
+    fq_resp_plot->replot();
 }
 
 QWidget* DialogRx::InterferencePattern()
@@ -600,52 +695,66 @@ QWidget*
 DialogRx::PrxDopplerSpctr()
 {
     QWidget *widget = new QWidget;
-    doppler_distr_plot = new QCustomPlot;
+    pds_plot = new QCustomPlot;
 
     pds = m_mathematicalproduct->prxDopplerSpread();
     doppler_distr = m_mathematicalproduct->dopplerDistr();
     w = m_mathematicalproduct->getw();
 
-    cout << "pds size: " <<pds.size() << endl;
-    cout << "w size: " <<w.size() << endl;
-
     QVector<double> localpds = pds;
     QVector<double> localw = w;
 
-//    for (int i = 0; i < pds.size(); i++) {
-//        QCPItemLine *line_impulse = new QCPItemLine(doppler_distr_plot);
-//        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
-//        line_impulse->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
-//        line_impulse->setPen(QPen(Qt::blue));
-//    }
+    for (int i = 0; i < pds.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pds_plot);
+        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(w[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
 
     // Plot physiscal impulse response
-    doppler_distr_plot->addGraph();
-    doppler_distr_plot->graph(0)->setPen(QPen(Qt::blue));
-//    doppler_distr_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
-//    doppler_distr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-    doppler_distr_plot->graph(0)->setData(w, pds);
-    doppler_distr_plot->graph(0)->setName("PDS");
+    pds_plot->addGraph();
+    pds_plot->graph(0)->setPen(QPen(Qt::blue));
+    pds_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    pds_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    pds_plot->graph(0)->setData(w, pds);
+    pds_plot->graph(0)->setName("PDS");
 
-    doppler_distr_plot->xAxis->setLabel("w[rad/s]");
-    doppler_distr_plot->yAxis->setLabel("S(w)[dB]");
-    doppler_distr_plot->yAxis->grid()->setSubGridVisible(true);
-    doppler_distr_plot->xAxis->grid()->setSubGridVisible(true);
-    doppler_distr_plot->rescaleAxes();
-    doppler_distr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    doppler_distr_plot->replot();
-    doppler_distr_plot->legend->setVisible(true);
-    doppler_distr_plot->plotLayout()->insertRow(0);
-    doppler_distr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(doppler_distr_plot,
+    pds_plot->xAxis->setLabel("w[rad/s]");
+    pds_plot->yAxis->setLabel("S(w)[dB]");
+    pds_plot->yAxis->grid()->setSubGridVisible(true);
+    pds_plot->xAxis->grid()->setSubGridVisible(true);
+    pds_plot->rescaleAxes();
+    pds_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    pds_plot->replot();
+    pds_plot->legend->setVisible(true);
+    pds_plot->plotLayout()->insertRow(0);
+    pds_plot->plotLayout()->addElement(0, 0, new QCPTextElement(pds_plot,
                                                                           "Power Doppler Density (PAS) and Doppler Distribution",
                                                                           QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
-    firstLayout->addWidget(doppler_distr_plot,0,0);
+    firstLayout->addWidget(pds_plot,0,0);
 
     widget->setLayout(firstLayout);
 
     return widget;
+}
+
+void DialogRx::updatePrxDopplerSpctr()
+{
+    pds_plot->clearItems();
+    pds = m_mathematicalproduct->prxDopplerSpread();
+    w = m_mathematicalproduct->getw();
+    for (int i = 0; i < pds.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pds_plot);
+        line_impulse->start->setCoords(w[i], pds[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(w[i], -1500);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+//    QVector npas = normalise<QVector<double>>(pas, m_mathematicalproduct->getPower());
+//    void updatePrxAngularSpctr();
+    pds_plot->graph(0)->setData(w, pds);
+    pds_plot->replot();
 }
 
 QWidget*
@@ -686,44 +795,51 @@ DialogRx::DopplerDistr()
     return widget;
 }
 
-//QWidget* DialogRx::DopplerSpectrum(){
-//    QWidget *widget = new QWidget;
+QWidget* DialogRx::DopplerSpectrum(){
+    QWidget *widget = new QWidget;
+    doppler_spctr_plot = new QCustomPlot;
 //    QCustomPlot *customplot = new QCustomPlot;
 
-//    doppler = m_mathematicalproduct->getDoppler();
-//    omega = m_mathematicalproduct->getOmega();
+//    vector<double> dp = m_mathematicalproduct->getDoppler();
+//    doppler = QVector(dp.begin(), dp.end());
+    doppler = vec2QVec<double>(m_mathematicalproduct->getDoppler());
+    vector<double> omg = m_mathematicalproduct->getOmega();
+    omega = QVector(omg.begin(), omg.end());
 
-//    for(int i = 0; i < doppler.size(); i++){
-//        QCPItemLine *line_doppler = new QCPItemLine(customplot);
-//        line_doppler->start->setCoords(omega[i], doppler[i]);  // location of point 1 in plot coordinate
-//        line_doppler->end->setCoords(omega[i], -130);  // location of point 2 in plot coordinate
-//        line_doppler->setPen(QPen(Qt::blue));
-//    }
+    doppler_spctr_plot->addGraph();
+    doppler_spctr_plot->graph(0)->setPen(QPen(Qt::red));
+    doppler_spctr_plot->graph(0)->setLineStyle(QCPGraph::lsImpulse);
+    doppler_spctr_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    doppler_spctr_plot->graph(0)->setData(omega, doppler);
+    doppler_spctr_plot->graph(0)->setName("Doppler spectrum");
 
-//    customplot->addGraph();
-//    customplot->graph(0)->setPen(QPen(Qt::red));
-//    customplot->graph(0)->setLineStyle(QCPGraph::lsNone);
-//    customplot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
-//    customplot->graph(0)->setData(omega, doppler);
-//    customplot->graph(0)->setName("Doppler spectrum");
+    doppler_spctr_plot->xAxis->setLabel("\u03C9[rad/s]");
+    doppler_spctr_plot->yAxis->setLabel("a(\u03c9)[dB]");
+    doppler_spctr_plot->yAxis->grid()->setSubGridVisible(true);
+    doppler_spctr_plot->xAxis->grid()->setSubGridVisible(true);
+    doppler_spctr_plot->rescaleAxes();
+    doppler_spctr_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    doppler_spctr_plot->replot();
 
-//    customplot->xAxis->setLabel("\u03C9[rad/s]");
-//    customplot->yAxis->setLabel("a(\u03c9)[dB]");
-//    customplot->yAxis->grid()->setSubGridVisible(true);
-//    customplot->xAxis->grid()->setSubGridVisible(true);
-//    customplot->rescaleAxes();
-//    customplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-//    customplot->replot();
+    doppler_spctr_plot->plotLayout()->insertRow(0);
+    doppler_spctr_plot->plotLayout()->addElement(0, 0, new QCPTextElement(doppler_spctr_plot, "Dopler spectrum", QFont("sans", 12, QFont::Bold)));
 
-//    customplot->plotLayout()->insertRow(0);
-//    customplot->plotLayout()->addElement(0, 0, new QCPTextElement(customplot, "Dopler spectrum", QFont("sans", 12, QFont::Bold)));
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(doppler_spctr_plot,0,0);
 
-//    QGridLayout *firstLayout = new QGridLayout;
-//    firstLayout->addWidget(customplot,0,0);
+    widget->setLayout(firstLayout);
+    return widget;
+}
 
-//    widget->setLayout(firstLayout);
-//    return widget;
-//}
+void DialogRx::updateDopplerSpctr()
+{
+    vector<double> dp = m_mathematicalproduct->getDoppler();
+    doppler = QVector(dp.begin(), dp.end());
+    vector<double> omg = m_mathematicalproduct->getOmega();
+    omega = QVector(omg.begin(), omg.end());
+    doppler_spctr_plot->graph(0)->setData(omega, doppler);
+    doppler_spctr_plot->replot();
+}
 
 QWidget *DialogRx::SpcCrltn()
 {
@@ -769,10 +885,10 @@ QWidget *DialogRx::SpcCrltn()
 
 void DialogRx::updateSpcCrltn()
 {
-    vector<double> dz = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
     QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
+    vector<double> dz = m_mathematicalproduct->deltaZ();
+    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
     spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->replot();
 }
@@ -895,8 +1011,23 @@ void DialogRx::showTDL(){
 void DialogRx::update()
 {
     updateImpulseResponse();
+    if (idxTab == 3) updateFqResp();
     updatePrxAngularSpctr();
-//    updateSpcCrltn();
-//    updateGeneralTab();
-    updateSpcCrltn();
+    updatePrxDopplerSpctr();
+    if (idxTab == 8) updateSpcCrltn();
+    updateGeneralTab();
+    updateDopplerSpctr();
+}
+
+void DialogRx::tabOpened(int index)
+{
+    idxTab = index;
+    if (idxTab == 3) {
+        updateFqResp();
+        fq_resp_plot->graph(0)->rescaleAxes();
+    }
+    if (idxTab == 8) {
+        updateSpcCrltn();
+        spc_crltn_plot->graph(0)->rescaleAxes();
+    }
 }

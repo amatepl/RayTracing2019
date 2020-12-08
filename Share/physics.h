@@ -314,6 +314,32 @@ vector<complex<double>> dft(vector<T> &in)
 }
 
 template <typename T>
+vector<complex<double>> dft2(vector<T> &in,double bandwidth,double step)
+{
+    vector<complex<double>> out;
+
+    complex<double> j (0., 1.);
+
+    unsigned N = in.size();
+    double margin = bandwidth*0.05;
+    double kmax = round((bandwidth+margin)*(N*step*1e-9));
+    for (unsigned n = 0; n < kmax; n++) {
+        out.push_back(0);
+        for (unsigned m = 0; m < N; m++) {
+            out.at(n) += in.at(m) * exp(-j * 2. * M_PI * (double) n * (double) m / (double) N);
+        }
+    }
+    for (unsigned n = N-kmax; n < N; n++){
+        out.push_back(0);
+        for (unsigned m = 0; m < N; m++) {
+            out.at(kmax+n-(N-kmax)) += in.at(m) * exp(-j * 2. * M_PI * (double) n * (double) m / (double) N);
+        }
+    }
+
+    return out;
+}
+
+template <typename T>
 vector<complex<double>> idft(vector<T> &in)
 {
     vector<complex<double>> out;
@@ -327,13 +353,49 @@ vector<complex<double>> idft(vector<T> &in)
             out.at(n) += in.at(m) * exp(j * 2. * M_PI * (double) n * (double) m / (double) N) / (double) N;
         }
     }
-
     return out;
 }
 
 using cd = complex<double>;
 
 void fft(vector<cd> &a, bool invert);
+
+/*!
+ * \fn upsample()(const vector<Tx> &x, const vector<Ty> &y, const double min,
+ * const double max, const double step)
+ *
+ * \brief Upsample a vector.
+ *
+ * Upsample vector y function of x in a range [min, max] and with the given step.
+ *
+ */
+template <typename Tx, typename Ty>
+vector<Ty> upsample(const vector<Tx> &x, const vector<Ty> &y, const double min,
+                   const double max, const double step=1)
+{
+    vector<Ty> res;
+    double val = min;
+    unsigned imax = x.size();
+    for (unsigned idx = 0; idx < imax; idx++) {
+        while (val < x.at(idx)) {
+            res.push_back(Ty(0));
+            val += step;
+        }
+        res.push_back(y.at(idx));
+    }
+
+    if (x.size() != 0) {
+        double xend = x.back();
+        while (xend <= max) {
+            res.push_back(Ty(0));
+            xend += step;
+        }
+    }
+//    for (unsigned i =0; i< 10000; i++){
+//        res.push_back(Ty(0));
+//    }
+    return res;
+}
 
 }
 #endif // PHYSICS_H

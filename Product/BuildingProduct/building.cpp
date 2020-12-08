@@ -241,3 +241,10 @@ bool Building::adjacentWall(const QLineF &line, Wall *&wall){
     }
     return res;
 }
+
+void Building::setPermittivity(double eps){
+    m_permittivity = eps;
+    for (unsigned i = 0; i < m_walls.size(); i++){
+        m_walls.at(i)->setEpsilon(eps);
+    }
+}

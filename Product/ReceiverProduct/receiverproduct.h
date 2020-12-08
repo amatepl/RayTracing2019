@@ -40,6 +40,7 @@ public:
     virtual int getPosY() = 0;
     virtual bool getEnable() = 0;
     virtual std::complex<double> getEField() = 0;
+    virtual std::complex<double> getVoltage() = 0;
     virtual double getPower() = 0;
     virtual double getDstnc() = 0;
     virtual double getDlySprd() = 0;
@@ -66,11 +67,15 @@ public:
 
     // Physical Result and parameters
 
-    // 3. Impulse and TDL Results:
+    // 1. Impulse and TDL Results:
     virtual QVector<double> impulse(){return h;}
     virtual QVector<double> impulseTDL(){return h_tdl;}
     virtual QVector<double> impulseTau() {return tau;}
     virtual QVector<double> impulseTauTDL() {return tau_tdl;}
+
+    // 2. Frequency Response
+    virtual std::vector<double> fqResp() const = 0;
+    virtual std::vector<double> fq() const = 0;
 
     // 4. Cell Range Results:
     virtual unsigned long frequency() {return m_transmitterfrequency;}
@@ -84,8 +89,8 @@ public:
     double dopplerSpread(){return doppler_spread;}
     QVector<double> getw() {return w;}
 
-    virtual QVector<double> getDoppler() {return doppler;}
-    virtual QVector<double> getOmega() {return omega;}
+    virtual std::vector<double> getDoppler() = 0;
+    virtual std::vector<double> getOmega() = 0;
 
     // 6. Spatial correlation
     virtual QVector<double> prxAngularSpread(){return pas;}
@@ -107,9 +112,6 @@ protected:
     QVector<double> doppler_distr;
     double doppler_spread {0};
     QVector<double> w;
-
-    QVector<double> omega;
-    QVector<double> doppler;
 
     // 5. Spatial correlation
     PrxAngularSpread pas;

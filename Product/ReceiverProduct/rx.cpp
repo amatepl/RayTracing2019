@@ -2,12 +2,14 @@
 
 #include <algorithm>
 #include "Share/physics.h"
+#include <FFT>
 
 Rx::Rx(int posX, int posY): QPointF(posX,posY)
 {
     m_type                  = "Receiver";
     m_power                 = 0.0;
     m_e_field               = 0.0;
+    m_ind_voltage           = 0.0;
     m_transmitter_distance  = 0.0;
     snr_received            = 0.0;
     delay_spread            = 0.0;
@@ -51,6 +53,7 @@ void Rx::clearData()
 {
     m_power = 0;
     m_e_field = 0;
+    m_ind_voltage = 0;
 }
 
 double Rx::inputNoise()
@@ -117,7 +120,13 @@ void Rx::extractChData()
 {
 
     m_impulse = m_chData->impulseResp;
-    m_doppler = m_chData->dopplerSpctr;
+//    m_doppler = m_chData->dopplerSpctr;
+
+//    for (const auto e: m_doppler) {
+//        doppler.push_back(abs(e.second));
+//        omega.push_back(e.first);
+//    }
+
     riceFactor(m_chData->riceFactor);
 
     for (vector<complex<double>>::iterator ang = m_chData->angularDistr.begin();
@@ -176,7 +185,12 @@ void Rx::save(string path)
     vectorSizes.push_back(logD.size());
     vectorSizes.push_back(fading.size());
     vectorSizes.push_back(logD_model.size());
-    vectorSizes.push_back(doppler.size());
+    vectorSizes.push_back(m_chData->dopplerSpctr.size());
+
+    vector<double> doppler;
+    for (const auto &e: m_chData->dopplerSpctr) {
+        doppler.push_back(abs(e.second));
+    }
 
     sort(vectorSizes.begin(), vectorSizes.end());
 
@@ -243,7 +257,7 @@ void Rx::save(string path)
             ofs << ";" ;
         }
 
-        if (n < doppler.size()) {
+        if (n < m_chData->dopplerSpctr.size()) {
             ofs << doppler[n];
         } else {
             ofs << ";" ;
@@ -345,20 +359,73 @@ void Rx::computeImpulseTDL()
 
 }
 
+// Frequency Response
+vector<double> Rx::fqResp() const
+{
+    vector<double> res;
+    if (m_chData != nullptr && m_chData->impulseResp.size() != 0){
+        vector<double> h;
+        vector<double> t;
+        for (auto e: m_chData->impulseResp) {
+            t.push_back(e.first);
+            h.push_back(abs(e.second));
+        }
+        double step = 1;
+        vector<double> uph = ph::upsample<double, double>(t, h, 0, t.back(), step);
+//        vector<complex<double>> fqResp = ph::dft(uph);
+        vector<complex<double>> fqResp ;
+
+        Eigen::FFT<double> fft;
+        fft.fwd(fqResp, uph);
+        double fpos = 0.0;
+        double fneg = 0.0;
+        double length = fqResp.size();
+        res.resize(length);
+        for (const auto &e: fqResp) {
+            if (fpos < length/2) {
+                res.at(fpos+length/2) = round(abs(e)*1e6)/1e6;
+                m_chData->fqResp[fpos/(uph.size()*step*1e-9)] = e;
+                fpos++;
+            }
+            else {
+                res.at(fneg) = round(abs(e)*1e6)/1e6;
+                m_chData->fqResp[(-length/2+fneg)/(uph.size()*step*1e-9)] = e;
+                fneg ++;
+            }
+        }
+    }
+    return res;
+}
+
+vector<double> Rx::fq() const
+{
+    vector<double> res;
+    double fq = 0.0;
+    vector<double> h;
+    vector<double> t;
+    if (m_chData != nullptr) {
+        for (const auto &e: m_chData->fqResp) {
+            fq = e.first/*-m_chData->fqResp.size()/2)/(uph.size()*step*1e-9)*/;
+            res.push_back(fq);
+        }
+    }
+    return res;
+}
+
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 4. Doppler:
 void Rx::dopplerSpectrum()
 {
-    omega.clear();
-    doppler.clear();
-    omega.resize(m_doppler.size());
-    doppler.resize(m_doppler.size());
-    int i = 0;
-    for(const auto &dop : m_doppler){
-        omega[i] = dop.first;
-        doppler[i] = 20*log10(abs(dop.second));
-        i++;
-    }
+//    omega.clear();
+//    doppler.clear();
+//    omega.resize(m_doppler.size());
+//    doppler.resize(m_doppler.size());
+//    int i = 0;
+//    for(const auto &dop : m_doppler){
+//        omega[i] = dop.first;
+//        doppler[i] = 20*log10(abs(dop.second));
+//        i++;
+//    }
 }
 
 void Rx::sendInterferencePattern()
@@ -459,7 +526,31 @@ double Rx::getDopplerSprd()
     return doppler_spread;
 }
 complex <double> Rx::getEField() {return m_e_field;}
+complex <double> Rx::getVoltage() {return m_ind_voltage;}
 bool Rx::getEnable() {return enable;}
+
+
+vector<double> Rx::getDoppler()
+{
+    vector<double> doppler;
+    if (m_chData != nullptr) {
+        for (auto e: m_chData->dopplerSpctr) {
+            doppler.push_back(abs(e.second));
+        }
+    }
+    return doppler;
+}
+
+vector<double> Rx::getOmega()
+{
+    vector<double> omega;
+    if (m_chData != nullptr) {
+        for (auto e: m_chData->dopplerSpctr) {
+            omega.push_back(e.first);
+        }
+    }
+    return omega;
+}
 
 void Rx::setSpeed(float speed)
 {
@@ -502,8 +593,27 @@ void Rx::setEnable(bool enable) {this->enable = enable;}
 vector<double> Rx::spaceCrltn()
 {
     vector<double> sc;
-    if (m_chData != nullptr) {
-        sc = m_chData->spaceCrltn;
+    if (m_chData != nullptr && m_chData->prxAngularSpctrMap.size()){
+        vector<double> pas;
+        vector<double> u;
+        for (auto e: m_chData->prxAngularSpctrMap) {
+            u.push_back(e.first);
+            pas.push_back(e.second);
+        }
+        double wvNbr = 2. * M_PI * m_chData->fq / c;
+        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 1);
+        vector<complex<double>> fqResp = ph::idft(upPAS);
+
+        m_chData->deltaZ.clear();
+        double deltaZ = 0;
+        for (const auto &e: fqResp) {
+            m_chData->spaceCrltnMap[deltaZ] = e.real();
+            m_chData->deltaZ.push_back(deltaZ);
+            sc.push_back(e.real());
+            deltaZ++;
+        }
+
+//        sc = m_chData->spaceCrltn;
         double max = *sc.begin();
         for (auto &d: sc){
             d = d / max;
@@ -590,7 +700,11 @@ void Rx::notifyObservers()
     doppler_distr.clear();
 
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
+        // Here must be the choice of transmitter and the different
+        // physical results. Not totally optimal for the moment.
         m_chData = m_transmitters.at(i)->update(this, m_movement);
+        // Voltage:
+        m_ind_voltage = m_chData->indVoltage;
         m_e_field += m_chData->eField;
         m_power = m_chData->prx;
         m_transmitterbandwidth = m_chData->bw;
