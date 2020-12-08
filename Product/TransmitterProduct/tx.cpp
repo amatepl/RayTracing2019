@@ -127,6 +127,7 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
     chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
+    chData.prxDopplerSpctrMap[w] += prxDopSpctr;
 
     // Save Data
     chData.u.push_back(u);
@@ -207,7 +208,6 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
                                                                     const bool properties)
 {
     // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
-    // TO DO: check if there is a wall between the TX and RX
     double distance = this->distance(receiver); // conversion (1px == 2cm)
 //    cout << "Distance in tx.cpp for ground: " << distance << endl;
     double thetaG = atan((distance / 2) / ant_hght);
@@ -262,14 +262,20 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         }
         // Put computed data into channels data.
         double u = ph::uMPC(wvNbr, angleRx);
+        double w = receiver_speed.length()*u;
 
         complex<double> angularDistr = ph::angDistrMPC(a, angleRx, u);
         double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
+
+        complex<double> dopplerDistr = ph::angDistrMPC(a, theta, w);
+        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
         // Save Data
         chData.u.push_back(u);
         chData.angularDistr.push_back(angularDistr);
         chData.prxAngularSpctr.push_back(prxAngSpctr);
+        chData.prxAngularSpctrMap[u] += prxAngSpctr;
+        chData.prxDopplerSpctrMap[w] += prxDopSpctr;
 
     }
 
@@ -387,6 +393,7 @@ void Tx::chooseBeam(QPointF *receiver)
 
     double powerAtReceiver = 0;
     complex<double> emField = 0;
+    double sumAbsE = 0;
     complex<double> groundField = 0;
     char chosenBeam = -5;
 
@@ -395,13 +402,16 @@ void Tx::chooseBeam(QPointF *receiver)
     for (int i = -5; i < 5; i++) {
 //        m_pr_orientation = i;
         emField = 0;
+        sumAbsE = 0;
 
         for (unsigned j = 0; j < wholeRays.size(); j++) {
             WholeRay *wholeRay  = wholeRays.at(j);
 
             if (wholeRay->at(0)->getDiffracted()) {     // The ray is a diffracted one.
 
-                emField += computeDiffractedEfield(receiver,wholeRay,false);
+                complex<double> e = computeDiffractedEfield(receiver,wholeRay,false);
+                emField += e;
+                sumAbsE += abs(e);
 
             } else {                                    // The ray was reflected.
 
@@ -418,6 +428,7 @@ void Tx::chooseBeam(QPointF *receiver)
                 }
 
                 emField += EMfield;
+                sumAbsE += abs(EMfield);
             }
         }
 
@@ -426,6 +437,7 @@ void Tx::chooseBeam(QPointF *receiver)
             powerAtReceiver = computePrx(emField,groundField,receiver);
             chosenBeam = i;
             m_receiversField[receiver] = emField;
+            m_rxsSumAbsE[receiver] = sumAbsE + abs(groundField);
             m_receiversGroundField[receiver] = groundField;
 
         }
@@ -442,6 +454,7 @@ Tx::comput4FixedBeam(QPointF *receiver)
     bool diffracted = false;
     m_receiversField[receiver] = 0;
     m_receiversGroundField[receiver] = 0;
+    m_rxsSumAbsE[receiver] = 0;
     complex<double> EMfield;
     for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++)
     {
@@ -454,7 +467,7 @@ Tx::comput4FixedBeam(QPointF *receiver)
             //m_ray_speed = ray_speeds[wholeRay];
             EMfield = computeDiffractedEfield(receiver,wholeRay,true);
             m_receiversField[receiver] += EMfield;
-
+            m_rxsSumAbsE[receiver] += abs(EMfield);
             diffracted = true;
 
         } else {
@@ -476,6 +489,7 @@ Tx::comput4FixedBeam(QPointF *receiver)
 //                cout << "E_g: " << m_receiversGroundField[receiver] << endl;
             }
             m_receiversField[receiver] += EMfield;
+            m_rxsSumAbsE[receiver] += abs(EMfield);
 
         }
         estimateCh(receiver,EMfield,wholeRay);
@@ -507,6 +521,10 @@ double Tx::computePrx(complex <double> totalEfield, complex<double> groundField,
     return Prx;
 }
 
+double Tx::getRxPrx(QPointF *rx)
+{
+    return m_chsData[rx].prx;
+}
 
 double Tx::dBm(double power)
 {
@@ -688,6 +706,7 @@ void Tx::clearChData(QPointF *rx)
     m_chsData[rx].angularDistr.clear();
     m_chsData[rx].prxAngularSpctr.clear();
     m_chsData[rx].prxAngularSpctrMap.clear();
+    m_chsData[rx].prxDopplerSpctrMap.clear();
     m_chsData[rx].w.clear();
     m_chsData[rx].dopplerDistr.clear();
     m_chsData[rx].prxDopplerSpctr.clear();
@@ -722,6 +741,7 @@ Data *Tx::update(QPointF *receiver, const QLineF movement)
     clearChData(receiver);
 
     m_receiversField[receiver] = 0;
+    m_rxsSumAbsE[receiver] = 0;
     m_los_factor[receiver] = 0.0;
     m_nlos_factor[receiver] = 0.0;
     rays_speed.erase(rays_speed.begin(), rays_speed.end());
@@ -809,7 +829,11 @@ Data * Tx::getChData(QPointF *rx)
     }
 
     for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-        e.second = e.second / max;
+        e.second = (e.second / max) + 1;
+    }
+
+    for (double &e: m_chsData[rx].prxAngularSpctr) {
+        e += 1;
     }
 
     // Rice Factor
@@ -844,6 +868,7 @@ Data * Tx::getChData(QPointF *rx)
 
     // FFT
 //    vector <complex <double>> test;
+//    vector<complex<double>> out;
 //    vector <double> out2;
 
 //    vector <double> ulocal;
@@ -855,15 +880,16 @@ Data * Tx::getChData(QPointF *rx)
 //    vector<complex<double>> upsampledPAS = ph::upsample<double, complex<double>>(ulocal, test, -wvNbr, wvNbr, 1);
 
 //    if (upsampledPAS.size() > 1){
-//        fft.inv(out2, upsampledPAS);
+//        fft.inv(out, upsampledPAS);
 //    }
 
 //    ph::fft(upsampledPAS, true);
 //    vector<complex<double>> out3 = ph::idft(upsampledPAS);
 //    vector<complex<double>> out3 = ph::idft(test);
 
-//    for (const auto &e: out3) {
+//    for (const auto &e: out) {
 //        out2.push_back((float)e.real());
+////        out2.push_back((float)abs(e));
 //    }
 
 //    vector<double> omega;
@@ -1010,6 +1036,11 @@ complex<double> Tx::computeEField(QPointF *rx)
     }
 
     return emField;
+}
+
+double Tx::getRxSumAbsE(QPointF *rx)
+{
+    return m_rxsSumAbsE[rx];
 }
 
 complex<double> Tx::computeInterference(QPointF* copy_receiver,QLineF local_region)

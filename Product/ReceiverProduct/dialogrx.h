@@ -71,6 +71,8 @@ public:
     QWidget* DopplerDistr();
     QWidget *SpcCrltn();
     void updateSpcCrltn();
+    QWidget *timeCrltn();
+    void updateTimeCrltn();
     QWidget *DopplerSpectrum();
     void updateDopplerSpctr();
     QWidget *fqResp();
@@ -180,6 +182,8 @@ private:
     QVector<double> angular_distr;
     double angular_spread {0};
     QVector <double> u;
+
+    // 6. Time correlation
 
     unsigned long m_transmitterfrequency;
     unsigned long m_transmitterbandwidth;

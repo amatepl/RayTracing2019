@@ -74,7 +74,6 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
 //        dynamic_cast<Rx*>(receiver)->setPosY(i);
 
-//        for(int j = workingZone.topLeft().x();
 //             j < workingZone.topRight().x();
 //             j += workingZone.width() / (200/px_to_meter)){
 
@@ -137,10 +136,12 @@ void Coverage::choseBeams()
 HeatMap *Coverage::buildCoverageZone(const QRect &workingZone)
 {
     QPointF rx;
-    unsigned h = workingZone.height();
-    unsigned w = workingZone.width();
+//    unsigned h = workingZone.height();
+//    unsigned w = workingZone.width();
     int maxY = workingZone.bottomLeft().y();
     int maxX = workingZone.topRight().x();
+
+    fptr f = selectFct();
 
     for(int i = workingZone.topLeft().y(); i < maxY; i += (int) (1 / m_dnsty)){
         rx.setY(i);
@@ -149,20 +150,21 @@ HeatMap *Coverage::buildCoverageZone(const QRect &workingZone)
 
                 rx.setX(j);
 
-                notifyTxs(&rx);
+                notifyTxs(&rx, f);
         }
     }
     return &m_heatMap;
 }
 
-void Coverage::notifyTxs(QPointF *rx)
+void Coverage::notifyTxs(QPointF *rx, fptr f)
 {
     complex<double> eField(0,0);
     for (auto &tx: m_transmitters){
         tx->deleteRays(rx);
         tx->detectAndLink(*rx);
         tx->notifyObservers(rx, tx->movement());
-        eField += tx->computeEField(rx);
+        eField += (this->*f)(tx, rx);
+//        eField += tx->computeEField(rx);
 
     }
 
@@ -173,5 +175,35 @@ void Coverage::setDnsty(const double dnsty)
 {
     m_dnsty = dnsty;
 }
+
+complex<double> Coverage::complexE(Tx *tx, QPointF *rx)
+{
+    return tx->computeEField(rx);
+}
+
+complex<double> Coverage::sumAbsE(Tx *tx, QPointF *rx)
+{
+    return (complex<double>) tx->getRxSumAbsE(rx);
+}
+
+complex<double> Coverage::prx(Tx *tx, QPointF *rx)
+{
+    return (complex<double>) tx->getRxPrx(rx);
+}
+
+Coverage::fptr Coverage::selectFct()
+{
+    switch (m_mode) {
+    case HeatmapMode::complexE:
+        return &Coverage::complexE;
+    case HeatmapMode::sumAbsE:
+        return &Coverage::sumAbsE;
+    case HeatmapMode::prx:
+        return &Coverage::prx;
+    default:
+        break;
+    }
+}
+
 //-------SIGNALS-----------------------------------------------------------------------------------
 

@@ -147,6 +147,7 @@ public:
     void dontChoseBeam(QPointF * receiver);
     void freazeBeams();
     double computePrx(complex <double> totalEfield, complex<double> groundField, QPointF* receiver);
+    double getRxPrx(QPointF *rx);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR) const;
     double computeReflexionPar(double thetaI, double epsilonR) const;
@@ -197,6 +198,13 @@ public:
     void link(const QPointF &p, WholeRay *wholeRay);
 
     complex<double> computeEField(QPointF *rx);
+
+    /*!
+     * \brief Returns the sum of |E|
+     * \param rx
+     * \return
+     */
+    double getRxSumAbsE(QPointF *rx);
 
     /*
      * ProductObserver
@@ -460,6 +468,7 @@ private:
 
     map<const QPointF *,vector<WholeRay *>> m_receiversRays;
     map<QPointF *,complex<double>> m_receiversField;
+    map<QPointF *, double> m_rxsSumAbsE;
     map<QPointF *,complex<double>> m_receiversGroundField;
     vector<MathematicalTreeProduct *> m_trees;
 

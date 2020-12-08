@@ -136,7 +136,6 @@ void InfoWidget::createCoverageGroup(){
     launch_coverage = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"Launch coverage");
     // Coverage informations and edition
     QGridLayout *coverage_layout = new QGridLayout(coverage_group);
-//    coverage_layout->addRow(launch_coverage);
     coverage_layout->addWidget(launch_coverage, 0, 0, Qt::AlignTop);
     connect(launch_coverage,&QPushButton::clicked,this,&InfoWidget::sendLaunchCoverage);
 
@@ -147,7 +146,6 @@ void InfoWidget::createCoverageGroup(){
     rflctns_cov = new QSpinBox(ray_group);
     rflctns_cov->setRange(0.00,999.00);
     rflctns_cov->setAccelerated(true);
-//    connect(rflctns_cov, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
 
     QFormLayout *f_layout = new QFormLayout;
     f_layout->addRow("Reflections: ", rflctns_cov);
@@ -163,9 +161,6 @@ void InfoWidget::createCoverageGroup(){
 
     m_eFieldDisp = new QLabel("|E| [...]: ", this);
     coverage_layout->addWidget(m_eFieldDisp, 3, 0);
-
-//    m_eFieldDisp = new QLabel("",this);
-//    coverage_layout->addWidget(m_eFieldDisp, 3, 1);
 
     coverage_group->setLayout(coverage_layout);
 

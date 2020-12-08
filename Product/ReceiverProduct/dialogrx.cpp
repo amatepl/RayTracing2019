@@ -20,6 +20,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
     m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
+    m_tabwidget->addTab(timeCrltn(), tr("Time Correltaion"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -414,7 +415,7 @@ QWidget* DialogRx::fqResp(){
     fq_resp_plot->yAxis->grid()->setSubGridVisible(true);
     fq_resp_plot->xAxis->grid()->setSubGridVisible(true);
 
-    updateFqResp();
+//    updateFqResp();
 
     fq_resp_plot->rescaleAxes();
     fq_resp_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
@@ -588,7 +589,7 @@ DialogRx::PrxAngularSpctr()
     pas_plot = new QCustomPlot;
 
     pas = m_mathematicalproduct->prxAngularSpread();
-    angular_distr = m_mathematicalproduct->angularDistr();
+//    angular_distr = m_mathematicalproduct->angularDistr();
     u = m_mathematicalproduct->getu();
 
     for (int i = 0; i < pas.size(); i++) {
@@ -893,6 +894,53 @@ void DialogRx::updateSpcCrltn()
     spc_crltn_plot->replot();
 }
 
+QWidget *DialogRx::timeCrltn()
+{
+    QWidget *widget = new QWidget;
+    tm_crltn_plot = new QCustomPlot;
+
+    vector<double> dt = m_mathematicalproduct->deltaZ();
+    QVector<double> deltaT = QVector(dt.begin(), dt.end());
+    vector<double> tc = m_mathematicalproduct->spaceCrltn();
+    QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
+
+    // Plot physiscal impulse response
+    tm_crltn_plot->addGraph();
+    tm_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
+    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
+    tm_crltn_plot->graph(0)->setName("Time Correlation");
+
+    tm_crltn_plot->xAxis->setLabel("t");
+    tm_crltn_plot->yAxis->setLabel("R");
+    tm_crltn_plot->yAxis->grid()->setSubGridVisible(true);
+    tm_crltn_plot->xAxis->grid()->setSubGridVisible(true);
+    tm_crltn_plot->rescaleAxes();
+    tm_crltn_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    tm_crltn_plot->replot();
+    tm_crltn_plot->legend->setVisible(true);
+    tm_crltn_plot->plotLayout()->insertRow(0);
+    tm_crltn_plot->plotLayout()->addElement(0, 0, new QCPTextElement(tm_crltn_plot,
+                                                                          "Spatial Correlation",
+                                                                          QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(tm_crltn_plot,0,0);
+
+    widget->setLayout(firstLayout);
+
+    return widget;
+}
+
+void DialogRx::updateTimeCrltn()
+{
+    vector<double> tc = m_mathematicalproduct->timeCrltn();
+    QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
+    vector<double> dt = m_mathematicalproduct->timeCrltnT();
+    QVector<double> deltaT = QVector(dt.begin(), dt.end());
+    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
+    tm_crltn_plot->replot();
+}
+
 void DialogRx::changeGraph(){
 }
 
@@ -1010,24 +1058,83 @@ void DialogRx::showTDL(){
 
 void DialogRx::update()
 {
-    updateImpulseResponse();
-    if (idxTab == 3) updateFqResp();
-    updatePrxAngularSpctr();
-    updatePrxDopplerSpctr();
-    if (idxTab == 8) updateSpcCrltn();
-    updateGeneralTab();
-    updateDopplerSpctr();
+    switch (idxTab) {
+    case 0:
+        updateGeneralTab();
+        break;
+    case 1:
+        updateImpulseResponse();
+        break;
+    case 2:
+        updateImpulseResponse();
+        break;
+    case 3:
+        updateFqResp();
+        break;
+    case 4:
+        break;
+    case 5:
+        updateDopplerSpctr();
+        break;
+    case 6:
+        updatePrxAngularSpctr();
+        break;
+    case 7:
+        updatePrxDopplerSpctr();
+        break;
+    case 8:
+        updateSpcCrltn();
+        break;
+    case 9:
+        updateTimeCrltn();
+        break;
+    default:
+        break;
+    }
 }
 
 void DialogRx::tabOpened(int index)
 {
     idxTab = index;
-    if (idxTab == 3) {
+
+    switch (idxTab) {
+    case 0:
+        updateGeneralTab();
+        break;
+    case 1:
+        updateImpulseResponse();
+        impulse_plot->graph(0)->rescaleAxes();
+        break;
+    case 2:
+        updateImpulseResponse();
+        break;
+    case 3:
         updateFqResp();
         fq_resp_plot->graph(0)->rescaleAxes();
-    }
-    if (idxTab == 8) {
+        break;
+    case 4:
+        break;
+    case 5:
+        updateDopplerSpctr();
+        doppler_spctr_plot->graph(0)->rescaleAxes();
+        break;
+    case 6:
+        updatePrxAngularSpctr();
+        pas_plot->graph(0)->rescaleAxes();
+        break;
+    case 7:
+        updatePrxDopplerSpctr();
+        pds_plot->graph(0)->rescaleAxes();
+        break;
+    case 8:
         updateSpcCrltn();
         spc_crltn_plot->graph(0)->rescaleAxes();
+        break;
+    case 9:
+        updateTimeCrltn();
+        tm_crltn_plot->graph(0)->rescaleAxes();
+        break;
+    default:
+        break;
     }
 }

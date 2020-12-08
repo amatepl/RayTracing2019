@@ -96,6 +96,20 @@ public:
     // 4. Doppler
     void dopplerSpectrum();
 
+    // . Power Angular Spectrum
+//    vector<double> prxAngularSpctr() const override;
+
+    // . Power Doppler Spectrum
+//    vector<double> prxDopplerSpctr() const override;
+
+    // 5. Space correlation
+    vector<double> spaceCrltn() override;
+    vector<double> deltaZ() override;
+
+    // 6. Time correlation
+    vector<double> timeCrltn() const override;
+    vector<double> timeCrltnT() const override;
+
     // From ReceiverProduct:
     float getSpeed() override;
     float getOrientation() override;
@@ -130,9 +144,6 @@ public:
     void setTargetSNR(int target) override {m_target_snr = target;}
     void setNoiseFigure(int figure) override {m_noise_figure = figure;}
     void setInterferecenceMargin(int interference) override {m_interferencemargin = interference;}
-    vector<double> spaceCrltn() override;
-    vector<double> deltaZ() override;
-
     void newProperties() override;
     void dialogDeleted() override;
 

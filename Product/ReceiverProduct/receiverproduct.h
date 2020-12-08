@@ -85,6 +85,7 @@ public:
 
     // 5. Doppler
     virtual QVector<double> prxDopplerSpread(){return pds;}
+//    virtual std::vector<double> prxDopplerSpctr() const = 0;
     virtual QVector<double> dopplerDistr(){return doppler_distr;}
     double dopplerSpread(){return doppler_spread;}
     QVector<double> getw() {return w;}
@@ -94,11 +95,18 @@ public:
 
     // 6. Spatial correlation
     virtual QVector<double> prxAngularSpread(){return pas;}
+//    virtual std::vector<double> prxAngularSpctr() const = 0;
+
     virtual QVector<double> angularDistr(){return angular_distr;}
+//    virtual std::vector<double> angularDistr() const = 0;
     double angularSpread(){return angular_spread;}
     QVector<double> getu() {return u;}
     virtual std::vector<double> spaceCrltn() = 0;
     virtual std::vector<double> deltaZ() = 0;
+
+    // 7. Time correlation
+    virtual std::vector<double> timeCrltn() const = 0;
+    virtual std::vector<double> timeCrltnT() const = 0;
 
     virtual void newProperties() = 0;
 
