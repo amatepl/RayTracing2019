@@ -183,11 +183,13 @@ complex<double> Coverage::complexE(Tx *tx, QPointF *rx)
 
 complex<double> Coverage::sumAbsE(Tx *tx, QPointF *rx)
 {
-    return (complex<double>) tx->getRxSumAbsE(rx);
+
+    return (complex<double>) abs(tx->computeEField(rx));
 }
 
 complex<double> Coverage::prx(Tx *tx, QPointF *rx)
 {
+//    double totalPower = computePrx(m_receiversField[receiver],m_receiversGroundField[receiver],receiver);
     return (complex<double>) tx->getRxPrx(rx);
 }
 

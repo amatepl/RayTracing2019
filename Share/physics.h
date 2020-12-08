@@ -216,7 +216,7 @@ complex <double> totaleArrayFactor(double theta, double phi, const TxParams &txP
  * \param arrayFactor
  * \return
  *
- * Computes the electrical gain for a antane with a given array factor.
+ * Computes the electrical gain for a antana with a given array factor.
  *
  */
 double electricalGain(complex<double> arrayFctr);
