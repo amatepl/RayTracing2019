@@ -40,6 +40,7 @@ public:
     virtual int getPosY() = 0;
     virtual bool getEnable() = 0;
     virtual std::complex<double> getEField() = 0;
+    virtual std::complex<double> getVoltage() = 0;
     virtual double getPower() = 0;
     virtual double getDstnc() = 0;
     virtual double getDlySprd() = 0;

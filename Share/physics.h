@@ -314,6 +314,32 @@ vector<complex<double>> dft(vector<T> &in)
 }
 
 template <typename T>
+vector<complex<double>> dft2(vector<T> &in,double bandwidth,double step)
+{
+    vector<complex<double>> out;
+
+    complex<double> j (0., 1.);
+
+    unsigned N = in.size();
+    double margin = bandwidth*0.05;
+    double kmax = round((bandwidth+margin)*(N*step*1e-9));
+    for (unsigned n = 0; n < kmax; n++) {
+        out.push_back(0);
+        for (unsigned m = 0; m < N; m++) {
+            out.at(n) += in.at(m) * exp(-j * 2. * M_PI * (double) n * (double) m / (double) N);
+        }
+    }
+    for (unsigned n = N-kmax; n < N; n++){
+        out.push_back(0);
+        for (unsigned m = 0; m < N; m++) {
+            out.at(kmax+n-(N-kmax)) += in.at(m) * exp(-j * 2. * M_PI * (double) n * (double) m / (double) N);
+        }
+    }
+
+    return out;
+}
+
+template <typename T>
 vector<complex<double>> idft(vector<T> &in)
 {
     vector<complex<double>> out;
@@ -365,6 +391,9 @@ vector<Ty> upsample(const vector<Tx> &x, const vector<Ty> &y, const double min,
             xend += step;
         }
     }
+//    for (unsigned i =0; i< 10000; i++){
+//        res.push_back(Ty(0));
+//    }
     return res;
 }
 

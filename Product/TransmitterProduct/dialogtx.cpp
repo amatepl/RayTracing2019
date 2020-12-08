@@ -84,7 +84,7 @@ QWidget *DialogTx::createDialog(){
     m_orientationValue = new QDoubleSpinBox(this);
     m_orientationValue->setRange(-360,360);
     m_pr_orientationValue = new QSpinBox(this);
-    m_pr_orientationValue->setRange(-5,5);
+    m_pr_orientationValue->setRange(-11,12);
     m_posx->setRange(0,5000);
     m_posx->setAccelerated(true);
     m_posy->setRange(0,5000);
@@ -140,7 +140,7 @@ QWidget *DialogTx::createDialog(){
     QFormLayout *phyProperties = new QFormLayout;
     phyProperties->addRow("Frequency: ",frequency);
     phyProperties->addRow("Bandwidth: ",bandwidth);
-    phyProperties->addRow("Power: ",m_power);
+    phyProperties->addRow("Power [dBm]: ",m_power);
 
     QGroupBox *phy = new QGroupBox("Physical properties");
     phy->setLayout(phyProperties);
@@ -166,7 +166,7 @@ void DialogTx::updateGeneralTab()
 {
     setPosX(m_tx->getPosX());
     setPosY(m_tx->getPosY());
-    setPower(m_tx->getPower());
+    setPower(10*log10(m_tx->getPower()/0.001));
     setFrequency(m_tx->getFrequency());
     setBandwidth(m_tx->getBandwidth());
     setOrientation(m_tx->getOrientation());
@@ -368,8 +368,8 @@ unsigned long DialogTx::getFrequency(){
 }
 
 double DialogTx::getOrientation(){
-//    m_orientation = m_orientationValue->value();
-//    return m_orientation;
+    double orientation = m_orientationValue->value();
+    return orientation;
 }
 
 unsigned long DialogTx::getBandwidth(){
@@ -467,6 +467,8 @@ void DialogTx::setTxType(TxInterface::Kind kind)
 {
     if (kind == TxInterface::dipole){
         m_modelBox->setCurrentText("Half-wave dipole antenna");
+        m_rowBox->setValue(1);
+        m_columnBox->setValue(1);
         m_rowBox->setEnabled(false);
         m_columnBox->setEnabled(false);
     }
@@ -493,7 +495,7 @@ void DialogTx::newProperties(){
     m_tx->setKind(getKind());
     m_tx->setFrequency(getFrequency());
     m_tx->setBandwidth(getBandwidth());
-    m_tx->setPower(getPower());
+    m_tx->setPower(pow(10,(getPower()/10))*0.001);
     m_tx->setPrincipalOrientation(principalOrientation());
     m_tx->newProperties(QPointF(getPosX(),getPosY()),getOrientation());
 }

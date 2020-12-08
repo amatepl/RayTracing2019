@@ -125,6 +125,7 @@ public:
     double getAngSprd() override;
     double getDopplerSprd() override;
     complex<double> getEField() override;
+    complex<double> getVoltage() override;
     bool getEnable() override;
     int targetSNR() override {return m_target_snr;}
     int noiseFigure() override {return m_noise_figure;}
@@ -182,6 +183,7 @@ private:
     Data *m_chData {nullptr};
 
     // 2. For E Field And Power Computation
+    complex <double> m_ind_voltage;
     complex <double> m_e_field;
     double m_power = 0;
     double m_transmitter_distance;

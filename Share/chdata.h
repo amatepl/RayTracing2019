@@ -34,6 +34,7 @@ struct Data {
 //    double                                                          dlySprd{0};
 //    double                                                          coherenceBw{0};
 //    double                                                          coherenceTm{0};
+    std::complex<double>                                            indVoltage{0};
     std::complex<double>                                            eField{0};
     std::map<double /*tau*/, std::complex<double> /*impulseResp*/>  impulseResp;
     std::map<double, std::complex<double>>                          fqResp;

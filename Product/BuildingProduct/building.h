@@ -25,7 +25,7 @@ public:
     double getConductivity() override {return m_conductivity;}
     double getPermittivity() override {return m_permittivity;}
     void setConductivity(double sigma) override {m_conductivity = sigma;}
-    void setPermittivity(double eps) override {m_permittivity = eps;}
+    void setPermittivity(double eps) override;
     QVector<QPointF> getExtremities() override {return m_extremities;}
     std::string getModel() override {return m_model;}
     void setModel(std::string model) override;

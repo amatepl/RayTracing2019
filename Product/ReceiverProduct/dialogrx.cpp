@@ -105,10 +105,6 @@ QWidget* DialogRx::GeneralTabDialog(){
     m_target_snr->setRange(0,20);
     m_noise_figure->setRange(0,20);
     m_interferencemargin->setRange(0,20);
-    m_power = new QLineEdit("Received power [dB]: ", this);
-    m_power->setEnabled(false);
-    m_e_field = new QLineEdit("Electric fiedl [V/m]: ", this);
-    m_e_field->setEnabled(false);
 
     QFormLayout *geoProperties = new QFormLayout(this);
     geoProperties->addRow("X center: ",m_posx);
@@ -133,8 +129,6 @@ QWidget* DialogRx::GeneralTabDialog(){
     phyProperties->addRow("Target SNR [dB]: ", m_target_snr);
     phyProperties->addRow("Noise Figure [dB]: ", m_noise_figure);
     phyProperties->addRow("Interference Margin [dB]: ", m_interferencemargin);
-    phyProperties->addRow("Received power [dB]: ", m_power);
-    phyProperties->addRow("Electric fiedl [V/m]: ", m_e_field);
 
     QGroupBox *phy = new QGroupBox("Physical properties");
     phy->setLayout(phyProperties);
@@ -144,53 +138,84 @@ QWidget* DialogRx::GeneralTabDialog(){
     QGroupBox *chBox = new QGroupBox("Channel");
     QGridLayout *chLayout = new QGridLayout(this);
 
-    QLabel *prxLabel = new QLabel("Received power [dBm]: ",this);
-    chLayout->addWidget(prxLabel, 0, 0);
+    QLabel *eFieldLabel = new QLabel("Electric filed [V/m]: ",this);
+    chLayout->addWidget(eFieldLabel, 0, 0);
+    complex<double> eField = m_mathematicalproduct->getEField();
+    if (eField.imag() <0){
+        m_eField = new QLabel(QString::number(eField.real())
+                              +QString::number(eField.imag())
+                              +"i", this);
+    }
+    else {
+        m_eField = new QLabel(QString::number(eField.real())
+                              +"+"
+                              +QString::number(eField.imag())
+                              +"i", this);
+    }
+    chLayout->addWidget(m_eField, 0, 1);
 
+    QLabel *voltageLabel = new QLabel("Induced voltage [V]: ",this);
+    chLayout->addWidget(voltageLabel, 1, 0);
+    complex<double> voltage = m_mathematicalproduct->getVoltage();
+    if (voltage.imag() <0){
+        m_indVoltage = new QLabel(QString::number(voltage.real())
+                                  +QString::number(voltage.imag())
+                                  +"i", this);
+    }
+    else {
+        m_indVoltage = new QLabel(QString::number(voltage.real())
+                                  +"+"
+                                  +QString::number(voltage.imag())
+                                  +"i", this);
+    }
+    chLayout->addWidget(m_indVoltage, 1, 1);
+
+    QLabel *prxLabel = new QLabel("Received power [dBm]: ",this);
+    chLayout->addWidget(prxLabel, 2, 0);
     m_prx = new QLabel(QString::number(m_mathematicalproduct->getPower()), this);
-    chLayout->addWidget(m_prx, 0, 1);
+    chLayout->addWidget(m_prx, 2, 1);
 
     QLabel *dstLabel = new QLabel("Transmitter distance: ", this);
-    chLayout->addWidget(dstLabel, 1, 0);
+    chLayout->addWidget(dstLabel, 3, 0);
 
     m_dstnc = new QLabel(QString::number(m_mathematicalproduct->getDstnc()), this);
-    chLayout->addWidget(m_dstnc, 1, 1);
+    chLayout->addWidget(m_dstnc, 3, 1);
 
     QLabel *dlySprdLabel = new QLabel("Delay Spread [ns]: ", this);
-    chLayout->addWidget(dlySprdLabel, 3, 0);
+    chLayout->addWidget(dlySprdLabel, 4, 0);
 
     m_dlySprd = new QLabel(QString::number(m_mathematicalproduct->getDlySprd()) , this);
-    chLayout->addWidget(m_dlySprd, 3, 1);
+    chLayout->addWidget(m_dlySprd, 4, 1);
 
     QLabel *riceFctrLabel = new QLabel("Rice Factor [dB]: ", this);
-    chLayout->addWidget(riceFctrLabel, 4, 0);
+    chLayout->addWidget(riceFctrLabel, 5, 0);
 
     m_riceFactor = new QLabel(QString::number(m_mathematicalproduct->getRiceFctr()), this);
-    chLayout->addWidget(m_riceFactor, 4, 1);
+    chLayout->addWidget(m_riceFactor, 5, 1);
 
     QLabel *coherenceBwLabel = new QLabel("Coherence Bandwidth [MHz]: ", this);
-    chLayout->addWidget(coherenceBwLabel, 5, 0);
+    chLayout->addWidget(coherenceBwLabel, 6, 0);
 
     m_coherenceBw = new QLabel(QString::number(m_mathematicalproduct->getCoherenceBw()), this);
-    chLayout->addWidget(m_coherenceBw, 5, 1);
+    chLayout->addWidget(m_coherenceBw, 6, 1);
 
     QLabel *coherenceTmLabel = new QLabel("Coherence Time [\u03bcs]: ", this);
-    chLayout->addWidget(coherenceTmLabel, 6, 0);
+    chLayout->addWidget(coherenceTmLabel, 7, 0);
 
     m_coherenceTm = new QLabel(QString::number(m_mathematicalproduct->getCoherenceTm()), this);
-    chLayout->addWidget(m_coherenceTm, 6, 1);
+    chLayout->addWidget(m_coherenceTm, 7, 1);
 
     QLabel *angSprdLabel = new QLabel("Angular Spread [rad]: ", this);
-    chLayout->addWidget(angSprdLabel, 7, 0);
+    chLayout->addWidget(angSprdLabel, 8, 0);
 
     m_angSpdr = new QLabel(QString::number(m_mathematicalproduct->getAngSprd()), this);
-    chLayout->addWidget(m_angSpdr, 7, 1);
+    chLayout->addWidget(m_angSpdr, 8, 1);
 
     QLabel *dopplerSprdLabel = new QLabel("Doppler Spread [rad/s]: ", this);
-    chLayout->addWidget(dopplerSprdLabel, 8, 0);
+    chLayout->addWidget(dopplerSprdLabel, 9, 0);
 
     m_dopplerSpdr = new QLabel(QString::number(m_mathematicalproduct->getDopplerSprd()), this);
-    chLayout->addWidget(m_dopplerSpdr, 8, 1);
+    chLayout->addWidget(m_dopplerSpdr, 9, 1);
 
     chBox->setLayout(chLayout);
 
@@ -223,14 +248,8 @@ void DialogRx::updateGeneralTab()
     m_speed->setValue(m_mathematicalproduct->getSpeed());
     m_posx->setValue(m_mathematicalproduct->getPosX());
     m_posy->setValue(m_mathematicalproduct->getPosY());
-    m_power->clear();
-    m_power->setText("Received power [dB]: ");
-    m_power->insert(QString::number(m_mathematicalproduct->getPower()));
 
-    m_e_field->clear();
-    m_e_field->setText("Electric fiedl [V/m]: ");
-    m_e_field->insert(QString::number(norm(m_mathematicalproduct->getEField())));
-    setEnable(m_mathematicalproduct->getEnable());
+//    setEnable(m_mathematicalproduct->getEnable());
     m_target_snr->setValue(m_mathematicalproduct->targetSNR());
     m_noise_figure->setValue(m_mathematicalproduct->noiseFigure());
     m_interferencemargin->setValue(m_mathematicalproduct->interFerenceMargin());
@@ -240,6 +259,32 @@ void DialogRx::updateGeneralTab()
 
 void DialogRx::updateChInfo()
 {
+    complex<double> eField = m_mathematicalproduct->getEField();
+    if (eField.imag() <0){
+        m_eField->setText(QString::number(eField.real())
+                          +QString::number(eField.imag())
+                          +"i");
+    }
+    else {
+        m_eField->setText(QString::number(eField.real())
+                          +"+"
+                          +QString::number(eField.imag())
+                          +"i");
+    }
+
+    complex<double> voltage = m_mathematicalproduct->getVoltage();
+    if (voltage.imag() <0){
+        m_indVoltage->setText(QString::number(voltage.real())
+                              +QString::number(voltage.imag())
+                              +"i");
+    }
+    else {
+        m_indVoltage->setText(QString::number(voltage.real())
+                              +"+"
+                              +QString::number(voltage.imag())
+                              +"i");
+    }
+
     m_prx->setText(QString::number(m_mathematicalproduct->getPower()));
 
     m_dstnc->setText(QString::number(m_mathematicalproduct->getDstnc()));
@@ -353,16 +398,20 @@ QWidget* DialogRx::fqResp(){
     QWidget *widget = new QWidget;
     fq_resp_plot = new QCustomPlot;
 
+    vector<double> resp = m_mathematicalproduct->fqResp();
+    QVector<double> freqResp = QVector(resp.begin(), resp.end());
+    vector<double> f = m_mathematicalproduct->fq();
+    QVector<double> freq = QVector(f.begin(), f.end());
 
-    // Plot physiscal impulse response
     fq_resp_plot->addGraph();
+    fq_resp_plot->graph(0)->setData(freq, freqResp);
     fq_resp_plot->graph(0)->setPen(QPen(Qt::blue));
 //    fq_resp_plot->graph(0)->setLineStyle(QCPGraph::lsImpulse);
 //    fq_resp_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
     fq_resp_plot->graph(0)->setName("Impulse");
 
-    fq_resp_plot->xAxis->setLabel("\u03C4[ns]");
-    fq_resp_plot->yAxis->setLabel("Normalized induced voltage V_OC");
+    fq_resp_plot->xAxis->setLabel("f[Hz]");
+    fq_resp_plot->yAxis->setLabel("|H(f)|");
     fq_resp_plot->yAxis->grid()->setSubGridVisible(true);
     fq_resp_plot->xAxis->grid()->setSubGridVisible(true);
 
@@ -385,9 +434,11 @@ QWidget* DialogRx::fqResp(){
 void DialogRx::updateFqResp()
 {
 //    fq_resp_plot->graph(0)->data().clear();
-    QVector<double> fqResp = vec2QVec<double>(m_mathematicalproduct->fqResp());
-    fq_resp_plot->graph(0)->setData(vec2QVec<double>(m_mathematicalproduct->fq()),
-                                    fqResp);
+    vector<double> f = m_mathematicalproduct->fq();
+    QVector<double> freq = QVector(f.begin(), f.end());
+    vector<double> resp = m_mathematicalproduct->fqResp();
+    QVector<double> freqResp = QVector(resp.begin(), resp.end());
+    fq_resp_plot->graph(0)->setData(freq, freqResp);
     fq_resp_plot->replot();
 }
 
@@ -939,8 +990,10 @@ void DialogRx::setEnable(bool enable){
 void DialogRx::newProperties(){
     m_mathematicalproduct->setSpeed(m_speed->value());
     m_mathematicalproduct->setOrientation(m_orientation->value());
-    m_mathematicalproduct->setPosX(m_posx->value());
-    m_mathematicalproduct->setPosY(m_posy->value());
+    int posx = m_posx->value();
+    int posy = m_posy->value();
+    m_mathematicalproduct->setPosY(posy);
+    m_mathematicalproduct->setPosX(posx);
     m_mathematicalproduct->setTargetSNR(m_target_snr->value());
     m_mathematicalproduct->setNoiseFigure(m_noise_figure->value());
     m_mathematicalproduct->setInterferecenceMargin(m_interferencemargin->value());
@@ -1084,5 +1137,4 @@ void DialogRx::tabOpened(int index)
     default:
         break;
     }
-
 }

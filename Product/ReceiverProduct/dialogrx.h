@@ -133,8 +133,6 @@ private:
     ReceiverProduct *m_mathematicalproduct;
     QSpinBox *m_posx,*m_posy, *m_target_snr, *m_noise_figure,* m_interferencemargin;
     QDoubleSpinBox *m_speed, *m_orientation;
-    QLineEdit *m_power;
-    QLineEdit *m_e_field;
     QTabWidget* m_tabwidget;
     QDialogButtonBox *m_buttonbox;
     QVector<QCPItemLine*> impulse_tdl;
@@ -152,6 +150,8 @@ private:
     QCustomPlot *m_distribution;
 
     // 1. Channel
+    QLabel *m_eField;
+    QLabel *m_indVoltage;
     QLabel *m_prx;
     QLabel *m_dstnc;
     QLabel *m_dlySprd;

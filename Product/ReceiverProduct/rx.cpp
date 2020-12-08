@@ -9,6 +9,7 @@ Rx::Rx(int posX, int posY): QPointF(posX,posY)
     m_type                  = "Receiver";
     m_power                 = 0.0;
     m_e_field               = 0.0;
+    m_ind_voltage           = 0.0;
     m_transmitter_distance  = 0.0;
     snr_received            = 0.0;
     delay_spread            = 0.0;
@@ -52,6 +53,7 @@ void Rx::clearData()
 {
     m_power = 0;
     m_e_field = 0;
+    m_ind_voltage = 0;
 }
 
 double Rx::inputNoise()
@@ -367,24 +369,35 @@ void Rx::computeImpulseTDL()
 vector<double> Rx::fqResp() const
 {
     vector<double> res;
-    if (m_chData != nullptr && m_chData->impulseResp.size() > 1){
+    if (m_chData != nullptr && m_chData->impulseResp.size() != 0){
         vector<double> h;
         vector<double> t;
         for (auto e: m_chData->impulseResp) {
             t.push_back(e.first);
             h.push_back(abs(e.second));
         }
-        vector<double> uph = ph::upsample<double, double>(t, h, 0, t.back(), 1);
+        double step = 1;
+        vector<double> uph = ph::upsample<double, double>(t, h, 0, t.back(), step);
 //        vector<complex<double>> fqResp = ph::dft(uph);
-        Eigen::FFT<double> fft;
-        vector<complex<double>> fqResp;
-        fft.fwd(fqResp, uph);
+        vector<complex<double>> fqResp ;
 
-        double fq = 0;
+        Eigen::FFT<double> fft;
+        fft.fwd(fqResp, uph);
+        double fpos = 0.0;
+        double fneg = 0.0;
+        double length = fqResp.size();
+        res.resize(length);
         for (const auto &e: fqResp) {
-            m_chData->fqResp[fq] = e;
-            res.push_back(abs(e));
-            fq++;
+            if (fpos < length/2) {
+                res.at(fpos+length/2) = round(abs(e)*1e6)/1e6;
+                m_chData->fqResp[fpos/(uph.size()*step*1e-9)] = e;
+                fpos++;
+            }
+            else {
+                res.at(fneg) = round(abs(e)*1e6)/1e6;
+                m_chData->fqResp[(-length/2+fneg)/(uph.size()*step*1e-9)] = e;
+                fneg ++;
+            }
         }
 //        for (const auto e: m_chData->fqResp) {
 //            res.push_back(abs(e.second));
@@ -396,9 +409,13 @@ vector<double> Rx::fqResp() const
 vector<double> Rx::fq() const
 {
     vector<double> res;
+    double fq = 0.0;
+    vector<double> h;
+    vector<double> t;
     if (m_chData != nullptr) {
-        for (auto e: m_chData->fqResp) {
-            res.push_back(e.first);
+        for (const auto &e: m_chData->fqResp) {
+            fq = e.first/*-m_chData->fqResp.size()/2)/(uph.size()*step*1e-9)*/;
+            res.push_back(fq);
         }
     }
     return res;
@@ -518,6 +535,7 @@ double Rx::getDopplerSprd()
     return doppler_spread;
 }
 complex <double> Rx::getEField() {return m_e_field;}
+complex <double> Rx::getVoltage() {return m_ind_voltage;}
 bool Rx::getEnable() {return enable;}
 
 
@@ -749,7 +767,11 @@ void Rx::notifyObservers()
     doppler_distr.clear();
 
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
+        // Here must be the choice of transmitter and the different
+        // physical results. Not totally optimal for the moment.
         m_chData = m_transmitters.at(i)->update(this, m_movement);
+        // Voltage:
+        m_ind_voltage = m_chData->indVoltage;
         m_e_field += m_chData->eField;
         m_power = m_chData->prx;
         m_transmitterbandwidth = m_chData->bw;
