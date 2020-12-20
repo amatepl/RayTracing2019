@@ -33,7 +33,7 @@
 #include "Product/RayProduct/ray.h"
 #include "Product/TreeProduct/mathematicaltreeproduct.h"
 #include <Product/abstractantena.h>
-#include "Product/CarProduct/mathematicalcarproduct.h"
+#include "Product/CarProduct/car.h"
 
 #include "Share/physics.h"
 #include "Share/chdata.h"
@@ -142,7 +142,20 @@ public:
     complex<double> computeImpulseDiffraction(WholeRay *ray_line, QLineF local_region);
     complex<double> computeDiffractedEfield(QPointF *receiver, WholeRay *rayLine,bool properties);
 
+    /*!
+     * \fn chooseBeam(QPointF * receiver)
+     * \brief Choses the best beam for the receiver.
+     * \param receiver
+     */
     void chooseBeam(QPointF * receiver);
+
+    /*!
+     * \fn comput4FixedBeam(QPointF * receiver)
+     * \brief comput4FixedBeam
+     * \param receiver
+     *
+     * Computes channel's caracteristics for an already selected beam.
+     */
     void comput4FixedBeam(QPointF * receiver);
     void dontChoseBeam(QPointF * receiver);
     void freazeBeams();
@@ -197,7 +210,27 @@ public:
      */
     void link(const QPointF &p, WholeRay *wholeRay);
 
+    /*!
+     * \fn computeEField(QPointF *rx)
+     * \brief computeEField
+     * \param rx
+     * \return complex<double> electric field
+     */
     complex<double> computeEField(QPointF *rx);
+
+    /*!
+     * \struct EFields
+     * \brief The EFields struct
+     *
+     * Container for the electric field componant on the same plane and the one reflected on the ground.
+     */
+    struct EFields
+    {
+        complex<double> plainEField;
+        complex<double> reflEField;
+    };
+
+    EFields computeEFields(QPointF *rx);
 
     /*!
      * \brief Returns the sum of |E|
@@ -504,7 +537,7 @@ private:
     int m_interferencemargin{6};
 
 public slots:
-    void carMoved(MathematicalCarProduct *car, int, int, double) override;
+    void carMoved(Car *car, int, int, double) override;
 
 
 };

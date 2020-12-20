@@ -54,7 +54,7 @@ void AbstractAntena::setMovement(QLineF const movement)
 }
 
 
-bool AbstractAntena::carInIlluminatedCars(MathematicalCarProduct *car, int *idx)
+bool AbstractAntena::carInIlluminatedCars(Car *car, int *idx)
 {
     for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
         if (m_illuminatedCars.at(i) == car) {
@@ -65,7 +65,7 @@ bool AbstractAntena::carInIlluminatedCars(MathematicalCarProduct *car, int *idx)
     return false;
 }
 
-bool AbstractAntena::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+bool AbstractAntena::inIlluminatedCars(Car *car, int *idx)
 {
     for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
         if (m_illuminatedCars.at(i) == car) {

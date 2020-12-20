@@ -1,6 +1,6 @@
-#include "mathematicalcarproduct.h"
+#include "car.h"
 
-MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center):
+Car::Car(QPolygonF rect, QPointF center):
     Building(rect), m_center(center)
 {
     //setRect(round(rect.topLeft().x()),round(rect.topLeft().y()),rect.width(),rect.height());
@@ -13,18 +13,18 @@ MathematicalCarProduct::MathematicalCarProduct(QPolygonF rect, QPointF center):
 
 }
 
-MathematicalCarProduct::~MathematicalCarProduct(){
+Car::~Car(){
     cout << "Mathematical Car Product Deleted." << endl;
 }
 
 
-void MathematicalCarProduct::runCar()
+void Car::runCar()
 {
-//    std::thread *thread_obj = new std::thread (&MathematicalCarProduct::moveCar);
+//    std::thread *thread_obj = new std::thread (&Car::moveCar);
 }
 
 
-void MathematicalCarProduct::moveCar(){
+void Car::moveCar(){
     while(true){
 //    cout<<m_street.dx()/m_street.length()<<endl;
 //        setPosX(getPosX() + m_street.dx()/m_street.length());
@@ -37,18 +37,18 @@ void MathematicalCarProduct::moveCar(){
     }
 }
 
-void MathematicalCarProduct::setRoad(QLineF *road){
+void Car::setRoad(QLineF *road){
     m_street = road;
 }
 
 
-QLineF *MathematicalCarProduct::getRoad()
+QLineF *Car::getRoad()
 {
     return m_street;
 }
 
 
-void MathematicalCarProduct::setMovement(QLineF( &vect))
+void Car::setMovement(QLineF( &vect))
 {
     m_movement = vect;
     m_walls.at(0)->setMovement(m_movement);
@@ -58,12 +58,12 @@ void MathematicalCarProduct::setMovement(QLineF( &vect))
 }
 
 
-QLineF MathematicalCarProduct::getMovement()
+QLineF Car::getMovement()
 {
     return m_movement;
 }
 
-void MathematicalCarProduct::setPos(QPointF pos)
+void Car::setPos(QPointF pos)
 {
     QPointF offset = pos - m_center;
     m_center = pos;
@@ -72,49 +72,65 @@ void MathematicalCarProduct::setPos(QPointF pos)
     positionChanged(this,getPosX(),getPosY(),getOrientation());
 }
 
-QPointF MathematicalCarProduct::getPos() const
+QPointF Car::getPos() const
 {
     return m_center;
 }
 
-void MathematicalCarProduct::attachObservable(GraphicsProduct *graphic)
+void Car::attachObservable(GraphicsProduct *graphic)
 {
     m_graphic = graphic;
     QObject::connect(this,
-                     &MathematicalCarProduct::positionChanged,
+                     &Car::positionChanged,
                      dynamic_cast<MoveableGraphics *>(m_graphic),
                      &MoveableGraphics::notifyToGraphicSig,Qt::QueuedConnection);
 }
 
 
-double MathematicalCarProduct::getSpeed(){
+double Car::getSpeed(){
     return m_movement.length();
 }
 
 
-double MathematicalCarProduct::getOrientation(){
+double Car::getOrientation(){
     return m_movement.angle();
 
 }
 
 
-void MathematicalCarProduct::setSpeed(double speed){
+void Car::setSpeed(double speed){
     m_movement.setLength(speed);
     setMovement(m_movement);
 }
 
 
-int MathematicalCarProduct::getPosX(){
+int Car::getPosX(){
     return m_center.x();
 }
 
 
-int MathematicalCarProduct::getPosY(){
+int Car::getPosY(){
     return m_center.y();
 }
 
+float Car::getWidth() const
+{
+    return m_width;
+}
 
-void MathematicalCarProduct::setOrientation(double orientation){
+float Car::getLength() const
+{
+    return m_length;
+}
+
+QPointF Car::topLeft() const
+{
+//    double drctn = m_street->angle();
+//    QPointF res = m_center;
+//    double x = m_center.x() - m_
+}
+
+void Car::setOrientation(double orientation){
     QLineF tmpLine(QPointF(0.0,0.0),QPointF(22.0,0.0));
     tmpLine.setAngle(orientation);
     tmpLine.translate(m_center-tmpLine.center());
@@ -145,7 +161,7 @@ void MathematicalCarProduct::setOrientation(double orientation){
 }
 
 
-void MathematicalCarProduct::setPosX(int posX){
+void Car::setPosX(int posX){
     QPointF offset = QPointF(posX,getPosY()) - m_center;
     m_center.setX(posX);
     translate(offset);
@@ -154,7 +170,7 @@ void MathematicalCarProduct::setPosX(int posX){
 }
 
 
-void MathematicalCarProduct::setPosY(int posY){
+void Car::setPosY(int posY){
     QPointF offset = QPointF(getPosX(),posY) - m_center;
     m_center.setY(posY);
     translate(offset);
@@ -163,7 +179,7 @@ void MathematicalCarProduct::setPosY(int posY){
 }
 
 
-void MathematicalCarProduct::update(QGraphicsItem *graphic){
+void Car::update(QGraphicsItem *graphic){
     QPointF offset = graphic->scenePos() - m_center;
     translate(offset);
     moveWalls(offset);
@@ -175,11 +191,11 @@ void MathematicalCarProduct::update(QGraphicsItem *graphic){
 }
 
 
-void MathematicalCarProduct::openDialog(QWidget *){
+void Car::openDialog(QWidget *){
     new DialogCarProduct(this);
 }
 
 
-void MathematicalCarProduct::newProperties(){
+void Car::newProperties(){
     //m_graphic->notifyToGraphic(this, getPosX(), getPosY(), getOrientation());
 }

@@ -44,7 +44,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/CarProduct/carproduct.h \
     Product/CarProduct/dialogcarproduct.h \
     Product/CarProduct/graphicscarproduct.h \
-    Product/CarProduct/mathematicalcarproduct.h \
+    Product/CarProduct/car.h \
     Product/RayProduct/graphicsray.h \
     Product/RayProduct/ray.h \
     Product/RayProduct/rayproduct.h \
@@ -107,7 +107,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/BuildingProduct/graphicsbuilding.cpp \
     Product/CarProduct/dialogcarproduct.cpp \
     Product/CarProduct/graphicscarproduct.cpp \
-    Product/CarProduct/mathematicalcarproduct.cpp \
+    Product/CarProduct/car.cpp \
     Product/RayProduct/graphicsray.cpp \
     Product/RayProduct/ray.cpp \
     Product/ReceiverProduct/dialogrx.cpp \

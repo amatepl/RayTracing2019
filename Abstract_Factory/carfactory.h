@@ -3,7 +3,7 @@
 
 #include "scenefactory.h"
 #include "Product/CarProduct/graphicscarproduct.h"
-#include "Product/CarProduct/mathematicalcarproduct.h"
+#include "Product/CarProduct/car.h"
 
 class CarFactory: public SceneFactory
 {

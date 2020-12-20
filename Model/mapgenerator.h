@@ -26,17 +26,26 @@ public:
     void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap, double px_to_meter);
     void generateStreets(const unsigned streetsDistance);
     void generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth);
-    void addCars();
+    void addCars(unsigned carDnsty);
     void addTrees();
     void egBuilidings();
+
+    /*!
+     * \fn vector<float> carPlaces(const QLineF *str, float length)
+     *
+     * Generate a vector of all the possible positions of a car in a street \a str.
+     */
+    vector<float> carPlaces(const QLineF *str, float length, float followindDist);
+    QPointF carPoistion(vector<float> *places, const QLineF *str);
+    QPolygonF createPolyCar(const QPointF *pos, const QLineF *str);
 
     /* Dynamics */
     void startCars();
     bool getRunCars() const;
-    static void moveCar(MathematicalCarProduct &car, MapGenerator &map, QLineF &street);
+    static void moveCar(Car &car, MapGenerator &map, QLineF &street);
     static void moveCars(MapGenerator &mapGenerator);
     vector<Building *> getBuildings() const;
-    vector<MathematicalCarProduct *> getCars() const;
+    vector<Car *> getCars() const;
     vector<MathematicalProduct *> getProducts() const;
 
     /* Modifiers */
@@ -56,12 +65,13 @@ public:
     }
 
 protected:
+    struct CarParams {float l=4; float w=1.8;} m_carParams;
     double px_to_meter;
     QRectF m_mapBoundary;
     vector<QLineF *> m_horizontalStreets;
     vector<QLineF *> m_verticalStreets;
     vector<Building *> m_buildings;
-    vector<MathematicalCarProduct *> m_cars;
+    vector<Car *> m_cars;
     vector<MathematicalTreeProduct *> m_trees;
     BuildingFactory *m_buildingFactory;
     CarFactory *m_carFactory;

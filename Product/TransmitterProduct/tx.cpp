@@ -523,7 +523,9 @@ double Tx::computePrx(complex <double> totalEfield, complex<double> groundField,
 
 double Tx::getRxPrx(QPointF *rx)
 {
-    return m_chsData[rx].prx;
+    Tx::EFields fields = computeEFields(rx);
+    return computePrx(fields.plainEField, fields.reflEField, rx);
+//    return m_chsData[rx].prx;
 }
 
 double Tx::dBm(double power)
@@ -1038,6 +1040,41 @@ complex<double> Tx::computeEField(QPointF *rx)
     return emField;
 }
 
+Tx::EFields Tx::computeEFields(QPointF *rx)
+{
+    complex<double> emField = 0;
+    complex<double> groundField = 0;
+
+    for (unsigned i = 0; i < m_receiversRays[rx].size(); i++)
+    {
+        WholeRay *wholeRay = m_receiversRays[rx].at(i);
+
+        if (wholeRay->at(0)->getDiffracted())
+        {
+            map<QPointF *, map<double, double>>::iterator it;
+            complex<double>EMfield = computeDiffractedEfield(rx, wholeRay, false);
+            emField += EMfield;
+        }
+        else
+        {
+            //            complex<double> EMfield = computeEMfield(wholeRay, copy_receiver,false);
+            tuple<int, int> arrSize = {m_column, m_row};
+            complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+                                                         m_orientation, m_pr_orientation,
+                                                         static_cast<ph::TxType>(m_kind));
+            if (wholeRay->size() == 1) {
+                // Adding the ground component
+                double angle_transmitter = wholeRay->back()->angle();
+                groundField = computeEfieldGround(rx ,angle_transmitter, false); // Compute the electrical field from the ray reflected off the ground
+//                emField += groundField;
+            }
+            emField += EMfield;
+        }
+    }
+
+    return {emField, groundField};
+}
+
 double Tx::getRxSumAbsE(QPointF *rx)
 {
     return m_rxsSumAbsE[rx];
@@ -1134,7 +1171,7 @@ void Tx::setIlluminatedZone(const QPolygonF &zone)
 }
 
 
-void Tx::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
+void Tx::carMoved(Car *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
 //    cout << "Illuminated cars: " << m_illuminatedCars.size() << endl;
     int idx = 0;

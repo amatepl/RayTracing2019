@@ -162,7 +162,7 @@ Data *TxImg::update(QPointF *productObservable, QLineF const /*movement*/)
 
 //void TxImg::updateCarPos(QPointF *productObservable)
 //{
-//    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
+//    Car *car = dynamic_cast<Car *>(productObservable);
 
 //    int idx = 0;
 //    if (carInIlluminatedCars(car, &idx)) {
@@ -215,7 +215,7 @@ void TxImg::notifyCarDetected()
 }
 
 
-//bool TxImg::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+//bool TxImg::inIlluminatedCars(Car *car, int *idx)
 //{
 //    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
 //        if (m_illuminatedCars.at(i) == car) {
@@ -227,7 +227,7 @@ void TxImg::notifyCarDetected()
 //}
 
 
-void TxImg::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
+void TxImg::carMoved(Car *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
     int idx = 0;
 //    if (m_zone.intersects(*car)) {

@@ -1,5 +1,5 @@
-#ifndef MATHEMATICALCARPRODUCT_H
-#define MATHEMATICALCARPRODUCT_H
+#ifndef CAR_H
+#define CAR_H
 
 #include <QRectF>
 #include <iostream>
@@ -13,14 +13,14 @@
 
 using namespace std;
 
-class MathematicalCarProduct:public QObject, public Building,
+class Car:public QObject, public Building,
                                /*  public MathematicalProduct,*/ public CarProduct
 {
     Q_OBJECT
 
 public:
-    MathematicalCarProduct(QPolygonF rect, QPointF center);
-    ~MathematicalCarProduct() override;
+    Car(QPolygonF rect, QPointF center);
+    ~Car() override;
 
     void runCar();
     static void moveCar();
@@ -37,6 +37,9 @@ public:
     double getOrientation() override;
     int getPosX() override;
     int getPosY() override;
+    float getWidth() const;
+    float getLength() const;
+    QPointF topLeft() const;
 
     void setSpeed(double) override;
     void setOrientation(double orientation) override;
@@ -50,9 +53,11 @@ private:
     QPointF m_center;
     QLineF m_movement;
     QLineF *m_street;
+    float m_width {1.8};
+    float m_length {4};
 
 signals:
-    void positionChanged(MathematicalCarProduct* poly,int x, int y, double orientation);
+    void positionChanged(Car* poly,int x, int y, double orientation);
     void signal();
 };
 

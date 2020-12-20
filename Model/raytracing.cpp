@@ -106,7 +106,7 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
 
     if(m_mathematicalComponents.count("Car")) {
         for(unsigned i = 0; i<m_mathematicalComponents["Car"].size(); i++) {
-            m_cars.push_back(static_cast<MathematicalCarProduct *>
+            m_cars.push_back(static_cast<Car *>
                                   (m_mathematicalComponents["Car"].at(i)) );
 
             m_buildings.push_back(static_cast<Building *>

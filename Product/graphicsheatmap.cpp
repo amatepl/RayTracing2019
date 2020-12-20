@@ -11,9 +11,8 @@ GraphicsTile::GraphicsTile(const double eField, int x, int y, int width, int hei
 
 }
 
-void GraphicsTile::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void GraphicsTile::hoverEnterEvent(QGraphicsSceneHoverEvent */*event*/)
 {
-//    cout << "On tile!" << endl;
     eField(m_eField);
 }
 
@@ -23,42 +22,42 @@ void GraphicsTile::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 //
 //--------------------------------------------------------------------------------------------
 
-GraphicsHeatMap::GraphicsHeatMap(HeatMap *heatMap, QGraphicsScene *scene): m_heatMap(heatMap), m_scene(scene)
+GraphicsHeatMap::GraphicsHeatMap(HeatMap *heatMap, QGraphicsScene *scene, Mode mode):
+      m_heatMap(heatMap), m_scene(scene), m_mode(mode)
 {
-//    double maxe = 0;
-//    double mine = 1;
-    for (const auto &tile: *heatMap){
-//        m_tiles.push_back(QGraphicsRectItem(tile.pos.x(), tile.pos.y(), 10, 10));
-        GraphicsTile *gtile = new GraphicsTile(abs(tile.eField), tile.pos.x(), tile.pos.y(), tile.sz, tile.sz);
+    if (m_mode == GraphicsHeatMap::Mode::field) {
+        for (const auto &tile: *heatMap){
+            GraphicsTile *gtile = new GraphicsTile(abs(tile.eField), tile.pos.x(), tile.pos.y(), tile.sz, tile.sz);
+            QColor color;
+            color.setHsv(200/pow(10, abs(tile.eField)), 255,255 - 200/ pow(10, abs(tile.eField)));
+            gtile->setBrush(QBrush(color));
+            gtile->setPen(QPen(color));
+            gtile->setAcceptHoverEvents(true);
+            connect(gtile, &GraphicsTile::eField, this, &GraphicsHeatMap::updateEField);
+            m_tiles.push_back(gtile);
+        }
+    } else if (m_mode == GraphicsHeatMap::Mode::prx) {
+        drawPrxTile(heatMap);
+    }
+    draw<QGraphicsRectItem>(m_tiles);
+}
+
+void GraphicsHeatMap::drawPrxTile(HeatMap* heatmap)
+{
+    for (const auto &tile: *heatmap){
+//        cout << "Tile power: "<< tile.eField<<endl;
+GraphicsTile *gtile = new GraphicsTile(10*log10(abs(tile.eField)) + 30, tile.pos.x(), tile.pos.y(), tile.sz, tile.sz);
         QColor color;
-        color.setHsv(200/pow(10, abs(tile.eField)), 255,255 - 200/ pow(10, abs(tile.eField)));
+        color.setHsv(200/pow(10, abs(tile.eField)*pow(10,8)), 255,255 - 200/ pow(10, abs(tile.eField)*pow(10,8)));
+//        color.setHsv(abs(tile.eField) * 2, 255,255 - 200/ pow(10, abs(tile.eField)));
+//        color.setHsv((abs(tile.eField) - 40)* 255 / 100 , 255,255 - (abs(tile.eField) - 20)*200/110);
         gtile->setBrush(QBrush(color));
         gtile->setPen(QPen(color));
         gtile->setAcceptHoverEvents(true);
         connect(gtile, &GraphicsTile::eField, this, &GraphicsHeatMap::updateEField);
         m_tiles.push_back(gtile);
-
-//        if (mine > abs(tile.eField))
-//            mine = abs(tile.eField);
-//        else if (maxe < abs(tile.eField)) {
-//            maxe = abs(tile.eField);
-//        }
-
-//        if (abs(tile.eField) != 0)
-//            cout<<"Pos: " << tile.pos.x() << ", " << tile.pos.y() << " E filed: " << abs(tile.eField)<<endl;
     }
-
-//    cout << "Min: " << mine << " Max: " << maxe << endl;
-    draw<QGraphicsRectItem>(m_tiles);
-
 }
-
-//void GraphicsHeatMap::draw(vector<QGraphicsItem *> &tiles)
-//{
-//    for (auto &tile: tiles){
-//        m_scene->addItem(tile);
-//    }
-//}
 
 void GraphicsHeatMap::clear()
 {
