@@ -147,6 +147,7 @@ public:
     void dontChoseBeam(QPointF * receiver);
     void freazeBeams();
     double computePrx(complex <double> totalEfield, complex<double> groundField, QPointF* receiver);
+    double computePrx(QPointF* receiver);
     double getRxPrx(QPointF *rx);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR) const;

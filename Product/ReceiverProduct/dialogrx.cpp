@@ -325,6 +325,10 @@ QWidget* DialogRx::PhysicalImpulseResponse(){
     impulse_plot->yAxis->grid()->setSubGridVisible(true);
     impulse_plot->xAxis->grid()->setSubGridVisible(true);
 
+    QString title1 = "Normalized induced voltage as impulse response with maximum voltage = " + QString::number(round(m_mathematicalproduct->maxVoltage()*1e6)/1e6);
+    QString title2 = "and normalized TDL model under US assumption with maximum TDL voltage = " + QString::number(round(m_mathematicalproduct->maxVoltageTDL()*1e6)/1e6);
+    title_impulse = new QCPTextElement(impulse_plot, title1 + QString("\n") + title2, QFont("sans", 12, QFont::Bold));
+
     updateImpulseResponse();
 
     impulse_plot->rescaleAxes();
@@ -332,7 +336,7 @@ QWidget* DialogRx::PhysicalImpulseResponse(){
 //    impulse_plot->replot();
     impulse_plot->legend->setVisible(true);
     impulse_plot->plotLayout()->insertRow(0);
-    impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Normalized induced voltage as impulse response (and normalized TDL model under US assumption)", QFont("sans", 12, QFont::Bold)));
+    impulse_plot->plotLayout()->addElement(0, 0, title_impulse);
     QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
@@ -355,6 +359,9 @@ void DialogRx::updateImpulseResponse()
 
     impulse_plot->graph(0)->setData(tau, h);
     impulse_plot->graph(1)->setData(tau_tdl, h_tdl);
+    QString title1 = "Normalized induced voltage as impulse response with maximum voltage = " + QString::number(round(m_mathematicalproduct->maxVoltage()*1e6)/1e6);
+    QString title2 = "and normalized TDL model under US assumption with maximum TDL voltage = " + QString::number(round(m_mathematicalproduct->maxVoltageTDL()*1e6)/1e6);
+    title_impulse->setText(title1 + QString("\n") + title2);
     impulse_plot->replot();
 }
 
@@ -411,7 +418,7 @@ QWidget* DialogRx::fqResp(){
     fq_resp_plot->graph(0)->setName("Impulse");
 
     fq_resp_plot->xAxis->setLabel("f[Hz]");
-    fq_resp_plot->yAxis->setLabel("|H(f)|");
+    fq_resp_plot->yAxis->setLabel("|V_OC(f)| [dB]");
     fq_resp_plot->yAxis->grid()->setSubGridVisible(true);
     fq_resp_plot->xAxis->grid()->setSubGridVisible(true);
 

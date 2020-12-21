@@ -163,6 +163,7 @@ private:
 
     // 2. Impulse and TDL vVariables
     QVector<double> h,h_tdl,tau, tau_tdl;
+    QCPTextElement *title_impulse;
 
     // 3. Frequency Response
     QCustomPlot *fq_resp_plot;

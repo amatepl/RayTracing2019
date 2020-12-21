@@ -338,18 +338,17 @@ void Rx::computeImpulseTDL()
         i++;
     }
 
-    std::map<double,std::complex<double>> map_tau_tdl;
     for (unsigned i=0; i<indepentant_rays; ++i){
         h[i] = h[i]/max_h;
-        map_tau_tdl[x[i]] += y[i];
+        m_tdl[x[i]] += y[i];
     }
     h_tdl.clear();
     tau_tdl.clear();
-    h_tdl.resize(map_tau_tdl.size());
-    tau_tdl.resize(map_tau_tdl.size());
+    h_tdl.resize(m_tdl.size());
+    tau_tdl.resize(m_tdl.size());
     i = 0;
     double max_tdl = 0;
-    for (const auto &tdl : map_tau_tdl){
+    for (const auto &tdl : m_tdl){
 //        h_tdl[i] = 20*log10(abs(tdl.second));
 //        h_tdl[i] = (abs(tdl.second) / abs(map_tau_tdl.begin()->second));
         h_tdl[i] = abs(tdl.second);
@@ -362,7 +361,8 @@ void Rx::computeImpulseTDL()
         h_tdl[i] = h_tdl[i]/max_tdl;
     }
 
-
+    max_voltage = max_h;
+    max_voltage_tdl = max_tdl;
 }
 
 // Frequency Response
@@ -370,31 +370,35 @@ vector<double> Rx::fqResp() const
 {
     vector<double> res;
     if (m_chData != nullptr && m_chData->impulseResp.size() != 0){
-        vector<double> h;
+        vector<complex<double>> h;
         vector<double> t;
-        for (auto e: m_chData->impulseResp) {
-            t.push_back(e.first);
-            h.push_back(abs(e.second));
+        for (const auto &tdl : m_tdl) {
+            h.push_back(tdl.second);
+            t.push_back(tdl.first);
         }
-        double step = 1;
-        vector<double> uph = ph::upsample<double, double>(t, h, 0, t.back(), step);
-//        vector<complex<double>> fqResp = ph::dft(uph);
-        vector<complex<double>> fqResp ;
+//        for (auto e: m_chData->impulseResp) {
+//            t.push_back(e.first);
+//            h.push_back(abs(e.second));
+//        }
+        double step = 1/(2*m_chData->bw)*1e9;
+        vector<complex<double>> uph = ph::upsample<double, complex<double>>(t, h, 0, t.back(), step);
+        vector<complex<double>> fqResp = ph::dft(uph);
+//        vector<complex<double>> fqResp ;
 
-        Eigen::FFT<double> fft;
-        fft.fwd(fqResp, uph);
+//        Eigen::FFT<double> fft;
+//        fft.fwd(fqResp, uph);
         double fpos = 0.0;
         double fneg = 0.0;
         double length = fqResp.size();
         res.resize(length);
         for (const auto &e: fqResp) {
             if (fpos < length/2) {
-                res.at(fpos+length/2) = round(abs(e)*1e6)/1e6;
+                res.at(fpos+length/2) = 20*log10(round(abs(e)*1e6)/1e6);
                 m_chData->fqResp[fpos/(uph.size()*step*1e-9)] = e;
                 fpos++;
             }
             else {
-                res.at(fneg) = round(abs(e)*1e6)/1e6;
+                res.at(fneg) = 20*log10(round(abs(e)*1e6)/1e6);
                 m_chData->fqResp[(-length/2+fneg)/(uph.size()*step*1e-9)] = e;
                 fneg ++;
             }
@@ -439,56 +443,96 @@ void Rx::dopplerSpectrum()
 
 void Rx::sendInterferencePattern()
 {
-    vector<double> impulse_r(80*80);
-    vector<double> tmp_vect_h(80*80);
-    QVector<double> rice_distribution;
-    double lambda = c/frequency();
-    int k = 0;
-    double min = -0.0;
-    double max = -150.0;
-    double max_h = -150.0;
-    double impulse_db = 0.0;
-    QLineF local_region(QPointF(.0,.0),QPointF(.1,.1));
-    for (int i = -40; i < 40; i++)
-    {
-        for (int j = -40; j < 40; j++)
-        {
-            local_region.setP2(QPointF(-i * 0.05 * lambda,-j * 0.05 * lambda));
-            complex<double> impulse = notifyObserversInterference(local_region);
-            impulse_db = 20*log(abs(impulse));
-            impulse_r[k] = impulse_db;
-            tmp_vect_h[k] = abs(impulse);
-            if(impulse_db < min)
+    if (m_chData != nullptr) {
+        if(m_chData->intPattern.size()>0){
+            complex<double> i_comp(0,1);
+            vector<double> impulse_r(320*320);
+            vector<double> tmp_vect_h(320*320);
+            QVector<double> rice_distribution;
+            double lambda = c/m_chData->fq;
+            int k = 0;
+            double min = -0.0;
+            double max = -150.0;
+            double max_h = -150.0;
+            double impulse_db = 0.0;
+            QLineF local_region(QPointF(.0,.0),QPointF(.1,.1));
+            for (int i = -160; i < 160; i++)
             {
-                min = impulse_db;
+                for (int j = -160; j < 160; j++)
+                {
+                    local_region.setP2(QPointF(i * 0.1 * lambda,j * 0.1 * lambda));
+                    complex<double> impulse = 0.0;
+                    for (auto &pattern: m_chData->intPattern){
+                        double angleMPC = pattern.first;
+                        QLineF beta(QPointF(.0,.0),QPointF(2*M_PI*cos(angleMPC*M_PI/180)/lambda,2*M_PI*sin(angleMPC*M_PI/180)/lambda));
+                        double scalar_product = beta.p2().x()*local_region.p2().x() + beta.p2().y()*local_region.p2().y();
+                        double indVolt_real = round(pattern.second.real()*1e5)/1e5;
+                        double indVolt_imag = round(pattern.second.imag()*1e5)/1e5;
+                        complex<double> indVolt(indVolt_real,indVolt_imag);
+                        impulse += indVolt*exp(-i_comp*scalar_product);
+                        if (i == -20 && j == -40){
+                            cout << "induced voltage LOS (-lambda,-2lambda): " << pattern.second << endl;
+                            cout << "impulse LOS: (-lambda,-2lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+                        }
+                        if (i == 20 && j == 20){
+                            cout << "induced voltage LOS (lambda,lambda): " << pattern.second << endl;
+                            cout << "impulse LOS: (lambda,lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+                        }
+                    }
+                    if (m_chData->indVoltageGnd != 0.0){
+                        double angleGroundX = m_chData->angleGroundX;
+                        double angleGroundZ = m_chData->angleGroundZ;
+                        QLineF beta(QPointF(.0,.0),QPointF(2*M_PI*cos(angleGroundZ*M_PI/180)*cos(angleGroundX*M_PI/180)/lambda,2*M_PI*cos(angleGroundZ*M_PI/180)*sin(angleGroundX*M_PI/180)/lambda));
+                        double scalar_product = beta.p2().x()*local_region.p2().x() + beta.p2().y()*local_region.p2().y();
+                        double indVolt_real = round(m_chData->indVoltageGnd.real()*1e5)/1e5;
+                        double indVolt_imag = round(m_chData->indVoltageGnd.imag()*1e5)/1e5;
+                        complex<double> indVolt(indVolt_real,indVolt_imag);
+                        impulse += indVolt*exp(-i_comp*scalar_product);
+                        if (i == -20 && j == -40){
+                            cout << "induced voltage GND (-lambda,-2lambda): " << m_chData->indVoltageGnd << endl;
+                            cout << "impulse GND: (-lambda,-2lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+                        }
+                        if (i == 20 && j == 20){
+                            cout << "induced voltage GND (lambda,lambda): " << m_chData->indVoltageGnd << endl;
+                            cout << "impulse GND: (lambda,lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+                        }
+                    }
+                    impulse_db = 20*log10(abs(impulse));
+                    impulse_r[k] = impulse_db;
+                    tmp_vect_h[k] = abs(impulse);
+                    if(impulse_db < min)
+                    {
+                        min = impulse_db;
+                    }
+                    if(impulse_db>max){
+                        max = impulse_db;
+                        max_h = abs(impulse);
+                    }
+                    k++;
+                }
             }
-            if(impulse_db>max){
-                max = impulse_db;
-                max_h = abs(impulse);
-            }
-            k++;
+            m_dialog->setInterferencePattern(impulse_r,min,max);
+    //        map <double,double> distribution;
+    //        double sigma = 0.0;
+    //        for (int i = 0; i < 80*80; i++)
+    //        {
+    //            tmp_vect_h[i] = round(tmp_vect_h[i]/max_h * 1e2) / 1e2;
+    //            distribution[tmp_vect_h[i]] += 1.0/(80.0*80.0);
+    //            if (sigma < tmp_vect_h[i])
+    //            {
+    //                sigma = tmp_vect_h[i];
+    //            }
+    //        }
+    //        for (auto const &imp: distribution)
+    //        {
+    //            rice_distribution.push_back(imp.first / pow(sigma, 2)
+    //                                        * exp(-pow(imp.first,2)/(2*pow(sigma,2)))
+    //                                        * exp(-pow(10,rice_factor/10))
+    //                                        /** cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma)*/);
+    //        }
+    //        m_dialog->setDistributionInterference(distribution ,rice_distribution);
         }
     }
-    m_dialog->setInterferencePattern(impulse_r,min,max);
-    map <double,double> distribution;
-    double sigma = 0.0;
-    for (int i = 0; i < 80*80; i++)
-    {
-        tmp_vect_h[i] = round(tmp_vect_h[i]/max_h * 1e2) / 1e2;
-        distribution[tmp_vect_h[i]] += 1.0/(80.0*80.0);
-        if (sigma < tmp_vect_h[i])
-        {
-            sigma = tmp_vect_h[i];
-        }
-    }
-    for (auto const &imp: distribution)
-    {
-        rice_distribution.push_back(imp.first / pow(sigma, 2)
-                                    * exp(-pow(imp.first,2)/(2*pow(sigma,2)))
-                                    * exp(-pow(10,rice_factor/10))
-                                    /** cyl_bessel_k(0.0,imp.first*sqrt(2*pow(10,rice_factor/10))/sigma)*/);
-    }
-    m_dialog->setDistributionInterference(distribution ,rice_distribution);
 }
 
 // From ReceiverProduct
@@ -763,6 +807,7 @@ void Rx::notifyObservers()
 {
     m_impulse.clear();
     m_doppler.clear();
+    m_tdl.clear();
     angular_distr.clear();
     doppler_distr.clear();
 
@@ -809,6 +854,7 @@ void Rx::notifyObservers()
     }
     if (m_dialog != nullptr) {
         m_dialog->update();
+        sendInterferencePattern();
     }
 }
 

@@ -58,6 +58,10 @@ struct Data {
     std::vector<double>                                             timeCrltn;
     std::map<double, double>                                        timeCrltnMap;
     std::vector<double>                                             deltaZ;
+    std::map<double, std::complex<double>>                          intPattern;
+    std::complex<double>                                            indVoltageGnd{0};
+    double                                                          angleGroundZ{0};
+    double                                                          angleGroundX{0};
 
 };
 #endif // CHDATA_H
