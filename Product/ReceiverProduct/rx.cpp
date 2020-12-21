@@ -619,13 +619,15 @@ vector<double> Rx::spaceCrltn()
         Eigen::FFT<double> fft;
         vector<complex<double>> fqResp;
         fft.inv(fqResp, compUpPAS);
+//        fft.fwd(fqResp, upPAS);
+//        fft.inv(fqResp, upPAS);
 
         m_chData->deltaZ.clear();
         double deltaZ = 0;
         for (const auto &e: fqResp) {
-            m_chData->spaceCrltnMap[deltaZ] = e.real();
+            m_chData->spaceCrltnMap[deltaZ] = round(abs(e)*1e6)/1e6; // /*abs(e/*.real()*/)*/ ;
             m_chData->deltaZ.push_back(deltaZ);
-            sc.push_back(e.real());
+            sc.push_back(round(abs(e)*1e6)/1e6 /*e.real()*/);
             deltaZ++;
         }
 
@@ -650,14 +652,14 @@ vector<double> Rx::timeCrltn() const
     m_chData->timeCrltnMap.clear();
     vector<double> tc;
     if (m_chData != nullptr && m_chData->prxDopplerSpctrMap.size() > 1){
-        vector<double> pds;
+        vector<complex<double>> pds;
         vector<double> w;
         for (auto e: m_chData->prxDopplerSpctrMap) {
             w.push_back(e.first);
             pds.push_back(e.second);
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
-        vector<double> upPDS = ph::upsample<double, double>(w, pds, -wvNbr, wvNbr, 1);
+        vector<complex<double>> upPDS = ph::upsample<double, complex<double>>(w, pds, -wvNbr, wvNbr, 1);
 //        vector<complex<double>> fqResp = ph::idft(upPDS);
 
         vector<complex<double>> complexPDS;
@@ -667,7 +669,8 @@ vector<double> Rx::timeCrltn() const
 
         Eigen::FFT<double> fft;
         vector<complex<double>> ifftPDS;
-        fft.inv(ifftPDS, complexPDS);
+//        fft.inv(ifftPDS, complexPDS);
+        fft.inv(ifftPDS, upPDS);
 
         double deltaT = 0;
         for (const auto &e: ifftPDS) {

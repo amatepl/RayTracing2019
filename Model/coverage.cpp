@@ -119,6 +119,16 @@ void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathem
                                   (m_mathematicalComponents["Building"].at(i)));
         }
     }
+
+    if(m_mathematicalComponents.count("Car")) {
+        for(unsigned i = 0; i<m_mathematicalComponents["Car"].size(); i++) {
+            m_cars.push_back(static_cast<Car *>
+                             (m_mathematicalComponents["Car"].at(i)) );
+
+            m_buildings.push_back(static_cast<Building *>
+                                  (m_mathematicalComponents["Car"].at(i)) );
+        }
+    }
 }
 
 

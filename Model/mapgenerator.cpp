@@ -147,7 +147,6 @@ void MapGenerator::addCars(unsigned carDnsty)
     QPointF carPos;
 
     for (unsigned i = 1; i < m_horizontalStreets.size()-1; i++) {
-//        int random = rand() % (int) m_horizontalStreets.at(i)->length();
 
         vector<float> freePlaces = carPlaces(m_horizontalStreets.at(i), m_carParams.l / px_to_meter, 1 / px_to_meter);
 
@@ -161,7 +160,6 @@ void MapGenerator::addCars(unsigned carDnsty)
                                                                                carPos.y(),
                                                                                carContour,
                                                                                true);
-            //        carPoistion = carPoistion(m_horizontalStreets.at(i), )
             QLineF tmpLine = *m_horizontalStreets.at(i);
             tmpLine.setLength(m_carParams.l);
             tmpLine.translate(carPos - tmpLine.p1());
@@ -169,20 +167,18 @@ void MapGenerator::addCars(unsigned carDnsty)
 
             m_products.push_back(car);
             m_cars.push_back(static_cast<Car *>(car));
-            //        QLineF *l1 = m_horizontalStreets.at(i);
             ((Car *)car)->setRoad(m_horizontalStreets.at(i));
 
             QPolygonF carPoly = *dynamic_cast<QPolygonF *>(car);
 
-//            cout << "p0 = "<< carPoly[0].x() << ", " << carPoly[0].y()
-//                 << " p1 = "<< carPoly[1].x() << ", " << carPoly[1].y()
-//                 << " p2 = "<< carPoly[2].x() << ", " << carPoly[2].y()
-//                 << " p3 = "<< carPoly[3].x() << ", " << carPoly[3].y() << endl;
+
 
             //        thread *thread_obj = new thread (&MapGenerator::moveCar,
             //                                        ref(*(Car*)car),
             //                                        ref(*this),
             //                                        ref(*m_horizontalStreets.at(i)));
+
+            nbCars++;
         }
     }
 
@@ -199,7 +195,6 @@ void MapGenerator::addCars(unsigned carDnsty)
                                                                                carPos.y(),
                                                                                carContour,
                                                                                true);
-            //        carPoistion = carPoistion(m_horizontalStreets.at(i), )
             QLineF tmpLine = *m_verticalStreets.at(j);
             tmpLine.setLength(m_carParams.l);
             tmpLine.translate(carPos - tmpLine.p1());
@@ -207,60 +202,16 @@ void MapGenerator::addCars(unsigned carDnsty)
 
             m_products.push_back(car);
             m_cars.push_back(static_cast<Car *>(car));
-            //        QLineF *l1 = m_horizontalStreets.at(i);
             ((Car *)car)->setRoad(m_verticalStreets.at(j));
 
             QPolygonF carPoly = *dynamic_cast<QPolygonF *>(car);
+
+            //        thread *thread_obj = new thread (&MapGenerator::moveCar,
+            //                                        ref(*(Car*)car),
+            //                                        ref(*this),
+            //                                        ref(*m_verticalStreets.at(i)));
+            nbCars++;
         }
-
-
-//        int random = rand() % (int) m_verticalStreets.at(j)->length();
-//        QLineF line = *m_verticalStreets.at(j);
-//        line.setLength(random);
-//        carPos = line.p2();
-
-//        QLineF tmpLine(line);
-//        tmpLine.setLength(tmpLine.length() - (m_carParams.l/2)/px_to_meter);
-//        QPointF tmpPoint = tmpLine.p2();
-//        tmpLine.setLength(tmpLine.length() + m_carParams.l/px_to_meter);
-//        tmpLine.setP1(tmpPoint);
-
-//        QLineF normal = tmpLine.normalVector();
-//        normal.setLength((m_carParams.w/2)/px_to_meter);
-
-//        QPolygonF carContour;
-
-//        carContour << normal.p2();
-
-//        normal.translate(normal.p1() - normal.p2());
-
-//        carContour << normal.p1();
-
-//        normal.translate(tmpLine.p2() - tmpLine.p1());
-
-//        carContour << normal.p1();
-
-//        normal.translate(normal.p2() - normal.p1());
-
-//        carContour << normal.p2();
-
-//        carContour<< carContour.at(0);
-
-//        MathematicalProduct *car = m_carFactory->createMathematicalProduct(carPos.x(),
-//                                                                           carPos.y(),
-//                                                                           carContour,
-//                                                                           true);
-
-//        dynamic_cast<Car *>(car)->setMovement(tmpLine);
-
-//        m_products.push_back(car);
-//        m_cars.push_back((Car *) car);
-//        ((Car *) car)->setRoad(m_verticalStreets.at(j));
-
-//        thread *thread_obj = new thread (&MapGenerator::moveCar,
-//                                        ref(*(Car*)car),
-//                                        ref(*m_verticalStreets.at(j)));
-
 
     }
 

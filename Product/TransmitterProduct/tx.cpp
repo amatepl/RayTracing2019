@@ -827,26 +827,26 @@ Data * Tx::getChData(QPointF *rx)
     // Normalize PAS
     double max = 0;
     for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
-        if (max < e.second) max = e.second;
+        if (max < abs(e.second)) max = abs(e.second);
     }
 
     for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-        e.second = (e.second / max) + 1;
+        e.second = (e.second / max);
     }
 
-    for (double &e: m_chsData[rx].prxAngularSpctr) {
-        e += 1;
-    }
+//    for (double &e: m_chsData[rx].prxAngularSpctr) {
+//        e += 1;
+//    }
 
     // Rice Factor
     m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
 
     // Angular Spread
-    m_chsData[rx].angularSpred = ph::angularSpread(m_chsData[rx].prxAngularSpctr, m_chsData[rx].u, wvNbr);
+//    m_chsData[rx].angularSpred = ph::angularSpread(m_chsData[rx].prxAngularSpctr, m_chsData[rx].u, wvNbr);
 
     // Doppler Spread
     double speed = receivers_speed[rx].length();
-    m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
+//    m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
 
     Eigen::FFT<double> fft;
 
