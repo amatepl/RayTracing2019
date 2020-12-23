@@ -610,7 +610,7 @@ vector<double> Rx::spaceCrltn()
             pas.push_back(e.second);
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
-        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 1);
+        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 0.01);
         vector<complex<double>> compUpPAS;
         for (double &e: upPAS) {
             compUpPAS.push_back(complex<double>(e, 0));

@@ -126,8 +126,8 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
     double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
-    chData.prxAngularSpctrMap[u] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
-    chData.prxDopplerSpctrMap[w] += prxDopSpctr;
+    chData.prxAngularSpctrMap[round(u * 1e2)/1e2] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
+    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
 
     // Save Data
     chData.u.push_back(u);
@@ -274,8 +274,8 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         chData.u.push_back(u);
         chData.angularDistr.push_back(angularDistr);
         chData.prxAngularSpctr.push_back(prxAngSpctr);
-        chData.prxAngularSpctrMap[u] += prxAngSpctr;
-        chData.prxDopplerSpctrMap[w] += prxDopSpctr;
+        chData.prxAngularSpctrMap[round(u * 1e2)/1e2] += prxAngSpctr;
+        chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
 
     }
 
@@ -825,6 +825,8 @@ void Tx::drawRays(QPointF *productObservable, bool draw)
 Data * Tx::getChData(QPointF *rx)
 {
     // Normalize PAS
+    map<double, double> testPAS = m_chsData[rx].prxAngularSpctrMap;
+    vector<double> testPASVec = m_chsData[rx].prxAngularSpctr;
     double max = 0;
     for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
         if (max < abs(e.second)) max = abs(e.second);

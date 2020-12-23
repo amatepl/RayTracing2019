@@ -78,6 +78,7 @@ protected:
     AbstractRayFactory *m_rayFactory;
     map<Tx *, vector<AbstractAntena *>> m_images;
 
+    float px_to_meter;
 
     QGraphicsScene *m_scene;
 

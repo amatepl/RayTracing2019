@@ -19,7 +19,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
     RayFactory* rayFactory = new RayFactory(false, m_scene,px_to_meter);
     m_rayFactory = rayFactory;
 
-    for(unsigned int i =0;i<m_transmitters.size();i++){
+    for(unsigned int i = 0; i < m_transmitters.size(); i++){
         m_transmitters.at(i)->setRayFactory(rayFactory);
     }
 
@@ -47,16 +47,12 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
     }
 
-
 //    MathematicalProduct* receiver = m_receiverFactory->createMathematicalProduct(0,0,true);
 //    m_receivers.push_back(dynamic_cast<Rx*>(receiver));
 
 //    m_receiver = dynamic_cast<Rx*>(receiver);
 
 //    illuminationZones();
-
-
-
 
     QRectF workingZone = m_totalIlluminationZone.boundingRect();
 
@@ -186,7 +182,8 @@ void Coverage::notifyTxs(QPointF *rx, fptr f)
 
 void Coverage::notifyTxsPrx(QPointF *rx, fptr)
 {
-    double prx = 1e-10;
+    double mindBm = -130;
+    double prx = pow(10, (mindBm - 30)/10);
     for (auto &tx: m_transmitters){
         tx->deleteRays(rx);
         tx->detectAndLink(*rx);
