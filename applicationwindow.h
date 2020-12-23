@@ -110,14 +110,14 @@ public slots:
     void obstacleGroupClicked(int);
     void LaunchRayTracing(unsigned reflectionsNbr);
     void clearRayTracing();
-    void launchCoverage(unsigned reflectionsNbr, double dnsty);
+    void launchCoverage(unsigned reflectionsNbr, double dnsty, int type_cov);
     void clearCoverage();
     void startCars();
     void deleteProduct();
     void openProduct();
     void clearWorkspace();
     void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap);
-    void addHeatMap(HeatMap *heatMap);
+    void addHeatMap(HeatMap *heatMap, HeatmapMode mode);
 };
 
 #endif // APPLICATIONWINDOW_H

@@ -29,10 +29,15 @@ void GraphicsMap::deleteItem(){
     }
 }
 
-void GraphicsMap::addHeatMap(HeatMap *heatMap)
+void GraphicsMap::addHeatMap(HeatMap *heatMap, GraphicsHeatMap::Mode mode)
 {
-    m_heatMap = unique_ptr<GraphicsHeatMap>(new GraphicsHeatMap(heatMap, this));
+    m_heatMap = unique_ptr<GraphicsHeatMap>(new GraphicsHeatMap(heatMap, this, mode));
     connect(m_heatMap.get(), &GraphicsHeatMap::eField, this, &GraphicsMap::updateEField);
+}
+
+void GraphicsMap::addPrxHeatMap(HeatMap *heatmap)
+{
+
 }
 
 void GraphicsMap::clearHeatMap()

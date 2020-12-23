@@ -66,7 +66,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
 
 //    m_scene->addRect(workingZone,QPen(),illumination1);
 
-    emit(computed(buildCoverageZone(workingZone.toRect())));
+    emit(computed(buildCoverageZone(workingZone.toRect()), m_mode));
 
 //    for(int i = workingZone.topLeft().y();
 //         i < workingZone.bottomLeft().y();
@@ -119,6 +119,16 @@ void Coverage::setAttributs(map<string, vector<MathematicalProduct *> > m_mathem
                                   (m_mathematicalComponents["Building"].at(i)));
         }
     }
+
+    if(m_mathematicalComponents.count("Car")) {
+        for(unsigned i = 0; i<m_mathematicalComponents["Car"].size(); i++) {
+            m_cars.push_back(static_cast<Car *>
+                             (m_mathematicalComponents["Car"].at(i)) );
+
+            m_buildings.push_back(static_cast<Building *>
+                                  (m_mathematicalComponents["Car"].at(i)) );
+        }
+    }
 }
 
 
@@ -143,6 +153,8 @@ HeatMap *Coverage::buildCoverageZone(const QRect &workingZone)
 
     fptr f = selectFct();
 
+    notifptr nptr = selectNotifier();
+
     for(int i = workingZone.topLeft().y(); i < maxY; i += (int) (1 / m_dnsty)){
         rx.setY(i);
 
@@ -150,7 +162,8 @@ HeatMap *Coverage::buildCoverageZone(const QRect &workingZone)
 
                 rx.setX(j);
 
-                notifyTxs(&rx, f);
+                (this->*nptr)(&rx, f);
+//                notifyTxs(&rx, f);
         }
     }
     return &m_heatMap;
@@ -171,6 +184,22 @@ void Coverage::notifyTxs(QPointF *rx, fptr f)
     m_heatMap.push_back(Tile{rx->toPoint(), eField, (int) (1 / m_dnsty)});
 }
 
+void Coverage::notifyTxsPrx(QPointF *rx, fptr)
+{
+    double prx = 1e-10;
+    for (auto &tx: m_transmitters){
+        tx->deleteRays(rx);
+        tx->detectAndLink(*rx);
+        tx->notifyObservers(rx, tx->movement());
+        double txPrx = tx->getRxPrx(rx);
+//        txPrx = tx->dBm(txPrx);
+        if (prx < txPrx) {
+            prx = txPrx;
+        }
+    }
+    m_heatMap.push_back(Tile{rx->toPoint(), prx, (int) (1 / m_dnsty)});
+}
+
 void Coverage::setDnsty(const double dnsty)
 {
     m_dnsty = dnsty;
@@ -183,12 +212,19 @@ complex<double> Coverage::complexE(Tx *tx, QPointF *rx)
 
 complex<double> Coverage::sumAbsE(Tx *tx, QPointF *rx)
 {
-    return (complex<double>) tx->getRxSumAbsE(rx);
+
+    return (complex<double>) abs(tx->computeEField(rx));
 }
 
 complex<double> Coverage::prx(Tx *tx, QPointF *rx)
 {
+//    double totalPower = computePrx(m_receiversField[receiver],m_receiversGroundField[receiver],receiver);
     return (complex<double>) tx->getRxPrx(rx);
+}
+
+void Coverage::setHeatmapMode(int mode)
+{
+    m_mode = static_cast<HeatmapMode>(mode);
 }
 
 Coverage::fptr Coverage::selectFct()
@@ -200,6 +236,20 @@ Coverage::fptr Coverage::selectFct()
         return &Coverage::sumAbsE;
     case HeatmapMode::prx:
         return &Coverage::prx;
+    default:
+        break;
+    }
+}
+
+Coverage::notifptr Coverage::selectNotifier()
+{
+    switch (m_mode) {
+    case HeatmapMode::complexE:
+        return &Coverage::notifyTxs;
+    case HeatmapMode::sumAbsE:
+        return &Coverage::notifyTxs;
+    case HeatmapMode::prx:
+        return &Coverage::notifyTxsPrx;
     default:
         break;
     }

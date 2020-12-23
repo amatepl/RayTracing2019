@@ -545,7 +545,9 @@ double Tx::computePrx(QPointF* receiver)
 
 double Tx::getRxPrx(QPointF *rx)
 {
-    return m_chsData[rx].prx;
+    Tx::EFields fields = computeEFields(rx);
+    return computePrx(fields.plainEField, fields.reflEField, rx);
+//    return m_chsData[rx].prx;
 }
 
 double Tx::dBm(double power)
@@ -852,26 +854,26 @@ Data * Tx::getChData(QPointF *rx)
     // Normalize PAS
     double max = 0;
     for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
-        if (max < e.second) max = e.second;
+        if (max < abs(e.second)) max = abs(e.second);
     }
 
     for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-        e.second = (e.second / max) + 1;
+        e.second = (e.second / max);
     }
 
-    for (double &e: m_chsData[rx].prxAngularSpctr) {
-        e += 1;
-    }
+//    for (double &e: m_chsData[rx].prxAngularSpctr) {
+//        e += 1;
+//    }
 
     // Rice Factor
     m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
 
     // Angular Spread
-    m_chsData[rx].angularSpred = ph::angularSpread(m_chsData[rx].prxAngularSpctr, m_chsData[rx].u, wvNbr);
+//    m_chsData[rx].angularSpred = ph::angularSpread(m_chsData[rx].prxAngularSpctr, m_chsData[rx].u, wvNbr);
 
     // Doppler Spread
     double speed = receivers_speed[rx].length();
-    m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
+//    m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
 
     Eigen::FFT<double> fft;
 
@@ -1065,6 +1067,41 @@ complex<double> Tx::computeEField(QPointF *rx)
     return emField;
 }
 
+Tx::EFields Tx::computeEFields(QPointF *rx)
+{
+    complex<double> emField = 0;
+    complex<double> groundField = 0;
+
+    for (unsigned i = 0; i < m_receiversRays[rx].size(); i++)
+    {
+        WholeRay *wholeRay = m_receiversRays[rx].at(i);
+
+        if (wholeRay->at(0)->getDiffracted())
+        {
+            map<QPointF *, map<double, double>>::iterator it;
+            complex<double>EMfield = computeDiffractedEfield(rx, wholeRay, false);
+            emField += EMfield;
+        }
+        else
+        {
+            //            complex<double> EMfield = computeEMfield(wholeRay, copy_receiver,false);
+            tuple<int, int> arrSize = {m_column, m_row};
+            complex<double> EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
+                                                         m_orientation, m_pr_orientation,
+                                                         static_cast<ph::TxType>(m_kind));
+            if (wholeRay->size() == 1) {
+                // Adding the ground component
+                double angle_transmitter = wholeRay->back()->angle();
+                groundField = computeEfieldGround(rx ,angle_transmitter, false); // Compute the electrical field from the ray reflected off the ground
+//                emField += groundField;
+            }
+            emField += EMfield;
+        }
+    }
+
+    return {emField, groundField};
+}
+
 double Tx::getRxSumAbsE(QPointF *rx)
 {
     return m_rxsSumAbsE[rx];
@@ -1161,7 +1198,7 @@ void Tx::setIlluminatedZone(const QPolygonF &zone)
 }
 
 
-void Tx::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
+void Tx::carMoved(Car *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
 //    cout << "Illuminated cars: " << m_illuminatedCars.size() << endl;
     int idx = 0;

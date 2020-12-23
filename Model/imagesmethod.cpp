@@ -82,7 +82,7 @@ void ImagesMethod::setObservers()
 void ImagesMethod::connectToCars(AbstractAntena *ant)
 {
     for (unsigned i = 0; i < m_cars.size(); i++) {
-        connect(m_cars.at(i), &MathematicalCarProduct::positionChanged,
+        connect(m_cars.at(i), &Car::positionChanged,
                 ant, &AbstractAntena::carMoved, Qt::QueuedConnection);
     }
 }
@@ -91,7 +91,7 @@ void ImagesMethod::connectToCars(AbstractAntena *ant)
 void ImagesMethod::disconnectCars(AbstractAntena *ant)
 {
     for (unsigned i = 0; i < m_cars.size(); i++) {
-        disconnect(m_cars.at(i), &MathematicalCarProduct::positionChanged,
+        disconnect(m_cars.at(i), &Car::positionChanged,
                    ant, &AbstractAntena::carMoved);
     }
 }

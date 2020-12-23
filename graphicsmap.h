@@ -29,7 +29,8 @@ public:
 
     void setSceneFactory(SceneFactory *sceneFactory);
     void deleteItem();
-    void addHeatMap(HeatMap *heatMap);
+    void addHeatMap(HeatMap *heatMap, GraphicsHeatMap::Mode mode=GraphicsHeatMap::Mode::field);
+    void addPrxHeatMap(HeatMap *heatmap);
     void clearHeatMap();
 
     // Overdrives

@@ -6,7 +6,7 @@
 #include "Observer/productobservable.h"
 #include "Product/RayProduct/ray.h"
 #include "Abstract_Factory/abstractrayfactory.h"
-#include "Product/CarProduct/mathematicalcarproduct.h"
+#include "Product/CarProduct/car.h"
 
 struct Data;
 
@@ -22,7 +22,7 @@ public:
     void setSceneBoundary(const QRectF &rect);
     void buildIlluminationZone(const QPointF &p1, const QPointF &p2);
     QPolygonF buildCoverage();
-//    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
+//    bool inIlluminatedCars(Car *car, int *idx);
 
     // Overrides from AbstractAntena
     virtual void notifyParent(QPointF *productObservable, double speed,
@@ -48,7 +48,7 @@ private:
 
 public slots:
 
-    void carMoved(MathematicalCarProduct *car, int, int, double) override;
+    void carMoved(Car *car, int, int, double) override;
 };
 
 #endif // ANTENADIFFRACTION_H

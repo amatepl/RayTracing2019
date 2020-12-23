@@ -160,6 +160,7 @@ void Model::generateMap(unsigned h, unsigned w, unsigned cars, unsigned wstrs, u
 void Model::clear()
 {
     m_mathematicalComponents.clear();
+    m_mapGenerator->clear();
 }
 
 void Model::clearWorkspace()

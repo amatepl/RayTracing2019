@@ -32,12 +32,12 @@ GraphicsCarProduct::GraphicsCarProduct(const QPolygonF &poly, QMenu *productmenu
 {
     QPolygonF graphic = poly;
     QPointF p0 = graphic.at(0);
-    for (int i = 0; i < graphic.size()-1; i++){
-        if(p0.manhattanLength() > graphic.at(i+1).manhattanLength()){
-            p0 = graphic.at(i+1);
-        }
-    }
-    graphic.translate(-p0-QPointF(11.0,11.0));
+//    for (int i = 0; i < graphic.size()-1; i++){
+//        if(p0.manhattanLength() > graphic.at(i+1).manhattanLength()){
+//            p0 = graphic.at(i+1);
+//        }
+//    }
+    graphic.translate(-p0);
     setPolygon(graphic);
     QLinearGradient linearGrad(graphic.at(0),graphic.at(3));
     linearGrad.setColorAt(0, Qt::white);
@@ -90,7 +90,7 @@ QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVarian
     if (change == QGraphicsItem::ItemPositionHasChanged
         || change == QGraphicsItem::ItemTransformHasChanged
         || change == QGraphicsItem::ItemRotationHasChanged) {
-        m_observer->update(this);
+//        m_observer->update(this);
     }
     return value;
 }

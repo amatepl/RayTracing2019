@@ -19,7 +19,7 @@ class  Building;
 class Ray;
 class AbstractRayFactory;
 class ProductObservable;
-class MathematicalCarProduct;
+class Car;
 
 class AbstractAntena: public QObject
 {
@@ -45,8 +45,8 @@ public:
 
     virtual QLineF movement() const;
     virtual void setMovement(QLineF const movement);
-    bool carInIlluminatedCars(MathematicalCarProduct *car, int *idx);
-    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
+    bool carInIlluminatedCars(Car *car, int *idx);
+    bool inIlluminatedCars(Car *car, int *idx);
 
 
     //virtual QPolygonF getIluminationZone(const QRectF &rect)const = 0;
@@ -56,14 +56,14 @@ protected:
     Building *m_building;
     QPolygonF m_zone;
     QPolygonF m_tmpZone;
-    vector<MathematicalCarProduct *> m_illuminatedCars;
+    vector<Car *> m_illuminatedCars;
     AbstractRayFactory *m_rayFactory = nullptr;
     QLineF m_movement {QLineF(.0,.0,.0,.0)};
     int m_wallType{wall};
 
 
 public slots:
-    virtual void carMoved(MathematicalCarProduct *car, int x, int y, double orientation) = 0;
+    virtual void carMoved(Car *car, int x, int y, double orientation) = 0;
 
 signals:
     void detectsCar(AbstractAntena *tx);

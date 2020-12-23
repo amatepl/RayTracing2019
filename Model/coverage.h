@@ -51,14 +51,18 @@ public:
 
     HeatMap *buildCoverageZone(const QRect &workingZone);
     typedef complex<double>(Coverage::*fptr)(Tx *, QPointF *);
+    typedef void(Coverage::*notifptr)(QPointF *, fptr) ;
     void notifyTxs(QPointF *rx, fptr f);
+    void notifyTxsPrx(QPointF *rx, fptr);
     void setDnsty(const double dnsty);
 
     complex<double> complexE(Tx *tx, QPointF *rx);
     complex<double> sumAbsE(Tx *tx, QPointF *rx);
     complex<double> prx(Tx *tx, QPointF *rx);
 
+    void setHeatmapMode(int mode);
     fptr selectFct();
+    notifptr selectNotifier();
 protected:
 
     SceneFactory* m_receiverFactory;
@@ -70,7 +74,7 @@ protected:
     HeatmapMode m_mode {HeatmapMode::complexE};
 
 signals:
-    void computed(HeatMap *heatMap);
+    void computed(HeatMap *heatMap, HeatmapMode mode);
 
 };
 

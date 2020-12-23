@@ -105,7 +105,7 @@ Data *AntenaDiffraction::update(QPointF *productObservable, QLineF const /*movem
 
 //void AntenaDiffraction::updateCarPos(QPointF *productObservable)
 //{
-//    MathematicalCarProduct *car = dynamic_cast<MathematicalCarProduct *>(productObservable);
+//    Car *car = dynamic_cast<Car *>(productObservable);
 
 //    int idx = 0;
 //    if (carInIlluminatedCars(car, &idx)) {
@@ -148,7 +148,7 @@ void AntenaDiffraction::attachObservable(QPointF *productObservable)
 }
 
 
-void AntenaDiffraction::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y*/, double /*orientation*/)
+void AntenaDiffraction::carMoved(Car *car, int /*x*/, int /*y*/, double /*orientation*/)
 {
     int idx = 0;
     if (m_zone.intersects(*car)) {
@@ -165,7 +165,7 @@ void AntenaDiffraction::carMoved(MathematicalCarProduct *car, int /*x*/, int /*y
     }
 }
 
-//bool AntenaDiffraction::inIlluminatedCars(MathematicalCarProduct *car, int *idx)
+//bool AntenaDiffraction::inIlluminatedCars(Car *car, int *idx)
 //{
 //    for (unsigned i = 0; i < m_illuminatedCars.size(); i++) {
 //        if (m_illuminatedCars.at(i) == car) {

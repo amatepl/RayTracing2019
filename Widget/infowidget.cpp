@@ -143,6 +143,12 @@ void InfoWidget::createCoverageGroup(){
     connect(clear_coverage, &QPushButton::clicked, this, &InfoWidget::sendClearCoverage);
     coverage_layout->addWidget(clear_coverage, 1, 0, Qt::AlignTop);
 
+    cov_type = new QComboBox(this);
+    cov_type->addItem("Complex fields sum");
+    cov_type->addItem("Fields' modules sum");
+    cov_type->addItem("Prx");
+    coverage_layout->addWidget(cov_type, 2, 0, Qt::AlignTop);
+
     rflctns_cov = new QSpinBox(ray_group);
     rflctns_cov->setRange(0.00,999.00);
     rflctns_cov->setAccelerated(true);
@@ -157,10 +163,10 @@ void InfoWidget::createCoverageGroup(){
 
     f_layout->addRow("Density [1/m]: ", cov_dnsty);
 
-    coverage_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
+    coverage_layout->addLayout(f_layout, 3, 0, Qt::AlignTop);
 
     m_eFieldDisp = new QLabel("|E| [...]: ", this);
-    coverage_layout->addWidget(m_eFieldDisp, 3, 0);
+    coverage_layout->addWidget(m_eFieldDisp, 4, 0);
 
     coverage_group->setLayout(coverage_layout);
 
@@ -170,7 +176,20 @@ void InfoWidget::createCoverageGroup(){
 
 void InfoWidget::updateCoverageGroup(double eField)
 {
-    m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
+    switch (cov_type->currentIndex()) {
+    case 0:
+        m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
+        break;
+    case 1:
+        m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
+        break;
+    case 2:
+        m_eFieldDisp->setText("P [dBm]: " + QString::number(eField));
+        break;
+    default:
+        break;
+    }
+
 }
 
 void InfoWidget::printValue(double value)
@@ -194,7 +213,7 @@ void InfoWidget::createMapGroup()
     st_dnsty = new QSpinBox(map_group);
     st_dnsty->setRange(0, 999);
     st_dnsty->setAccelerated(true);
-    connect(st_dnsty, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
+//    connect(st_dnsty, QOverload<int>::of(&QSpinBox::valueChanged), this, &InfoWidget::printValue);
 
     QFormLayout *f_layout = new QFormLayout;
     f_layout->addRow("Distance Between Streets: ", st_dnsty);
@@ -248,7 +267,7 @@ void InfoWidget::createMapGroup()
     height->setValue(500);
     width->setValue(500);
     st_dnsty->setValue(200);
-    st_width->setValue(20);
+    st_width->setValue(7);
 
 }
 
@@ -322,7 +341,7 @@ void InfoWidget::sendClearRayTracing()
 }
 
 void InfoWidget::sendLaunchCoverage(){
-    coverage(rflctns_cov->value(), cov_dnsty->value());
+    coverage(rflctns_cov->value(), cov_dnsty->value(), cov_type->currentIndex());
     launch_raytracing->setEnabled(false);
     launch_coverage->setEnabled(false);
 }

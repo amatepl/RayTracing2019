@@ -95,7 +95,7 @@ private:
 signals:
     void rayTracing(unsigned reflectionsNbr);
     void clearRayTracing();
-    void coverage(unsigned reflectionsNbr, double dnsty);
+    void coverage(unsigned reflectionsNbr, double dnsty, int type);
     void clearCoverage();
     void clear();
     void startCars();

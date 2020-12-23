@@ -2,7 +2,7 @@
 #include "Share/wholeray.h"
 #include "Share/params.h"
 
-float px_to_meter = 1;
+float px_to_meter = 1;  // meter per pixel
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::WindowStaysOnBottomHint)
 {
@@ -12,6 +12,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
     createActions();
     createMenus();
     view = new QGraphicsView();
+    view->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     connect(m_map, &GraphicsMap::eField, m_info_widget, &InfoWidget::updateEField);
@@ -171,11 +172,11 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode)
         button->setIcon(icon);
         m_obstaclegroup->addButton(button,mode);
         break;
-    case int(InsertTree):
-        icon = QIcon(GraphicsTreeProduct::getImage());
-        button->setIcon(icon);
-        m_obstaclegroup->addButton(button,mode);
-        break;
+//    case int(InsertTree):
+//        icon = QIcon(GraphicsTreeProduct::getImage());
+//        button->setIcon(icon);
+//        m_obstaclegroup->addButton(button,mode);
+//        break;
     case int(InsertCar):
         icon = QIcon(GraphicsCarProduct::getImage());
         button->setIcon(icon);
@@ -239,12 +240,12 @@ void ApplicationWindow::createToolBox()
 
     QWidget* obstacle_widget = createToolButton("Building",int(InsertBuilding));
     antenna_layout->addWidget(obstacle_widget, 2, 0, Qt::AlignTop);
-    QWidget* tree_widget = createToolButton("Tree", int(InsertTree));
-    antenna_layout->addWidget(tree_widget, 3, 0, Qt::AlignTop);
+//    QWidget* tree_widget = createToolButton("Tree", int(InsertTree));
+//    antenna_layout->addWidget(tree_widget, 3, 0, Qt::AlignTop);
     QWidget* car_layout = createToolButton("Car", int(InsertCar));
-    antenna_layout->addWidget(car_layout, 4, 0, Qt::AlignTop);
+    antenna_layout->addWidget(car_layout, 3, 0, Qt::AlignTop);
 
-    antenna_layout->setRowStretch(5,10);
+    antenna_layout->setRowStretch(4,10);
     antenna_layout->setColumnStretch(1, 10);
 
     QWidget *itemWidget = new QWidget;
@@ -304,10 +305,10 @@ void ApplicationWindow::notifyMap()
             factory = m_buildingFactory;
             m_map->setSceneFactory(factory);
             break;
-        case int(InsertTree):
-            factory = m_treeFactory;
-            m_map->setSceneFactory(factory);
-            break;
+//        case int(InsertTree):
+//            factory = m_treeFactory;
+//            m_map->setSceneFactory(factory);
+//            break;
         case int(InsertCar):
             factory = m_carFactory;
             m_map->setSceneFactory(factory);
@@ -374,10 +375,11 @@ void ApplicationWindow::clearRayTracing()
     m_rayTracingAlgorithm->clear();
 }
 
-void ApplicationWindow::launchCoverage(unsigned reflectionsNbr, double dnsty)
+void ApplicationWindow::launchCoverage(unsigned reflectionsNbr, double dnsty, int type_cov)
 {
     m_coverageAlgorithm->setReflectionsNbr(reflectionsNbr);
     m_coverageAlgorithm->setDnsty(dnsty);
+    m_coverageAlgorithm->setHeatmapMode(type_cov);
     m_model->launchAlgorithm(m_coverageAlgorithm);
 }
 
@@ -407,17 +409,31 @@ void ApplicationWindow::clearWorkspace()
 //    m_model->clearWorkspace();
 //    m_rayTracingAlgorithm->clearWorkspace();
     m_rayTracingAlgorithm->clear();
+    m_coverageAlgorithm->clear();
     m_map->clear();
     m_model->clear();
 }
 
 void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap)
 {
-    m_map->setSceneRect(0, 0, w, h);
+    m_map->setSceneRect(0, 0, w / px_to_meter, h / px_to_meter);
     m_model->generateMap(h, w, carDnsty, strWidth, strGap, px_to_meter);
 }
 
-void ApplicationWindow::addHeatMap(HeatMap *heatMap)
+void ApplicationWindow::addHeatMap(HeatMap *heatMap, HeatmapMode mode)
 {
-    m_map->addHeatMap(heatMap);
+    switch (mode) {
+    case HeatmapMode::complexE:
+        m_map->addHeatMap(heatMap);
+        break;
+    case HeatmapMode::sumAbsE:
+        m_map->addHeatMap(heatMap);
+        break;
+    case HeatmapMode::prx:
+        m_map->addHeatMap(heatMap, GraphicsHeatMap::Mode::prx);
+        break;
+    default:
+        break;
+    }
+
 }

@@ -10,7 +10,7 @@
 #include "Product/RayProduct/ray.h"  // Should probably be deleted
 #include "Share/wall.h"
 #include "Abstract_Factory/abstractrayfactory.h"
-#include "Product/CarProduct/mathematicalcarproduct.h"
+#include "Product/CarProduct/car.h"
 
 struct Data;
 
@@ -27,7 +27,7 @@ public:
     //void setBuilding(Building *building);
     void setSceneBoundary(const QRectF &rect);
     QPolygonF buildCoverage();
-//    bool inIlluminatedCars(MathematicalCarProduct *car, int *idx);
+//    bool inIlluminatedCars(Car *car, int *idx);
 
     //AbstractAntena
     void notifyParent(QPointF *productObservable, double speed,
@@ -52,7 +52,7 @@ private:
     double m_epsilonWall;
 
 public slots:
-    void carMoved(MathematicalCarProduct *car, int, int, double) override;
+    void carMoved(Car *car, int, int, double) override;
 
 
 };

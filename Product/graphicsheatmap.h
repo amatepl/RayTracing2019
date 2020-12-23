@@ -42,7 +42,7 @@ signals:
     void eField(double eField);
 protected:
     double m_eField;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
 };
 
 //--------------------------------------------------------------------------------------------
@@ -55,7 +55,9 @@ class GraphicsHeatMap: public QObject
 {
     Q_OBJECT
 public:
-    GraphicsHeatMap(HeatMap *heatMap, QGraphicsScene *scene);
+    enum class Mode {field, prx};
+    GraphicsHeatMap(HeatMap *heatMap, QGraphicsScene *scene, Mode mode=Mode::field);
+    void drawPrxTile(HeatMap *heatmap);
     void draw(vector<QGraphicsItem *> &tiles);
 
     template<class T>
@@ -78,6 +80,7 @@ private:
     HeatMap *m_heatMap;
     QGraphicsScene *m_scene;
     vector<QGraphicsRectItem *> m_tiles;
+    Mode m_mode {Mode::field};
 };
 
 #endif // GRAPHICSHEATMAP_H
