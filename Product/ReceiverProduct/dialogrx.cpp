@@ -856,10 +856,18 @@ QWidget *DialogRx::SpcCrltn()
 
 //    pds = m_mathematicalproduct->prxDopplerSpread();
 //    doppler_distr = m_mathematicalproduct->dopplerDistr();
-    vector<double> dz = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
-    QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
+    vector<double> dz = m_mathematicalproduct->deltaZ();
+    QVector<double> deltaZ;
+    QVector<double> spaceCrltn;
+    if (dz.size() >=400) {
+        deltaZ = QVector(dz.begin(),dz.begin() + 400);
+        spaceCrltn = QVector(sc.begin(), sc.begin() + 400);
+    } else {
+        deltaZ = QVector(dz.begin(),dz.end());
+        spaceCrltn = QVector(sc.begin(), sc.end());
+    }
+
 
 //    QVector<double> localpds = pds;
 //    QVector<double> localw = w;
@@ -894,11 +902,15 @@ QWidget *DialogRx::SpcCrltn()
 void DialogRx::updateSpcCrltn()
 {
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
-    QVector<double> spaceCrltn = QVector(sc.begin(), sc.end());
     vector<double> dz = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaZ = QVector(dz.begin(), dz.end());
-    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
-    spc_crltn_plot->replot();
+    if (dz.size() >= 400){
+        QVector<double> spaceCrltn;
+        QVector<double> deltaZ;
+        spaceCrltn = QVector(sc.begin(), sc.begin() + 400);
+        deltaZ = QVector(dz.begin(), dz.begin() + 400);
+        spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
+        spc_crltn_plot->replot();
+    }
 }
 
 QWidget *DialogRx::timeCrltn()

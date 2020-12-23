@@ -61,7 +61,7 @@ public:
 private:
     ReceiverFactory* m_receiverfactory;
 //    Rx* copy_receiver;
-    float px_to_meter;
+//    float px_to_meter;
 
 };
 

@@ -27,9 +27,9 @@ void AntenaDiffraction::buildIlluminationZone(const QPointF &p1, const QPointF &
 {
     QPolygonF illuminationZone;
     QLineF line1(*this, p2);
-    line1.setLength(50000);
+    line1.setLength(m_radius * 10);
     QLineF line2(*this, p1);
-    line2.setLength(50000);
+    line2.setLength(m_radius * 10);
     illuminationZone << *this << line1.p2() << line2.p2();
 //    m_zone = illuminationZon.e.intersected(m_sceneBoundary);
     m_zone = illuminationZone.intersected(buildCoverage());
@@ -175,3 +175,10 @@ void AntenaDiffraction::carMoved(Car *car, int /*x*/, int /*y*/, double /*orient
 //    }
 //    return false;
 //}
+
+void AntenaDiffraction::setScale(float scale)
+{
+    m_radius = m_radius / scale;
+//    m_zone = buildCoverage();
+//    buildIlluminationZone();
+}

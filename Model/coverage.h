@@ -66,7 +66,7 @@ public:
 protected:
 
     SceneFactory* m_receiverFactory;
-    float px_to_meter;
+//    float px_to_meter;
     vector <MathematicalProduct *> m_coverageRxs;
     //QPolygonF totalIlluminationZone;
     HeatMap m_heatMap;

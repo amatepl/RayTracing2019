@@ -38,6 +38,7 @@ public:
     void notifyCarDetected() override {};
 //    void updateCarPos(QPointF *productObservable) override;
     void attachObservable(QPointF *productObservable) override;
+    void setScale(float scale);
 
 private:
     AbstractAntena *m_parent;

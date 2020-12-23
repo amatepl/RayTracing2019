@@ -242,3 +242,9 @@ void TxImg::carMoved(Car *car, int /*x*/, int /*y*/, double /*orientation*/)
 //    }
 //    cout << "Car moved!" << endl;
 }
+
+void TxImg::setScale(float scale)
+{
+    m_radius = m_radius / scale;
+    m_zone = buildCoverage();
+}

@@ -43,6 +43,8 @@ public:
 //    void updateCarPos(QPointF *productObservable) override;
     void attachObservable(QPointF *productObservable) override;
 
+    void setScale(float scale);
+
 private:
     Line m_wall;
     AbstractAntena *m_parent;

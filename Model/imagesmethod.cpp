@@ -271,6 +271,8 @@ void ImagesMethod::buildDiffractionPoints(const QPolygonF &zone, vector<Wall *> 
 
 //            m_scene->addPolygon(corner->getIlluminationZone(), QPen(), illumination1);
 
+            corner->setScale(px_to_meter);
+            corner->buildIlluminationZone(p1, p2);
             QPolygonF cornerZone = buildingsInIlluminationZone(corner, nbReflections);
 
 //            m_scene->addPolygon(corner->getIlluminationZone(), QPen(), illumination2);
@@ -561,6 +563,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
 
                 //QPolygonF imagesZone = zone.intersected(image->getIlluminationZone());
 
+                image->setScale(px_to_meter);
                 QPolygonF imagesZone = buildingsInIlluminationZone(image, nbReflections);
 
                 //usedWalls.push_back(walls.at(j));
