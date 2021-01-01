@@ -88,7 +88,7 @@ QPolygonF Tx::buildCoverage() const
 
 void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
 {
-    m_chsData.at(rx).dstnc = QLineF(*this, *rx).length();
+    m_chsData.at(rx).dstnc = QLineF(*this, *rx).length()*px_to_meter;
     m_los_factor[rx] = 0;
     QLineF receiver_speed = receivers_speed[rx];
     QLineF beta(QPointF(.0, .0), QPointF(2.0 * M_PI / lambda, 0.0));
@@ -121,23 +121,24 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     }
 
     double u = ph::uMPC(wvNbr, theta);
-    double w = receiver_speed.length()*u;
+    double w = rays_speed[ray]*wvNbr - receiver_speed.length()*u;
 
     complex<double> angularDistr = ph::angDistrMPC(voltage, theta, u);
-    complex<double> dopplerDistr = ph::angDistrMPC(voltage, theta, w);
+//    complex<double> dopplerDistr = ph::angDistrMPC(voltage, theta, w);
+    chData.dopplerDistr[w] += 2*M_PI*voltage;
     double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
-    double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
+//    double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
     chData.prxAngularSpctrMap[round(u * 1e2)/1e2] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
-    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
+//    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
 
     // Save Data
     chData.u.push_back(u);
     chData.w.push_back(w);
     chData.angularDistr.push_back(angularDistr);
-    chData.dopplerDistr.push_back(dopplerDistr);
+//    chData.dopplerDistr.push_back(dopplerDistr);
     chData.prxAngularSpctr.push_back(prxAngSpctr);
-    chData.prxDopplerSpctr.push_back(prxDopSpctr);
+//    chData.prxDopplerSpctr.push_back(prxDopSpctr);
 
     // receivers_speed.translate(- m_receiver_speed.p1());   Check if necessary
     // m_ray_speed.translate(- m_ray_speed.p1());       Chack if necessary
@@ -148,7 +149,7 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     // QLineF resultant_speed(QPointF(0.0, 0.0), m_receiver_speed.p2() - m_ray_speed.p2());
     //double omega = - (beta.p2().x() * resultant_speed.p2().x() + beta.p2().y() * resultant_speed.p2().y());
 
-    double omega = 2.0 * M_PI / lambda * rays_speed[ray];
+    double omega = rays_speed[ray]*wvNbr - receiver_speed.length()*u;
     omega = round(omega * 1e4) / 1e4;
 
     chData.dopplerSpctr[omega] += voltage;

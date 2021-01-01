@@ -132,6 +132,7 @@ public:
     int interFerenceMargin() override {return m_interferencemargin;}
     vector<double> getDoppler() override;
     vector<double> getOmega() override;
+    vector<double> getPDP() override;
 
     void setSpeed(float speed) override;
     void setOrientation(float orientation) override;

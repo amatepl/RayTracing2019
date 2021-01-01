@@ -12,15 +12,16 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget = new QTabWidget;
     m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
-    m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
+//    m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
     m_tabwidget->addTab(fqResp(),                   tr("Frequency Response"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
 //    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
-    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
+//    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
     m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
     m_tabwidget->addTab(timeCrltn(), tr("Time Correltaion"));
+    m_tabwidget->addTab(PDP(), tr("Power Delay Profile"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -849,6 +850,56 @@ void DialogRx::updateDopplerSpctr()
     doppler_spctr_plot->replot();
 }
 
+QWidget* DialogRx::PDP(){
+    QWidget *widget = new QWidget;
+    pdp_plot = new QCustomPlot;
+    pdp = vec2QVec<double>(m_mathematicalproduct->getPDP());
+    tau = m_mathematicalproduct->impulseTau();
+
+    for (int i = 0; i < pdp.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pdp_plot);
+        line_impulse->start->setCoords(tau[i], pdp[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(tau[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+
+    pdp_plot->addGraph();
+    pdp_plot->graph(0)->setPen(QPen(Qt::blue));
+    pdp_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    pdp_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    pdp_plot->graph(0)->setData(tau, pdp);
+    pdp_plot->graph(0)->setName("Power Delay Profile");
+
+    pdp_plot->xAxis->setLabel("\u03C4[ns]");
+    pdp_plot->yAxis->setLabel("P(\u03C4)[dB]");
+    pdp_plot->yAxis->grid()->setSubGridVisible(true);
+    pdp_plot->xAxis->grid()->setSubGridVisible(true);
+    pdp_plot->rescaleAxes();
+    pdp_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    pdp_plot->replot();
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(pdp_plot,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
+}
+
+void DialogRx::updatePDP()
+{
+    pdp_plot->clearItems();
+    pdp = vec2QVec<double>(m_mathematicalproduct->getPDP());
+    tau = m_mathematicalproduct->impulseTau();
+    for (int i = 0; i < pdp.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pdp_plot);
+        line_impulse->start->setCoords(tau[i], pdp[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(tau[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+    pdp_plot->graph(0)->setData(tau, pdp);
+    pdp_plot->replot();
+}
+
 QWidget *DialogRx::SpcCrltn()
 {
     QWidget *widget = new QWidget;
@@ -1085,27 +1136,24 @@ void DialogRx::update()
         updateImpulseResponse();
         break;
     case 2:
-        updateImpulseResponse();
-        break;
-    case 3:
         updateFqResp();
         break;
+    case 3:
+        break;
     case 4:
-        break;
-    case 5:
-        updateDopplerSpctr();
-        break;
-    case 6:
         updatePrxAngularSpctr();
         break;
-    case 7:
+    case 5:
         updatePrxDopplerSpctr();
         break;
-    case 8:
+    case 6:
         updateSpcCrltn();
         break;
-    case 9:
+    case 7:
         updateTimeCrltn();
+        break;
+    case 8:
+        updatePDP();
         break;
     default:
         break;

@@ -131,12 +131,24 @@ QPointF Car::topLeft() const
 }
 
 void Car::setOrientation(double orientation){
-    QLineF tmpLine(QPointF(0.0,0.0),QPointF(22.0,0.0));
+    QLineF line1(this->at(0),this->at(1));
+    QLineF line2(this->at(1),this->at(2));
+    double length;
+    double height;
+    if (line1.length() > line2.length()){
+        length = line1.length();
+        height = line2.length();
+    }
+    else {
+        length = line2.length();
+        height = line1.length();
+    }
+    QLineF tmpLine(QPointF(0.0,0.0),QPointF(length,0.0));
     tmpLine.setAngle(orientation);
     tmpLine.translate(m_center-tmpLine.center());
     m_movement.setAngle(orientation);
     QLineF normal = tmpLine.normalVector();
-    normal.setLength(11);
+    normal.setLength(height/2);
 
     QPolygonF carContour;
     carContour << normal.p2();
@@ -157,7 +169,7 @@ void Car::setOrientation(double orientation){
 
     m_walls.at(2)->setWallType(Wall::front);
     m_walls.at(2)->setMovement(m_movement);
-    emit positionChanged(this,getPosX(),getPosY(),getOrientation());
+    emit positionChanged(this,this->at(0).x(),this->at(0).y(),getOrientation());
 }
 
 
@@ -166,7 +178,7 @@ void Car::setPosX(int posX){
     m_center.setX(posX);
     translate(offset);
     moveWalls(offset);
-    emit positionChanged(this,getPosX(),getPosY(),getOrientation());
+    emit positionChanged(this,this->at(0).x(),this->at(0).y(),getOrientation());
 }
 
 
@@ -175,19 +187,16 @@ void Car::setPosY(int posY){
     m_center.setY(posY);
     translate(offset);
     moveWalls(offset);
-    emit positionChanged(this,getPosX(),getPosY(),getOrientation());
+    emit positionChanged(this,this->at(0).x(),this->at(0).y(),getOrientation());
 }
 
 
 void Car::update(QGraphicsItem *graphic){
-    QPointF offset = graphic->scenePos() - m_center;
+    QPointF offset = graphic->scenePos() - this->at(0);
     translate(offset);
     moveWalls(offset);
-    //QRectF rect = graphic->sceneBoundingRect();
-//    QPolygonF polyRect = QPolygonF(rect);
-//    swap(polyRect);
-//    m_extremities = polyRect;
-    m_center = graphic->scenePos();
+    QRectF rect = graphic->sceneBoundingRect();
+    m_center = rect.center();
 }
 
 

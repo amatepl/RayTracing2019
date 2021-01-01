@@ -77,28 +77,23 @@ void Rx::computeSnr()
 
 void Rx::computeDelaySpread()
 {
-    double min_tau, max_tau, t;
-    int i = 0;
-    for (const auto &imp: m_impulse) {
-        t = imp.first;
-        if (i == 0) {
-            min_tau = t;
-            max_tau = t;
+    double pdp;
+    double P = 0, tau_m = 0, sigma_tau = 0;
+    if (m_chData != nullptr) {
+        for (auto imp: m_chData->impulseResp) {
+            pdp = norm(imp.second);
+            P += pdp;
+            tau_m += imp.first*pdp;
+            sigma_tau +=  pow(imp.first,2)*pdp;
         }
-        else {
-            if(t < min_tau){
-                min_tau = t;
-            }
-            else if (t > max_tau) {
-                max_tau = t;
-            }
+        tau_m = tau_m/P;
+        delay_spread = sqrt(sigma_tau/P-pow(tau_m,2));
+
+        if (delay_spread < 1e-20){
+            delay_spread = 0.0;
         }
-        i++;
     }
-
-    delay_spread = abs(max_tau-min_tau);
-
-    if (delay_spread < 1e-20){
+    else{
         delay_spread = 0.0;
     }
 }
@@ -106,7 +101,7 @@ void Rx::computeDelaySpread()
 
 void Rx::coherenceBandwidth()
 {
-    coherence_bandwidth = 1e3 / delay_spread; //MHz
+    coherence_bandwidth = 1e3 / (2*M_PI*delay_spread); //MHz
 }
 
 
@@ -137,13 +132,13 @@ void Rx::extractChData()
 //        angular_distr[ang - m_chData->angularDistr.begin()] = 20*log10(abs(*ang));
         angular_distr.push_back(-20*log10(abs(*ang)));
     }
-    if (m_movement.length() > 0){
-        for (vector<complex<double>>::iterator dop = m_chData->dopplerDistr.begin();
-             dop != m_chData->dopplerDistr.end();
-             dop++) {
-             doppler_distr.push_back(20*log10(abs(*dop)));
-        }
-    }
+//    if (m_movement.length() > 0){
+//        for (vector<complex<double>>::iterator dop = m_chData->dopplerDistr.begin();
+//             dop != m_chData->dopplerDistr.end();
+//             dop++) {
+//             doppler_distr.push_back(20*log10(abs(*dop)));
+//        }
+//    }
 //    if (m_chData->angularDistr.size() > 0){
 //        angular_distr = QVector<complex<double>>(m_chData->angularDistr.begin(), m_chData->angularDistr.end());
 //    }
@@ -153,9 +148,10 @@ void Rx::extractChData()
     if (m_chData->prxAngularSpctr.size() > 0) {
         vector<double> pasLocal = m_chData->prxAngularSpctr;
         pas = QVector<double>(pasLocal.begin(), pasLocal.end());
-        vector<double> pdsLocal = m_chData->prxDopplerSpctr;
-        pds = QVector<double>(pdsLocal.begin(), pdsLocal.end());
+//        vector<double> pdsLocal = m_chData->prxDopplerSpctr;
+//        pds = QVector<double>(pdsLocal.begin(), pdsLocal.end());
     }
+
 
     dB<QVector<double>>(pas);
 //    dB(pds);
@@ -603,6 +599,18 @@ vector<double> Rx::getOmega()
         }
     }
     return omega;
+}
+
+vector<double> Rx::getPDP(){
+    vector<double> pdp;
+    double P;
+    if (m_chData != nullptr) {
+        for (auto imp: m_chData->impulseResp) {
+            P = 10*log10(norm(imp.second));
+            pdp.push_back(P);
+        }
+    }
+    return pdp;
 }
 
 void Rx::setSpeed(float speed)

@@ -19,13 +19,13 @@ GraphicsProduct* TransmitterFactory::createGraphicsProduct(int posX, int posY){
 //    DerivedDialogWinFctry <DialogTx, QDialog, TxInterface> fctry (dynamic_cast<TxInterface*>(mathematicalProduct));//;= new DerivedDialogWinFctry(dynamic_cast<TxInterface*>(mathematicalProduct));
     DerivedDialogWinFctry <DialogTx, QDialog, TxInterface> *fctry = new DerivedDialogWinFctry <DialogTx, QDialog, TxInterface> (mathematicalProduct);
     graphicsProduct->setDialogFctry(fctry);
-    double rad = 1;
-    vector<QPointF> pl_points = mathematicalProduct->pathLossPoints();
-    for (unsigned i = 0; i < pl_points.size(); i++)
-    {
-        m_scene->addEllipse(pl_points.at(i).x()-rad, pl_points.at(i).y()-rad, rad*2.0, rad*2.0,
-            QPen(QColor(Qt::red)), QBrush(Qt::SolidPattern));
-    }
+//    double rad = 1;
+//    vector<QPointF> pl_points = mathematicalProduct->pathLossPoints();
+//    for (unsigned i = 0; i < pl_points.size(); i++)
+//    {
+//        m_scene->addEllipse(pl_points.at(i).x()-rad, pl_points.at(i).y()-rad, rad*2.0, rad*2.0,
+//            QPen(QColor(Qt::red)), QBrush(Qt::SolidPattern));
+//    }
 
     return graphicsProduct;
 }

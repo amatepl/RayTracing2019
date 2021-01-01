@@ -75,6 +75,8 @@ public:
     void updateTimeCrltn();
     QWidget *DopplerSpectrum();
     void updateDopplerSpctr();
+    QWidget* PDP();
+    void updatePDP();
     QWidget *fqResp();
     void updateFqResp();
 
@@ -143,6 +145,7 @@ private:
     QCustomPlot *doppler_distr_plot;
     QCustomPlot *spc_crltn_plot;
     QCustomPlot *tm_crltn_plot;
+    QCustomPlot *pdp_plot;
 
     bool show_tdl;
     bool enable;
@@ -188,6 +191,9 @@ private:
 
     unsigned long m_transmitterfrequency;
     unsigned long m_transmitterbandwidth;
+
+    // 7. PDP
+    QVector<double> pdp;
 
 signals:
     void save(string path);

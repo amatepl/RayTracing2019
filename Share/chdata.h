@@ -47,7 +47,7 @@ struct Data {
     std::vector<double>                                             w;
 //    std::map<double /*u*/, std::complex<double> /* a(u) */>         angularDistr;
     std::vector<std::complex<double> /* a(u) */>                    angularDistr;
-    std::vector<std::complex<double> /* a(w) */>                    dopplerDistr;
+    std::map<double,std::complex<double> /* a(w) */>                dopplerDistr;
     std::map<double /*u*/, double /* S(u) */>                       prxAngularSpctrMap;
     std::vector<double /* S(u) */>                                  prxAngularSpctr;
     std::map<double, double>                                        prxDopplerSpctrMap;

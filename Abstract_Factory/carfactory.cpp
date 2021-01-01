@@ -8,13 +8,34 @@ CarFactory::CarFactory(QMenu* productmenu, QGraphicsScene* scene,const float sca
 }
 
 GraphicsProduct* CarFactory::createGraphicsProduct(int posX, int posY){
-    GraphicsCarProduct* graphicsProduct = new GraphicsCarProduct(m_productmenu, m_scene);
-    QRectF rect = graphicsProduct->sceneBoundingRect();
-    Car* mathematicalProduct = new Car(rect, QPointF(posX,posY));
+    QPointF low(posX-(m_carParams.l/2)/px_to_meter,posY);
+    QPointF high(posX+(m_carParams.l/2)/px_to_meter,posY);
+    QLineF tmpLine(low,high);
+
+    QLineF normal = tmpLine.normalVector();
+    normal.setLength((m_carParams.w/2)/px_to_meter);
+
+    QPolygonF carContour;
+
+    carContour << normal.p2();
+
+    normal.translate(normal.p1() - normal.p2());
+    carContour << normal.p1();
+
+    normal.translate(tmpLine.p2() - tmpLine.p1());
+    carContour << normal.p1();
+
+    normal.translate(normal.p2() - normal.p1());
+    carContour << normal.p2();
+
+    carContour<< carContour.at(0);
+    GraphicsCarProduct* graphicsProduct = new GraphicsCarProduct(carContour,m_productmenu, m_scene);
+    Car* mathematicalProduct = new Car(carContour, QPointF(posX,posY));
+    QLineF movement(QPointF(0,0),QPointF(20,0));
+    mathematicalProduct->setMovement(movement);
     mathematicalProduct->setScale(px_to_meter);
     graphicsProduct->attachObserver(mathematicalProduct);
-    graphicsProduct->setX(posX);
-    graphicsProduct->setY(posY);
+    graphicsProduct->setPos(carContour[0]);
     mathematicalProduct->attachObservable(graphicsProduct);
     return graphicsProduct;
 }
@@ -34,7 +55,6 @@ MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, b
 }
 
 MathematicalProduct* CarFactory::createMathematicalProduct(int posX, int posY, QPolygonF poly, bool linkgraphic){
-
     Building* mathematicalCarProduct = new Car(poly,QPointF(posX,posY));
     mathematicalCarProduct->setScale(px_to_meter);
     if (linkgraphic){

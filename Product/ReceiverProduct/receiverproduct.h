@@ -110,6 +110,9 @@ public:
     virtual std::vector<double> timeCrltn() const = 0;
     virtual std::vector<double> timeCrltnT() const = 0;
 
+    // 8. PDP
+    virtual std::vector<double> getPDP() = 0;
+
     virtual void newProperties() = 0;
 
 protected:
