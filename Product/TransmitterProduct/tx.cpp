@@ -724,6 +724,8 @@ void Tx::clearChData(QPointF *rx)
     m_chsData[rx].deltaZ.clear();
     m_chsData[rx].spaceCrltn.clear();
     m_chsData[rx].fqResp.clear();
+    m_chsData[rx].angularDistrMap.clear();
+    m_chsData[rx].dopplerDistrMap.clear();
 
 }
 
