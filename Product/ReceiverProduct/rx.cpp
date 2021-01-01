@@ -150,14 +150,22 @@ void Rx::extractChData()
 
     pas.clear();
     pds.clear();
+    u.clear();
+
+    map<double, double> localPAS = m_chData->prxAngularSpctrMap;
+    for (const auto &e: localPAS) {
+        pas.push_back(e.second);
+        u.push_back(e.first);
+    }
+
     if (m_chData->prxAngularSpctr.size() > 0) {
-        vector<double> pasLocal = m_chData->prxAngularSpctr;
-        pas = QVector<double>(pasLocal.begin(), pasLocal.end());
+//        vector<double> pasLocal = m_chData->prxAngularSpctr;
+//        pas = QVector<double>(pasLocal.begin(), pasLocal.end());
         vector<double> pdsLocal = m_chData->prxDopplerSpctr;
         pds = QVector<double>(pdsLocal.begin(), pdsLocal.end());
     }
 
-    dB<QVector<double>>(pas);
+    dBm<QVector<double>>(pas);
 //    dB(pds);
 
 //    cout<<"Tmp prx [dB]: " <<20*log10(tmpPrx)<<", tmp prx: "<<tmpPrx<<", "<<m_power << endl;
@@ -166,9 +174,10 @@ void Rx::extractChData()
 //        ang = 20*log10(abs(ang));
 //    }
 
+
     angular_spread = m_chData->angularSpred;
     doppler_spread = m_chData->dopplerSpread;
-    u = QVector<double>(m_chData->u.begin(), m_chData->u.end());
+//    u = QVector<double>(m_chData->u.begin(), m_chData->u.end());
     w = QVector<double>(m_chData->w.begin(), m_chData->w.end());
 }
 
@@ -192,6 +201,7 @@ void Rx::save(string path)
     vectorSizes.push_back(fading.size());
     vectorSizes.push_back(logD_model.size());
     vectorSizes.push_back(m_chData->dopplerSpctr.size());
+    vectorSizes.push_back(m_chData->prxAngularSpctrMap.size());
 
     vector<double> doppler;
     for (const auto &e: m_chData->dopplerSpctr) {
@@ -210,6 +220,7 @@ void Rx::save(string path)
         <<";fading"
         <<";logD_model"
         <<";Doppler shift"
+        <<";PAS"
         << endl;
 
     int vsize = vectorSizes.back();
@@ -265,6 +276,12 @@ void Rx::save(string path)
 
         if (n < m_chData->dopplerSpctr.size()) {
             ofs << doppler[n];
+        } else {
+            ofs << ";" ;
+        }
+
+        if (n < m_chData->prxAngularSpctrMap.size()) {
+            ofs << pas[n];
         } else {
             ofs << ";" ;
         }
@@ -625,9 +642,9 @@ vector<double> Rx::spaceCrltn()
         m_chData->deltaZ.clear();
         double deltaZ = 0;
         for (const auto &e: fqResp) {
-            m_chData->spaceCrltnMap[deltaZ] = round(abs(e)*1e6)/1e6; // /*abs(e/*.real()*/)*/ ;
+            m_chData->spaceCrltnMap[deltaZ] = round(abs(e)*1e16)/1e16; // /*abs(e/*.real()*/)*/ ;
             m_chData->deltaZ.push_back(deltaZ);
-            sc.push_back(round(abs(e)*1e6)/1e6 /*e.real()*/);
+            sc.push_back(round(abs(e)*1e16)/1e16 /*e.real()*/);
             deltaZ++;
         }
 

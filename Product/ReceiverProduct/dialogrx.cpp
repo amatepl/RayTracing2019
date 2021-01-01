@@ -608,7 +608,7 @@ DialogRx::PrxAngularSpctr()
     pas_plot->graph(0)->setName("PAS");
 
     pas_plot->xAxis->setLabel("u[rad/m]");
-    pas_plot->yAxis->setLabel("S(u)[dB]");
+    pas_plot->yAxis->setLabel("S(u)[dBm]");
     pas_plot->yAxis->grid()->setSubGridVisible(true);
     pas_plot->xAxis->grid()->setSubGridVisible(true);
     pas_plot->rescaleAxes();
@@ -849,17 +849,17 @@ QWidget *DialogRx::SpcCrltn()
 
 //    pds = m_mathematicalproduct->prxDopplerSpread();
 //    doppler_distr = m_mathematicalproduct->dopplerDistr();
-    vector<double> sc = m_mathematicalproduct->spaceCrltn();
-    vector<double> dz = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaZ;
-    QVector<double> spaceCrltn;
-    if (dz.size() >=400) {
-        deltaZ = QVector(dz.begin(),dz.begin() + 400);
-        spaceCrltn = QVector(sc.begin(), sc.begin() + 400);
-    } else {
-        deltaZ = QVector(dz.begin(),dz.end());
-        spaceCrltn = QVector(sc.begin(), sc.end());
-    }
+//    vector<double> sc = m_mathematicalproduct->spaceCrltn();
+//    vector<double> dz = m_mathematicalproduct->deltaZ();
+//    QVector<double> deltaZ;
+//    QVector<double> spaceCrltn;
+//    if (dz.size() >=400) {
+//        deltaZ = QVector(dz.begin(),dz.begin() + 400);
+//        spaceCrltn = QVector(sc.begin(), sc.begin() + 400);
+//    } else {
+//        deltaZ = QVector(dz.begin(),dz.end());
+//        spaceCrltn = QVector(sc.begin(), sc.end());
+//    }
 
 
 //    QVector<double> localpds = pds;
@@ -868,7 +868,7 @@ QWidget *DialogRx::SpcCrltn()
     // Plot physiscal impulse response
     spc_crltn_plot->addGraph();
     spc_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
-    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
+//    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->graph(0)->setName("Spatial Correlation");
 
     spc_crltn_plot->xAxis->setLabel("z");
@@ -911,15 +911,15 @@ QWidget *DialogRx::timeCrltn()
     QWidget *widget = new QWidget;
     tm_crltn_plot = new QCustomPlot;
 
-    vector<double> dt = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaT = QVector(dt.begin(), dt.end());
-    vector<double> tc = m_mathematicalproduct->spaceCrltn();
-    QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
+//    vector<double> dt = m_mathematicalproduct->deltaZ();
+//    QVector<double> deltaT = QVector(dt.begin(), dt.end());
+//    vector<double> tc = m_mathematicalproduct->spaceCrltn();
+//    QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
 
     // Plot physiscal impulse response
     tm_crltn_plot->addGraph();
     tm_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
-    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
+//    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
     tm_crltn_plot->graph(0)->setName("Time Correlation");
 
     tm_crltn_plot->xAxis->setLabel("t");

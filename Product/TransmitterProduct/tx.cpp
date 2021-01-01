@@ -126,8 +126,11 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
     double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
-    chData.prxAngularSpctrMap[round(u * 1e2)/1e2] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
-    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
+    chData.angularDistrMap[round(u * 1e2)/1e2] += angularDistr;
+    chData.dopplerDistrMap[round(w * 1e2)/1e2] += dopplerDistr;
+
+    chData.prxAngularSpctrMap[round(u * 1e2)/1e2] = ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
+    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] = ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
 
     // Save Data
     chData.u.push_back(u);
@@ -273,9 +276,13 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         // Save Data
         chData.u.push_back(u);
         chData.angularDistr.push_back(angularDistr);
+
+        chData.angularDistrMap[round(u * 1e2)/1e2] += angularDistr;
+        chData.dopplerDistrMap[round(w * 1e2)/1e2] += dopplerDistr;
+
         chData.prxAngularSpctr.push_back(prxAngSpctr);
-        chData.prxAngularSpctrMap[round(u * 1e2)/1e2] += prxAngSpctr;
-        chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
+        chData.prxAngularSpctrMap[round(u * 1e2)/1e2] = ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
+        chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] = ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
 
     }
 
@@ -827,14 +834,14 @@ Data * Tx::getChData(QPointF *rx)
     // Normalize PAS
     map<double, double> testPAS = m_chsData[rx].prxAngularSpctrMap;
     vector<double> testPASVec = m_chsData[rx].prxAngularSpctr;
-    double max = 0;
-    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
-        if (max < abs(e.second)) max = abs(e.second);
-    }
+//    double max = 0;
+//    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
+//        if (max < abs(e.second)) max = abs(e.second);
+//    }
 
-    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-        e.second = (e.second / max);
-    }
+//    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
+//        e.second = (e.second / max);
+//    }
 
 //    for (double &e: m_chsData[rx].prxAngularSpctr) {
 //        e += 1;
@@ -847,10 +854,10 @@ Data * Tx::getChData(QPointF *rx)
 //    m_chsData[rx].angularSpred = ph::angularSpread(m_chsData[rx].prxAngularSpctr, m_chsData[rx].u, wvNbr);
 
     // Doppler Spread
-    double speed = receivers_speed[rx].length();
+//    double speed = receivers_speed[rx].length();
 //    m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
 
-    Eigen::FFT<double> fft;
+//    Eigen::FFT<double> fft;
 
 //    // Frequency response
 //    vector<double> h;
