@@ -619,15 +619,15 @@ DialogRx::PrxAngularSpctr()
     pas_plot->plotLayout()->addElement(0, 0, new QCPTextElement(pas_plot,
                                                                           "Power Angular Density (PAS) and Angular Distribution",
                                                                           QFont("sans", 12, QFont::Bold)));
-    QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
+//    QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(pas_plot,0,0);
-    firstLayout->addWidget(show_tdl,1,0);
+//    firstLayout->addWidget(show_tdl,1,0);
 
     widget->setLayout(firstLayout);
 
-    connect(show_tdl,&QPushButton::clicked,this,&DialogRx::showTDL);
+//    connect(show_tdl,&QPushButton::clicked,this,&DialogRx::showTDL);
     return widget;
 }
 
@@ -871,11 +871,12 @@ QWidget *DialogRx::SpcCrltn()
 //    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->graph(0)->setName("Spatial Correlation");
 
-    spc_crltn_plot->xAxis->setLabel("z");
-    spc_crltn_plot->yAxis->setLabel("R");
+    spc_crltn_plot->xAxis->setLabel("\u0394z [cm]");
+    spc_crltn_plot->yAxis->setLabel("|R(\u0394z)|");
     spc_crltn_plot->yAxis->grid()->setSubGridVisible(true);
     spc_crltn_plot->xAxis->grid()->setSubGridVisible(true);
     spc_crltn_plot->rescaleAxes();
+    spc_crltn_plot->yAxis->setRange(0, 1);
     spc_crltn_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     spc_crltn_plot->replot();
     spc_crltn_plot->legend->setVisible(true);
@@ -896,12 +897,16 @@ void DialogRx::updateSpcCrltn()
 {
     vector<double> sc = m_mathematicalproduct->spaceCrltn();
     vector<double> dz = m_mathematicalproduct->deltaZ();
-    if (dz.size() >= 400){
+    if (dz.size() >= 170){
         QVector<double> spaceCrltn;
         QVector<double> deltaZ;
-        spaceCrltn = QVector(sc.begin(), sc.begin() + 400);
-        deltaZ = QVector(dz.begin(), dz.begin() + 400);
+        spaceCrltn = QVector(sc.begin(), sc.begin() + 300);
+        deltaZ = QVector(dz.begin(), dz.begin() + 300);
+//        spaceCrltn = QVector(sc.begin(), sc.end());
+//        deltaZ = QVector(dz.begin(), dz.end());
         spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
+        spc_crltn_plot->yAxis->setRange(0, 1);
+        spc_crltn_plot->xAxis->setRange(0, 1);
         spc_crltn_plot->replot();
     }
 }
@@ -922,17 +927,18 @@ QWidget *DialogRx::timeCrltn()
 //    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
     tm_crltn_plot->graph(0)->setName("Time Correlation");
 
-    tm_crltn_plot->xAxis->setLabel("t");
-    tm_crltn_plot->yAxis->setLabel("R");
+    tm_crltn_plot->xAxis->setLabel("\u0394t [10\u207B\u00B2 s]");
+    tm_crltn_plot->yAxis->setLabel("|R(\u0394t)|");
     tm_crltn_plot->yAxis->grid()->setSubGridVisible(true);
     tm_crltn_plot->xAxis->grid()->setSubGridVisible(true);
     tm_crltn_plot->rescaleAxes();
+    tm_crltn_plot->yAxis->setRange(0, 1);
     tm_crltn_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     tm_crltn_plot->replot();
     tm_crltn_plot->legend->setVisible(true);
     tm_crltn_plot->plotLayout()->insertRow(0);
     tm_crltn_plot->plotLayout()->addElement(0, 0, new QCPTextElement(tm_crltn_plot,
-                                                                          "Spatial Correlation",
+                                                                          "Time Correlation",
                                                                           QFont("sans", 12, QFont::Bold)));
 
     QGridLayout *firstLayout = new QGridLayout;
@@ -946,11 +952,15 @@ QWidget *DialogRx::timeCrltn()
 void DialogRx::updateTimeCrltn()
 {
     vector<double> tc = m_mathematicalproduct->timeCrltn();
-    QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
-    vector<double> dt = m_mathematicalproduct->timeCrltnT();
-    QVector<double> deltaT = QVector(dt.begin(), dt.end());
-    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
-    tm_crltn_plot->replot();
+    if (tc.size() >= 170 ) {
+        QVector<double> timeCrltn = QVector(tc.begin(), tc.begin() + 300);
+        vector<double> dt = m_mathematicalproduct->timeCrltnT();
+        QVector<double> deltaT = QVector(dt.begin(), dt.begin() + 300);
+        tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
+        tm_crltn_plot->yAxis->setRange(0, 1);
+        tm_crltn_plot->xAxis->setRange(0, 1);
+        tm_crltn_plot->replot();
+    }
 }
 
 void DialogRx::changeGraph(){

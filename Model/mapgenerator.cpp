@@ -32,15 +32,15 @@ void MapGenerator::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsign
 void MapGenerator::generateStreets(const unsigned streetsDistance)
 {
     for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)); i++) {
-        int random1 = 0;//= rand() % 100;
+        int random1 = 0;//rand() % 50;
         int random2 = 0;//= rand() % 100;
-        QLineF *horizontalLine = new QLineF(0, round(i*streetsDistance / px_to_meter + random1),
+        QLineF *horizontalLine = new QLineF(0, round((i*streetsDistance + random1 )/ px_to_meter),
                                             round(m_mapBoundary.right() / px_to_meter),
                                             round(i*streetsDistance / px_to_meter + random2));
 
-        int random3 = 0;//rand() % 100;
+        int random3 = 0;//rand() % 50;
         int random4 = 0;//rand() % 100;
-        QLineF *verticalLine = new QLineF(round(i*streetsDistance / px_to_meter + random3),
+        QLineF *verticalLine = new QLineF(round((i*streetsDistance + random3)/ px_to_meter),
                                           round(m_mapBoundary.top() / px_to_meter),
                                           round(i*streetsDistance / px_to_meter + random4),
                                           round(m_mapBoundary.bottom() / px_to_meter));

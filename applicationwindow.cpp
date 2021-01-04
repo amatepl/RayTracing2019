@@ -2,7 +2,7 @@
 #include "Share/wholeray.h"
 #include "Share/params.h"
 
-float px_to_meter = 0.5;  // meter per pixel
+float px_to_meter = 0.2;  // meter per pixel
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::WindowStaysOnBottomHint)
 {

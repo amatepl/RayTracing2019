@@ -129,8 +129,11 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     chData.angularDistrMap[round(u * 1e2)/1e2] += angularDistr;
     chData.dopplerDistrMap[round(w * 1e2)/1e2] += dopplerDistr;
 
-    chData.prxAngularSpctrMap[round(u * 1e2)/1e2] = ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
-    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] = ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
+    chData.prxAngularSpctrMap[round(u * 1e2)/1e2] =
+        ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
+
+    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] =
+        ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
 
     // Save Data
     chData.u.push_back(u);
@@ -257,20 +260,20 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         double angleRx = 180 + direction;
         Data &chData = m_chsData[receiver];
 
-        betavec.setAngle(angleRx + 180);
+        betavec.setAngle(angleRx);
 
         double theta = angleRx;
         if (receiver_speed.length() > 0.0){
             theta = betavec.angleTo(receiver_speed);
         }
         // Put computed data into channels data.
-        double u = ph::uMPC(wvNbr, angleRx);
+        double u = ph::uMPC(wvNbr, theta);
         double w = receiver_speed.length()*u;
 
-        complex<double> angularDistr = ph::angDistrMPC(a, angleRx, u);
+        complex<double> angularDistr = ph::angDistrMPC(induced_voltage, angleRx, u);
         double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
 
-        complex<double> dopplerDistr = ph::angDistrMPC(a, theta, w);
+        complex<double> dopplerDistr = ph::angDistrMPC(induced_voltage, theta, w);
         double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
         // Save Data
@@ -281,8 +284,12 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         chData.dopplerDistrMap[round(w * 1e2)/1e2] += dopplerDistr;
 
         chData.prxAngularSpctr.push_back(prxAngSpctr);
-        chData.prxAngularSpctrMap[round(u * 1e2)/1e2] = ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
-        chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] = ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
+
+        chData.prxAngularSpctrMap[round(u * 1e2)/1e2] =
+            ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
+
+        chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] =
+            ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
 
     }
 
@@ -732,13 +739,12 @@ void Tx::clearChData(QPointF *rx)
 
 void Tx::deleteRays(QPointF *rx)
 {
-     if (m_receiversRays.count(rx)) {
+    if (m_receiversRays.count(rx)) {
         for (unsigned int i = 0; i < m_receiversRays[rx].size(); i++) {
             delete m_receiversRays[rx].at(i);
         }
         m_receiversRays[rx].clear();
     }
-
 }
 
 // ---------------------------------------------------- ProductObserver -------------------------------------------------------------------
@@ -836,6 +842,12 @@ Data * Tx::getChData(QPointF *rx)
     // Normalize PAS
     map<double, double> testPAS = m_chsData[rx].prxAngularSpctrMap;
     vector<double> testPASVec = m_chsData[rx].prxAngularSpctr;
+    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
+        e.second = e.second/m_chsData[rx].prxAngularSpctrMap.size();
+    }
+    for (auto &e: m_chsData[rx].prxDopplerSpctrMap) {
+        e.second = e.second/m_chsData[rx].prxDopplerSpctrMap.size();
+    }
 //    double max = 0;
 //    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
 //        if (max < abs(e.second)) max = abs(e.second);

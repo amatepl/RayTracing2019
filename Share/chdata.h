@@ -60,6 +60,7 @@ struct Data {
     std::vector<double>                                             timeCrltn;
     std::map<double, double>                                        timeCrltnMap;
     std::vector<double>                                             deltaZ;
+    std::vector<double>                                             deltaT;
 
 };
 #endif // CHDATA_H

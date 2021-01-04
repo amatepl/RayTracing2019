@@ -26,14 +26,20 @@ Wall::~Wall(void)
 
 
 QPointF Wall::symetricalPoint(const QPointF &point){
-    QLineF normal = normalVector();
-    QLineF finalVector(point,point);
-    normal.translate(point);
-    QPointF closestPoint;
-    intersects(normal,&closestPoint);
-    //intersect(normalVector().translate(point),&closestPoint);
-    finalVector.setP2(closestPoint);
-    finalVector.setLength(2*finalVector.length());
+//    QLineF normal = normalVector();
+//    QLineF finalVector(point,point);
+//    normal.translate(point);
+//    QPointF closestPoint;
+//    intersects(normal,&closestPoint);
+//    //intersect(normalVector().translate(point),&closestPoint);
+//    finalVector.setP2(closestPoint);
+//    finalVector.setLength(2*finalVector.length());
+
+
+    QLineF finalVector(p1(), point);
+    double theta = angleTo(finalVector);
+    finalVector.setAngle(angle() - theta);
+
     return finalVector.p2();
 }
 
