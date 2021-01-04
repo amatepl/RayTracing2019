@@ -26,8 +26,9 @@ double ph::prxSpctrMPC(angle theta, double spectrum)
 
 double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const ph::u u)
 {
-//    return 1/(2 * M_PI * std::sqrt(pow(ampu, 2) - pow(u, 2)));
-    return norm(angDistr)/(2 * M_PI * std::sqrt(pow(ampu, 2) - pow(u, 2)));
+    return 2*M_PI;
+//    return 2*M_PI/std::sqrt(pow(ampu, 2) - pow(u, 2));
+//    return norm(angDistr)/(2 * M_PI /* * std::sqrt(pow(ampu, 2) - pow(u, 2))*/);
 //    return ampu * sqrt(1 - pow(u/ampu, 2)) * norm(angDistr) / (2 * M_PI);
 //    return ampu * sqrt(1 - pow(u/ampu, 2)) * angDistr / (2 * M_PI);
 }

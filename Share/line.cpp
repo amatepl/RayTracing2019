@@ -36,23 +36,28 @@ double Line::getSlope() const
 
 QPointF Line::symetricalPoint(const QPointF &point) {
 
-    qreal ray_vector_length = sqrt(pow(point.y() - y2(), 2) + pow(point.x() - x2(), 2));
-    qreal virtual_slope;
+//    qreal ray_vector_length = sqrt(pow(point.y() - y2(), 2) + pow(point.x() - x2(), 2));
+//    qreal virtual_slope;
 
-    if (point.y() - y2() < 0 && point.x() - x2()){
-        virtual_slope = -acos((point.x() - x2())/ray_vector_length);
-    } else {
-        virtual_slope = acos((point.x() - x2())/ray_vector_length);
-    }
+//    if (point.y() - y2() < 0 && point.x() - x2()){
+//        virtual_slope = -acos((point.x() - x2())/ray_vector_length);
+//    } else {
+//        virtual_slope = acos((point.x() - x2())/ray_vector_length);
+//    }
 
-    qreal ray_slope = 2*getAngleRad() - virtual_slope;
-    qreal ray_vector[2] ={cos(ray_slope), sin(ray_slope)};
-    qreal x2 = ray_vector_length * ray_vector[0];
-    qreal y2 = ray_vector_length * ray_vector[1];
-    qreal transmitterImagePosX = this->x2() + x2;
-    qreal transmitterImagePosY = this->y2() + y2;
+//    qreal ray_slope = 2*getAngleRad() - virtual_slope;
+//    qreal ray_vector[2] ={cos(ray_slope), sin(ray_slope)};
+//    qreal x2 = ray_vector_length * ray_vector[0];
+//    qreal y2 = ray_vector_length * ray_vector[1];
+//    qreal transmitterImagePosX = this->x2() + x2;
+//    qreal transmitterImagePosY = this->y2() + y2;
+//    return QPointF(transmitterImagePosX, transmitterImagePosY);
 
-    return QPointF(transmitterImagePosX, transmitterImagePosY);
+    QLineF finalVector(p1(), point);
+    double theta = angleTo(finalVector);
+    finalVector.setAngle(angle() - theta);
+    return finalVector.p2();
+
 
 }
 

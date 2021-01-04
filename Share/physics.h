@@ -345,14 +345,19 @@ vector<complex<double>> dft2(vector<T> &in,double bandwidth,double step)
 }
 
 template <typename T>
-vector<complex<double>> idft(vector<T> &in)
+vector<complex<double>> idft(vector<T> &in, unsigned nidft=-1)
 {
     vector<complex<double>> out;
 
     complex<double> j (0., 1.);
 
     unsigned N = in.size();
-    for (unsigned n = 0; n < N; n++) {
+
+    if (nidft<0) {
+        nidft = in.size();
+    }
+
+    for (unsigned n = 0; n < nidft; n++) {
         out.push_back(0);
         for (unsigned m = 0; m < N; m++) {
             out.at(n) += in.at(m) * exp(j * 2. * M_PI * (double) n * (double) m / (double) N) / (double) N;

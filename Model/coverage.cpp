@@ -176,7 +176,6 @@ void Coverage::notifyTxs(QPointF *rx, fptr f)
 //        eField += tx->computeEField(rx);
 
     }
-
     m_heatMap.push_back(Tile{rx->toPoint(), eField, (int) (1 / m_dnsty)});
 }
 

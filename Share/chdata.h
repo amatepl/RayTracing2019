@@ -66,6 +66,7 @@ struct Data {
     std::complex<double>                                            indVoltageGnd{0};
     double                                                          angleGroundZ{0};
     double                                                          angleGroundX{0};
+    std::vector<double>                                             deltaT;
 
 };
 #endif // CHDATA_H
