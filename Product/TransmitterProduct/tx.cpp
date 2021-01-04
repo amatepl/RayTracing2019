@@ -109,8 +109,8 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     chData.impulseResp[tau] += voltage;
     chData.intPattern[angleRx-180] += voltage;
 
-    if (ray->size() == 1) m_los_factor[rx] = norm(voltage);
-    else m_nlos_factor[rx] += norm(voltage);
+    if (ray->size() == 1) chData.losFactor = norm(voltage);
+    else chData.nlosFactor += norm(voltage);
 
     beta.setAngle(angleRx);
 //        beta.setAngle(angleRx + 180); ???
@@ -124,21 +124,23 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
     double w = rays_speed[ray]*wvNbr - receiver_speed.length()*u;
 
     complex<double> angularDistr = ph::angDistrMPC(voltage, theta, u);
-//    complex<double> dopplerDistr = ph::angDistrMPC(voltage, theta, w);
-    chData.dopplerDistr[w] += 2*M_PI*voltage;
+    complex<double> dopplerDistr = ph::angDistrMPC(voltage, theta, w);
     double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
-//    double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
+    double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
-    chData.prxAngularSpctrMap[round(u * 1e2)/1e2] += ph::prxSpctrMPC(angularDistr, wvNbr, u);
-//    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
+    chData.angularDistrMap[round(u * 1e2)/1e2] += angularDistr;
+    chData.dopplerDistrMap[round(w * 1e2)/1e2] += dopplerDistr;
+
+    chData.prxAngularSpctrMap[round(u * 1e2)/1e2] = ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
+    chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] = ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
 
     // Save Data
     chData.u.push_back(u);
     chData.w.push_back(w);
     chData.angularDistr.push_back(angularDistr);
-//    chData.dopplerDistr.push_back(dopplerDistr);
+    chData.dopplerDistr.push_back(dopplerDistr);
     chData.prxAngularSpctr.push_back(prxAngSpctr);
-//    chData.prxDopplerSpctr.push_back(prxDopSpctr);
+    chData.prxDopplerSpctr.push_back(prxDopSpctr);
 
     // receivers_speed.translate(- m_receiver_speed.p1());   Check if necessary
     // m_ray_speed.translate(- m_ray_speed.p1());       Chack if necessary
@@ -253,7 +255,7 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         m_chsData[receiver].angleGroundX = direction;
         m_chsData[receiver].angleGroundZ = (M_PI/2-thetaG)*180/M_PI;
 //        cout << "Induced voltage for ground: " << induced_voltage << endl;
-        m_nlos_factor[receiver] += pow(abs(a),2);
+        m_chsData[receiver].nlosFactor += norm(induced_voltage);
 //        double shift = (direction - m_receiver_speed.angle()) * M_PI / 180.0;
 //        double omega = -2.0 * M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
 //        m_dopplerSpectrum[receiver][omega] += a;
@@ -281,9 +283,13 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         // Save Data
         chData.u.push_back(u);
         chData.angularDistr.push_back(angularDistr);
+
+        chData.angularDistrMap[round(u * 1e2)/1e2] += angularDistr;
+        chData.dopplerDistrMap[round(w * 1e2)/1e2] += dopplerDistr;
+
         chData.prxAngularSpctr.push_back(prxAngSpctr);
-        chData.prxAngularSpctrMap[round(u * 1e2)/1e2] += prxAngSpctr;
-        chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] += prxDopSpctr;
+        chData.prxAngularSpctrMap[round(u * 1e2)/1e2] = ph::prxSpctrMPC(chData.angularDistrMap[round(u * 1e2)/1e2], wvNbr, u);
+        chData.prxDopplerSpctrMap[round(w * 1e2)/1e2] = ph::prxSpctrMPC(chData.dopplerDistrMap[round(w * 1e2)/1e2], wvNbr * receiver_speed.length(), w);
 
     }
 
@@ -737,7 +743,8 @@ void Tx::clearChData(QPointF *rx)
     m_chsData[rx].w.clear();
     m_chsData[rx].dopplerDistr.clear();
     m_chsData[rx].prxDopplerSpctr.clear();
-    m_chsData[rx].riceFactor = 0;
+    m_chsData[rx].nlosFactor = 0;
+    m_chsData[rx].losFactor = 0;
     m_chsData[rx].spaceCrltnMap.clear();
     m_chsData[rx].deltaZ.clear();
     m_chsData[rx].spaceCrltn.clear();
@@ -855,30 +862,30 @@ Data * Tx::getChData(QPointF *rx)
     // Normalize PAS
     map<double, double> testPAS = m_chsData[rx].prxAngularSpctrMap;
     vector<double> testPASVec = m_chsData[rx].prxAngularSpctr;
-    double max = 0;
-    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
-        if (max < abs(e.second)) max = abs(e.second);
-    }
+//    double max = 0;
+//    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
+//        if (max < abs(e.second)) max = abs(e.second);
+//    }
 
-    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-        e.second = (e.second / max);
-    }
+//    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
+//        e.second = (e.second / max);
+//    }
 
 //    for (double &e: m_chsData[rx].prxAngularSpctr) {
 //        e += 1;
 //    }
 
     // Rice Factor
-    m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
+//    m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
 
     // Angular Spread
 //    m_chsData[rx].angularSpred = ph::angularSpread(m_chsData[rx].prxAngularSpctr, m_chsData[rx].u, wvNbr);
 
     // Doppler Spread
-    double speed = receivers_speed[rx].length();
+//    double speed = receivers_speed[rx].length();
 //    m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
 
-    Eigen::FFT<double> fft;
+//    Eigen::FFT<double> fft;
 
 //    // Frequency response
 //    vector<double> h;

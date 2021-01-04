@@ -616,7 +616,7 @@ DialogRx::PrxAngularSpctr()
     pas_plot->graph(0)->setName("PAS");
 
     pas_plot->xAxis->setLabel("u[rad/m]");
-    pas_plot->yAxis->setLabel("S(u)[dB]");
+    pas_plot->yAxis->setLabel("S(u)[dBm]");
     pas_plot->yAxis->grid()->setSubGridVisible(true);
     pas_plot->xAxis->grid()->setSubGridVisible(true);
     pas_plot->rescaleAxes();
@@ -878,6 +878,9 @@ QWidget* DialogRx::PDP(){
     pdp_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     pdp_plot->replot();
 
+    pdp_plot->plotLayout()->insertRow(0);
+    pdp_plot->plotLayout()->addElement(0, 0, new QCPTextElement(pdp_plot, "Power delay profile", QFont("sans", 12, QFont::Bold)));
+
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(pdp_plot,0,0);
 
@@ -907,17 +910,17 @@ QWidget *DialogRx::SpcCrltn()
 
 //    pds = m_mathematicalproduct->prxDopplerSpread();
 //    doppler_distr = m_mathematicalproduct->dopplerDistr();
-    vector<double> sc = m_mathematicalproduct->spaceCrltn();
-    vector<double> dz = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaZ;
-    QVector<double> spaceCrltn;
-    if (dz.size() >=400) {
-        deltaZ = QVector(dz.begin(),dz.begin() + 400);
-        spaceCrltn = QVector(sc.begin(), sc.begin() + 400);
-    } else {
-        deltaZ = QVector(dz.begin(),dz.end());
-        spaceCrltn = QVector(sc.begin(), sc.end());
-    }
+//    vector<double> sc = m_mathematicalproduct->spaceCrltn();
+//    vector<double> dz = m_mathematicalproduct->deltaZ();
+//    QVector<double> deltaZ;
+//    QVector<double> spaceCrltn;
+//    if (dz.size() >=400) {
+//        deltaZ = QVector(dz.begin(),dz.begin() + 400);
+//        spaceCrltn = QVector(sc.begin(), sc.begin() + 400);
+//    } else {
+//        deltaZ = QVector(dz.begin(),dz.end());
+//        spaceCrltn = QVector(sc.begin(), sc.end());
+//    }
 
 
 //    QVector<double> localpds = pds;
@@ -926,7 +929,7 @@ QWidget *DialogRx::SpcCrltn()
     // Plot physiscal impulse response
     spc_crltn_plot->addGraph();
     spc_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
-    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
+//    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->graph(0)->setName("Spatial Correlation");
 
     spc_crltn_plot->xAxis->setLabel("z");
@@ -969,15 +972,15 @@ QWidget *DialogRx::timeCrltn()
     QWidget *widget = new QWidget;
     tm_crltn_plot = new QCustomPlot;
 
-    vector<double> dt = m_mathematicalproduct->deltaZ();
-    QVector<double> deltaT = QVector(dt.begin(), dt.end());
-    vector<double> tc = m_mathematicalproduct->spaceCrltn();
-    QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
+//    vector<double> dt = m_mathematicalproduct->deltaZ();
+//    QVector<double> deltaT = QVector(dt.begin(), dt.end());
+//    vector<double> tc = m_mathematicalproduct->spaceCrltn();
+//    QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
 
     // Plot physiscal impulse response
     tm_crltn_plot->addGraph();
     tm_crltn_plot->graph(0)->setPen(QPen(Qt::blue));
-    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
+//    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
     tm_crltn_plot->graph(0)->setName("Time Correlation");
 
     tm_crltn_plot->xAxis->setLabel("t");
@@ -1173,33 +1176,30 @@ void DialogRx::tabOpened(int index)
         impulse_plot->graph(0)->rescaleAxes();
         break;
     case 2:
-        updateImpulseResponse();
-        break;
-    case 3:
         updateFqResp();
         fq_resp_plot->graph(0)->rescaleAxes();
         break;
+    case 3:
+        break;
     case 4:
-        break;
-    case 5:
-        updateDopplerSpctr();
-        doppler_spctr_plot->graph(0)->rescaleAxes();
-        break;
-    case 6:
         updatePrxAngularSpctr();
         pas_plot->graph(0)->rescaleAxes();
         break;
-    case 7:
+    case 5:
         updatePrxDopplerSpctr();
         pds_plot->graph(0)->rescaleAxes();
         break;
-    case 8:
+    case 6:
         updateSpcCrltn();
         spc_crltn_plot->graph(0)->rescaleAxes();
         break;
-    case 9:
+    case 7:
         updateTimeCrltn();
         tm_crltn_plot->graph(0)->rescaleAxes();
+        break;
+    case 8:
+        updatePDP();
+        pdp_plot->graph(0)->rescaleAxes();
         break;
     default:
         break;

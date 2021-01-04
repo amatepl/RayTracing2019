@@ -214,10 +214,10 @@ public slots:
 };
 
 template <typename T>
-void dB (T &container)
+void dBm (T &container)
 {
     for (auto & i: container) {
-        i = 20 * log10(i);
+        i = 10 * log10(i) + 30;
     }
 }
 

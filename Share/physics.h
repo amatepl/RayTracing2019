@@ -72,6 +72,11 @@ double omegaMPC(double v, double wvNbr,  angle angleRx);
  */
 double prxSpctrMPC(angle theta, double spectrum);
 
+/*!
+ * \fn double pasMPC (WholeRay *wholeRay);
+ * \return Power Angular Sepctrum for one MPC
+ *  Overload
+ */
 double prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const u u);
 
 /*!
