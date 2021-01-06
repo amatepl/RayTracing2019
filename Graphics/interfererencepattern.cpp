@@ -1,9 +1,9 @@
 #include "interfererencepattern.h"
 
-const int sampleCountX = 80;
-const int sampleCountZ = 80;
-const float sampleMin = -2.0;
-const float sampleMax = 2.0f;
+const int sampleCountX = 320;
+const int sampleCountZ = 320;
+const float sampleMin = -16.0;
+const float sampleMax = 16.0f;
 
 InterfererencePattern::InterfererencePattern(Q3DSurface *surface)
     : m_graph(surface)
@@ -16,13 +16,15 @@ InterfererencePattern::InterfererencePattern(Q3DSurface *surface)
     m_graph->axisX()->setTitle(x_axe);
     m_graph->setAxisY(new QValue3DAxis);
     m_graph->axisY()->setTitleVisible(true);
-    QString y_axe = QString("|h| [dB]");
+    QString y_axe = QString("|V_OC(x,y)| [dB]");
     m_graph->axisY()->setTitle(y_axe);
     m_graph->setAxisZ(new QValue3DAxis);
     m_graph->axisZ()->setTitleVisible(true);
-    QString z_axe = QString("Z/") + QChar(0x03BB);
+    QString z_axe = QString("Y/") + QChar(0x03BB);
     m_graph->axisZ()->setTitle(z_axe);
-    m_graph->activeTheme()->setType(Q3DTheme::ThemeStoneMoss);
+    m_graph->activeTheme()->setType(Q3DTheme::ThemePrimaryColors);
+//    m_graph->activeTheme()->setGridLineColor(QColor(Qt::black));
+    m_graph->activeTheme()->setGridEnabled(true);
     m_graph->activeTheme()->setFont(font);
 
     m_impulseproxy = new QSurfaceDataProxy();
@@ -42,8 +44,8 @@ InterfererencePattern::enableImpulseInterference(std::vector<double> impulse_r,d
     m_impulseseries->setDrawMode(QSurface3DSeries::DrawSurfaceAndWireframe);
     m_impulseseries->setFlatShadingEnabled(true);
 
-    m_graph->axisX()->setLabelFormat("%.2f");
-    m_graph->axisZ()->setLabelFormat("%.2f");
+    m_graph->axisX()->setLabelFormat("%0.2f");
+    m_graph->axisZ()->setLabelFormat("%0.2f");
     m_graph->axisX()->setRange(sampleMin, sampleMax);
     m_graph->axisY()->setRange(min, max);
     m_graph->axisZ()->setRange(sampleMin, sampleMax);
@@ -74,6 +76,7 @@ InterfererencePattern::enableImpulseInterference(std::vector<double> impulse_r,d
 
     m_graph->seriesList().at(0)->setBaseGradient(gr);
     m_graph->seriesList().at(0)->setColorStyle(Q3DTheme::ColorStyleRangeGradient);
+    m_graph->seriesList().at(0)->setDrawMode(QSurface3DSeries::DrawSurface);
 }
 
 void

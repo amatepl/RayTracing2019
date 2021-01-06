@@ -187,6 +187,7 @@ QWidget *DialogTx::createPathLossTab()
     map<double, double> shadow = m_tx->notifyObserversShadowing();
     QVector<double> distance_sha;
     QVector<double> power_sha;
+
     for (auto &sha: shadow){
         distance_sha.push_back(log10(sha.first));
         power_sha.push_back(sha.second);
@@ -235,7 +236,7 @@ QWidget *DialogTx::createPathLossTab()
     customplot->graph(3)->setName("Free propagation loss");
 
     customplot->xAxis->setLabel("Distance log(d/1m)");
-    customplot->yAxis->setLabel("Prx[dbm]");
+    customplot->yAxis->setLabel("<Prx(d)>[dbm]");
     //customplot->xAxis->setScaleType(QCPAxis::stLogarithmic);
     customplot->yAxis->grid()->setSubGridVisible(true);
     customplot->xAxis->grid()->setSubGridVisible(true);

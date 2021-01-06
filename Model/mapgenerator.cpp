@@ -32,15 +32,19 @@ void MapGenerator::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsign
 void MapGenerator::generateStreets(const unsigned streetsDistance)
 {
     for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)); i++) {
-        int random1 = 0;//rand() % 50;
-        int random2 = 0;//= rand() % 100;
-        QLineF *horizontalLine = new QLineF(0, round((i*streetsDistance + random1 )/ px_to_meter),
+//        int random1 = 0;
+        int random1 = rand() % 100;
+//        int random2 = 0;
+        int random2 = random1;
+        QLineF *horizontalLine = new QLineF(0, round(i*streetsDistance / px_to_meter + random1),
                                             round(m_mapBoundary.right() / px_to_meter),
                                             round(i*streetsDistance / px_to_meter + random2));
 
-        int random3 = 0;//rand() % 50;
-        int random4 = 0;//rand() % 100;
-        QLineF *verticalLine = new QLineF(round((i*streetsDistance + random3)/ px_to_meter),
+//        int random3 = 0;
+        int random3 = rand() % 100;
+//        int random4 = 0;//rand() % 100;
+        int random4 = random3;
+        QLineF *verticalLine = new QLineF(round(i*streetsDistance / px_to_meter + random3),
                                           round(m_mapBoundary.top() / px_to_meter),
                                           round(i*streetsDistance / px_to_meter + random4),
                                           round(m_mapBoundary.bottom() / px_to_meter));
@@ -53,6 +57,7 @@ void MapGenerator::generateStreets(const unsigned streetsDistance)
 
 void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth)
 {
+    m_products.clear();
     for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance )) - 1; i++) {
         for (int j = 0; j < round(m_mapBoundary.width()/(streetsDistance )) - 1; j++) {
             QPointF intersectionPoint1;
@@ -280,8 +285,8 @@ void MapGenerator::egBuilidings()
 
 //    QPolygonF buildingForm;
 //    buildingForm << QPointF(0,0)
-//                 << QPointF(600,0)
-//                 << QPointF(600,200)
+//                 << QPointF(2000,0)
+//                 << QPointF(2000,200)
 //                 << QPointF(0,200)
 //                 << QPointF(0,0);
 
@@ -291,11 +296,11 @@ void MapGenerator::egBuilidings()
 //    m_products.push_back(building);
 
 //    QPolygonF buildingForm2;
-//    buildingForm2 << QPointF(0,212)
-//                 << QPointF(600,212)
-//                 << QPointF(600,410)
+//    buildingForm2 << QPointF(0,260)
+//                 << QPointF(2000,260)
+//                 << QPointF(2000,410)
 //                 << QPointF(0,410)
-//                 << QPointF(0,212);
+//                 << QPointF(0,260);
 
 //    MathematicalProduct *building2 = m_buildingFactory
 //                                        ->createMathematicalProduct(buildingForm2);
@@ -337,6 +342,114 @@ void MapGenerator::egBuilidings()
                                         ->createMathematicalProduct(buildingForm3);
 
     m_products.push_back(building3);
+
+//        QPolygonF buildingForm;
+//        buildingForm << QPointF(0,0)
+//                     << QPointF(100,0)
+//                     << QPointF(100,100)
+//                     << QPointF(0,100)
+//                     << QPointF(0,0);
+
+//        MathematicalProduct *building = m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm);
+
+//        m_products.push_back(building);
+
+//        QPolygonF buildingForm2;
+//        buildingForm2 << QPointF(160,0)
+//                     << QPointF(260,0)
+//                     << QPointF(260,100)
+//                     << QPointF(160,100)
+//                     << QPointF(160,0);
+
+//        MathematicalProduct *building2 = m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm2);
+
+//        m_products.push_back(building2);
+
+//        QPolygonF buildingForm3;
+//        buildingForm3 << QPointF(320,0)
+//                     << QPointF(420,0)
+//                     << QPointF(420,100)
+//                     << QPointF(320,100)
+//                     << QPointF(320,0);
+
+//        MathematicalProduct *building3 = m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm3);
+
+//        m_products.push_back(building3);
+
+//        QPolygonF buildingForm4;
+//        buildingForm4 << QPointF(0,160)
+//                     << QPointF(100,160)
+//                     << QPointF(100,260)
+//                     << QPointF(0,260)
+//                     << QPointF(0,160);
+
+//        MathematicalProduct *building4= m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm4);
+
+//        m_products.push_back(building4);
+
+//        QPolygonF buildingForm5;
+//        buildingForm5 << QPointF(160,160)
+//                     << QPointF(260,160)
+//                     << QPointF(260,260)
+//                     << QPointF(160,260)
+//                     << QPointF(160,160);
+
+//        MathematicalProduct *building5 = m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm5);
+
+//        m_products.push_back(building5);
+
+//        QPolygonF buildingForm6;
+//        buildingForm6 << QPointF(320,160)
+//                     << QPointF(420,160)
+//                     << QPointF(420,260)
+//                     << QPointF(320,260)
+//                     << QPointF(320,160);
+
+//        MathematicalProduct *building6 = m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm6);
+
+//        m_products.push_back(building6);
+
+//        QPolygonF buildingForm7;
+//        buildingForm7 << QPointF(0,320)
+//                     << QPointF(100,320)
+//                     << QPointF(100,420)
+//                     << QPointF(0,420)
+//                     << QPointF(0,320);
+
+//        MathematicalProduct *building7= m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm7);
+
+//        m_products.push_back(building7);
+
+//        QPolygonF buildingForm8;
+//        buildingForm8 << QPointF(160,320)
+//                     << QPointF(260,320)
+//                     << QPointF(260,420)
+//                     << QPointF(160,420)
+//                     << QPointF(160,320);
+
+//        MathematicalProduct *building8 = m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm8);
+
+//        m_products.push_back(building8);
+
+//        QPolygonF buildingForm9;
+//        buildingForm9 << QPointF(320,320)
+//                     << QPointF(420,320)
+//                     << QPointF(420,420)
+//                     << QPointF(320,420)
+//                     << QPointF(320,320);
+
+//        MathematicalProduct *building9 = m_buildingFactory
+//                                            ->createMathematicalProduct(buildingForm9);
+
+//        m_products.push_back(building9);
 
 
 }

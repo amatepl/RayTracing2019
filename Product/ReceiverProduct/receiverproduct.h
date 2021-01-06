@@ -68,6 +68,8 @@ public:
     // Physical Result and parameters
 
     // 1. Impulse and TDL Results:
+    virtual double maxVoltage() {return max_voltage;}
+    virtual double maxVoltageTDL() {return max_voltage_tdl;}
     virtual QVector<double> impulse(){return h;}
     virtual QVector<double> impulseTDL(){return h_tdl;}
     virtual QVector<double> impulseTau() {return tau;}
@@ -108,12 +110,16 @@ public:
     virtual std::vector<double> timeCrltn() const = 0;
     virtual std::vector<double> timeCrltnT() const = 0;
 
+    // 8. PDP
+    virtual std::vector<double> getPDP() = 0;
+
     virtual void newProperties() = 0;
 
 protected:
 
     // 2. Impulse and TDL vVariables
     QVector<double> h,h_tdl,tau, tau_tdl;
+    double max_voltage, max_voltage_tdl;
 
     // 4. Doppler
     PrxDopplerSpread pds;

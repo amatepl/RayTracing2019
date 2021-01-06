@@ -47,6 +47,7 @@ struct Data {
     std::vector<double>                                             w;
 //    std::map<double /*u*/, std::complex<double> /* a(u) */>         angularDistr;
     std::vector<std::complex<double> /* a(u) */>                    angularDistr;
+
     std::map<double, std::complex<double> /* a(u) */>               angularDistrMap;
     std::vector<std::complex<double> /* a(w) */>                    dopplerDistr;
     std::map<double, std::complex<double>>                          dopplerDistrMap;
@@ -54,12 +55,17 @@ struct Data {
     std::vector<double /* S(u) */>                                  prxAngularSpctr;
     std::map<double, double>                                        prxDopplerSpctrMap;
     std::vector<double /* S(w) */>                                  prxDopplerSpctr;
-    double                                                          riceFactor{0};
+    double                                                          losFactor{0};
+    double                                                          nlosFactor{0};
     std::vector<double>                                             spaceCrltn;
     std::map<double, double>                                        spaceCrltnMap;
     std::vector<double>                                             timeCrltn;
     std::map<double, double>                                        timeCrltnMap;
     std::vector<double>                                             deltaZ;
+    std::map<double, std::complex<double>>                          intPattern;
+    std::complex<double>                                            indVoltageGnd{0};
+    double                                                          angleGroundZ{0};
+    double                                                          angleGroundX{0};
     std::vector<double>                                             deltaT;
 
 };

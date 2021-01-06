@@ -35,8 +35,10 @@ void DialogCarProduct::createDialog(){
 
     m_orientation = new QDoubleSpinBox(this);
     m_orientation->setRange(0.00,360.00);
+    m_orientation->setSingleStep(90);
     m_speed = new QDoubleSpinBox(this);
     m_speed->setRange(0.00,50.00);
+    m_orientation->findChild<QLineEdit*>()->setReadOnly(true);
 
     QFormLayout *geoProperties = new QFormLayout(this);
     geoProperties->addRow("X center: ",m_posx);

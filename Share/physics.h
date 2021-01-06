@@ -392,6 +392,7 @@ vector<Ty> upsample(const vector<Tx> &x, const vector<Ty> &y, const double min,
             val += step;
         }
         res.push_back(y.at(idx));
+        val+=step;
     }
 
     if (x.size() != 0) {
@@ -401,9 +402,9 @@ vector<Ty> upsample(const vector<Tx> &x, const vector<Ty> &y, const double min,
             xend += step;
         }
     }
-//    for (unsigned i =0; i< 10000; i++){
-//        res.push_back(Ty(0));
-//    }
+    for (unsigned i =0; i< 1000; i++){
+        res.push_back(Ty(0));
+    }
     return res;
 }
 

@@ -90,7 +90,7 @@ QVariant GraphicsCarProduct::itemChange(GraphicsItemChange change, const QVarian
     if (change == QGraphicsItem::ItemPositionHasChanged
         || change == QGraphicsItem::ItemTransformHasChanged
         || change == QGraphicsItem::ItemRotationHasChanged) {
-//        m_observer->update(this);
+        m_observer->update(this);
     }
     return value;
 }
@@ -103,23 +103,13 @@ void GraphicsCarProduct::notifyToGraphicSig(QPolygonF *rect, int centerx, int ce
 {
     QPolygonF graphic = *rect;
     QPointF p0 = graphic.at(0);
-
-    for (int i = 0; i < graphic.size()-1; i++) {
-        if (p0.manhattanLength() > graphic.at(i+1).manhattanLength()) {
-            p0 = graphic.at(i+1);
-        }
-    }
-    graphic.translate(-p0-QPointF(11.0,11.0));
-    p0 = graphic.at(0);
-    QPointF p1 = graphic.at(2);
-    QLineF diag(p0,p1);
-    QPointF center = diag.center();
-    graphic.translate(-center);
+    graphic.translate(-p0);
+    setPolygon(graphic);
     QLinearGradient linearGrad(graphic.at(0),graphic.at(3));
     linearGrad.setColorAt(0, Qt::white);
     linearGrad.setColorAt(0.5, Qt::blue);
     linearGrad.setColorAt(1, Qt::darkBlue);
     setBrush(linearGrad);
-    setPolygon(graphic);
+
     setPos(centerx, centery);
 }

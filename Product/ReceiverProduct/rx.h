@@ -132,6 +132,7 @@ public:
     int interFerenceMargin() override {return m_interferencemargin;}
     vector<double> getDoppler() override;
     vector<double> getOmega() override;
+    vector<double> getPDP() override;
 
     void setSpeed(float speed) override;
     void setOrientation(float orientation) override;
@@ -171,6 +172,7 @@ private:
     int m_target_snr;
     int m_noise_figure;
     int m_interferencemargin;
+    std::map<double,std::complex<double>> m_tdl;
     DialogRx *m_dialog = nullptr;
     InfoWidget *m_info_widget;
     double min_prx;

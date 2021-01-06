@@ -15,6 +15,7 @@ public:
     MathematicalProduct * createMathematicalProduct(int posX, int posY, QPolygonF poly, bool linkgraphic);
 
 private:
+    struct CarParams {float l=4; float w=1.8;} m_carParams;
     QMenu *m_productmenu;
     QGraphicsScene *m_scene;
     float px_to_meter;

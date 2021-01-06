@@ -160,6 +160,7 @@ public:
     void dontChoseBeam(QPointF * receiver);
     void freazeBeams();
     double computePrx(complex <double> totalEfield, complex<double> groundField, QPointF* receiver);
+    double computePrx(QPointF* receiver);
     double getRxPrx(QPointF *rx);
     double dBm(double power);
     double computeReflexionPer(double thetaI, double epsilonR) const;
@@ -487,7 +488,7 @@ public:
 private:
     double m_power                 { 2 };
     Kind m_kind               { dipole };
-    int m_radius                 { 500 };
+    int m_radius                 { 550 };
     bool m_beamsFrozen = false;
 
     vector<ProductObserver *> m_txImgs;     // Would be nice if converted to unique_ptr

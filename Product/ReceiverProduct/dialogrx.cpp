@@ -12,15 +12,16 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget = new QTabWidget;
     m_tabwidget->addTab(GeneralTabDialog(),         tr("General"));
     m_tabwidget->addTab(PhysicalImpulseResponse(),  tr("Impulse Response"));
-    m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
+//    m_tabwidget->addTab(TDLImpulseResponse(),       tr("TDL"));
     m_tabwidget->addTab(fqResp(),                   tr("Frequency Response"));
     m_tabwidget->addTab(InterferencePattern(),      tr("Interference Pattern"));
 //    m_tabwidget->addTab(DistributionInterference(), tr("Interference Distribution"));
-    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
+//    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
     m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
     m_tabwidget->addTab(timeCrltn(), tr("Time Correltaion"));
+    m_tabwidget->addTab(PDP(), tr("Power Delay Profile"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
                                        | QDialogButtonBox::Cancel
@@ -325,6 +326,10 @@ QWidget* DialogRx::PhysicalImpulseResponse(){
     impulse_plot->yAxis->grid()->setSubGridVisible(true);
     impulse_plot->xAxis->grid()->setSubGridVisible(true);
 
+    QString title1 = "Normalized induced voltage as impulse response with maximum voltage = " + QString::number(round(m_mathematicalproduct->maxVoltage()*1e6)/1e6);
+    QString title2 = "and normalized TDL model under US assumption with maximum TDL voltage = " + QString::number(round(m_mathematicalproduct->maxVoltageTDL()*1e6)/1e6);
+    title_impulse = new QCPTextElement(impulse_plot, title1 + QString("\n") + title2, QFont("sans", 12, QFont::Bold));
+
     updateImpulseResponse();
 
     impulse_plot->rescaleAxes();
@@ -332,7 +337,7 @@ QWidget* DialogRx::PhysicalImpulseResponse(){
 //    impulse_plot->replot();
     impulse_plot->legend->setVisible(true);
     impulse_plot->plotLayout()->insertRow(0);
-    impulse_plot->plotLayout()->addElement(0, 0, new QCPTextElement(impulse_plot, "Normalized induced voltage as impulse response (and normalized TDL model under US assumption)", QFont("sans", 12, QFont::Bold)));
+    impulse_plot->plotLayout()->addElement(0, 0, title_impulse);
     QPushButton *show_tdl = new QPushButton("Show/Hide TDL");
 
     QGridLayout *firstLayout = new QGridLayout;
@@ -355,6 +360,9 @@ void DialogRx::updateImpulseResponse()
 
     impulse_plot->graph(0)->setData(tau, h);
     impulse_plot->graph(1)->setData(tau_tdl, h_tdl);
+    QString title1 = "Normalized induced voltage as impulse response with maximum voltage = " + QString::number(round(m_mathematicalproduct->maxVoltage()*1e6)/1e6);
+    QString title2 = "and normalized TDL model under US assumption with maximum TDL voltage = " + QString::number(round(m_mathematicalproduct->maxVoltageTDL()*1e6)/1e6);
+    title_impulse->setText(title1 + QString("\n") + title2);
     impulse_plot->replot();
 }
 
@@ -411,7 +419,7 @@ QWidget* DialogRx::fqResp(){
     fq_resp_plot->graph(0)->setName("Impulse");
 
     fq_resp_plot->xAxis->setLabel("f[Hz]");
-    fq_resp_plot->yAxis->setLabel("|H(f)|");
+    fq_resp_plot->yAxis->setLabel("|V_OC(f)| [dB]");
     fq_resp_plot->yAxis->grid()->setSubGridVisible(true);
     fq_resp_plot->xAxis->grid()->setSubGridVisible(true);
 
@@ -842,6 +850,59 @@ void DialogRx::updateDopplerSpctr()
     doppler_spctr_plot->replot();
 }
 
+QWidget* DialogRx::PDP(){
+    QWidget *widget = new QWidget;
+    pdp_plot = new QCustomPlot;
+    pdp = vec2QVec<double>(m_mathematicalproduct->getPDP());
+    tau = m_mathematicalproduct->impulseTau();
+
+    for (int i = 0; i < pdp.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pdp_plot);
+        line_impulse->start->setCoords(tau[i], pdp[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(tau[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+
+    pdp_plot->addGraph();
+    pdp_plot->graph(0)->setPen(QPen(Qt::blue));
+    pdp_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    pdp_plot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 10));
+    pdp_plot->graph(0)->setData(tau, pdp);
+    pdp_plot->graph(0)->setName("Power Delay Profile");
+
+    pdp_plot->xAxis->setLabel("\u03C4[ns]");
+    pdp_plot->yAxis->setLabel("P(\u03C4)[dB]");
+    pdp_plot->yAxis->grid()->setSubGridVisible(true);
+    pdp_plot->xAxis->grid()->setSubGridVisible(true);
+    pdp_plot->rescaleAxes();
+    pdp_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    pdp_plot->replot();
+
+    pdp_plot->plotLayout()->insertRow(0);
+    pdp_plot->plotLayout()->addElement(0, 0, new QCPTextElement(pdp_plot, "Power delay profile", QFont("sans", 12, QFont::Bold)));
+
+    QGridLayout *firstLayout = new QGridLayout;
+    firstLayout->addWidget(pdp_plot,0,0);
+
+    widget->setLayout(firstLayout);
+    return widget;
+}
+
+void DialogRx::updatePDP()
+{
+    pdp_plot->clearItems();
+    pdp = vec2QVec<double>(m_mathematicalproduct->getPDP());
+    tau = m_mathematicalproduct->impulseTau();
+    for (int i = 0; i < pdp.size(); i++) {
+        QCPItemLine *line_impulse = new QCPItemLine(pdp_plot);
+        line_impulse->start->setCoords(tau[i], pdp[i]);  // location of point 1 in plot coordinate
+        line_impulse->end->setCoords(tau[i], -600);  // location of point 2 in plot coordinate
+        line_impulse->setPen(QPen(Qt::blue));
+    }
+    pdp_plot->graph(0)->setData(tau, pdp);
+    pdp_plot->replot();
+}
+
 QWidget *DialogRx::SpcCrltn()
 {
     QWidget *widget = new QWidget;
@@ -1088,27 +1149,24 @@ void DialogRx::update()
         updateImpulseResponse();
         break;
     case 2:
-        updateImpulseResponse();
-        break;
-    case 3:
         updateFqResp();
         break;
+    case 3:
+        break;
     case 4:
-        break;
-    case 5:
-        updateDopplerSpctr();
-        break;
-    case 6:
         updatePrxAngularSpctr();
         break;
-    case 7:
+    case 5:
         updatePrxDopplerSpctr();
         break;
-    case 8:
+    case 6:
         updateSpcCrltn();
         break;
-    case 9:
+    case 7:
         updateTimeCrltn();
+        break;
+    case 8:
+        updatePDP();
         break;
     default:
         break;
@@ -1128,33 +1186,30 @@ void DialogRx::tabOpened(int index)
         impulse_plot->graph(0)->rescaleAxes();
         break;
     case 2:
-        updateImpulseResponse();
-        break;
-    case 3:
         updateFqResp();
         fq_resp_plot->graph(0)->rescaleAxes();
         break;
+    case 3:
+        break;
     case 4:
-        break;
-    case 5:
-        updateDopplerSpctr();
-        doppler_spctr_plot->graph(0)->rescaleAxes();
-        break;
-    case 6:
         updatePrxAngularSpctr();
         pas_plot->graph(0)->rescaleAxes();
         break;
-    case 7:
+    case 5:
         updatePrxDopplerSpctr();
         pds_plot->graph(0)->rescaleAxes();
         break;
-    case 8:
+    case 6:
         updateSpcCrltn();
         spc_crltn_plot->graph(0)->rescaleAxes();
         break;
-    case 9:
+    case 7:
         updateTimeCrltn();
         tm_crltn_plot->graph(0)->rescaleAxes();
+        break;
+    case 8:
+        updatePDP();
+        pdp_plot->graph(0)->rescaleAxes();
         break;
     default:
         break;
