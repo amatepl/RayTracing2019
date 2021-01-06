@@ -645,7 +645,7 @@ vector<double> Rx::spaceCrltn()
             pas.push_back(e.second);
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
-        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 1);
+        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 0.1);
         vector<complex<double>> compUpPAS;
         for (double &e: upPAS) {
             compUpPAS.push_back(complex<double>(e, 0));
@@ -701,7 +701,7 @@ vector<double> Rx::timeCrltn() const
             pds.push_back(round(e.second));
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
-        vector<complex<double>> upPDS = ph::upsample<double, complex<double>>(w, pds, -wvNbr*speed, wvNbr*speed, 1);
+        vector<complex<double>> upPDS = ph::upsample<double, complex<double>>(w, pds, -wvNbr*speed, wvNbr*speed, 0.1);
 //        vector<complex<double>> fqResp = ph::idft(upPDS);
 
 //        vector<complex<double>> complexPDS;
