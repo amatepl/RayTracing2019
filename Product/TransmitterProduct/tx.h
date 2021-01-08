@@ -177,7 +177,7 @@ public:
      * Computes the angular spred for rx.
      * The result is stored in m_chsData[rx].angularSpread
      */
-    void angularSpread(QPointF *rx);
+//    void angularSpread(QPointF *rx);
 
     void clearAll();
 

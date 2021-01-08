@@ -90,13 +90,23 @@ double prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const u u)
 std::complex<double> angDistrMPC(const std::complex<double> &h, const double theta, const double spectrum);
 
 /*!
- * \fn double angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u)
- * \brief Returns the angular spread.
- * \param prxAngularSpread
- * \param u
- * \return
+ * \fn double spread(const vector<double> &psd, const vector<double> &u)
+ *
+ * Computes the spread of the arriving power using a \a psd (Power Spectral Density)
+ * and a \a u (Power Shift).
+ *
  */
-double angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u, const double ampu);
+double spread(const vector<double> &psd, const vector<double> &u);
+
+/*!
+ * \fn double spread(const vector<double> &psd, const vector<double> &u)
+ *
+ * Override.
+ * Computes the spread of the arriving power using a \a psd (Power Spectral Density)
+ * and a \a u (Power Shift).
+ *
+ */
+double spread(const map<double, double> &psd);
 
 //BOOST_COMPUTE_FUNCTION(bool, compare_first, (const double &a, const double &b),
 //{
@@ -299,6 +309,14 @@ std::complex <double> computeEMfield(const gsl::not_null<WholeRay*> rayLine, con
  */
 std::complex <double> inducedVoltage(const std::complex <double> field,
                                      const double anglerx,const double lambda);
+
+/*!
+ * \fn double firstMinIdx(map<double, double> &fct, double th=0.2)
+ *
+ * Find the first minimum in \a fct and returns its index.
+ * A lack of precision in \a fct is possible so \a th can be set as threshold.
+ */
+double firstMinIdx(const map<double, double> &fct, const double th=0.2, const unsigned range=1);
 
 template <typename T>
 vector<complex<double>> dft(vector<T> &in)

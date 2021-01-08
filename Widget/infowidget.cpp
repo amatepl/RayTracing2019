@@ -206,9 +206,9 @@ void InfoWidget::createMapGroup()
     generate_map = new QPushButton("Generate Map");
     map_layout->addWidget(generate_map, 0, 0, Qt::AlignTop);
 
-    start_cars = new QPushButton("Start/Stop cars");
-    map_layout->addWidget(start_cars, 1, 0, Qt::AlignTop);
-    connect(start_cars,&QPushButton::clicked,this,&InfoWidget::sendStartCars);
+//    start_cars = new QPushButton("Start/Stop cars");
+//    map_layout->addWidget(start_cars, 1, 0, Qt::AlignTop);
+//    connect(start_cars,&QPushButton::clicked,this,&InfoWidget::sendStartCars);
 
     st_dnsty = new QSpinBox(map_group);
     st_dnsty->setRange(0, 999);
@@ -256,9 +256,9 @@ void InfoWidget::createMapGroup()
 
 //    f_layout->addRow("Size: ", size_layout);
 //    f_layout->addRow("Cars Density: ", width);
-    map_layout->addLayout(size_layout, 3, 0, Qt::AlignTop);
+    map_layout->addLayout(size_layout, 2, 0, Qt::AlignTop);
 
-    map_layout->addLayout(f_layout, 2, 0, Qt::AlignTop);
+    map_layout->addLayout(f_layout, 1, 0, Qt::AlignTop);
 
     connect(generate_map, &QPushButton::clicked, this, &InfoWidget::sendGenerateMap);
 

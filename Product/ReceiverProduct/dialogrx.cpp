@@ -194,29 +194,35 @@ QWidget* DialogRx::GeneralTabDialog(){
     m_riceFactor = new QLabel(QString::number(m_mathematicalproduct->getRiceFctr()), this);
     chLayout->addWidget(m_riceFactor, 5, 1);
 
+    QLabel *coherenceDistLabel = new QLabel("Coherence Distance [cm]: ", this);
+    chLayout->addWidget(coherenceDistLabel, 6, 0);
+
+    m_coherenceDist = new QLabel(QString::number(m_mathematicalproduct->getCoherenceDist()), this);
+    chLayout->addWidget(m_coherenceDist, 6, 1);
+
     QLabel *coherenceBwLabel = new QLabel("Coherence Bandwidth [MHz]: ", this);
-    chLayout->addWidget(coherenceBwLabel, 6, 0);
+    chLayout->addWidget(coherenceBwLabel, 7, 0);
 
     m_coherenceBw = new QLabel(QString::number(m_mathematicalproduct->getCoherenceBw()), this);
-    chLayout->addWidget(m_coherenceBw, 6, 1);
+    chLayout->addWidget(m_coherenceBw, 7, 1);
 
     QLabel *coherenceTmLabel = new QLabel("Coherence Time [\u03bcs]: ", this);
-    chLayout->addWidget(coherenceTmLabel, 7, 0);
+    chLayout->addWidget(coherenceTmLabel, 8, 0);
 
     m_coherenceTm = new QLabel(QString::number(m_mathematicalproduct->getCoherenceTm()), this);
-    chLayout->addWidget(m_coherenceTm, 7, 1);
+    chLayout->addWidget(m_coherenceTm, 8, 1);
 
-    QLabel *angSprdLabel = new QLabel("Angular Spread [rad]: ", this);
-    chLayout->addWidget(angSprdLabel, 8, 0);
+    QLabel *angSprdLabel = new QLabel("Angular Spread [rad/m]: ", this);
+    chLayout->addWidget(angSprdLabel, 9, 0);
 
     m_angSpdr = new QLabel(QString::number(m_mathematicalproduct->getAngSprd()), this);
-    chLayout->addWidget(m_angSpdr, 8, 1);
+    chLayout->addWidget(m_angSpdr, 9, 1);
 
     QLabel *dopplerSprdLabel = new QLabel("Doppler Spread [rad/s]: ", this);
-    chLayout->addWidget(dopplerSprdLabel, 9, 0);
+    chLayout->addWidget(dopplerSprdLabel, 10, 0);
 
     m_dopplerSpdr = new QLabel(QString::number(m_mathematicalproduct->getDopplerSprd()), this);
-    chLayout->addWidget(m_dopplerSpdr, 9, 1);
+    chLayout->addWidget(m_dopplerSpdr, 10, 1);
 
     chBox->setLayout(chLayout);
 
@@ -293,6 +299,8 @@ void DialogRx::updateChInfo()
     m_dlySprd->setText(QString::number(m_mathematicalproduct->getDlySprd()));
 
     m_riceFactor->setText(QString::number(m_mathematicalproduct->getRiceFctr()));
+
+    m_coherenceDist->setText(QString::number(m_mathematicalproduct->getCoherenceDist()));
 
     m_coherenceBw->setText(QString::number(m_mathematicalproduct->getCoherenceBw()));
 

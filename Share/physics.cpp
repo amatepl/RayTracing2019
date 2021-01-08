@@ -36,7 +36,7 @@ double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const 
 
 std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double theta, const double spectrum)
 {
-    return 2 * M_PI * h;
+    return 2 * M_PI;
 //    return 2 * M_PI * h / (spectrum * sin(theta * M_PI / 180.0)/ cos(theta * M_PI / 180));
 //    return 2 * M_PI * 1 / (spectrum * sin(theta * M_PI / 180.0)/ cos(theta * M_PI / 180));
 }
@@ -51,21 +51,33 @@ void sample(vector<T> &vec, T range){
     }
 }
 
-double ph::angularSpread(const vector<double> &prxAngularSpread, const vector<double> &u, const double ampu)
+double ph::spread(const vector<double> &psd, const vector<double> &u)
 {
     double prx = 0;
     double variance = 0;
     double mean = 0;
 
-    for (unsigned i = 0; i < prxAngularSpread.size(); i++) {
-        prx += prxAngularSpread.at(i) * ampu * sqrt(1 - pow(u.at(i) / ampu, 2)) / (2 * M_PI);
-        variance += pow(u.at(i), 2) * prxAngularSpread.at(i);
-        mean += u.at(i) * prxAngularSpread.at(i);
+    for (unsigned i = 0; i < psd.size(); i++) {
+        prx += psd.at(i);
+        variance += pow(u.at(i), 2) * psd.at(i);
+        mean += u.at(i) * psd.at(i);
     }
 
-    return sqrt(variance/prx - pow(mean, 2));
+    return sqrt(variance/prx - pow(mean/prx, 2));
 }
 
+double ph::spread(const map<double, double> &pds)
+{
+    double prx = 0;
+    double variance = 0;
+    double mean = 0;
+    for (const auto &e: pds) {
+        prx += e.second;
+        variance += pow(e.first, 2) * e.second;
+        mean += e.first * e.second;
+    }
+    return sqrt(variance/prx - pow(mean/prx, 2));
+}
 
 map<double, double> ph::correlation(const vector<complex<double> > &spctr)
 {
@@ -388,6 +400,34 @@ std::complex <double> ph::inducedVoltage(const std::complex <double> field,
 {
     complex <double> voltage = lambda/M_PI*field*cos(M_PI/2*cos(anglerx))/sin(anglerx);
     return voltage;
+}
+
+double ph::firstMinIdx(const map<double, double> &fct, const double th, const unsigned range)
+{
+
+    auto it_max = fct.cend();
+    map<double, double>::const_iterator it = fct.cbegin();
+    map<double, double>::const_iterator itr_max;
+    map<double, double>::const_iterator itr;
+    bool found = false;
+    double first = it->second;
+    while (it != it_max && !found) {
+        if (it->second/first <= th) {
+            bool higher_than_it = true;
+            itr_max = next(it, range + 1);
+            itr = it;
+            while (higher_than_it && itr != itr_max) {
+                higher_than_it = (itr->second >= it->second);
+                itr++;
+            }
+            if (higher_than_it) {
+                found = true;
+                return it->first;
+            } /*else it = itr;*/
+        }
+        ++it;
+    }
+    return fct.end()->first;
 }
 
 void ph::fft(vector<cd> & a, bool invert) {

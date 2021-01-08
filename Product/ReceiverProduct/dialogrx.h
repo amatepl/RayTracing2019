@@ -159,6 +159,7 @@ private:
     QLabel *m_dstnc;
     QLabel *m_dlySprd;
     QLabel *m_riceFactor;
+    QLabel *m_coherenceDist;
     QLabel *m_coherenceBw;
     QLabel *m_coherenceTm;
     QLabel *m_angSpdr;

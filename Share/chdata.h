@@ -31,6 +31,7 @@ struct Data {
     double                                                          bw{0};
     double                                                          prx{0};
     double                                                          dstnc{0};
+    double                                                          maxSpeed{0};
 //    double                                                          dlySprd{0};
 //    double                                                          coherenceBw{0};
 //    double                                                          coherenceTm{0};
