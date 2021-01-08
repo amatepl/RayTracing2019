@@ -45,6 +45,7 @@ public:
     virtual double getDstnc() = 0;
     virtual double getDlySprd() = 0;
     virtual double getRiceFctr() = 0;
+    virtual double getCoherenceDist() = 0;
     virtual double getCoherenceBw() = 0;
     virtual double getCoherenceTm() = 0;
     virtual double getAngSprd() = 0;
@@ -101,7 +102,7 @@ public:
 
     virtual QVector<double> angularDistr(){return angular_distr;}
 //    virtual std::vector<double> angularDistr() const = 0;
-    double angularSpread(){return angular_spread;}
+//    double angularSpread(){return angular_spread;}
     QVector<double> getu() {return u;}
     virtual std::vector<double> spaceCrltn() = 0;
     virtual std::vector<double> deltaZ() = 0;
@@ -130,7 +131,7 @@ protected:
     // 5. Spatial correlation
     PrxAngularSpread pas;
     QVector<double> angular_distr;
-    double angular_spread {0};
+//    double angular_spread {0};
     QVector <double> u;
 
     unsigned long m_transmitterfrequency;

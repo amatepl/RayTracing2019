@@ -178,8 +178,9 @@ void Rx::extractChData()
 //    }
 
 
-    angular_spread = m_chData->angularSpred;
-    doppler_spread = m_chData->dopplerSpread;
+//    angular_spread = m_chData->angularSpred;
+//    doppler_spread = m_chData->dopplerSpread;
+
 //    u = QVector<double>(m_chData->u.begin(), m_chData->u.end());
 //    w = QVector<double>(m_chData->w.begin(), m_chData->w.end());
 }
@@ -589,6 +590,14 @@ double Rx::getRiceFctr()
     return rice_factor;
 }
 
+double Rx::getCoherenceDist()
+{
+    if (m_chData){
+        spaceCrltn();
+        return ph::firstMinIdx(m_chData->spaceCrltnMap); // cm
+    } else return 0;
+}
+
 double Rx::getCoherenceBw()
 {
     return coherence_bandwidth;
@@ -596,17 +605,27 @@ double Rx::getCoherenceBw()
 
 double Rx::getCoherenceTm()
 {
-    return 0;
+    if (m_chData){
+        timeCrltn();
+        return ph::firstMinIdx(m_chData->timeCrltnMap)*10000; // us
+    } else return 0;
+//    return 0;
 }
 
 double Rx::getAngSprd()
 {
-    return angular_spread;
+    if (m_chData && m_chData->prxAngularSpctrMap.size()){
+        return ph::spread(m_chData->prxAngularSpctrMap);
+    } else return 0;
+//    return angular_spread;
 }
 
 double Rx::getDopplerSprd()
 {
-    return doppler_spread;
+    if (m_chData && m_chData->prxDopplerSpctrMap.size()) {
+        return ph::spread(m_chData->prxDopplerSpctrMap);
+    } else return 0;
+//    return doppler_spread;
 }
 complex <double> Rx::getEField() {return m_e_field;}
 complex <double> Rx::getVoltage() {return m_ind_voltage;}
@@ -696,21 +715,17 @@ vector<double> Rx::spaceCrltn()
             pas.push_back(e.second);
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
-        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 0.1);
+        vector<double> upPAS = ph::upsample<double, double>(u, pas, -wvNbr, wvNbr, 1);
         vector<complex<double>> compUpPAS;
         for (double &e: upPAS) {
             compUpPAS.push_back(complex<double>(e, 0));
         }
-//        vector<complex<double>> fqResp = ph::idft(upPAS, 1733);
+
         int nifft = pow(2, 17);
-//        Eigen::FFT<double> fft;
         vector<complex<double>> fqResp;
         fqResp = compUpPAS;
         fqResp.resize(nifft);
         ph::fft(fqResp, true);
-//        fft.inv(fqResp, compUpPAS, nifft);
-//        fft.fwd(fqResp, upPAS);
-//        fft.inv(fqResp, upPAS);
 
         m_chData->spaceCrltnMap.clear();
         m_chData->deltaZ.clear();
@@ -742,9 +757,9 @@ vector<double> Rx::timeCrltn() const
 {
     m_chData->timeCrltnMap.clear();
     m_chData->deltaT.clear();
-    double speed = m_movement.length();
+    double speed = m_chData->maxSpeed;
     vector<double> tc;
-    if (m_chData != nullptr && m_chData->prxDopplerSpctrMap.size() > 1 && speed){
+    if (m_chData != nullptr && m_chData->prxDopplerSpctrMap.size() > 1 ){
         vector<complex<double>> pds;
         vector<double> w;
         for (auto e: m_chData->prxDopplerSpctrMap) {
@@ -752,7 +767,7 @@ vector<double> Rx::timeCrltn() const
             pds.push_back(round(e.second));
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
-        vector<complex<double>> upPDS = ph::upsample<double, complex<double>>(w, pds, -wvNbr*speed, wvNbr*speed, 0.1);
+        vector<complex<double>> upPDS = ph::upsample<double, complex<double>>(w, pds, -wvNbr*speed, wvNbr*speed, 1);
 //        vector<complex<double>> fqResp = ph::idft(upPDS);
 
 //        vector<complex<double>> complexPDS;
@@ -788,7 +803,7 @@ vector<double> Rx::timeCrltn() const
 vector<double> Rx::timeCrltnT() const
 {
     vector<double> t;
-    if (m_chData && m_chData->timeCrltnMap.size() && m_movement.length()) {
+    if (m_chData && m_chData->timeCrltnMap.size() && m_chData->maxSpeed) {
         for (const auto &e: m_chData->timeCrltnMap) {
             t.push_back(e.first);
         }

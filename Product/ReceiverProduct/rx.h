@@ -120,6 +120,7 @@ public:
     double getDstnc() override;
     double getDlySprd() override;
     double getRiceFctr() override;
+    double getCoherenceDist() override;
     double getCoherenceBw() override;
     double getCoherenceTm() override;
     double getAngSprd() override;

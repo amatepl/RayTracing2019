@@ -120,6 +120,9 @@ void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
         theta = beta.angleTo(receiver_speed);
     }
 
+    if (m_chsData[rx].maxSpeed < (abs(rays_speed[ray]) + receiver_speed.length())) {
+        m_chsData[rx].maxSpeed = abs(rays_speed[ray]) + receiver_speed.length();
+    }
     double u = ph::uMPC(wvNbr, theta);
     double w = rays_speed[ray]*wvNbr + receiver_speed.length()*u;
 
@@ -734,6 +737,7 @@ void Tx::clearChData(QPointF *rx)
     m_chsData[rx].fq = 0;
     m_chsData[rx].bw = 0;
     m_chsData[rx].prx = 0;
+    m_chsData[rx].maxSpeed = 0;
     m_chsData[rx].eField = 0;
     m_chsData[rx].impulseResp.clear();
     m_chsData[rx].indVoltage = 0;
@@ -975,23 +979,23 @@ Data * Tx::getChData(QPointF *rx)
     return &m_chsData[rx];
 }
 
-void Tx::angularSpread(QPointF *rx)
-{
-    double prx = 0;
-    double variance = 0;
-    double mean = 0;
+//void Tx::angularSpread(QPointF *rx)
+//{
+//    double prx = 0;
+//    double variance = 0;
+//    double mean = 0;
 
-    const vector<double> &prxAngularSpread = m_chsData.at(rx).prxAngularSpctr;
-    const vector<double> &u = m_chsData.at(rx).u;
+//    const vector<double> &prxAngularSpread = m_chsData.at(rx).prxAngularSpctr;
+//    const vector<double> &u = m_chsData.at(rx).u;
 
-    for (unsigned i = 0; i < prxAngularSpread.size(); i++) {
-        prx += prxAngularSpread.at(i);
-        variance += pow(u.at(i), 2) * prxAngularSpread.at(i);
-        mean += u.at(i) * prxAngularSpread.at(i);
-    }
+//    for (unsigned i = 0; i < prxAngularSpread.size(); i++) {
+//        prx += prxAngularSpread.at(i);
+//        variance += pow(u.at(i), 2) * prxAngularSpread.at(i);
+//        mean += u.at(i) * prxAngularSpread.at(i);
+//    }
 
-    m_chsData.at(rx).angularSpred = sqrt(variance/prx - pow(mean, 2));
-}
+//    m_chsData.at(rx).angularSpred = sqrt(variance/prx - pow(mean, 2));
+//}
 
 void Tx::compute(QPointF *receiver)
 {
