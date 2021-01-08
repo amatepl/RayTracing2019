@@ -502,12 +502,12 @@ void Rx::sendInterferencePattern()
                         complex<double> indVolt(indVolt_real,indVolt_imag);
                         impulse += indVolt*exp(-i_comp*scalar_product);
                         if (i == -20 && j == -40){
-                            cout << "induced voltage LOS (-lambda,-2lambda): " << pattern.second << endl;
-                            cout << "impulse LOS: (-lambda,-2lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+//                            cout << "induced voltage LOS (-lambda,-2lambda): " << pattern.second << endl;
+//                            cout << "impulse LOS: (-lambda,-2lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
                         }
                         if (i == 20 && j == 20){
-                            cout << "induced voltage LOS (lambda,lambda): " << pattern.second << endl;
-                            cout << "impulse LOS: (lambda,lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+//                            cout << "induced voltage LOS (lambda,lambda): " << pattern.second << endl;
+//                            cout << "impulse LOS: (lambda,lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
                         }
                     }
                     if (m_chData->indVoltageGnd != 0.0){
@@ -520,12 +520,12 @@ void Rx::sendInterferencePattern()
                         complex<double> indVolt(indVolt_real,indVolt_imag);
                         impulse += indVolt*exp(-i_comp*scalar_product);
                         if (i == -20 && j == -40){
-                            cout << "induced voltage GND (-lambda,-2lambda): " << m_chData->indVoltageGnd << endl;
-                            cout << "impulse GND: (-lambda,-2lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+//                            cout << "induced voltage GND (-lambda,-2lambda): " << m_chData->indVoltageGnd << endl;
+//                            cout << "impulse GND: (-lambda,-2lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
                         }
                         if (i == 20 && j == 20){
-                            cout << "induced voltage GND (lambda,lambda): " << m_chData->indVoltageGnd << endl;
-                            cout << "impulse GND: (lambda,lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
+//                            cout << "induced voltage GND (lambda,lambda): " << m_chData->indVoltageGnd << endl;
+//                            cout << "impulse GND: (lambda,lambda):" << indVolt*exp(-i_comp*scalar_product) << endl;
                         }
                     }
                     impulse_db = 20*log10(abs(impulse));

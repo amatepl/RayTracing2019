@@ -554,9 +554,9 @@ double Tx::computePrx(QPointF* receiver)
     for (auto &imp: m_chsData[receiver].impulseResp){
         Voc += imp.second;
     }
-    cout << "Voltage: " << Voc << endl;
+//    cout << "Voltage: " << Voc << endl;
     double Prx = 1.0 / (8.0 * r_a) * norm(Voc);
-    cout << "Prx: " << Prx << endl;
+//    cout << "Prx: " << Prx << endl;
     return Prx;
 }
 
