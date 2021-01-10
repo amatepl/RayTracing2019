@@ -179,6 +179,21 @@ void Coverage::notifyTxs(QPointF *rx, fptr f)
     m_heatMap.push_back(Tile{rx->toPoint(), eField, (int) (1 / m_dnsty)});
 }
 
+void Coverage::notifyTxsRms(QPointF *rx, fptr f)
+{
+    complex<double> eField(0,0);
+    for (auto &tx: m_transmitters){
+        tx->deleteRays(rx);
+        tx->detectAndLink(*rx);
+        tx->notifyObservers(rx, tx->movement());
+//        eField += (this->*f)(tx, rx);
+        eField += normE(tx,rx);
+
+    }
+    eField = sqrt(eField);
+    m_heatMap.push_back(Tile{rx->toPoint(), eField, (int) (1 / m_dnsty)});
+}
+
 void Coverage::notifyTxsPrx(QPointF *rx, fptr)
 {
     double mindBm = -130;
@@ -206,10 +221,11 @@ complex<double> Coverage::complexE(Tx *tx, QPointF *rx)
     return tx->computeEField(rx);
 }
 
-complex<double> Coverage::sumAbsE(Tx *tx, QPointF *rx)
+complex<double> Coverage::normE(Tx *tx, QPointF *rx)
 {
 
-    return (complex<double>) abs(tx->computeEField(rx));
+//    return (complex<double>) abs(tx->computeEField(rx));
+    return (complex<double>) norm(tx->computeEField(rx));
 }
 
 complex<double> Coverage::prx(Tx *tx, QPointF *rx)
@@ -229,7 +245,7 @@ Coverage::fptr Coverage::selectFct()
     case HeatmapMode::complexE:
         return &Coverage::complexE;
     case HeatmapMode::sumAbsE:
-        return &Coverage::sumAbsE;
+        return &Coverage::normE;
     case HeatmapMode::prx:
         return &Coverage::prx;
     default:
@@ -243,7 +259,7 @@ Coverage::notifptr Coverage::selectNotifier()
     case HeatmapMode::complexE:
         return &Coverage::notifyTxs;
     case HeatmapMode::sumAbsE:
-        return &Coverage::notifyTxs;
+        return &Coverage::notifyTxsRms;
     case HeatmapMode::prx:
         return &Coverage::notifyTxsPrx;
     default:

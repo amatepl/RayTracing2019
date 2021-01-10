@@ -53,11 +53,12 @@ public:
     typedef complex<double>(Coverage::*fptr)(Tx *, QPointF *);
     typedef void(Coverage::*notifptr)(QPointF *, fptr) ;
     void notifyTxs(QPointF *rx, fptr f);
+    void notifyTxsRms(QPointF *rx, fptr);
     void notifyTxsPrx(QPointF *rx, fptr);
     void setDnsty(const double dnsty);
 
     complex<double> complexE(Tx *tx, QPointF *rx);
-    complex<double> sumAbsE(Tx *tx, QPointF *rx);
+    complex<double> normE(Tx *tx, QPointF *rx);
     complex<double> prx(Tx *tx, QPointF *rx);
 
     void setHeatmapMode(int mode);
