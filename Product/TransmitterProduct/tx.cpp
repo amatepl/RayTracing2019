@@ -875,12 +875,12 @@ Data * Tx::getChData(QPointF *rx)
     // Normalize PAS
     map<double, double> testPAS = m_chsData[rx].prxAngularSpctrMap;
     vector<double> testPASVec = m_chsData[rx].prxAngularSpctr;
-    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-        e.second = e.second/m_chsData[rx].prxAngularSpctrMap.size();
-    }
-    for (auto &e: m_chsData[rx].prxDopplerSpctrMap) {
-        e.second = e.second/m_chsData[rx].prxDopplerSpctrMap.size();
-    }
+//    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
+//        e.second = e.second/m_chsData[rx].prxAngularSpctrMap.size();
+//    }
+//    for (auto &e: m_chsData[rx].prxDopplerSpctrMap) {
+//        e.second = e.second/m_chsData[rx].prxDopplerSpctrMap.size();
+//    }
 //    double max = 0;
 //    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
 //        if (max < abs(e.second)) max = abs(e.second);
