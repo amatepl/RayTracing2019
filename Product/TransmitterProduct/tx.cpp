@@ -1266,7 +1266,7 @@ void Tx::computePathLossFading()
 {
     linearRegressionPathLoss();
     for (unsigned i = 0; i < m_pathloss.size(); i++){
-        path_loss.push_back(m * logD[i] + b);
+        path_loss.push_back(m * logD[i] + m_pathloss[1]);
         fading.push_back(Prx[i] - path_loss[i]);
         friis_loss.push_back(-20 * logD[i] + m_pathloss[1]);
     }
@@ -1436,7 +1436,7 @@ map<double,double> Tx::notifyObserversShadowing()
     map <double /*distance*/,double /*power_mean*/> shadow;
     vector<double> prx = powerPathLoss();
     vector <double> dpl = distancePathLoss();
-    int sample_mean = round(dpl.size()*0.01);
+    int sample_mean = round(dpl.size()*0.005);
     std::map<double,double>::iterator it;
     double power_mean = 0;
     for (int j = 0; j < prx.size(); j ++){

@@ -35,7 +35,7 @@ void MapGenerator::generateStreets(const unsigned streetsDistance)
 //        int random1 = 0;
         int random1 = rand() % 100;
 //        int random2 = 0;
-        int random2 = random1;
+        int random2 = rand() % 100;
         QLineF *horizontalLine = new QLineF(0, round(i*streetsDistance / px_to_meter + random1),
                                             round(m_mapBoundary.right() / px_to_meter),
                                             round(i*streetsDistance / px_to_meter + random2));
@@ -43,7 +43,7 @@ void MapGenerator::generateStreets(const unsigned streetsDistance)
 //        int random3 = 0;
         int random3 = rand() % 100;
 //        int random4 = 0;//rand() % 100;
-        int random4 = random3;
+        int random4 = rand() % 100;
         QLineF *verticalLine = new QLineF(round(i*streetsDistance / px_to_meter + random3),
                                           round(m_mapBoundary.top() / px_to_meter),
                                           round(i*streetsDistance / px_to_meter + random4),
