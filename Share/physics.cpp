@@ -26,9 +26,9 @@ double ph::prxSpctrMPC(angle theta, double spectrum)
 
 double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const ph::u u)
 {
-    return 2*M_PI;
+//    return 2*M_PI;
 //    return 2*M_PI/std::sqrt(pow(ampu, 2) - pow(u, 2));
-//    return norm(angDistr)/(2 * M_PI /* * std::sqrt(pow(ampu, 2) - pow(u, 2))*/);
+    return norm(angDistr)/(2 * M_PI);
 //    return ampu * sqrt(1 - pow(u/ampu, 2)) * norm(angDistr) / (2 * M_PI);
 //    return ampu * sqrt(1 - pow(u/ampu, 2)) * angDistr / (2 * M_PI);
 }
@@ -36,8 +36,8 @@ double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const 
 
 std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double theta, const double spectrum)
 {
-    return 2 * M_PI;
-//    return 2 * M_PI * h / (spectrum * sin(theta * M_PI / 180.0)/ cos(theta * M_PI / 180));
+//    return 2 * M_PI;
+    return 2 * M_PI * h;
 //    return 2 * M_PI * 1 / (spectrum * sin(theta * M_PI / 180.0)/ cos(theta * M_PI / 180));
 }
 
@@ -411,6 +411,7 @@ double ph::firstMinIdx(const map<double, double> &fct, const double th, const un
     map<double, double>::const_iterator itr;
     bool found = false;
     double first = it->second;
+
     while (it != it_max && !found) {
         if (it->second/first <= th) {
             bool higher_than_it = true;

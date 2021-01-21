@@ -201,6 +201,7 @@ void Rx::save(string path)
     vectorSizes.push_back(tau.size());
     vectorSizes.push_back(h_tdl.size());
     vectorSizes.push_back(tau_tdl.size());
+    vectorSizes.push_back(m_chData->impulseResp.size());
     vectorSizes.push_back(logD.size());
     vectorSizes.push_back(fading.size());
     vectorSizes.push_back(logD_model.size());
@@ -213,6 +214,13 @@ void Rx::save(string path)
         doppler.push_back(abs(e.second));
     }
 
+    double sigma_u = getAngSprd();
+    double sigma_w = getDopplerSprd();
+
+    double delta_z = getCoherenceDist();
+    double delta_t = getCoherenceTm();
+    double delta_f = getCoherenceBw();
+
     sort(vectorSizes.begin(), vectorSizes.end());
 
 
@@ -221,10 +229,16 @@ void Rx::save(string path)
         <<";tau"
         <<";h_tdl"
         <<";tau_tdl"
+        <<";Induced voltage"
         <<";logD"
         <<";fading"
         <<";logD_model"
         <<";Doppler shift"
+        <<";angular spread"
+        <<";Doppler spread"
+        <<";Coherence distance"
+        <<";Coherence time"
+        <<";Coherence bandwidth"
         <<";u"
         <<";PAS"
         <<";w"
@@ -264,6 +278,12 @@ void Rx::save(string path)
             ofs << ";" ;
         }
 
+        if (n < m_chData->impulseResp.size()) {
+            ofs << m_chData->impulseResp[tau[n]]<<";" ;
+        } else {
+            ofs << ";" ;
+        }
+
         if (n < logD.size()) {
             ofs << logD[n]<<";" ;
         } else {
@@ -288,14 +308,44 @@ void Rx::save(string path)
             ofs << ";" ;
         }
 
+        if (n == 0) {
+            ofs << sigma_u << ";";
+        } else {
+            ofs << ";";
+        }
+
+        if (n == 0) {
+            ofs << sigma_w << ";";
+        } else {
+            ofs << ";";
+        }
+
+        if (n == 0) {
+            ofs << delta_z << ";";
+        } else {
+            ofs << ";";
+        }
+
+        if (n == 0) {
+            ofs << delta_t << ";";
+        } else {
+            ofs << ";";
+        }
+
+        if (n == 0) {
+            ofs << delta_f << ";";
+        } else {
+            ofs << ";";
+        }
+
         if (n < m_chData->prxAngularSpctrMap.size()) {
-            ofs << u[n]<<";" <<pas[n]<<";";
+            ofs << u[n]<<";" <<m_chData->prxAngularSpctrMap[u[n]]<<";";
         } else {
             ofs << ";" ;
         }
 
-        if (n < pds.size()) {
-            ofs << w[n] <<";" <<pds[n];
+        if (n < m_chData->prxDopplerSpctrMap.size()) {
+            ofs << w[n] <<";" <<m_chData->prxDopplerSpctrMap[w[n]];
         } /*else {
             ofs << ";" ;
         }*/
@@ -764,7 +814,7 @@ vector<double> Rx::timeCrltn() const
         vector<double> w;
         for (auto e: m_chData->prxDopplerSpctrMap) {
             w.push_back(e.first);
-            pds.push_back(round(e.second));
+            pds.push_back(e.second);
         }
         double wvNbr = 2. * M_PI * m_chData->fq / c;
         vector<complex<double>> upPDS = ph::upsample<double, complex<double>>(w, pds, -wvNbr*speed, wvNbr*speed, 1);
@@ -803,7 +853,7 @@ vector<double> Rx::timeCrltn() const
 vector<double> Rx::timeCrltnT() const
 {
     vector<double> t;
-    if (m_chData && m_chData->timeCrltnMap.size() && m_chData->maxSpeed) {
+    if (m_chData && m_chData->timeCrltnMap.size() > 1) {
         for (const auto &e: m_chData->timeCrltnMap) {
             t.push_back(e.first);
         }
