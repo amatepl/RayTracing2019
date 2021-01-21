@@ -15,9 +15,9 @@ void MapGenerator::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsign
     this->px_to_meter = px_to_meter;
 //    unsigned streetsDistance = 100;
 
-    generateStreets(strGap);
+    generateStreets(strGap + strWidth);
 
-    generateBuidlings(strGap, strWidth);
+    generateBuidlings(strGap + strWidth, (unsigned) strWidth/2);
 
 //    egBuilidings();
 
@@ -32,18 +32,18 @@ void MapGenerator::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsign
 void MapGenerator::generateStreets(const unsigned streetsDistance)
 {
     for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)); i++) {
-//        int random1 = 0;
-        int random1 = rand() % 100;
-//        int random2 = 0;
-        int random2 = rand() % 100;
+        int random1 = 0;
+//        int random1 = rand() % 100;
+        int random2 = 0;
+//        int random2 = rand() % 100;
         QLineF *horizontalLine = new QLineF(0, round(i*streetsDistance / px_to_meter + random1),
                                             round(m_mapBoundary.right() / px_to_meter),
                                             round(i*streetsDistance / px_to_meter + random2));
 
-//        int random3 = 0;
-        int random3 = rand() % 100;
-//        int random4 = 0;//rand() % 100;
-        int random4 = rand() % 100;
+        int random3 = 0;
+//        int random3 = rand() % 100;
+        int random4 = 0;//rand() % 100;
+//        int random4 = rand() % 100;
         QLineF *verticalLine = new QLineF(round(i*streetsDistance / px_to_meter + random3),
                                           round(m_mapBoundary.top() / px_to_meter),
                                           round(i*streetsDistance / px_to_meter + random4),
@@ -58,7 +58,7 @@ void MapGenerator::generateStreets(const unsigned streetsDistance)
 void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth)
 {
     m_products.clear();
-    for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance )) - 1; i++) {
+    for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)) - 1; i++) {
         for (int j = 0; j < round(m_mapBoundary.width()/(streetsDistance )) - 1; j++) {
             QPointF intersectionPoint1;
             m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),

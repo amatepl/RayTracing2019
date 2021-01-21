@@ -65,13 +65,17 @@ public:
     void createMenus();
     void createToolBox();
     void createToolInfo();
+    void createStatusBar();
 
     void setGraphicsMode(GraphicsMode mode);
     void setActionMode(ActionMode mode);
     void notifyMap();
     void notifyModel();
 
-    bool eventFilter(QObject *watched, QEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
+    void mapPosStatusBar(const double &x, const double &y);
+
 private:
     QGraphicsView *view;
     GraphicsMap *m_map;
@@ -96,6 +100,8 @@ private:
     QToolBar* m_toolinfo;
     InfoWidget* m_info_widget;
 
+    QStatusBar *m_statusBar;
+
     QAction *deleteaction;
     QAction *propertiesaction;
     QAction *objectminimize;
@@ -118,6 +124,8 @@ public slots:
     void clearWorkspace();
     void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap);
     void addHeatMap(HeatMap *heatMap, HeatmapMode mode);
+
+    void updateStatusBar(const string &str);
 };
 
 #endif // APPLICATIONWINDOW_H

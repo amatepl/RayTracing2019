@@ -70,11 +70,11 @@ void Car::setPos(QPointF pos)
     translate(offset);
     moveWalls(offset);
     positionChanged(this,getPosX(),getPosY(),getOrientation());
-    cout << "======= CAR POSITION =======" << endl;
-    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
-    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
-    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
-    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
+//    cout << "======= CAR POSITION =======" << endl;
+//    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
+//    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
+//    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
+//    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
 }
 
 QPointF Car::getPos() const
@@ -184,11 +184,11 @@ void Car::setPosX(int posX){
     translate(offset);
     moveWalls(offset);
     emit positionChanged(this,this->at(0).x(),this->at(0).y(),getOrientation());
-    cout << "======= CAR POSITION =======" << endl;
-    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
-    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
-    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
-    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
+//    cout << "======= CAR POSITION =======" << endl;
+//    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
+//    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
+//    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
+//    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
 }
 
 
@@ -198,11 +198,11 @@ void Car::setPosY(int posY){
     translate(offset);
     moveWalls(offset);
     emit positionChanged(this,this->at(0).x(),this->at(0).y(),getOrientation());
-    cout << "======= CAR POSITION =======" << endl;
-    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
-    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
-    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
-    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
+//    cout << "======= CAR POSITION =======" << endl;
+//    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
+//    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
+//    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
+//    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
 }
 
 
@@ -212,11 +212,11 @@ void Car::update(QGraphicsItem *graphic){
     moveWalls(offset);
     QRectF rect = graphic->sceneBoundingRect();
     m_center = rect.center();
-    cout << "======= CAR POSITION =======" << endl;
-    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
-    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
-    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
-    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
+//    cout << "======= CAR POSITION =======" << endl;
+//    cout << this->at(0).x() << ", " << this->at(0).y() << endl;
+//    cout << this->at(1).x() << ", " << this->at(1).y() << endl;
+//    cout << this->at(2).x() << ", " << this->at(2).y() << endl;
+//    cout << this->at(3).x() << ", " << this->at(3).y() << endl;
 }
 
 

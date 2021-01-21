@@ -82,17 +82,27 @@ QPointF Line::symetricalPoint(const double x, const double y){
     return QPointF(transmitterImagePosX, transmitterImagePosY);
 }
 
-bool Line::onLine(const QPointF &point)
+//bool Line::onLine(const QPointF &point)
+//{
+//    /*
+//     * Check if the given point is on the line.
+//     *
+//     */
+
+//    QLineF testLine1(point,p2());
+//    QLineF testLine2(point,p1());
+
+//    return (intersects(testLine1,nullptr) == 0
+//            && testLine1.length() <= length()
+//            && testLine2.length() <= length());
+//}
+
+bool Line::onLine(const QPointF &point, const double th)
 {
-    /*
-     * Check if the given point is on the line.
-     *
-     */
+    QLineF testLine1(p1(),point);
+    QLineF testLine2(p2(),point);
 
-    QLineF testLine1(point,p2());
-    QLineF testLine2(point,p1());
-
-    return (intersects(testLine1,nullptr) == 0
+    return (angleTo(testLine1) < th
             && testLine1.length() <= length()
             && testLine2.length() <= length());
 }

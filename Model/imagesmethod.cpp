@@ -38,6 +38,7 @@ void ImagesMethod::launchAlgorithm()
         m_totalIlluminationZone = m_totalIlluminationZone.united(data.zone.boundingRect());
 
 //        m_scene->addPolygon(m_totalIlluminationZone, illumination1);
+//        m_scene->addPolygon(data.zone, QPen(), illumination1);
         // Launches the methods to compute siple and double diffraction
 
         setDiffraction(data.walls, data.zone, transmitter);
@@ -567,7 +568,7 @@ vector <Line> ImagesMethod::createImages(vector<Wall *> walls, const QPolygonF z
                 QPolygonF imagesZone = buildingsInIlluminationZone(image, nbReflections);
 
                 //usedWalls.push_back(walls.at(j));
-                walls.erase(walls.begin() + j);
+//                walls.erase(walls.begin() + j);
                 cont = false;
             }
                 j++;

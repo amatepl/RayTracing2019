@@ -80,6 +80,7 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Share/rxdatahandler.h \
     Share/wall.h \
     Share/wholeray.h \
+    Widget/infobar.h \
     Widget/infowidget.h \
     Widget/toolbox.h \
     applicationwindow.h \
@@ -131,6 +132,7 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Share/rxdatahandler.cpp \
     Share/wall.cpp \
     Share/wholeray.cpp \
+    Widget/infobar.cpp \
     Widget/infowidget.cpp \
     Widget/toolbox.cpp \
     applicationwindow.cpp \
