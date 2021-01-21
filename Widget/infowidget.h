@@ -12,6 +12,7 @@
 #include <QDoubleSpinBox>
 #include <QComboBox>
 #include <iostream>
+#include <QEvent>
 
 using namespace std;
 
@@ -38,7 +39,7 @@ public:
     void changeDopplerSpread(double dopplerSpread);
     void reset();
 
-
+    bool eventFilter(QObject *obj, QEvent *event);
 
 private:
     QGridLayout *main_layout;
@@ -91,6 +92,12 @@ private:
     QSpinBox *st_width;
     QSpinBox *height;
     QSpinBox *width;
+    QSpinBox *min_st_dist;
+    QSpinBox *max_st_dist;
+    QSpinBox *min_st_w;
+    QSpinBox *max_st_w;
+    QSpinBox *min_car;
+    QSpinBox *max_car;
 
 signals:
     void rayTracing(unsigned reflectionsNbr);
@@ -101,6 +108,7 @@ signals:
     void startCars();
     void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs, unsigned strsGap);
 //    void antenas(double fq, double bw, bool modifyAll);
+    void hovered(const string &str);
 
 public slots:
     void sendLaunchRayTracing();

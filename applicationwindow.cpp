@@ -2,11 +2,11 @@
 #include "Share/wholeray.h"
 #include "Share/params.h"
 
-float px_to_meter = 0.4;  // meter per pixel
+float px_to_meter = 0.2;  // meter per pixel
 
 ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::WindowStaysOnBottomHint)
 {
-//    setWindowFlag(Qt::WindowStaysOnBottomHint);
+//    setWindowFlag(Qt::WindowStaysOnBottomHint);˚
     createToolBox();
     createToolInfo();
     createActions();
@@ -16,6 +16,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
     connect(m_map, &GraphicsMap::eField, m_info_widget, &InfoWidget::updateEField);
+    connect(m_info_widget, &InfoWidget::hovered, this, &ApplicationWindow::updateStatusBar);
     view->setMouseTracking(true);
     m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter, this);
     m_transmitterFactory = new TransmitterFactory(m_productmenu, m_map, px_to_meter);
@@ -28,7 +29,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
                       (TreeFactory *) m_treeFactory,
                       (CarFactory *) m_carFactory,
                       (ReceiverFactory *) m_receiverFactory);
-    m_info_widget->sendGenerateMap();
+//    m_info_widget->sendGenerateMap();
 
     m_rayTracingAlgorithm = new RayTracing(px_to_meter);
     m_rayTracingAlgorithm->setScene(m_map);
@@ -39,10 +40,14 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
 
     addToolBar(Qt::LeftToolBarArea, m_toolbarobject);
     addToolBar(Qt::TopToolBarArea, m_toolinfo);
+
+    createStatusBar();
+
     setCentralWidget(view);
     setWindowState(Qt::WindowMaximized);
 
     m_graphicsmode = MoveItem;
+
 }
 
 ApplicationWindow::~ApplicationWindow()
@@ -68,8 +73,10 @@ void ApplicationWindow::deleteAnswer(GraphicsProduct *graphic){
     m_model->removeMathematicalComponent(graphic->toMathematicalProduct());
 }
 
-void ApplicationWindow::moveMouse(QPointF mouse){
-    m_info_widget->changeScenePos(mouse.x(),mouse.y());
+void ApplicationWindow::moveMouse(QPointF mouse)
+{
+//    m_info_widget->changeScenePos(mouse.x(),mouse.y());
+    mapPosStatusBar(mouse.x(), mouse.y());
 }
 
 void ApplicationWindow::resetToolInfo(){
@@ -160,16 +167,19 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode)
     case int(InsertTransmitter):
         icon = QIcon(GraphicsTx::getImage());
         button->setIcon(icon);
+        button->installEventFilter(this);
         m_antennagroup->addButton(button,mode);
         break;
     case int(InsertReceiver):
         icon = QIcon(GraphicsRx::getImage());
         button->setIcon(icon);
+        button->installEventFilter(this);
         m_antennagroup->addButton(button,mode);
         break;
     case int(InsertBuilding):
         icon = QIcon(GraphicsBuilding::getImage());
         button->setIcon(icon);
+        button->installEventFilter(this);
         m_obstaclegroup->addButton(button,mode);
         break;
 //    case int(InsertTree):
@@ -180,6 +190,7 @@ QWidget* ApplicationWindow::createToolButton(const QString &text, int mode)
     case int(InsertCar):
         icon = QIcon(GraphicsCarProduct::getImage());
         button->setIcon(icon);
+        button->installEventFilter(this);
         m_obstaclegroup->addButton(button,mode);
         break;
 
@@ -233,27 +244,28 @@ void ApplicationWindow::createToolBox()
     QGridLayout *antenna_layout = new QGridLayout;
 
     // Creating the antennas pannel
-    QWidget* widget = createToolButton("Transmitter",int(InsertTransmitter));
+    QWidget* widget = createToolButton("",int(InsertTransmitter));
     antenna_layout->addWidget(widget, 0, 0, Qt::AlignTop);
-    QWidget* widget1 = createToolButton("Receiver", int(InsertReceiver));
+    QWidget* widget1 = createToolButton("", int(InsertReceiver));
     antenna_layout->addWidget(widget1, 1, 0, Qt::AlignTop);
 
-    QWidget* obstacle_widget = createToolButton("Building",int(InsertBuilding));
+    QWidget* obstacle_widget = createToolButton("",int(InsertBuilding));
     antenna_layout->addWidget(obstacle_widget, 2, 0, Qt::AlignTop);
 //    QWidget* tree_widget = createToolButton("Tree", int(InsertTree));
 //    antenna_layout->addWidget(tree_widget, 3, 0, Qt::AlignTop);
-    QWidget* car_layout = createToolButton("Car", int(InsertCar));
+    QWidget* car_layout = createToolButton("", int(InsertCar));
     antenna_layout->addWidget(car_layout, 3, 0, Qt::AlignTop);
 
     antenna_layout->setRowStretch(4,10);
-    antenna_layout->setColumnStretch(1, 10);
+//    antenna_layout->setColumnStretch(1, 1);
 
     QWidget *itemWidget = new QWidget;
     itemWidget->setLayout(antenna_layout);
 
     m_toolbox = new QToolBox;
-    m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
+    m_toolbox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum));
     m_toolbox->setMinimumWidth(itemWidget->sizeHint().width());
+//    m_toolbox->setFixedWidth(40);
     m_toolbox->addItem(itemWidget, tr("Insert antenna"));
     m_toolbarobject = new QToolBar;
     m_toolbarobject->addWidget(m_toolbox);
@@ -276,6 +288,24 @@ void ApplicationWindow::createToolInfo()
     connect(m_info_widget, &InfoWidget::generateMap, this, &ApplicationWindow::generateMap);
 //    connect(m_info_widget, &InfoWidget::generateMap, m_model, &Model::generateMap);
 
+}
+
+void ApplicationWindow::createStatusBar()
+{
+    QGraphicsScene *scaleScene = new QGraphicsScene();
+    QGraphicsTextItem *scaleMeters = new QGraphicsTextItem("10 m");
+    scaleMeters->setFont(QFont("Helvetica", 10));
+    scaleScene->addItem(scaleMeters);
+    scaleMeters->setPos(9, -9);
+    //    scaleScene->addText("10 m" );
+    scaleScene->addLine(1, 5, 10/px_to_meter, 5);
+    scaleScene->addLine(1, 0, 1, 5);
+    scaleScene->addLine(10/px_to_meter, 0, 10/px_to_meter, 5);
+
+    QGraphicsView *scaleWidget = new QGraphicsView(scaleScene);
+    scaleWidget->setFixedSize(100, 20);
+    m_statusBar = statusBar();
+    m_statusBar->addPermanentWidget(scaleWidget);
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode)
@@ -324,11 +354,49 @@ void ApplicationWindow::notifyModel()
     m_model->launchAlgorithm(m_coverageAlgorithm);
 }
 
-bool ApplicationWindow::eventFilter(QObject*, QEvent *event){
+bool ApplicationWindow::eventFilter(QObject* obj, QEvent *event){
     if (event->type() == QEvent::Leave)
     {
-        m_info_widget->changeScenePos(0,0);
+//        m_info_widget->changeScenePos(0,0);
+        updateStatusBar("");
     }
+    else if (obj == (QObject*) m_antennagroup->button(1)) {
+        if (event->type() == QEvent::Enter)
+        {
+            updateStatusBar("Transmitter");
+        }
+        else if (event->type() == QEvent::Leave) {
+            updateStatusBar("");
+        }
+    }
+    else if (obj == (QObject*) m_antennagroup->button(2)) {
+        if (event->type() == QEvent::Enter)
+        {
+            updateStatusBar("Receiver");
+        }
+        else if (event->type() == QEvent::Leave) {
+            updateStatusBar("");
+        }
+    }
+    else if (obj == (QObject*) m_obstaclegroup->button(3)) {
+        if (event->type() == QEvent::Enter)
+        {
+            updateStatusBar("Building");
+        }
+        else if (event->type() == QEvent::Leave) {
+            updateStatusBar("");
+        }
+    }
+    else if (obj == (QObject*) m_obstaclegroup->button(5)) {
+        if (event->type() == QEvent::Enter)
+        {
+            updateStatusBar("Car");
+        }
+        else if (event->type() == QEvent::Leave) {
+            updateStatusBar("");
+        }
+    }
+
     return false;
 }
 
@@ -436,4 +504,21 @@ void ApplicationWindow::addHeatMap(HeatMap *heatMap, HeatmapMode mode)
         break;
     }
 
+}
+
+void ApplicationWindow::mapPosStatusBar(const double &x, const double &y)
+{
+    string info = "";
+    info += "x = ";
+    info += to_string((int) x);
+    info += ", y = ";
+    info += to_string((int)y);
+    updateStatusBar(info);
+}
+
+
+
+void ApplicationWindow::updateStatusBar(const string &str)
+{
+    m_statusBar->showMessage(QString::fromStdString(str));
 }

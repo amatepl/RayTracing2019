@@ -931,30 +931,49 @@ void Rx::notifyObservers()
     m_tdl.clear();
     angular_distr.clear();
     doppler_distr.clear();
-
+    Data *local_chData;
+    m_power = -200;
     for (unsigned i = 0; i < m_transmitters.size(); i++) {
         // Here must be the choice of transmitter and the different
         // physical results. Not totally optimal for the moment.
-        m_chData = m_transmitters.at(i)->update(this, m_movement);
-        // Voltage:
-        m_ind_voltage = m_chData->indVoltage;
-        m_e_field += m_chData->eField;
-        m_power = m_chData->prx;
-        m_transmitterbandwidth = m_chData->bw;
-        m_transmitterfrequency = m_chData->fq;
+//        m_chData = m_transmitters.at(i)->update(this, m_movement);
+        local_chData = m_transmitters.at(i)->update(this, m_movement);
+        m_e_field += local_chData->eField;
+        if (m_power < local_chData->prx) {
+            m_power = local_chData->prx;
+            m_chData = local_chData;
 
-        if (m_graphic != nullptr){
-            m_graphic->notifyToGraphic(this,m_power);
+            // Voltage:
+            m_ind_voltage = local_chData->indVoltage;
 
+
+
+            m_transmitterbandwidth = local_chData->bw;
+            m_transmitterfrequency = local_chData->fq;
             m_transmitter = m_transmitters.at(i);
-    //        m_transmitters.at(0)->drawRays(this, true);
 
-            for(unsigned i = 0; i < m_transmitters.size(); i++) {
-                m_transmitters.at(i)->drawRays(this, true);
-            }
-            computeSnr();
+//            if (m_graphic != nullptr){
+//                m_graphic->notifyToGraphic(this,m_power);
+
+//                m_transmitter = m_transmitters.at(i);
+//        //        m_transmitters.at(0)->drawRays(this, true);
+
+//                for(unsigned i = 0; i < m_transmitters.size(); i++) {
+//                    m_transmitters.at(i)->drawRays(this, true);
+//                }
+//                computeSnr();
+//            }
+        }
     }
-}
+
+    if (m_graphic != nullptr){
+        m_graphic->notifyToGraphic(this,m_power);
+
+        if (m_transmitter){
+            m_transmitter->drawRays(this, true);
+            computeSnr();
+        }
+    }
 
 //    for (unsigned int i = 0; i < m_observers.size(); i++) {
 //        m_observers.at(i)->update(this,m_movement);
