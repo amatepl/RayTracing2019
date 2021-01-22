@@ -1,7 +1,7 @@
 #include "building.h"
 
 Building::Building(QVector<QPointF> points) : QPolygonF(points),
-    m_posx(0),m_posy(0)
+    m_pos(0,0)
 {
     m_extremities = points;
     setModel("concrete");
@@ -43,38 +43,67 @@ void Building::setModel(std::string model){
 }
 
 void Building::update(QGraphicsItem *graphic){
-    QPointF offset = QPointF(graphic->x(),graphic->y()) - QPointF(m_posx,m_posy);
-    this->translate(offset);
+    QPointF offset;
+    offset = QPointF(graphic->x(),graphic->y()) - m_leftupcorner;
     setPosX(graphic->scenePos().x());
     setPosY(graphic->scenePos().y());
-    moveWalls(offset);
-    setExtremities(*this);
+    m_leftupcorner = m_pos;
+    cout << "offset_graphic_x: " << offset.x() << endl;
+    cout << "offset_graphic_y: " << offset.y() << endl;
+    if (to_translate){
+        this->translate(offset);
+        moveWalls(offset);
+    }
+    else {
+        to_translate = true;
+    }
+    m_extremities = *this;
+    swap(*this);
+//    setExtremities(*this);
 }
 
 void Building::openDialog(QWidget *){
+    m_leftupcorner = m_pos;
     new DialogBuildingProduct(this);
 }
 
 void Building::newProperties(){
+    to_translate = false;
+    changeWalls();
     QPolygonF poly = *this;
-    poly.translate(-m_posx, -m_posy);
-    m_graphic->notifyToGraphic(&poly,m_posx,m_posy);
+    poly.translate(-m_pos);
+    m_graphic->notifyToGraphic(&poly,m_pos.x(),m_pos.y());
 }
-
 
 void Building::moveToPosition(const QPointF &pos)
 {
     //moveTopLeft(pos);
-    QPointF moveDirection = pos - QPointF(m_posx,m_posy);
+    QPointF moveDirection = pos - m_pos;
     moveWalls(moveDirection);
 }
 
 void Building::moveWalls(QPointF &moveDirection)
 {
+    cout << "m_walls_0_begin_x: " << m_walls.at(0)->p1().x() << endl;
+    cout << "m_walls_0_begin_y: " << m_walls.at(0)->p1().y() << endl;
     for(unsigned i=0;i<m_walls.size();i++){
         m_walls.at(i)->setPoints(m_walls.at(i)->p1() + moveDirection,m_walls.at(i)->p2() + moveDirection);
     }
+    QPointF point = m_walls.at(0)->p1() + moveDirection;
+    cout << "offset_0_x: " << point.x() << endl;
+    cout << "offset_0_x: " << point.y() << endl;
+    cout << "m_walls_0_end_x: " << m_walls.at(0)->p1().x() << endl;
+    cout << "m_walls_0_end_y: " << m_walls.at(0)->p1().y() << endl;
+}
 
+void Building::changeWalls(){
+    m_walls.clear();
+    for (int i = 0; i < size() - 1; i++) {
+        Wall *wall = new Wall(this->at(i), this->at((i+1)%(size())), 0.0, m_permittivity, m_conductivity, i);
+        wall->setBuilding(this);
+        wall->setScale(px_to_meter);
+        m_walls.push_back(wall);
+    }
 }
 
 QPointF Building::closestPoint(const QPointF &point)

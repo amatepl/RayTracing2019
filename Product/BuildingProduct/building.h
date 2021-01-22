@@ -18,10 +18,10 @@ public:
     ~Building() override;
 
     // From BuildingProduct
-    int getPosX() override {return m_posx;}
-    int getPosY() override {return m_posy;}
-    void setPosX(int posx) override {m_posx = posx;}
-    void setPosY(int posy) override {m_posy = posy;}
+    int getPosX() override {return m_pos.x();}
+    int getPosY() override {return m_pos.y();}
+    void setPosX(int posx) override {m_pos.setX(posx);}
+    void setPosY(int posy) override {m_pos.setY(posy);}
     double getConductivity() override {return m_conductivity;}
     double getPermittivity() override {return m_permittivity;}
     void setConductivity(double sigma) override {m_conductivity = sigma;}
@@ -33,6 +33,7 @@ public:
 
     void moveToPosition(const QPointF &pos);
     void moveWalls(QPointF &moveDirection);
+    void changeWalls();
     Wall *getWalls() ;
     QPointF closestPoint(const QPointF &point);
     vector<Wall *> nearestWalls(const QPointF &point);
@@ -51,7 +52,9 @@ public:
 
 protected:
     QVector<QPointF> m_extremities;
-    int m_posx, m_posy; // Correspond to the up-left corner
+    QPointF m_leftupcorner = QPointF(0,0);
+    QPointF m_pos; // Correspond to the up-left corner
+    bool to_translate = true;
     std::string m_model;
     double m_permittivity;
     double m_conductivity;

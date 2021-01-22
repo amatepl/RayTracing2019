@@ -13,8 +13,7 @@ GraphicsProduct* BuildingFactory::createGraphicsProduct(int posX, int posY){
     Building* mathematicalProduct = new Building(points);
     mathematicalProduct->setScale(px_to_meter);
     graphicsProduct->attachObserver(mathematicalProduct);
-    graphicsProduct->setX(posX);
-    graphicsProduct->setY(posY);
+    graphicsProduct->setPos(posX,posY);
     mathematicalProduct->attachObservable(graphicsProduct);
     return graphicsProduct;
 }

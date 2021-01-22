@@ -101,8 +101,7 @@ void GraphicsBuilding::mouseDoubleClickEvent(QGraphicsSceneMouseEvent */*event*/
 
 void GraphicsBuilding::notifyToGraphic(QPolygonF *poly, int posX, int posY){
     setPolygon(*poly);
-    setX(posX);
-    setY(posY);
+    setPos(posX,posY);
     setModel(m_observer->changeAppearance());
     std::cout << posX << " and " << posY << std::endl;
 }
