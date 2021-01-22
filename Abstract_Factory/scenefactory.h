@@ -16,6 +16,7 @@ public:
     virtual GraphicsProduct* createGraphicsProduct(int posX, int posY) = 0;
     virtual MathematicalProduct* createMathematicalProduct(int posX, int posY, bool linkgraphic) = 0;
     virtual MathematicalProduct* createMathematicalProduct(MathematicalProduct* /*original*/, bool /*linkgraphic*/) { return nullptr; };
+    virtual void setScale(const double &px_to_m) = 0;
 
 };
 

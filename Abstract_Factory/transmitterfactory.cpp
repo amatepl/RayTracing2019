@@ -43,3 +43,8 @@ MathematicalProduct* TransmitterFactory::createMathematicalProduct(int posX, int
     }
     return mathematicalProduct;
 }
+
+void TransmitterFactory::setScale(const double &px_to_m)
+{
+    px_to_meter = px_to_m;
+}

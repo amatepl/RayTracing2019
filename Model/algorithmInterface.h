@@ -24,6 +24,8 @@ public:
     virtual MathematicalComponent* compute(map<string,vector<MathematicalProduct*>> m_mathematicalComponents, ReceiverFactory* receiverfactory) =0;
 
     virtual void clearWorkspace() = 0;
+
+    virtual void setScale(const double &px_to_m) = 0;
 };
 
 #endif // ALGORITHMINTERFACE_H

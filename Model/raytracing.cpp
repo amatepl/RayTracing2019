@@ -121,3 +121,10 @@ void RayTracing::setAttributs(map<string, vector<MathematicalProduct *> >
         }
     }
 }
+
+void RayTracing::setScale(const double &px_to_m)
+{
+    px_to_meter = px_to_m;
+}
+
+

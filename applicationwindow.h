@@ -66,6 +66,10 @@ public:
     void createToolBox();
     void createToolInfo();
     void createStatusBar();
+    QGraphicsScene *createScaleScene(const double &px_to_m);
+    QGraphicsView *createScaleWidget();
+    void setScale(const double &px_to_m);
+    void updateGraphicsScale(const double &px_to_m);
 
     void setGraphicsMode(GraphicsMode mode);
     void setActionMode(ActionMode mode);
@@ -109,6 +113,8 @@ private:
     QMenu *m_productmenu;
     QMenu *m_windowmenu;
 
+    QGraphicsScene *m_scaleScene;
+
 signals:
 
 public slots:
@@ -122,7 +128,12 @@ public slots:
     void deleteProduct();
     void openProduct();
     void clearWorkspace();
-    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap);
+//    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap);
+    void generateMap(unsigned h, unsigned w,
+                     unsigned min_cars, unsigned max_cars,
+                     unsigned min_st_dist, unsigned max_st_dist,
+                     unsigned min_st_w, unsigned max_st_w,
+                     double px_to_m);
     void addHeatMap(HeatMap *heatMap, HeatmapMode mode);
 
     void updateStatusBar(const string &str);

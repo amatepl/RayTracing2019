@@ -58,6 +58,8 @@ public:
      */
     void setAttributs(map<string,vector<MathematicalProduct*>> mathematicalComponents);
 
+    void setScale(const double &px_to_m) override;
+
 private:
     ReceiverFactory* m_receiverfactory;
 //    Rx* copy_receiver;

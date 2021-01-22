@@ -98,6 +98,7 @@ private:
     QSpinBox *max_st_w;
     QSpinBox *min_car;
     QSpinBox *max_car;
+    QDoubleSpinBox *px_to_meter;
 
 signals:
     void rayTracing(unsigned reflectionsNbr);
@@ -106,7 +107,12 @@ signals:
     void clearCoverage();
     void clear();
     void startCars();
-    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs, unsigned strsGap);
+//    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned strs, unsigned strsGap);
+    void generateMap(unsigned h, unsigned w,
+                     unsigned min_cars, unsigned max_cars,
+                     unsigned min_st_dist, unsigned max_st_dist,
+                     unsigned min_st_w, unsigned max_st_w,
+                     double px_to_meter);
 //    void antenas(double fq, double bw, bool modifyAll);
     void hovered(const string &str);
 

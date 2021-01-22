@@ -59,3 +59,8 @@ MathematicalProduct* ReceiverFactory::createMathematicalProduct(MathematicalProd
     }
     return mathematicalReceiverProduct;
 }
+
+void ReceiverFactory::setScale(const double &px_to_m)
+{
+    px_to_meter = px_to_m;
+}
