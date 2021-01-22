@@ -64,6 +64,8 @@ public:
     void setHeatmapMode(int mode);
     fptr selectFct();
     notifptr selectNotifier();
+    void setScale(const double &px_to_m) override;
+
 protected:
 
     SceneFactory* m_receiverFactory;

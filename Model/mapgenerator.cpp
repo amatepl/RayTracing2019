@@ -5,48 +5,66 @@ MapGenerator::MapGenerator(QRectF mapBoundary): m_mapBoundary(mapBoundary)
 
 }
 
-void MapGenerator::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap, double px_to_meter)
+//void MapGenerator::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap, double px_to_meter)
+void MapGenerator::generateMap(unsigned h, unsigned w,
+                     unsigned min_cars, unsigned max_cars,
+                     unsigned min_st_dist, unsigned max_st_dist,
+                     unsigned min_st_w, unsigned max_st_w,
+                     double px_to_m)
 {
     m_horizontalStreets.clear();
     m_verticalStreets.clear();
     m_mapBoundary.setHeight(h);
     m_mapBoundary.setWidth(w);
 
-    this->px_to_meter = px_to_meter;
+    this->px_to_meter = px_to_m;
 //    unsigned streetsDistance = 100;
 
-    generateStreets(strGap + strWidth);
+    generateStreets(min_st_dist, max_st_dist,(unsigned) min_st_w/2, (unsigned) max_st_w/2);
 
-    generateBuidlings(strGap + strWidth, (unsigned) strWidth/2);
+    generateBuidlings(min_st_dist, max_st_dist, (unsigned) min_st_w/2, (unsigned) max_st_w/2);
 
 //    egBuilidings();
 
 //    for (unsigned i = 0; i < carDnsty; i++) {
-    addCars(carDnsty);
+    addCars(min_cars);
 //    }
 //    addCars();
 
     //addTrees();
 }
 
-void MapGenerator::generateStreets(const unsigned streetsDistance)
+void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &max_st_dist,
+                                   const unsigned &min_st_w, const unsigned &max_st_w)
 {
-    for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)); i++) {
+    for (int i = 0; i < round(m_mapBoundary.height()/(max_st_dist + 2 * max_st_w)); i++) {
         int random1 = 0;
-//        int random1 = rand() % 100;
+        if (min_st_dist < max_st_dist) {
+            random1 = rand() % (max_st_dist - min_st_dist);
+        }
+
         int random2 = 0;
-//        int random2 = rand() % 100;
-        QLineF *horizontalLine = new QLineF(0, round(i*streetsDistance / px_to_meter + random1),
+        if (min_st_dist < max_st_dist) {
+            random2 = rand() % (max_st_dist - min_st_dist);
+        }
+
+        QLineF *horizontalLine = new QLineF(0, round(i*min_st_dist / px_to_meter + random1/ px_to_meter),
                                             round(m_mapBoundary.right() / px_to_meter),
-                                            round(i*streetsDistance / px_to_meter + random2));
+                                            round(i*min_st_dist / px_to_meter + random2/ px_to_meter));
 
         int random3 = 0;
-//        int random3 = rand() % 100;
-        int random4 = 0;//rand() % 100;
-//        int random4 = rand() % 100;
-        QLineF *verticalLine = new QLineF(round(i*streetsDistance / px_to_meter + random3),
+        if (min_st_dist < max_st_dist) {
+            random3 = rand() % (max_st_dist - min_st_dist);
+        }
+
+        int random4 = 0;
+        if (min_st_dist < max_st_dist) {
+            random4 = rand() % (max_st_dist - min_st_dist);
+        }
+
+        QLineF *verticalLine = new QLineF(round(i*min_st_dist / px_to_meter + random3/ px_to_meter),
                                           round(m_mapBoundary.top() / px_to_meter),
-                                          round(i*streetsDistance / px_to_meter + random4),
+                                          round(i*min_st_dist / px_to_meter + random4/ px_to_meter),
                                           round(m_mapBoundary.bottom() / px_to_meter));
 
         m_horizontalStreets.push_back(horizontalLine);
@@ -55,11 +73,27 @@ void MapGenerator::generateStreets(const unsigned streetsDistance)
     }
 }
 
-void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth)
+void MapGenerator::generateBuidlings(const unsigned &min_st_dist, const unsigned &max_st_dist,
+                                     const unsigned &min_st_w, const unsigned &max_st_w)
 {
+    int random1 = 0;
+    int random2 = 0;
+    int random3 = 0;
+    int random4 = 0;
+
     m_products.clear();
-    for (int i = 0; i < round(m_mapBoundary.height()/(streetsDistance)) - 1; i++) {
-        for (int j = 0; j < round(m_mapBoundary.width()/(streetsDistance )) - 1; j++) {
+    for (int i = 0; i < round(m_mapBoundary.height()/(max_st_dist + 2*max_st_w)) - 1; i++) {
+
+        if (min_st_w < max_st_w) {
+            random2 = rand() % (max_st_w - min_st_w);
+        }
+
+        for (int j = 0; j < round(m_mapBoundary.width()/(max_st_dist + 2*max_st_w)) - 1; j++) {
+
+            if (min_st_w < max_st_w) {
+                random4 = rand() % (max_st_w - min_st_w);
+            }
+
             QPointF intersectionPoint1;
             m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),
                                                   &intersectionPoint1);
@@ -76,17 +110,17 @@ void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsig
             m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i + 1),
                                                       &intersectionPoint4);
 
-            intersectionPoint1.setX(round(intersectionPoint1.x() + streetWidth / px_to_meter));
-            intersectionPoint1.setY(round(intersectionPoint1.y() + streetWidth / px_to_meter));
+            intersectionPoint1.setX(round(intersectionPoint1.x() + (min_st_w + random3) / px_to_meter));
+            intersectionPoint1.setY(round(intersectionPoint1.y() + (min_st_w + random1) / px_to_meter));
 
-            intersectionPoint2.setX(round(intersectionPoint2.x() + streetWidth / px_to_meter));
-            intersectionPoint2.setY(round(intersectionPoint2.y() - streetWidth / px_to_meter));
+            intersectionPoint2.setX(round(intersectionPoint2.x() + (min_st_w + random3) / px_to_meter));
+            intersectionPoint2.setY(round(intersectionPoint2.y() - (min_st_w + random2) / px_to_meter));
 
-            intersectionPoint3.setX(round(intersectionPoint3.x() - streetWidth / px_to_meter));
-            intersectionPoint3.setY(round(intersectionPoint3.y() + streetWidth / px_to_meter));
+            intersectionPoint3.setX(round(intersectionPoint3.x() - (min_st_w + random4) / px_to_meter));
+            intersectionPoint3.setY(round(intersectionPoint3.y() + (min_st_w + random1) / px_to_meter));
 
-            intersectionPoint4.setX(round(intersectionPoint4.x() - streetWidth / px_to_meter));
-            intersectionPoint4.setY(round(intersectionPoint4.y() - streetWidth / px_to_meter));
+            intersectionPoint4.setX(round(intersectionPoint4.x() - (min_st_w + random4) / px_to_meter));
+            intersectionPoint4.setY(round(intersectionPoint4.y() - (min_st_w + random2) / px_to_meter));
 
             //            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
             //            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
@@ -112,7 +146,11 @@ void MapGenerator::generateBuidlings(const unsigned streetsDistance, const unsig
 
             m_products.push_back(building);
 
+            random3 = random4;
+
         }
+
+        random1 = random2;
     }
 //<<<<<<< Updated upstream
 

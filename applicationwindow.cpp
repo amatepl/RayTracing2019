@@ -29,7 +29,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
                       (TreeFactory *) m_treeFactory,
                       (CarFactory *) m_carFactory,
                       (ReceiverFactory *) m_receiverFactory);
-//    m_info_widget->sendGenerateMap();
+
 
     m_rayTracingAlgorithm = new RayTracing(px_to_meter);
     m_rayTracingAlgorithm->setScene(m_map);
@@ -47,7 +47,7 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
     setWindowState(Qt::WindowMaximized);
 
     m_graphicsmode = MoveItem;
-
+    m_info_widget->sendGenerateMap();
 }
 
 ApplicationWindow::~ApplicationWindow()
@@ -292,20 +292,60 @@ void ApplicationWindow::createToolInfo()
 
 void ApplicationWindow::createStatusBar()
 {
+    m_scaleScene = createScaleScene(px_to_meter);
+
+    QGraphicsView *scaleWidget = createScaleWidget();
+    m_statusBar = statusBar();
+    m_statusBar->addPermanentWidget(scaleWidget);
+}
+
+QGraphicsScene *ApplicationWindow::createScaleScene(const double &px_to_m)
+{
     QGraphicsScene *scaleScene = new QGraphicsScene();
     QGraphicsTextItem *scaleMeters = new QGraphicsTextItem("10 m");
     scaleMeters->setFont(QFont("Helvetica", 10));
     scaleScene->addItem(scaleMeters);
-    scaleMeters->setPos(9, -9);
-    //    scaleScene->addText("10 m" );
-    scaleScene->addLine(1, 5, 10/px_to_meter, 5);
+    scaleMeters->setPos(-32, -6);
+    scaleScene->addLine(1, 5, 10/px_to_m, 5);
     scaleScene->addLine(1, 0, 1, 5);
-    scaleScene->addLine(10/px_to_meter, 0, 10/px_to_meter, 5);
+    scaleScene->addLine(10/px_to_m, 0, 10/px_to_m, 5);
+    return scaleScene;
+}
 
-    QGraphicsView *scaleWidget = new QGraphicsView(scaleScene);
+QGraphicsView *ApplicationWindow::createScaleWidget()
+{
+    QGraphicsView *scaleWidget = new QGraphicsView(m_scaleScene);
+    scaleWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scaleWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scaleWidget->setFixedSize(100, 20);
-    m_statusBar = statusBar();
-    m_statusBar->addPermanentWidget(scaleWidget);
+    return scaleWidget;
+}
+
+void ApplicationWindow::setScale(const double &px_to_m)
+{
+    px_to_meter = px_to_m;
+    m_receiverFactory->setScale(px_to_m);
+    m_transmitterFactory->setScale(px_to_m);
+    m_buildingFactory->setScale(px_to_m);
+    m_treeFactory->setScale(px_to_m);
+    m_carFactory->setScale(px_to_m);
+    m_rayTracingAlgorithm->setScale(px_to_m);
+    m_coverageAlgorithm->setScale(px_to_m);
+
+}
+
+void ApplicationWindow::updateGraphicsScale(const double &px_to_m)
+{
+    m_scaleScene->clear();
+
+    QGraphicsTextItem *scaleMeters = new QGraphicsTextItem("10 m");
+    scaleMeters->setFont(QFont("Helvetica", 10));
+    m_scaleScene->addItem(scaleMeters);
+    scaleMeters->setPos(-32, -6);
+    m_scaleScene->addLine(1, 5, 10/px_to_m, 5);
+    m_scaleScene->addLine(1, 0, 1, 5);
+    m_scaleScene->addLine(10/px_to_m, 0, 10/px_to_m, 5);
+
 }
 
 void ApplicationWindow::setGraphicsMode(GraphicsMode mode)
@@ -482,10 +522,16 @@ void ApplicationWindow::clearWorkspace()
     m_model->clear();
 }
 
-void ApplicationWindow::generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap)
+void ApplicationWindow::generateMap(unsigned h, unsigned w,
+                                    unsigned min_cars, unsigned max_cars,
+                                    unsigned min_st_dist, unsigned max_st_dist,
+                                    unsigned min_st_w, unsigned max_st_w,
+                                    double px_to_m)
 {
-    m_map->setSceneRect(0, 0, w / px_to_meter, h / px_to_meter);
-    m_model->generateMap(h, w, carDnsty, strWidth, strGap, px_to_meter);
+    setScale(px_to_m);
+    updateGraphicsScale(px_to_m);
+    m_map->setSceneRect(0, 0, w / px_to_m, h / px_to_m);
+    m_model->generateMap(h, w, min_cars, max_cars, min_st_dist, max_st_dist, min_st_w, max_st_w, px_to_m);
 }
 
 void ApplicationWindow::addHeatMap(HeatMap *heatMap, HeatmapMode mode)

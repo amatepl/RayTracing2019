@@ -41,3 +41,8 @@ MathematicalProduct* BuildingFactory::createMathematicalProduct(QPolygonF poly, 
     }
     return mathematicalBuildingProduct;
 }
+
+void BuildingFactory::setScale(const double &px_to_m)
+{
+    px_to_meter = px_to_m;
+}

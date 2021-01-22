@@ -147,9 +147,14 @@ void Model::notify(Tx* transmitter)
     m_windowModelObservable->modelNotify(transmitter->getRays());
 }
 
-void Model::generateMap(unsigned h, unsigned w, unsigned cars, unsigned wstrs, unsigned strsGap, double px_to_meter)
+//void Model::generateMap(unsigned h, unsigned w, unsigned cars, unsigned wstrs, unsigned strsGap, double px_to_meter)
+void Model::generateMap(unsigned h, unsigned w,
+                     unsigned min_cars, unsigned max_cars,
+                     unsigned min_st_dist, unsigned max_st_dist,
+                     unsigned min_st_w, unsigned max_st_w,
+                     double px_to_m)
 {
-    m_mapGenerator->generateMap(h, w, cars, wstrs, strsGap, px_to_meter);
+    m_mapGenerator->generateMap(h, w, min_cars, max_cars, min_st_dist, max_st_dist, min_st_w, max_st_w, px_to_m);
     vector<MathematicalProduct *> mapProducts = m_mapGenerator->getProducts();
     for (unsigned i = 0; i < mapProducts.size(); i++) {
         string type = mapProducts.at(i)->getType();

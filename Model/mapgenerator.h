@@ -23,9 +23,16 @@ public:
     MapGenerator(QRectF mapBoundary);
 
     /* Generators */
-    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap, double px_to_meter);
-    void generateStreets(const unsigned streetsDistance);
-    void generateBuidlings(const unsigned streetsDistance, const unsigned streetWidth);
+//    void generateMap(unsigned h, unsigned w, unsigned carDnsty, unsigned strWidth, unsigned strGap, double px_to_meter);
+    void generateMap(unsigned h, unsigned w,
+                     unsigned min_cars, unsigned max_cars,
+                     unsigned min_st_dist, unsigned max_st_dist,
+                     unsigned min_st_w, unsigned max_st_w,
+                     double px_to_m);
+    void generateStreets(const unsigned &min_st_dist, const unsigned &max_st_dist,
+                         const unsigned &min_st_w, const unsigned &max_st_w);
+    void generateBuidlings(const unsigned &min_st_dist, const unsigned &max_st_dist,
+                           const unsigned &min_st_w, const unsigned &max_st_w);
     void addCars(unsigned carDnsty);
     void addTrees();
     void egBuilidings();

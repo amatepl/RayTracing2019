@@ -13,7 +13,7 @@ public:
     MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic = true) override;
     using SceneFactory::createMathematicalProduct;
     MathematicalProduct * createMathematicalProduct(QPolygonF polygone, bool linkgraphic = true);
-
+    void setScale(const double &px_to_m) override;
 
 private:
     QMenu *m_productmenu;

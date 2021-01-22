@@ -13,6 +13,7 @@ public:
     MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic =true) override;
     using SceneFactory::createMathematicalProduct;
     MathematicalProduct * createMathematicalProduct(int posX, int posY, QPolygonF poly, bool linkgraphic);
+    void setScale(const double &px_to_m) override;
 
 private:
     struct CarParams {float l=4; float w=1.8;} m_carParams;

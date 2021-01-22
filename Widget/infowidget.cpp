@@ -9,6 +9,7 @@ InfoWidget::InfoWidget(QWidget* parent):QWidget(parent)
     createCoverageGroup();
 
     QGridLayout *main_layout = new QGridLayout(this);
+    main_layout->setSizeConstraint(QLayout::SetFixedSize);
 //    main_layout->addWidget(info_group, 0, 0);
     main_layout->addWidget(edit_group, 0, 1);
     main_layout->addWidget(map_group, 0, 2);
@@ -55,6 +56,7 @@ void InfoWidget::createInfoGroup(){
 void InfoWidget::createEditGeneral(){
     edit_group = new QGroupBox("Edit Informations", this);
     QGridLayout *edit_layout = new QGridLayout(edit_group);
+//    edit_layout->setSizeConstraint(QLayout::SetFixedSize);
 
     frequency = new QDoubleSpinBox(edit_group);
     frequency->setRange(0.00,999.00);
@@ -83,8 +85,8 @@ void InfoWidget::createEditGeneral(){
 
     all_same = new QCheckBox("Same Properties For all", edit_group);
 //    generate_map = new QPushButton("Generate Map", edit_group);
-    clear_workspace = new QPushButton("Clear Workspace", edit_group);
-    connect(clear_workspace,&QPushButton::clicked,this,&InfoWidget::sendClear);
+//    clear_workspace = new QPushButton("Clear Workspace", edit_group);
+//    connect(clear_workspace,&QPushButton::clicked,this,&InfoWidget::sendClear);
 
 //    QGridLayout *row2 = new QGridLayout(edit_group);
 //    row2->addWidget(all_same, 0, 0);
@@ -93,9 +95,9 @@ void InfoWidget::createEditGeneral(){
     edit_layout->addLayout(f_layout,0,0);
     edit_layout->addLayout(b_layout,1,0);
 //    edit_layout->addLayout(row2, 0, 1);
-    edit_layout->addWidget(all_same,0,1);
+    edit_layout->addWidget(all_same,2,0);
 //    edit_layout->addWidget(generate_map,2,0);
-    edit_layout->addWidget(clear_workspace,1,1);
+//    edit_layout->addWidget(clear_workspace,1,1);
 
     edit_group->setLayout(edit_layout);
 
@@ -112,6 +114,7 @@ void InfoWidget::createRayGroup(){
     launch_raytracing = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"");
     // Ray Tracing informations and edition
     QGridLayout* ray_layout = new QGridLayout(ray_group);
+//    ray_layout->setSizeConstraint(QLayout::SetFixedSize);
     ray_layout->addWidget(launch_raytracing, 0, 0, Qt::AlignTop);
     connect(launch_raytracing,&QPushButton::clicked,this,&InfoWidget::sendLaunchRayTracing);
 
@@ -141,10 +144,11 @@ void InfoWidget::createRayGroup(){
 
 void InfoWidget::createCoverageGroup(){
     coverage_group = new QGroupBox("Coverage", this);
-    coverage_group->setFixedWidth(400);
+//    coverage_group->setFixedWidth(400);
     launch_coverage = new QPushButton(QIcon(QPixmap(":/Images/playButton.png")),"");
     // Coverage informations and edition
     QGridLayout *coverage_layout = new QGridLayout(coverage_group);
+//    coverage_layout->setSizeConstraint(QLayout::SetFixedSize);
     coverage_layout->addWidget(launch_coverage, 0, 0);
     connect(launch_coverage,&QPushButton::clicked,this,&InfoWidget::sendLaunchCoverage);
 
@@ -213,23 +217,28 @@ void InfoWidget::printValue(double value)
 void InfoWidget::createMapGroup()
 {
     map_group = new QGroupBox("Map", this);
-    map_group->setFixedWidth(700);
+//    map_group->setFixedWidth(700);
     QGridLayout *map_layout = new QGridLayout;
+    map_layout->setSizeConstraint(QLayout::SetFixedSize);
 
     // -------- Streets --------
 
     QGridLayout *st_layout = new QGridLayout;
 
+//    st_layout->setSizeConstraint(QLayout::SetFixedSize);
+
     QGroupBox *st_dist_box = new QGroupBox("Distance between streets [m]", this);
-    st_dist_box->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    st_dist_box->setFixedSize(170,50);
-    st_dist_box->setContentsMargins(2, 22, 5, 2);
+//    st_dist_box->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+//    st_dist_box->setFixedSize(170,50);
+//    st_dist_box->setContentsMargins(2, 20, 5, 2);
 
     QGridLayout *st_dist_layout = new QGridLayout;
+    st_dist_layout->setSizeConstraint(QLayout::SetFixedSize);
     st_dist_layout->setContentsMargins(1, 1, 1, 1);
 
     // Min Distance
     QFormLayout *min_dist_layout = new QFormLayout;
+    min_dist_layout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
 
     min_st_dist = new QSpinBox(map_group);
     min_st_dist->setRange(0, 999);
@@ -239,6 +248,7 @@ void InfoWidget::createMapGroup()
 
     // Max Distance
     QFormLayout *max_dist_layout = new QFormLayout;
+    max_dist_layout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
 
     max_st_dist = new QSpinBox(map_group);
     max_st_dist->setRange(0, 999);
@@ -252,17 +262,20 @@ void InfoWidget::createMapGroup()
     st_dist_box->setLayout(st_dist_layout);
 
     QGroupBox *st_w_box = new QGroupBox("Streets width [m]", this);
-    st_w_box->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    st_w_box->setFixedSize(170,50);
-    st_w_box->setContentsMargins(2, 22, 5, 2);
+//    st_w_box->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+//    st_w_box->setFixedSize(170,50);
+//    st_w_box->setContentsMargins(2, 20, 5, 2);
 
     QGridLayout *st_w_layout = new QGridLayout;
+    st_w_layout->setSizeConstraint(QLayout::SetFixedSize);
     st_w_layout->setContentsMargins(1, 1, 1, 1);
 
     // Min Width
     QFormLayout *min_w_layout = new QFormLayout;
-    min_w_layout->setAlignment(Qt::AlignLeft);
-    min_w_layout->setLabelAlignment(Qt::AlignLeft);
+    min_w_layout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
+
+//    min_w_layout->setAlignment(Qt::AlignLeft);
+//    min_w_layout->setLabelAlignment(Qt::AlignLeft);
 
     min_st_w = new QSpinBox(map_group);
     min_st_w->setRange(0, 999);
@@ -272,8 +285,9 @@ void InfoWidget::createMapGroup()
 
     // Max Width
     QFormLayout *max_w_layout = new QFormLayout;
-    max_w_layout->setAlignment(Qt::AlignLeft);
-    max_w_layout->setLabelAlignment(Qt::AlignLeft);
+    max_w_layout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
+//    max_w_layout->setAlignment(Qt::AlignLeft);
+//    max_w_layout->setLabelAlignment(Qt::AlignLeft);
 
     max_st_w = new QSpinBox(map_group);
     max_st_w->setRange(0, 999);
@@ -292,12 +306,9 @@ void InfoWidget::createMapGroup()
     // -------- Cars --------
 
     QGroupBox *car_box = new QGroupBox("Cars/street", this);
-    car_box->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    car_box->setFixedSize(170,50);
-    car_box->setContentsMargins(2, 22, 5, 2);
-
 
     QGridLayout *car_layout = new QGridLayout;
+    car_layout->setSizeConstraint(QLayout::SetFixedSize);
     car_layout->setContentsMargins(1, 1, 1, 1);
 
     // Min Width
@@ -331,11 +342,86 @@ void InfoWidget::createMapGroup()
 
     st_layout->addWidget(car_box, 0, 1);
 
+    // --------Map Dimentions --------
+
+    QGroupBox *dim_box = new QGroupBox("Map dimentions [m]", this);
+
+    QGridLayout *dim_layout = new QGridLayout;
+//    dim_layout->setSizeConstraint(QLayout::SetFixedSize);
+    dim_layout->setContentsMargins(1, 1, 1, 1);
+
+    // Min Width
+    QFormLayout *height_layout = new QFormLayout;
+    height_layout->setAlignment(Qt::AlignLeft);
+    height_layout->setLabelAlignment(Qt::AlignLeft);
+
+    height = new QSpinBox(map_group);
+    height->setRange(0, 9999);
+    height->setAccelerated(true);
+
+    height_layout->addRow("h", height);
+
+    // Max Width
+    QFormLayout *width_layout = new QFormLayout;
+    width_layout->setAlignment(Qt::AlignLeft);
+    width_layout->setLabelAlignment(Qt::AlignLeft);
+
+    width = new QSpinBox(map_group);
+    width->setRange(0, 9999);
+    width->setAccelerated(true);
+
+    width_layout->addRow("w", width);
+
+    // Meters per pixel
+    QFormLayout *mp_layout = new QFormLayout;
+    mp_layout->setAlignment(Qt::AlignLeft);
+    mp_layout->setLabelAlignment(Qt::AlignLeft);
+
+    px_to_meter = new QDoubleSpinBox(map_group);
+    px_to_meter->setDecimals(1);
+    px_to_meter->setSingleStep(0.1);
+    px_to_meter->setRange(0, 9);
+    px_to_meter->setAccelerated(true);
+
+    mp_layout->addRow("m/p", px_to_meter);
+
+    dim_layout->addLayout(height_layout, 0, 0, Qt::AlignLeft);
+    dim_layout->addLayout(width_layout, 0, 1, Qt::AlignLeft);
+    dim_layout->addLayout(mp_layout, 0, 2, Qt::AlignLeft);
+
+    dim_box->setLayout(dim_layout);
+
+    dim_layout->addWidget(dim_box, 0, 1);
+
+    st_layout->addWidget(dim_box, 1, 1);
+
     // -------- Generate --------
 
+    clear_workspace = new QPushButton("Clear Workspace", map_group);
+    connect(clear_workspace,&QPushButton::clicked,this,&InfoWidget::sendClear);
+
+    st_layout->addWidget(clear_workspace, 0, 2);
+
+    generate_map = new QPushButton("Generate Map", map_group);
+    connect(generate_map, &QPushButton::clicked, this, &InfoWidget::sendGenerateMap);
+
+    st_layout->addWidget(generate_map, 1, 2);
 
     map_layout->addLayout(st_layout, 0, 0);
     map_group->setLayout(map_layout);
+
+    // --------Initialize --------
+
+    min_st_dist->setValue(20);
+    max_st_dist->setValue(50);
+    min_st_w->setValue(6);
+    max_st_w->setValue(12);
+    min_car->setValue(10);
+    max_car->setValue(15);
+    height->setValue(500);
+    width->setValue(500);
+    px_to_meter->setValue(0.2);
+
 //    map_group = new QGroupBox("Map", this);
 //    map_group->setFixedWidth(500);
 //    QGridLayout *map_layout = new QGridLayout;
@@ -552,7 +638,12 @@ void InfoWidget::sendStartCars()
 
 void InfoWidget::sendGenerateMap()
 {
-    generateMap(height->value(), width->value(), car_dnsty->value(), st_width->value(), st_dnsty->value());
+//    generateMap(height->value(), width->value(), car_dnsty->value(), st_width->value(), st_dnsty->value());
+    generateMap(height->value(), width->value(),
+                min_car->value(), max_car->value(),
+                min_st_dist->value(), max_st_dist->value(),
+                min_st_w->value(), max_st_w->value(),
+                px_to_meter->value());
 }
 
 void InfoWidget::updateEField(double eField)

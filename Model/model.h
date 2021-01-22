@@ -60,7 +60,12 @@ public:
      */
     void clearWorkspace();
 
-    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned wstrs, unsigned strsGap, double px_to_meter);
+//    void generateMap(unsigned h, unsigned w, unsigned cars, unsigned wstrs, unsigned strsGap, double px_to_meter);
+    void generateMap(unsigned h, unsigned w,
+                     unsigned min_cars, unsigned max_cars,
+                     unsigned min_st_dist, unsigned max_st_dist,
+                     unsigned min_st_w, unsigned max_st_w,
+                     double px_to_m);
 
 private:
     map<string,vector<MathematicalProduct*>> m_mathematicalComponents;

@@ -11,6 +11,7 @@ public:
     TreeFactory(QMenu *productmenu, QGraphicsScene* scene,const float scale);
     GraphicsProduct * createGraphicsProduct(int posX, int posY) override;
     MathematicalProduct * createMathematicalProduct(int posX, int posY, bool linkgraphic) override;
+    void setScale(const double &px_to_m) override;
 
 private:
     QMenu *m_productmenu;
