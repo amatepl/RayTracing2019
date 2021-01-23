@@ -940,7 +940,7 @@ QWidget *DialogRx::SpcCrltn()
 //    spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
     spc_crltn_plot->graph(0)->setName("Spatial Correlation");
 
-    spc_crltn_plot->xAxis->setLabel("\u0394z [cm]");
+    spc_crltn_plot->xAxis->setLabel("\u0394z [m]");
     spc_crltn_plot->yAxis->setLabel("|R(\u0394z)|");
     spc_crltn_plot->yAxis->grid()->setSubGridVisible(true);
     spc_crltn_plot->xAxis->grid()->setSubGridVisible(true);
@@ -969,13 +969,17 @@ void DialogRx::updateSpcCrltn()
     if (dz.size() >= 170){
         QVector<double> spaceCrltn;
         QVector<double> deltaZ;
-        spaceCrltn = QVector(sc.begin(), sc.begin() + 300);
-        deltaZ = QVector(dz.begin(), dz.begin() + 300);
+
+        int sizeSC = round(sc.size()/2);
+        int sizeDz = round(dz.size()/2);
+
+        spaceCrltn = QVector(sc.begin(), sc.end());
+        deltaZ = QVector(dz.begin(), dz.end());
 //        spaceCrltn = QVector(sc.begin(), sc.end());
 //        deltaZ = QVector(dz.begin(), dz.end());
         spc_crltn_plot->graph(0)->setData(deltaZ, spaceCrltn);
         spc_crltn_plot->yAxis->setRange(0, 1);
-        spc_crltn_plot->xAxis->setRange(0, 1);
+        spc_crltn_plot->xAxis->setRange(0, deltaZ.back());
         spc_crltn_plot->replot();
     }
 }
@@ -996,7 +1000,7 @@ QWidget *DialogRx::timeCrltn()
 //    tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
     tm_crltn_plot->graph(0)->setName("Time Correlation");
 
-    tm_crltn_plot->xAxis->setLabel("\u0394t [10\u207B\u00B2 s]");
+    tm_crltn_plot->xAxis->setLabel("\u0394t [s]");
     tm_crltn_plot->yAxis->setLabel("|R(\u0394t)|");
     tm_crltn_plot->yAxis->grid()->setSubGridVisible(true);
     tm_crltn_plot->xAxis->grid()->setSubGridVisible(true);
@@ -1022,12 +1026,12 @@ void DialogRx::updateTimeCrltn()
 {
     vector<double> tc = m_mathematicalproduct->timeCrltn();
     if (tc.size() >= 170 ) {
-        QVector<double> timeCrltn = QVector(tc.begin(), tc.begin() + 300);
+        QVector<double> timeCrltn = QVector(tc.begin(), tc.end());
         vector<double> dt = m_mathematicalproduct->timeCrltnT();
-        QVector<double> deltaT = QVector(dt.begin(), dt.begin() + 300);
+        QVector<double> deltaT = QVector(dt.begin(), dt.end());
         tm_crltn_plot->graph(0)->setData(deltaT, timeCrltn);
         tm_crltn_plot->yAxis->setRange(0, 1);
-        tm_crltn_plot->xAxis->setRange(0, 1);
+        tm_crltn_plot->xAxis->setRange(0, deltaT.back());
         tm_crltn_plot->replot();
     }
 }

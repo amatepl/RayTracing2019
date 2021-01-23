@@ -149,12 +149,11 @@ double spread(const map<double, double> &psd);
 //    }
 //}
 /*!
- * \fn map<double, double> correlation(vector<double> &spctr)
- * \brief correlation
- * \param spctr
- * \return
+ * \fn ph::map<double, double> correlation(vector<double> &spctr)
+ *
+ * Return the correlation from the power spectrum \a spctr.
  */
-map<double, double> correlation(const vector<complex<double>> &spctr);
+map<double, complex<double>> correlation(const map<double, double> &spctr, const vector<double> &domain);
 
 /*!
  * \brief dipoleFactor

@@ -79,18 +79,27 @@ double ph::spread(const map<double, double> &pds)
     return sqrt(variance/prx - pow(mean/prx, 2));
 }
 
-map<double, double> ph::correlation(const vector<complex<double> > &spctr)
+map<double, complex<double>> ph::correlation(const map<double, double> &spctr, const vector<double> &domain)
 {
-    vector <double> out;
-    Eigen::FFT<double> fft;
-    fft.inv(out, spctr);
-
-    map<double, double> corr;
-    unsigned size = out.size();
-    for (unsigned i = 0; i < size; i++) {
-        corr[i] = out[i];
+    map <double, complex<double>> out;
+    complex<double> j{0,1};
+    for (const auto &e: spctr) {
+        for (const double d: domain) {
+            out[d] += e.second * exp(j * e.first * d) / (2 * M_PI);
+        }
     }
-    return corr;
+
+    return out;
+
+//    Eigen::FFT<double> fft;
+//    fft.inv(out, spctr);
+
+//    map<double, double> corr;
+//    unsigned size = out.size();
+//    for (unsigned i = 0; i < size; i++) {
+//        corr[i] = out[i];
+//    }
+//    return corr;
 }
 
 
