@@ -96,9 +96,7 @@ void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &
                                       0);
     m_verticalStreets.push_back(verticalLine);
 
-    while (prev_x1*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.right()  &&
-           prev_x2*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.right()  &&
-           prev_y1*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.bottom()  &&
+    while (prev_y1*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.bottom()  &&
            prev_y2*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.bottom()) {
 
         int random1 = 0;
@@ -128,6 +126,12 @@ void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &
         prev_y2 += y2;
         prev_w_h = min_st_w + randWidth;
 
+        m_horizontalStreets.push_back(horizontalLine);
+    }
+
+    while (prev_x1*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.right()  &&
+           prev_x2*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.right()) {
+
         int random3 = 0;
         if (min_st_dist < max_st_dist) {
             random3 = rand() % (max_st_dist - min_st_dist);
@@ -138,6 +142,7 @@ void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &
             random4 = rand() % (max_st_dist - min_st_dist);
         }
 
+        int randWidth = 0;
         if (min_st_w < max_st_w) {
             randWidth = rand() % (max_st_w - min_st_w);
         }
@@ -159,7 +164,7 @@ void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &
 //        m_scene->addLine(*horizontalLine);
 //        m_scene->addLine(*verticalLine);
 
-        m_horizontalStreets.push_back(horizontalLine);
+
         m_verticalStreets.push_back(verticalLine);
 
     }
