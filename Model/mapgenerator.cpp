@@ -1,5 +1,44 @@
 #include "mapgenerator.h"
 
+//--------------------------------------------------------------------------------------------
+//
+//          Class Street
+//
+//--------------------------------------------------------------------------------------------
+
+Street::Street(): QLineF()
+{
+
+}
+
+Street::Street(double x1, double y1, double x2, double y2, const double w):
+      QLineF(x1, y1, x2, y2), m_w{w}
+{
+
+}
+
+Street::Street(const QPointF &p1, const QPointF &p2, const double w):
+      QLineF(p1, p2), m_w{w}
+{
+
+}
+
+double Street::width() const
+{
+    return m_w;
+}
+
+void Street::setWidth(double w)
+{
+    m_w = w;
+}
+
+//--------------------------------------------------------------------------------------------
+//
+//          Class MapGenerator
+//
+//--------------------------------------------------------------------------------------------
+
 MapGenerator::MapGenerator(QRectF mapBoundary): m_mapBoundary(mapBoundary)
 {
 
@@ -22,12 +61,12 @@ void MapGenerator::generateMap(unsigned h, unsigned w,
 
     generateStreets(min_st_dist, max_st_dist,(unsigned) min_st_w/2, (unsigned) max_st_w/2);
 
-    generateBuidlings(min_st_dist, max_st_dist, (unsigned) min_st_w/2, (unsigned) max_st_w/2);
+    generateBuidlings();
 
 //    egBuilidings();
 
 //    for (unsigned i = 0; i < carDnsty; i++) {
-    addCars(min_cars);
+    addCars(min_cars, max_cars);
 //    }
 //    addCars();
 
@@ -37,7 +76,29 @@ void MapGenerator::generateMap(unsigned h, unsigned w,
 void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &max_st_dist,
                                    const unsigned &min_st_w, const unsigned &max_st_w)
 {
-    for (int i = 0; i < round(m_mapBoundary.height()/(max_st_dist + 2 * max_st_w)); i++) {
+    int prev_y1 = 0;
+    int prev_y2 = 0;
+    int prev_x1 = 0;
+    int prev_x2 = 0;
+    int prev_w_h = 0;
+    int prev_w_v = 0;
+
+    Street *horizontalLine = new Street(0, m_mapBoundary.topLeft().y()/px_to_meter,
+                                        m_mapBoundary.topRight().x()/px_to_meter,
+                                        m_mapBoundary.topRight().y()/px_to_meter,
+                                        0);
+    m_horizontalStreets.push_back(horizontalLine);
+
+    Street *verticalLine = new Street(m_mapBoundary.topLeft().x()/px_to_meter,
+                                      m_mapBoundary.topLeft().y()/px_to_meter,
+                                      m_mapBoundary.bottomLeft().x()/px_to_meter,
+                                      m_mapBoundary.bottomLeft().y()/px_to_meter,
+                                      0);
+    m_verticalStreets.push_back(verticalLine);
+
+    while (prev_y1*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.bottom()  &&
+           prev_y2*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.bottom()) {
+
         int random1 = 0;
         if (min_st_dist < max_st_dist) {
             random1 = rand() % (max_st_dist - min_st_dist);
@@ -48,9 +109,28 @@ void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &
             random2 = rand() % (max_st_dist - min_st_dist);
         }
 
-        QLineF *horizontalLine = new QLineF(0, round(i*min_st_dist / px_to_meter + random1/ px_to_meter),
+        int randWidth = 0;
+        if (min_st_w < max_st_w) {
+            randWidth = rand() % (max_st_w - min_st_w);
+        }
+
+        int y1 = round(min_st_dist / px_to_meter + random1/ px_to_meter + (min_st_w + randWidth + prev_w_h)/px_to_meter);
+        int y2 = round(min_st_dist / px_to_meter + random2/ px_to_meter + (min_st_w + randWidth + prev_w_h)/px_to_meter);
+
+        Street *horizontalLine = new Street(0, prev_y1 + y1,
                                             round(m_mapBoundary.right() / px_to_meter),
-                                            round(i*min_st_dist / px_to_meter + random2/ px_to_meter));
+                                            prev_y2 + y2,
+                                            (min_st_w + randWidth));
+
+        prev_y1 += y1;
+        prev_y2 += y2;
+        prev_w_h = min_st_w + randWidth;
+
+        m_horizontalStreets.push_back(horizontalLine);
+    }
+
+    while (prev_x1*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.right()  &&
+           prev_x2*px_to_meter + max_st_dist + 2*max_st_w < m_mapBoundary.right()) {
 
         int random3 = 0;
         if (min_st_dist < max_st_dist) {
@@ -62,37 +142,52 @@ void MapGenerator::generateStreets(const unsigned &min_st_dist, const unsigned &
             random4 = rand() % (max_st_dist - min_st_dist);
         }
 
-        QLineF *verticalLine = new QLineF(round(i*min_st_dist / px_to_meter + random3/ px_to_meter),
-                                          round(m_mapBoundary.top() / px_to_meter),
-                                          round(i*min_st_dist / px_to_meter + random4/ px_to_meter),
-                                          round(m_mapBoundary.bottom() / px_to_meter));
+        int randWidth = 0;
+        if (min_st_w < max_st_w) {
+            randWidth = rand() % (max_st_w - min_st_w);
+        }
 
-        m_horizontalStreets.push_back(horizontalLine);
+        int x1 = round(min_st_dist / px_to_meter + random3/ px_to_meter + (min_st_w + randWidth + prev_w_v)/px_to_meter);
+        int x2 = round(min_st_dist / px_to_meter + random4/ px_to_meter + (min_st_w + randWidth + prev_w_v)/px_to_meter);
+
+        Street *verticalLine = new Street(prev_x1 + x1,
+                                          round(m_mapBoundary.top() / px_to_meter),
+                                          prev_x2 + x2,
+                                          round(m_mapBoundary.bottom() / px_to_meter),
+                                          (min_st_w + randWidth));
+
+
+        prev_x1 += x1;
+        prev_x2 += x2;
+        prev_w_v = min_st_w + randWidth;
+
+//        m_scene->addLine(*horizontalLine);
+//        m_scene->addLine(*verticalLine);
+
+
         m_verticalStreets.push_back(verticalLine);
 
     }
+
+    horizontalLine = new Street(0, m_mapBoundary.bottomLeft().y()/px_to_meter,
+                                        m_mapBoundary.bottomRight().x()/px_to_meter,
+                                        m_mapBoundary.bottomRight().y()/px_to_meter,
+                                        0);
+    m_horizontalStreets.push_back(horizontalLine);
+
+    verticalLine = new Street(m_mapBoundary.topRight().x()/px_to_meter,
+                                      m_mapBoundary.topRight().y()/px_to_meter,
+                                      m_mapBoundary.bottomRight().x()/px_to_meter,
+                                      m_mapBoundary.bottomRight().y()/px_to_meter,
+                                      0);
+    m_verticalStreets.push_back(verticalLine);
 }
 
-void MapGenerator::generateBuidlings(const unsigned &min_st_dist, const unsigned &max_st_dist,
-                                     const unsigned &min_st_w, const unsigned &max_st_w)
+void MapGenerator::generateBuidlings()
 {
-    int random1 = 0;
-    int random2 = 0;
-    int random3 = 0;
-    int random4 = 0;
-
     m_products.clear();
-    for (int i = 0; i < round(m_mapBoundary.height()/(max_st_dist + 2*max_st_w)) - 1; i++) {
-
-        if (min_st_w < max_st_w) {
-            random2 = rand() % (max_st_w - min_st_w);
-        }
-
-        for (int j = 0; j < round(m_mapBoundary.width()/(max_st_dist + 2*max_st_w)) - 1; j++) {
-
-            if (min_st_w < max_st_w) {
-                random4 = rand() % (max_st_w - min_st_w);
-            }
+    for (unsigned i = 0; i < m_verticalStreets.size() - 1; i++) {
+        for (unsigned j = 0; j < m_horizontalStreets.size() - 1; j++) {
 
             QPointF intersectionPoint1;
             m_horizontalStreets.at(j)->intersects(*m_verticalStreets.at(i),
@@ -110,29 +205,23 @@ void MapGenerator::generateBuidlings(const unsigned &min_st_dist, const unsigned
             m_horizontalStreets.at(j + 1)->intersects(*m_verticalStreets.at(i + 1),
                                                       &intersectionPoint4);
 
-            intersectionPoint1.setX(round(intersectionPoint1.x() + (min_st_w + random3) / px_to_meter));
-            intersectionPoint1.setY(round(intersectionPoint1.y() + (min_st_w + random1) / px_to_meter));
+            double w1 = m_horizontalStreets.at(j)->width();
+            double w2 = m_horizontalStreets.at(j+1)->width();
+            double w3 = m_verticalStreets.at(i)->width();
+            double w4 = m_verticalStreets.at(i+1)->width();
 
-            intersectionPoint2.setX(round(intersectionPoint2.x() + (min_st_w + random3) / px_to_meter));
-            intersectionPoint2.setY(round(intersectionPoint2.y() - (min_st_w + random2) / px_to_meter));
+            intersectionPoint1.setX(round(intersectionPoint1.x() + w3 / px_to_meter));
+            intersectionPoint1.setY(round(intersectionPoint1.y() + w1 / px_to_meter));
 
-            intersectionPoint3.setX(round(intersectionPoint3.x() - (min_st_w + random4) / px_to_meter));
-            intersectionPoint3.setY(round(intersectionPoint3.y() + (min_st_w + random1) / px_to_meter));
+            intersectionPoint2.setX(round(intersectionPoint2.x() + w3 / px_to_meter));
+            intersectionPoint2.setY(round(intersectionPoint2.y() - w2 / px_to_meter));
 
-            intersectionPoint4.setX(round(intersectionPoint4.x() - (min_st_w + random4) / px_to_meter));
-            intersectionPoint4.setY(round(intersectionPoint4.y() - (min_st_w + random2) / px_to_meter));
+            intersectionPoint3.setX(round(intersectionPoint3.x() - w4 / px_to_meter));
+            intersectionPoint3.setY(round(intersectionPoint3.y() + w1 / px_to_meter));
 
-            //            intersectionPoint1.setX(intersectionPoint1.x() + streetWidth);
-            //            intersectionPoint1.setY(intersectionPoint1.y() + streetWidth);
+            intersectionPoint4.setX(round(intersectionPoint4.x() - w4 / px_to_meter));
+            intersectionPoint4.setY(round(intersectionPoint4.y() - w2 / px_to_meter));
 
-            //            intersectionPoint2.setX(intersectionPoint2.x() + streetWidth);
-            //            intersectionPoint2.setY(intersectionPoint2.y() - streetWidth);
-
-            //            intersectionPoint3.setX(intersectionPoint3.x() - streetWidth);
-            //            intersectionPoint3.setY(intersectionPoint3.y() + streetWidth);
-
-            //            intersectionPoint4.setX(intersectionPoint4.x() - streetWidth);
-            //            intersectionPoint4.setY(intersectionPoint4.y() - streetWidth);
 
             QPolygonF buildingForm;
             buildingForm << intersectionPoint1
@@ -145,47 +234,12 @@ void MapGenerator::generateBuidlings(const unsigned &min_st_dist, const unsigned
                                                 ->createMathematicalProduct(buildingForm);
 
             m_products.push_back(building);
-
-            random3 = random4;
-
         }
-
-        random1 = random2;
     }
-//<<<<<<< Updated upstream
-
-//                QPolygonF buildingForm;
-//                buildingForm << QPointF(0,0)
-//                             << QPointF(600,0)
-//                             << QPointF(600,200)
-//                             << QPointF(0,200)
-//                             << QPointF(0,0);
-
-//                MathematicalProduct *building = m_buildingFactory
-//                                                    ->createMathematicalProduct(buildingForm);
-
-//                m_products.push_back(building);
-
-//                QPolygonF buildingForm2;
-//                buildingForm2 << QPointF(0,260)
-//                             << QPointF(600,260)
-//                             << QPointF(600,410)
-//                             << QPointF(0,410)
-//                             << QPointF(0,260);
-
-//                MathematicalProduct *building2 = m_buildingFactory
-//                                                    ->createMathematicalProduct(buildingForm2);
-
-//                m_products.push_back(building2);
-
-//    addCars(car);
-//    addCars();
-
-    //addTrees();
 
 }
 
-void MapGenerator::addCars(unsigned carDnsty)
+void MapGenerator::addCars(unsigned min_cars, unsigned max_cars)
 {
     QPointF carPos;
 
@@ -193,8 +247,13 @@ void MapGenerator::addCars(unsigned carDnsty)
 
         vector<float> freePlaces = carPlaces(m_horizontalStreets.at(i), m_carParams.l / px_to_meter, 1 / px_to_meter);
 
+        unsigned max = min_cars;
+        if (max_cars > min_cars) {
+            max += rand()%(max_cars - min_cars);
+        }
+
         unsigned nbCars = 0;
-        while (nbCars < carDnsty && freePlaces.size()) {
+        while (nbCars < max && freePlaces.size()) {
             carPos = carPoistion(&freePlaces, m_horizontalStreets.at(i));
 
             QPolygonF carContour = createPolyCar(&carPos, m_horizontalStreets.at(i));
@@ -228,8 +287,13 @@ void MapGenerator::addCars(unsigned carDnsty)
     for (unsigned j = 1; j < m_verticalStreets.size() - 1; j++) {
         vector<float> freePlaces = carPlaces(m_verticalStreets.at(j), m_carParams.l / px_to_meter, 1 / px_to_meter);
 
+        unsigned max = min_cars;
+        if (max_cars > min_cars) {
+            max += rand()%(max_cars - min_cars);
+        }
+
         unsigned nbCars = 0;
-        while (nbCars < carDnsty && freePlaces.size()) {
+        while (nbCars < max && freePlaces.size()) {
             carPos = carPoistion(&freePlaces, m_verticalStreets.at(j));
 
             QPolygonF carContour = createPolyCar(&carPos, m_verticalStreets.at(j));
@@ -654,10 +718,10 @@ void MapGenerator::setTreeFactory(TreeFactory *treeFactory)
 
 void MapGenerator::clear()
 {
-    deleteElmnts<QLineF>(m_horizontalStreets);
+    deleteElmnts<Street>(m_horizontalStreets);
     m_horizontalStreets.clear();
 
-    deleteElmnts<QLineF>(m_verticalStreets);
+    deleteElmnts<Street>(m_verticalStreets);
     m_verticalStreets.clear();
 
     deleteElmnts<thread>(m_threads);

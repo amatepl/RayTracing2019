@@ -19,7 +19,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
 //    m_tabwidget->addTab(DopplerSpectrum(),          tr("Doppler Spectrum"));
     m_tabwidget->addTab(PrxAngularSpctr(), tr("Power Angular Spectrum"));
     m_tabwidget->addTab(PrxDopplerSpctr(),          tr("Power Doppler Spectrum"));
-    m_tabwidget->addTab(SpcCrltn(), tr("Spacial Correlation"));
+    m_tabwidget->addTab(SpcCrltn(), tr("Spatial Correlation"));
     m_tabwidget->addTab(timeCrltn(), tr("Time Correltaion"));
     m_tabwidget->addTab(PDP(), tr("Power Delay Profile"));
 
