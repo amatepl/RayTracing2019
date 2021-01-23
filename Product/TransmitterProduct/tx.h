@@ -359,6 +359,8 @@ public:
     }
     void setFrequency(unsigned long frequency) override {
         m_frequency = frequency;
+        lambda = c/m_frequency;
+        wvNbr = 2*M_PI/lambda;
     }
     void setBandwidth(unsigned long bandwidth) override {
         m_bandwidth = bandwidth;
