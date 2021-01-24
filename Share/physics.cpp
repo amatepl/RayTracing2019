@@ -24,7 +24,7 @@ double ph::prxSpctrMPC(angle theta, double spectrum)
     return 2 * M_PI / (max_spectrum * sqrt(1 - pow(spectrum/max_spectrum, 2)));
 }
 
-double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const ph::u u)
+double ph::prxSpctrMPC(std::complex<double> &angDistr, const double /*ampu*/, const ph::u /*u*/)
 {
 //    return 2*M_PI;
 //    return 2*M_PI/std::sqrt(pow(ampu, 2) - pow(u, 2));
@@ -34,7 +34,7 @@ double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const 
 }
 
 
-std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double theta, const double spectrum)
+std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double /*theta*/, const double /*spectrum*/)
 {
 //    return 2 * M_PI;
     return 2 * M_PI * h;

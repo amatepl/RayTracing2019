@@ -265,6 +265,7 @@ void MapGenerator::addCars(unsigned min_cars, unsigned max_cars)
             QLineF tmpLine = *m_horizontalStreets.at(i);
             tmpLine.setLength(m_carParams.l);
             tmpLine.translate(carPos - tmpLine.p1());
+            tmpLine.setLength(30);
             dynamic_cast<Car *>(car)->setMovement(tmpLine);
 
             m_products.push_back(car);

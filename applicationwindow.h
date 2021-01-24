@@ -79,6 +79,8 @@ public:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
     void mapPosStatusBar(const double &x, const double &y);
+    string createPosInfo(const double x, const double y);
+    string createInfo(const string &def, const double val);
 
 private:
     QGraphicsView *view;
@@ -105,6 +107,14 @@ private:
     InfoWidget* m_info_widget;
 
     QStatusBar *m_statusBar;
+
+    struct StatusBarInfos
+    {
+        QPointF mousePos {QPointF()};
+        double prx{0};
+    };
+
+    StatusBarInfos m_statusbarInfos;
 
     QAction *deleteaction;
     QAction *propertiesaction;
@@ -136,6 +146,7 @@ public slots:
                      double px_to_m);
     void addHeatMap(HeatMap *heatMap, HeatmapMode mode);
 
+    void addToStatusBar(const double val);
     void updateStatusBar(const string &str);
 };
 

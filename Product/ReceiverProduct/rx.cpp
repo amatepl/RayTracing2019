@@ -649,7 +649,7 @@ double Rx::getCoherenceDist()
             absPS[e.first] = abs(e.second);
         }
 //        return ph::firstMinIdx(m_chData->spaceCrltnMap); // cm
-        return ph::firstMinIdx(absPS); // cm
+        return ph::firstMinIdx(absPS, 0.7, 4)*100; // cm
     } else return 0;
 }
 
@@ -666,7 +666,7 @@ double Rx::getCoherenceTm()
         for (const auto &e: m_chData->spaceCrltnMap) {
             absPS[e.first] = abs(e.second);
         }
-        return ph::firstMinIdx(absPS)*10000; // us
+        return ph::firstMinIdx(absPS, 0.7, 3)*1000000; // us
     } else return 0;
 //    return 0;
 }
@@ -814,7 +814,7 @@ vector<double> Rx::spaceCrltn()
 //        sc = m_chData->spaceCrltn;
         double max = *sc.begin();
         for (auto &d: sc){
-            d = d / max;
+            d = round((d / max)*1e6)/1e6;
         }
     }
     return sc;
@@ -884,7 +884,7 @@ vector<double> Rx::timeCrltn() const
 //        sc = m_chData->spaceCrltn;
         double max = *tc.begin();
         for (auto &d: tc){
-            d = d / max;
+            d = round((d / max)*1e6)/1e6;
         }
     }
     return tc;

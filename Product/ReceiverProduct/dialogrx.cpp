@@ -970,8 +970,8 @@ void DialogRx::updateSpcCrltn()
         QVector<double> spaceCrltn;
         QVector<double> deltaZ;
 
-        int sizeSC = round(sc.size()/2);
-        int sizeDz = round(dz.size()/2);
+//        int sizeSC = round(sc.size()/2);
+//        int sizeDz = round(dz.size()/2);
 
         spaceCrltn = QVector(sc.begin(), sc.end());
         deltaZ = QVector(dz.begin(), dz.end());
