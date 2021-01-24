@@ -16,6 +16,8 @@
 
 using namespace std;
 
+enum State {idle, raytracing, coverage};
+
 class InfoWidget: public QWidget
 {
     Q_OBJECT;
@@ -40,8 +42,10 @@ public:
     void reset();
 
     bool eventFilter(QObject *obj, QEvent *event);
+    State state() const;
 
 private:
+    State m_state{idle};
     QGridLayout *main_layout;
 
     // Info
@@ -80,7 +84,7 @@ private:
     QPushButton *clear_coverage;
     QSpinBox *rflctns_cov;
     QDoubleSpinBox *cov_dnsty;
-    QLabel *m_eFieldDisp;
+//    QLabel *m_eFieldDisp;
     QComboBox *cov_type;
 
     // Map

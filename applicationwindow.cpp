@@ -15,7 +15,8 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
     view->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     m_map = new GraphicsMap(view, this, m_productmenu);
     m_map->installEventFilter(this);
-    connect(m_map, &GraphicsMap::eField, m_info_widget, &InfoWidget::updateEField);
+//    connect(m_map, &GraphicsMap::eField, m_info_widget, &InfoWidget::updateEField);
+    connect(m_map, &GraphicsMap::eField, this, &ApplicationWindow::addToStatusBar);
     connect(m_info_widget, &InfoWidget::hovered, this, &ApplicationWindow::updateStatusBar);
     view->setMouseTracking(true);
     m_receiverFactory = new ReceiverFactory(m_productmenu, m_info_widget, m_map, px_to_meter, this);
@@ -554,17 +555,76 @@ void ApplicationWindow::addHeatMap(HeatMap *heatMap, HeatmapMode mode)
 
 void ApplicationWindow::mapPosStatusBar(const double &x, const double &y)
 {
+    m_statusbarInfos.mousePos = QPointF(x, y);
+    string info = createPosInfo(x, y);
+    updateStatusBar(info);
+}
+
+string ApplicationWindow::createPosInfo(const double x, const double y)
+{
+
     string info = "";
     info += "x = ";
     info += to_string((int) x);
     info += ", y = ";
     info += to_string((int)y);
-    updateStatusBar(info);
+    return info;
 }
 
+string ApplicationWindow::createInfo(const string &def, const double val)
+{
+    string info = "";
+    info += def;
+    info += " = ";
+    info += to_string(val);
+    return info;
+}
 
+void ApplicationWindow::addToStatusBar(const double val)
+{
+    m_statusbarInfos.prx = val;
+//    HeatmapMode mode =  m_coverageAlgorithm->mode();
+//    QString info = m_statusBar->currentMessage();
+
+//    switch (mode) {
+//    case 0:
+//        m_statusBar->showMessage(info + ", |E| = " + QString::number(val) + "V/m");
+//        break;
+//    case 1:
+//        m_statusBar->showMessage(info + ", |E| = " + QString::number(val) + "V/m");
+//        break;
+//    case 2:
+//        m_statusBar->showMessage(info + ", P = " + QString::number(val) + "[dBm]");
+//        break;
+//    default:
+//        break;
+//    }
+
+}
 
 void ApplicationWindow::updateStatusBar(const string &str)
 {
-    m_statusBar->showMessage(QString::fromStdString(str));
+    string info = createPosInfo(m_statusbarInfos.mousePos.x(), m_statusbarInfos.mousePos.y());
+
+    if (m_info_widget->state() == State::coverage) {
+
+        double val = m_statusbarInfos.prx;
+
+        info += ", ";
+        HeatmapMode mode = m_coverageAlgorithm->mode();
+        switch (mode) {
+        case 0:
+            info += "|E| = " + to_string(val) + " V/m";
+            break;
+        case 1:
+            info += "|E| = " + to_string(val) + " V/m";
+            break;
+        case 2:
+            info += "P = " + to_string(val) + " [dBm]";
+            break;
+        default:
+            break;
+        }
+    }
+    m_statusBar->showMessage(QString::fromStdString(info));
 }

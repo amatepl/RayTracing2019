@@ -3,7 +3,7 @@
 InfoWidget::InfoWidget(QWidget* parent):QWidget(parent)
 {
 //    createInfoGroup();
-    createEditGeneral();
+//    createEditGeneral();
     createMapGroup();
     createRayGroup();
     createCoverageGroup();
@@ -11,7 +11,7 @@ InfoWidget::InfoWidget(QWidget* parent):QWidget(parent)
     QGridLayout *main_layout = new QGridLayout(this);
     main_layout->setSizeConstraint(QLayout::SetFixedSize);
 //    main_layout->addWidget(info_group, 0, 0);
-    main_layout->addWidget(edit_group, 0, 1);
+//    main_layout->addWidget(edit_group, 0, 1);
     main_layout->addWidget(map_group, 0, 2);
     main_layout->addWidget(ray_group, 0, 3);
     main_layout->addWidget(coverage_group, 0, 4);
@@ -178,8 +178,8 @@ void InfoWidget::createCoverageGroup(){
 
     coverage_layout->addLayout(f_layout, 0, 1, 2, 1);
 
-    m_eFieldDisp = new QLabel("|E| [...]: ", this);
-    coverage_layout->addWidget(m_eFieldDisp, 1, 2);
+//    m_eFieldDisp = new QLabel("|E| [...]: ", this);
+//    coverage_layout->addWidget(m_eFieldDisp, 1, 2);
 
     coverage_group->setLayout(coverage_layout);
 
@@ -194,15 +194,15 @@ void InfoWidget::createCoverageGroup(){
 void InfoWidget::updateCoverageGroup(double eField)
 {
     switch (cov_type->currentIndex()) {
-    case 0:
-        m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
-        break;
-    case 1:
-        m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
-        break;
-    case 2:
-        m_eFieldDisp->setText("P [dBm]: " + QString::number(eField));
-        break;
+//    case 0:
+//        m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
+//        break;
+//    case 1:
+//        m_eFieldDisp->setText("|E| [...]: " + QString::number(eField));
+//        break;
+//    case 2:
+//        m_eFieldDisp->setText("P [dBm]: " + QString::number(eField));
+//        break;
     default:
         break;
     }
@@ -598,6 +598,11 @@ bool InfoWidget::eventFilter(QObject *obj, QEvent *event)
     return QWidget::eventFilter(obj, event);
 }
 
+State InfoWidget::state() const
+{
+    return m_state;
+}
+
 // ---------- SLOTS ----------
 void InfoWidget::sendLaunchRayTracing(){
     rayTracing(rflctns_ray->value());
@@ -613,6 +618,7 @@ void InfoWidget::sendClearRayTracing()
 }
 
 void InfoWidget::sendLaunchCoverage(){
+    m_state = State::coverage;
     coverage(rflctns_cov->value(), cov_dnsty->value(), cov_type->currentIndex());
     launch_raytracing->setEnabled(false);
     launch_coverage->setEnabled(false);
@@ -620,6 +626,7 @@ void InfoWidget::sendLaunchCoverage(){
 
 void InfoWidget::sendClearCoverage()
 {
+    m_state = State::idle;
     clearCoverage();
     launch_raytracing->setEnabled(true);
     launch_coverage->setEnabled(true);

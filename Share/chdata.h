@@ -59,9 +59,9 @@ struct Data {
     double                                                          losFactor{0};
     double                                                          nlosFactor{0};
     std::vector<double>                                             spaceCrltn;
-    std::map<double, double>                                        spaceCrltnMap;
+    std::map<double, std::complex<double>>                          spaceCrltnMap;
     std::vector<double>                                             timeCrltn;
-    std::map<double, double>                                        timeCrltnMap;
+    std::map<double, std::complex<double>>                                        timeCrltnMap;
     std::vector<double>                                             deltaZ;
     std::map<double, std::complex<double>>                          intPattern;
     std::complex<double>                                            indVoltageGnd{0};
