@@ -24,6 +24,7 @@ DialogRx::DialogRx(ReceiverProduct *mathematicalproduct, QWidget *parent):QDialo
     m_tabwidget->addTab(PDP(), tr("Power Delay Profile"));
 
     m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                       | QDialogButtonBox::Apply
                                        | QDialogButtonBox::Cancel
                                        | QDialogButtonBox::Save);
 
@@ -1100,15 +1101,31 @@ void DialogRx::buttonBoxClicked(QAbstractButton *button)
         saveProperties();
 
     } else if (button->text() == "Save") {
-
         saveToDisk();
 
+    }
+      else if (button->text() == "Apply"){
+        applyProperties();
     }
 }
 
 
 void DialogRx::saveProperties(){
     newProperties();
+}
+
+void DialogRx::applyProperties(){
+    m_mathematicalproduct->setSpeed(m_speed->value());
+    m_mathematicalproduct->setOrientation(m_orientation->value());
+    int posx = m_posx->value();
+    int posy = m_posy->value();
+    m_mathematicalproduct->setPosY(posy);
+    m_mathematicalproduct->setPosX(posx);
+    m_mathematicalproduct->setTargetSNR(m_target_snr->value());
+    m_mathematicalproduct->setNoiseFigure(m_noise_figure->value());
+    m_mathematicalproduct->setInterferecenceMargin(m_interferencemargin->value());
+    m_mathematicalproduct->newProperties();
+    updateGeneralTab();
 }
 
 void DialogRx::saveToDisk()

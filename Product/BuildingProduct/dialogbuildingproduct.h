@@ -12,6 +12,7 @@
 #include <QGroupBox>
 #include <QComboBox>
 #include <QTextEdit>
+#include <QDialogButtonBox>
 
 //#include "mathematicalbuildingproduct.h"
 #include "graphicsbuilding.h"
@@ -38,9 +39,11 @@ public:
     std::string getModel() override {return m_model;}
     void setExtremities(QVector<QPointF> extremities) override;
     void newProperties() override;
+    void applyProperties();
     void writeExtremities();
 
 private:
+    QDialogButtonBox *m_buttonbox;
     BuildingProduct *m_mathematicalproduct;
     std::string m_model;
     QComboBox *m_modelBox;
@@ -56,5 +59,6 @@ public slots:
     void changeModel(QString model);
     void addExtremities();
     void removeExtremities();
+    void buttonBoxClicked(QAbstractButton *button);
 };
 #endif // DIALOGBUILDINGPRODUCT_H

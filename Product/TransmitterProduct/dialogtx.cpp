@@ -17,9 +17,16 @@ DialogTx::DialogTx(TxInterface *mathematicalproduct):m_tx(mathematicalproduct)
     /* Cell Range */
     m_tabwidget->addTab(createCellRangeTab(), tr("Cell range"));
 
+    m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                       | QDialogButtonBox::Apply
+                                       | QDialogButtonBox::Cancel);
+
     QVBoxLayout *mainlayout = new QVBoxLayout;
     mainlayout->addWidget(m_tabwidget);
+    mainlayout->addWidget(m_buttonbox);
     setLayout(mainlayout);
+
+    connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogTx::buttonBoxClicked);
     open();
 }
 
@@ -56,14 +63,10 @@ QWidget *DialogTx::createDialog(){
     QWidget *widget = new QWidget(this);
     setWindowTitle("Transmitter properties: ");
     setWindowIcon(QIcon(GraphicsTx::getImage()));
-    QPushButton *save = new QPushButton("Save",this);
-    QPushButton *cancel = new QPushButton("Cancel",this);
     QPushButton *plot = new QPushButton("Plot gain",this);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(plot);
-    buttonLayout->addWidget(save);
-    buttonLayout->addWidget(cancel);
     buttonLayout->setAlignment(Qt::AlignRight);
 
     m_modelBox = new QComboBox(this);
@@ -137,6 +140,7 @@ QWidget *DialogTx::createDialog(){
     QGroupBox *geo = new QGroupBox("Geometry properties");
     geo->setLayout(geoProperties);
 
+
     QFormLayout *phyProperties = new QFormLayout;
     phyProperties->addRow("Frequency: ",frequency);
     phyProperties->addRow("Bandwidth: ",bandwidth);
@@ -147,15 +151,12 @@ QWidget *DialogTx::createDialog(){
 
     QGridLayout *firstLayout = new QGridLayout(widget);
     firstLayout->addWidget(model,0,0);
-    firstLayout->addWidget(geo,1,0);
-    firstLayout->addWidget(phy,2,0);
+    firstLayout->addWidget(geo,2,0);
     firstLayout->addLayout(buttonLayout,3,0);
+    firstLayout->addWidget(phy,4,0);
 
     widget->setLayout(firstLayout);
-//    setLayout(firstLayout);
 
-    connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
-    connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
     connect(plot,SIGNAL(clicked()),this,SLOT(openPlot()));
     connect(m_modelBox,SIGNAL(activated(QString)),this,SLOT(changeModel(QString)));
 
@@ -504,6 +505,26 @@ void DialogTx::newProperties(){
 void DialogTx::saveProperties(){
     newProperties();
     close();
+}
+
+void DialogTx::applyProperties(){
+    newProperties();
+}
+
+void DialogTx::buttonBoxClicked(QAbstractButton *button)
+{
+    QString text = button->text();
+    if (button->text() == "&OK") {
+
+        saveProperties();
+
+    }
+      else if (button->text() == "Apply"){
+        applyProperties();
+    }
+    else if (button->text() == "&Cancel"){
+        close();
+    }
 }
 
 void DialogTx::openPlot(){

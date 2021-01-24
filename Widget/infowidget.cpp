@@ -241,7 +241,7 @@ void InfoWidget::createMapGroup()
     min_dist_layout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
 
     min_st_dist = new QSpinBox(map_group);
-    min_st_dist->setRange(0, 999);
+    min_st_dist->setRange(0, 2000);
     min_st_dist->setAccelerated(true);
 
     min_dist_layout->addRow("min", min_st_dist);
@@ -251,7 +251,7 @@ void InfoWidget::createMapGroup()
     max_dist_layout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
 
     max_st_dist = new QSpinBox(map_group);
-    max_st_dist->setRange(0, 999);
+    max_st_dist->setRange(0, 2000);
     max_st_dist->setAccelerated(true);
 
     max_dist_layout->addRow("max", max_st_dist);

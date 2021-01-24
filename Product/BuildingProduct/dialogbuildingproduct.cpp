@@ -21,13 +21,6 @@ DialogBuildingProduct::~DialogBuildingProduct(){
 void DialogBuildingProduct::createDialog(){
     setWindowTitle("Building properties: ");
     setWindowIcon(QIcon(GraphicsBuilding::getImage()));
-    QPushButton *save = new QPushButton("Save",this);
-    QPushButton *cancel = new QPushButton("Cancel",this);
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout->addWidget(save);
-    buttonLayout->addWidget(cancel);
-    buttonLayout->setAlignment(Qt::AlignRight);
 
     m_modelBox = new QComboBox(this);
     m_modelBox->addItem("Brick");
@@ -51,6 +44,10 @@ void DialogBuildingProduct::createDialog(){
     m_pointX->setAccelerated(true);
     m_pointY->setRange(0,5000);
     m_pointY->setAccelerated(true);
+
+    m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                       | QDialogButtonBox::Apply
+                                       | QDialogButtonBox::Cancel);
 
 
     QFormLayout *modelProperties = new QFormLayout(this);
@@ -95,12 +92,13 @@ void DialogBuildingProduct::createDialog(){
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(model,0,0);
     firstLayout->addWidget(geo,1,0);
-    firstLayout->addLayout(buttonLayout,2,0);
 
-    setLayout(firstLayout);
+    QVBoxLayout *mainlayout = new QVBoxLayout;
+    mainlayout->addLayout(firstLayout);
+    mainlayout->addWidget(m_buttonbox);
+    setLayout(mainlayout);
 
-    connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
-    connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
+    connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogBuildingProduct::buttonBoxClicked);
     connect(m_modelBox,SIGNAL(activated(QString)),this,SLOT(changeModel(QString)));
     connect(add,SIGNAL(clicked()),this,SLOT(addExtremities()));
     connect(del,SIGNAL(clicked()),this,SLOT(removeExtremities()));
@@ -200,6 +198,44 @@ void DialogBuildingProduct::newProperties(){
     m_mathematicalproduct->setPermittivity(m_permittivity->value());
     m_mathematicalproduct->newProperties();
     close();
+}
+
+void DialogBuildingProduct::applyProperties(){
+    m_mathematicalproduct->setPosX(m_posx->value());
+    m_mathematicalproduct->setPosY(m_posy->value());
+    QPointF offset = QPointF(m_posx->value(),m_posy->value()) - initialpos;
+    for (int i = 0; i<m_extremities.size();i++){
+        QPointF p = m_extremities.at(i);
+        p = p + offset;
+        m_extremities.replace(i,p);
+    }
+    m_mathematicalproduct->setExtremities(m_extremities);
+    m_mathematicalproduct->setModel(m_model);
+    m_mathematicalproduct->setConductivity(m_conductivity->value());
+    m_mathematicalproduct->setPermittivity(m_permittivity->value());
+    m_mathematicalproduct->newProperties();
+    setPosX(m_mathematicalproduct->getPosX());
+    setPosY(m_mathematicalproduct->getPosY());
+    initialpos = QPointF(getPosX(),getPosY());
+    setModel(m_mathematicalproduct->getModel());
+    setExtremities(m_mathematicalproduct->getExtremities());
+    writeExtremities();
+}
+
+void DialogBuildingProduct::buttonBoxClicked(QAbstractButton *button)
+{
+    QString text = button->text();
+    if (button->text() == "&OK") {
+
+        saveProperties();
+
+    }
+      else if (button->text() == "Apply"){
+        applyProperties();
+    }
+    else if (button->text() == "&Cancel"){
+        close();
+    }
 }
 
 void DialogBuildingProduct::saveProperties(){

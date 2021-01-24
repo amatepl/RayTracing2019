@@ -202,6 +202,7 @@ signals:
 
 public slots:
     void buttonBoxClicked(QAbstractButton *button);
+    void applyProperties();
     void saveProperties();
     void saveToDisk();
     void showTDL();

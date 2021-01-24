@@ -2,6 +2,7 @@
 #define DIALOGCARPRODUCT_H
 
 #include <QDialog>
+#include <QDialogButtonBox>
 
 #include "carproduct.h"
 #include "graphicscarproduct.h"
@@ -26,8 +27,10 @@ public:
     void setOrientation(double orientation) override;
     void setSpeed(double) override;
     void newProperties() override;
+    void applyProperties();
 
 private:
+    QDialogButtonBox *m_buttonbox;
     CarProduct *m_mathematicalproduct;
     QSpinBox* m_posx;
     QSpinBox* m_posy;
@@ -36,6 +39,7 @@ private:
 
 public slots:
     void saveProperties();
+    void buttonBoxClicked(QAbstractButton *button);
 
 };
 

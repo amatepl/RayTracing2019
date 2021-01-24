@@ -11,6 +11,7 @@
 #include <QGroupBox>
 #include <QComboBox>
 #include <qcustomplot.h>
+#include <QDialogButtonBox>
 
 #include "txinterface.h"
 #include "graphicstx.h"
@@ -65,10 +66,12 @@ public:
 //    virtual void setKind(Kind kind) ;
     void setTxType(TxInterface::Kind kind);
     void newProperties() ;
+    void applyProperties();
 
 private:
     /* General Parameters */
 //    Kind m_kind;
+    QDialogButtonBox *m_buttonbox;
     QComboBox *m_modelBox;
     QSpinBox *m_posx,*m_posy,*m_rowBox,*m_columnBox,*m_pr_orientationValue;
     QDoubleSpinBox *m_orientationValue;
@@ -103,6 +106,7 @@ private:
     TxInterface* m_tx;
 
 public slots:
+    void buttonBoxClicked(QAbstractButton *button);
     void saveProperties();
     void openPlot();
     void changeModel(QString model);

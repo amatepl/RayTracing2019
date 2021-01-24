@@ -34,6 +34,8 @@ MathematicalProduct* BuildingFactory::createMathematicalProduct(QPolygonF poly, 
 
     Building* mathematicalBuildingProduct = new Building(poly);
     mathematicalBuildingProduct->setScale(px_to_meter);
+    mathematicalBuildingProduct->setPosX(poly.at(0).x());
+    mathematicalBuildingProduct->setPosY(poly.at(0).y());
     if (linkgraphic){
         GraphicsBuilding* graphicsBuildingProduct = new GraphicsBuilding(poly,m_productmenu, m_scene);
         graphicsBuildingProduct->attachObserver(mathematicalBuildingProduct);

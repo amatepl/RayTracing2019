@@ -18,13 +18,6 @@ DialogCarProduct::~DialogCarProduct(){
 void DialogCarProduct::createDialog(){
     setWindowTitle("Car properties: ");
     setWindowIcon(QIcon(GraphicsCarProduct::getImage()));
-    QPushButton *save = new QPushButton("Save",this);
-    QPushButton *cancel = new QPushButton("Cancel",this);
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout->addWidget(save);
-    buttonLayout->addWidget(cancel);
-    buttonLayout->setAlignment(Qt::AlignRight);
 
     m_posx = new QSpinBox(this);
     m_posy = new QSpinBox(this);
@@ -35,10 +28,12 @@ void DialogCarProduct::createDialog(){
 
     m_orientation = new QDoubleSpinBox(this);
     m_orientation->setRange(0.00,360.00);
-    m_orientation->setSingleStep(90);
     m_speed = new QDoubleSpinBox(this);
     m_speed->setRange(0.00,50.00);
-    m_orientation->findChild<QLineEdit*>()->setReadOnly(true);
+
+    m_buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                       | QDialogButtonBox::Apply
+                                       | QDialogButtonBox::Cancel);
 
     QFormLayout *geoProperties = new QFormLayout(this);
     geoProperties->addRow("X center: ",m_posx);
@@ -66,12 +61,13 @@ void DialogCarProduct::createDialog(){
     QGridLayout *firstLayout = new QGridLayout;
     firstLayout->addWidget(geo,0,0);
     firstLayout->addWidget(phy,1,0);
-    firstLayout->addLayout(buttonLayout,2,0);
 
-    setLayout(firstLayout);
+    QVBoxLayout *mainlayout = new QVBoxLayout;
+    mainlayout->addLayout(firstLayout);
+    mainlayout->addWidget(m_buttonbox);
+    setLayout(mainlayout);
 
-    connect(cancel,SIGNAL(clicked()),this,SLOT(close()));
-    connect(save,SIGNAL(clicked()),this,SLOT(saveProperties()));
+    connect(m_buttonbox, &QDialogButtonBox::clicked, this, &DialogCarProduct::buttonBoxClicked);
 }
 
 int DialogCarProduct::getPosX(){
@@ -116,5 +112,33 @@ void DialogCarProduct::newProperties(){
     m_mathematicalproduct->setSpeed(m_speed->value());
     m_mathematicalproduct->newProperties();
     close();
+}
+
+void DialogCarProduct::applyProperties(){
+    m_mathematicalproduct->setPosX(m_posx->value());
+    m_mathematicalproduct->setPosY(m_posy->value());
+    m_mathematicalproduct->setOrientation(m_orientation->value());
+    m_mathematicalproduct->setSpeed(m_speed->value());
+    m_mathematicalproduct->newProperties();
+    setPosX(m_mathematicalproduct->getPosX());
+    setPosY(m_mathematicalproduct->getPosY());
+    setOrientation(m_mathematicalproduct->getOrientation());
+    setSpeed(m_mathematicalproduct->getSpeed());
+}
+
+void DialogCarProduct::buttonBoxClicked(QAbstractButton *button)
+{
+    QString text = button->text();
+    if (button->text() == "&OK") {
+
+        saveProperties();
+
+    }
+      else if (button->text() == "Apply"){
+        applyProperties();
+    }
+    else if (button->text() == "&Cancel"){
+        close();
+    }
 }
 

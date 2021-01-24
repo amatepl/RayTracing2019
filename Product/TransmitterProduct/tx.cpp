@@ -641,24 +641,19 @@ void Tx::addTxImg(ProductObserver *txImg)
 
 vector<QPointF> Tx::pathLossPoints() const
 {
-    vector<QPointF> pl_points; // Path loss (pl) points
-    QPolygonF coverage = buildCoverage();
-    QRectF bounding_rect = coverage.boundingRect();
-                               // Bounding rect of the coverage zone
-    int width = bounding_rect.width();
-    int height = bounding_rect.height();
-    QPointF tmp_point = bounding_rect.topLeft();
-                               // Starting point
-    int num_points = 1000;//px_to_meter;
-                               // Number of considered points
-    int range_x = width/num_points;
-    int range_y = height/num_points;
-    for (int i = 0; i <= num_points; i++)
-    {
-        for (int j = 0; j <= num_points; j++)
-        {
-            tmp_point = bounding_rect.topLeft() + QPointF(i*range_x,j*range_y);
-                                // Scan point inside de bounding rect
+    double logBins = 1000;
+    double logarithmicBase = 10;
+    double logMin = log10(1/px_to_meter);
+    double logMax = log10(400/px_to_meter);
+    double delta = (logMax - logMin) / logBins;
+    double accDelta = 0;
+    double rel_distance = 0;
+    QPointF tmp_point;
+    vector<QPointF> pl_points;
+    for (int i = 0; i< logBins;i++){
+       rel_distance = pow(logarithmicBase,logMin + accDelta);
+       for (double theta = 0; theta <= 2*M_PI; theta += M_PI/240){
+            tmp_point = *this+QPointF(rel_distance*cos(theta),rel_distance*sin(theta));
             if (m_zone.containsPoint(tmp_point,Qt::OddEvenFill))
             {
                 if (tmp_point.x() > 0 && tmp_point.y() > 0){
@@ -667,7 +662,8 @@ vector<QPointF> Tx::pathLossPoints() const
                                     // add tmp_point inside the pl_points
                 }
             }
-        }
+       }
+       accDelta = accDelta + delta;
     }
     return pl_points;
 }
@@ -1266,7 +1262,7 @@ void Tx::computePathLossFading()
 {
     linearRegressionPathLoss();
     for (unsigned i = 0; i < m_pathloss.size(); i++){
-        path_loss.push_back(m * logD[i] + m_pathloss[1]);
+        path_loss.push_back(m * logD[i] + b);
         fading.push_back(Prx[i] - path_loss[i]);
         friis_loss.push_back(-20 * logD[i] + m_pathloss[1]);
     }
@@ -1406,37 +1402,10 @@ void Tx::clearShadowing()
 
 map<double,double> Tx::notifyObserversShadowing()
 {
-//    vector<QPointF> points = circlePoints(*this, 100, 1);
-//    QPointF copy_receiver;
-//    map <double /*angle*/,double /*power*/> shadow;
-//    for(unsigned i = 0; i < points.size(); i++)
-//    {
-//        copy_receiver.setX(points.at(i).x());
-//        copy_receiver.setY(points.at(i).y());
-
-//        clearChData(&copy_receiver);
-//        if (m_receiversRays.count(&copy_receiver)) {
-//            for (unsigned int i = 0; i < m_receiversRays[&copy_receiver].size(); i++) {
-//                delete m_receiversRays[&copy_receiver].at(i);
-//            }
-//            m_receiversRays[&copy_receiver].clear();
-//        }
-
-//        detectAndLink(copy_receiver);
-//        notifyObservers(&copy_receiver, m_movement);
-
-//        double power = computePathLossPower(&copy_receiver);
-//        QLineF line(*this, copy_receiver);
-//        if (!isinf(power) && line.length()*px_to_meter >= 1.0)
-//        {
-//            shadow[line.angle()*M_PI/180.0] = power;
-//        }
-//    }
-//    return shadow;
     map <double /*distance*/,double /*power_mean*/> shadow;
     vector<double> prx = powerPathLoss();
     vector <double> dpl = distancePathLoss();
-    int sample_mean = round(dpl.size()*0.005);
+    int sample_mean = round(dpl.size()*0.001);
     std::map<double,double>::iterator it;
     double power_mean = 0;
     for (int j = 0; j < prx.size(); j ++){
