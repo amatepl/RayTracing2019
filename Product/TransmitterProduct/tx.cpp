@@ -1413,7 +1413,7 @@ map<double,double> Tx::notifyObserversShadowing()
             for (int i = -round(sample_mean/2) ; i <=round(sample_mean/2) ; i++){
                 power_mean += prx[j+i];
             }
-            power_mean = power_mean/sample_mean;
+            power_mean = power_mean/(sample_mean+1);
             shadow[dpl[j]] = power_mean;
          }
         else {
