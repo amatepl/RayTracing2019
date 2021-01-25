@@ -1405,20 +1405,28 @@ map<double,double> Tx::notifyObserversShadowing()
     map <double /*distance*/,double /*power_mean*/> shadow;
     vector<double> prx = powerPathLoss();
     vector <double> dpl = distancePathLoss();
-    int sample_mean = round(dpl.size()*0.001);
+    int sample_mean = round(dpl.size()*0.0005);
+    int mid = 0;
+    if (sample_mean % 2 == 0){
+        mid = sample_mean/2;
+        sample_mean = sample_mean+1;
+    }
+    else {
+        mid = (sample_mean-1)/2;
+    }
     std::map<double,double>::iterator it;
     double power_mean = 0;
     for (int j = 0; j < prx.size(); j ++){
-        if (j >= round(sample_mean/2) && j <= m_pathloss.size()-round(sample_mean/2)){
-            for (int i = -round(sample_mean/2) ; i <=round(sample_mean/2) ; i++){
-                power_mean += prx[j+i];
+        if (j > mid && j < prx.size()-mid){
+            for (int i = -mid ; i <=mid ; i++){
+                power_mean = power_mean + (prx[j+i]-m_pathloss[j+i]);
             }
-            power_mean = power_mean/(sample_mean+1);
-            shadow[dpl[j]] = power_mean;
+            power_mean = power_mean/sample_mean;
+            shadow[dpl[j]] = power_mean+m_pathloss[j];
          }
-        else {
-            shadow[dpl[j]] = prx[j];
-        }
+//        else {
+//            shadow[dpl[j]] = prx[j];
+//        }
     power_mean = 0;
     }
     return shadow;
