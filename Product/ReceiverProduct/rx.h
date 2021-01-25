@@ -192,8 +192,8 @@ private:
     double m_transmitter_distance;
     double snr_received;
     double delay_spread;
-    double rice_factor;
-    double coherence_bandwidth;
+    double rice_factor{0};
+    double coherence_bandwidth {0};
 
     // 3. For Path Loss Computation
     std::map<double /*distance*/, double /*power*/> m_pathloss;
