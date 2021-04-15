@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPPainter Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPPainter</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPPainter Class</h1>
+<!-- $$$QCPPainter-brief -->
+<p>QPainter subclass used internally. <a href="#details">More...</a></p>
+<!-- @@@QCPPainter -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPPainter&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPPainter-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>This QPainter subclass is used to provide some extended functionality e.g&#x2e; for tweaking position consistency between antialiased and non-antialiased painting. Further it provides workarounds for QPainter quirks.</p>
+<p><b>Warning:</b> This class intentionally hides non-virtual functions of QPainter, e.g&#x2e; setPen, save and restore. So while it is possible to pass a QCPPainter instance to a function that expects a QPainter pointer, some of the workarounds and tweaks will be unavailable to the function (because it will call the base class implementations of the functions actually hidden by QCPPainter).</p>
+</div>
+<!-- @@@QCPPainter -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

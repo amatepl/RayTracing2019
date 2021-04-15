@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPColorMap Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPColorMap</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPColorMap Class</h1>
+<!-- $$$QCPColorMap-brief -->
+<p>A plottable representing a two-dimensional color map in a plot. <a href="#details">More...</a></p>
+<!-- @@@QCPColorMap -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPColorMap&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpabstractplottable.html">QCPAbstractPlottable</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPColorMap-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>The data is stored in the class <b class="redFont"><code>\ref</code></b> <a href="qcpcolormapdata.html">QCPColorMapData</a>, which can be accessed via the data() method.</p>
+<p>A color map has three dimensions to represent a data point: The <i>key</i> dimension, the <i>value</i> dimension and the <i>data</i> dimension. As with other plottables such as graphs, <i>key</i> and <i>value</i> correspond to two orthogonal axes on the <a href="qcustomplot.html">QCustomPlot</a> surface that you specify in the QCPColorMap constructor. The <i>data</i> dimension however is encoded as the color of the point at (<i>key</i>, <i>value</i>).</p>
+<p>Set the number of points (or <i>cells</i>) in the key/value dimension via <b class="redFont"><code>\ref</code></b> QCPColorMapData::setSize. The plot coordinate range over which these points will be displayed is specified via <b class="redFont"><code>\ref</code></b> QCPColorMapData::setRange. The first cell will be centered on the lower range boundary and the last cell will be centered on the upper range boundary. The data can be set by either accessing the cells directly with QCPColorMapData::setCell or by addressing the cells via their plot coordinates with <b class="redFont"><code>\ref</code></b> QCPColorMapData::setData. If possible, you should prefer setCell, since it doesn't need to do any coordinate transformation and thus performs a bit better.</p>
+<p>The cell with index (0, 0) is at the bottom left, if the color map uses normal (i.e&#x2e; not reversed) key and value axes.</p>
+<p>To show the user which colors correspond to which <i>data</i> values, a <b class="redFont"><code>\ref</code></b> <a href="qcpcolorscale.html">QCPColorScale</a> is typically placed to the right of the axis rect. See the documentation there for details on how to add and use a color scale.</p>
+<p><b class="redFont"><code>\section</code></b>qcpcolormap-appearance Changing the appearance</p>
+<p>The central part of the appearance is the color gradient, which can be specified via <b class="redFont"><code>\ref</code></b> setGradient. See the documentation of <b class="redFont"><code>\ref</code></b> <a href="qcpcolorgradient.html">QCPColorGradient</a> for details on configuring a color gradient.</p>
+<p>The <i>data</i> range that is mapped to the colors of the gradient can be specified with <b class="redFont"><code>\ref</code></b> setDataRange. To make the data range encompass the whole data set minimum to maximum, call <b class="redFont"><code>\ref</code></b> rescaleDataRange.</p>
+<p><b class="redFont"><code>\section</code></b>qcpcolormap-transparency Transparency</p>
+<p>Transparency in color maps can be achieved by two mechanisms. On one hand, you can specify alpha values for color stops of the <b class="redFont"><code>\ref</code></b> <a href="qcpcolorgradient.html">QCPColorGradient</a>, via the regular QColor interface. This will cause the color map data which gets mapped to colors around those color stops to appear with the accordingly interpolated transparency.</p>
+<p>On the other hand you can also directly apply an alpha value to each cell independent of its data, by using the alpha map feature of <b class="redFont"><code>\ref</code></b> <a href="qcpcolormapdata.html">QCPColorMapData</a>. The relevant methods are <b class="redFont"><code>\ref</code></b> QCPColorMapData::setAlpha, QCPColorMapData::fillAlpha and <b class="redFont"><code>\ref</code></b> QCPColorMapData::clearAlpha().</p>
+<p>The two transparencies will be joined together in the plot and otherwise not interfere with each other. They are mixed in a multiplicative matter, so an alpha of e.g&#x2e; 50% (128/255) in both modes simultaneously, will result in a total transparency of 25% (64/255).</p>
+<p><b class="redFont"><code>\section</code></b>qcpcolormap-usage Usage</p>
+<p>Like all data representing objects in <a href="qcustomplot.html">QCustomPlot</a>, the QCPColorMap is a plottable (<a href="qcpabstractplottable.html">QCPAbstractPlottable</a>). So the plottable-interface of <a href="qcustomplot.html">QCustomPlot</a> applies (QCustomPlot::plottable, QCustomPlot::removePlottable, etc.)</p>
+<p>Usually, you first create an instance:</p>
+<pre class="cpp"></pre>
+<p>which registers it with the <a href="qcustomplot.html">QCustomPlot</a> instance of the passed axes. Note that this <a href="qcustomplot.html">QCustomPlot</a> instance takes ownership of the plottable, so do not delete it manually but use QCustomPlot::removePlottable() instead. The newly created plottable can be modified, e.g&#x2e;:</p>
+<pre class="cpp"></pre>
+<p><b>Note: </b>The QCPColorMap always displays the data at equal key/value intervals, even if the key or value axis is set to a logarithmic scaling. If you want to use QCPColorMap with logarithmic axes, you shouldn't use the <b class="redFont"><code>\ref</code></b> QCPColorMapData::setData method as it uses a linear transformation to determine the cell index. Rather directly access the cell index with <b class="redFont"><code>\ref</code></b> QCPColorMapData::setCell.</p>
+</div>
+<!-- @@@QCPColorMap -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

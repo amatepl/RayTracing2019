@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPLayoutElement Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPLayoutElement</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPLayoutElement Class</h1>
+<!-- $$$QCPLayoutElement-brief -->
+<p>The abstract base class for all objects that form <b class="redFont"><code>\ref</code></b> thelayoutsystem &quot;the layout system&quot;. <a href="#details">More...</a></p>
+<!-- @@@QCPLayoutElement -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPLayoutElement&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayerable.html">QCPLayerable</a></td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherited By:</td><td class="memItemRight bottomAlign"> <p><a href="qcpabstractlegenditem.html">QCPAbstractLegendItem</a>, <a href="qcpcolorscale.html">QCPColorScale</a>, and <a href="qcplayout.html">QCPLayout</a></p>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPLayoutElement-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>This is an abstract base class. As such, it can't be instantiated directly, rather use one of its subclasses.</p>
+<p>A Layout element is a rectangular object which can be placed in layouts. It has an outer rect (QCPLayoutElement::outerRect) and an inner rect (<b class="redFont"><code>\ref</code></b> QCPLayoutElement::rect). The difference between outer and inner rect is called its margin. The margin can either be set to automatic or manual (<b class="redFont"><code>\ref</code></b> setAutoMargins) on a per-side basis. If a side is set to manual, that margin can be set explicitly with <b class="redFont"><code>\ref</code></b> setMargins and will stay fixed at that value. If it's set to automatic, the layout element subclass will control the value itself (via <b class="redFont"><code>\ref</code></b> calculateAutoMargin).</p>
+<p>Layout elements can be placed in layouts (base class <a href="qcplayout.html">QCPLayout</a>) like <a href="qcplayoutgrid.html">QCPLayoutGrid</a>. The top level layout is reachable via <b class="redFont"><code>\ref</code></b> QCustomPlot::plotLayout, and is a <b class="redFont"><code>\ref</code></b> <a href="qcplayoutgrid.html">QCPLayoutGrid</a>. Since <b class="redFont"><code>\ref</code></b> <a href="qcplayout.html">QCPLayout</a> itself derives from <b class="redFont"><code>\ref</code></b> QCPLayoutElement, layouts can be nested.</p>
+<p>Thus in <a href="qcustomplot.html">QCustomPlot</a> one can divide layout elements into two categories: The ones that are invisible by themselves, because they don't draw anything. Their only purpose is to manage the position and size of other layout elements. This category of layout elements usually use <a href="qcplayout.html">QCPLayout</a> as base class. Then there is the category of layout elements which actually draw something. For example, QCPAxisRect, <a href="qcplegend.html">QCPLegend</a> and QCPTextElement are of this category. This does not necessarily mean that the latter category can't have child layout elements. <a href="qcplegend.html">QCPLegend</a> for instance, actually derives from <a href="qcplayoutgrid.html">QCPLayoutGrid</a> and the individual legend items are child layout elements in the grid layout.</p>
+</div>
+<!-- @@@QCPLayoutElement -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

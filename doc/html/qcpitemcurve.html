@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPItemCurve Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPItemCurve</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPItemCurve Class</h1>
+<!-- $$$QCPItemCurve-brief -->
+<p>A curved line from one point to another. <a href="#details">More...</a></p>
+<!-- @@@QCPItemCurve -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPItemCurve&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpabstractitem.html">QCPAbstractItem</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPItemCurve-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>It has four positions, <i>start</i> and <i>end</i>, which define the end points of the line, and two control points which define the direction the line exits from the start and the direction from which it approaches the end: <i>startDir</i> and <i>endDir</i>.</p>
+<p>With <b class="redFont"><code>\ref</code></b> setHead and <b class="redFont"><code>\ref</code></b> setTail you may set different line ending styles, e.g&#x2e; to create an arrow.</p>
+<p>Often it is desirable for the control points to stay at fixed relative positions to the start/end point. This can be achieved by setting the parent anchor e.g&#x2e; of <i>startDir</i> simply to <i>start</i>, and then specify the desired pixel offset with QCPItemPosition::setCoords on <i>startDir</i>.</p>
+</div>
+<!-- @@@QCPItemCurve -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

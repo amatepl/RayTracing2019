@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- physics.cpp -->
+  <title>ph Namespace | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#classes">Classes</a></li>
+<li class="level1"><a href="#types">Types</a></li>
+<li class="level1"><a href="#functions">Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">ph Namespace</h1>
+<!-- $$$ph-brief -->
+<p>Contains miscellaneous functions used for physics computation. <a href="#details">More...</a></p>
+<!-- @@@ph -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;ph&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="classes"></a>
+<h2 id="classes">Classes</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="ph-txparams.html">TxParams</a></b></td></tr>
+</table></div>
+<a name="types"></a>
+<h2 id="types">Types</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum class </td><td class="memItemRight bottomAlign"><b><a href="ph.html#TxType-enum">TxType</a></b> { dipole, array, dipoleRefl, arrayRefl }</td></tr>
+</table></div>
+<a name="functions"></a>
+<h2 id="functions">Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#angDistrMPC">angDistrMPC</a></b>(<i>const int &amp;</i>, <i>const double</i>, <i>const double</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#arrayFactor">arrayFactor</a></b>(<i>ph::angle</i>, <i>ph::angle</i>, <i>double</i>, <i>ph::angle</i>, <i>char</i>, <i>unsigned int</i>, <i>unsigned int</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#arrayFactor-1">arrayFactor</a></b>(<i>ph::angle</i>, <i>ph::angle</i>, <i>const ph::TxParams &amp;</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#computeEMfield">computeEMfield</a></b>(<i>const int</i>, <i>const int</i>, <i>double</i>, <i>double</i>, <i>double</i>, <i>char</i>, <i>ph::TxType</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#computeEMfield-1">computeEMfield</a></b>(<i>const int</i>, <i>const ph::TxParams &amp;</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="ph.html#computeR">computeR</a></b>(WholeRay *<i>wholeRay</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="ph.html#computeReflexionPer">computeReflexionPer</a></b>(double <i>thetaI</i>, double <i>epsilonR</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="ph.html#currentTx">currentTx</a></b>(const double <i>power</i>, const int <i>antArry</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#dipoleFactor">dipoleFactor</a></b>(<i>double</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="ph.html#firstMinIdx">firstMinIdx</a></b>(const int &amp;<i>fct</i>, const double <i>th</i> = 0.2, const unsigned int <i>range</i> = 1)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#inducedVoltage">inducedVoltage</a></b>(<i>const int</i>, <i>const double</i>, <i>const double</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="ph.html#omegaMPC">omegaMPC</a></b>(double <i>v</i>, double <i>wvNbr</i>, ph::angle <i>angleRx</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#reflectorFactor">reflectorFactor</a></b>(<i>ph::angle</i>, <i>ph::angle</i>, <i>double</i>, <i>ph::angle</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#reflectorFactor-1">reflectorFactor</a></b>(<i>ph::angle</i>, <i>ph::angle</i>, <i>const ph::TxParams &amp;</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="ph.html#spread-1">spread</a></b>(const int &amp;<i>pds</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#totaleArrayFactor">totaleArrayFactor</a></b>(<i>double</i>, <i>double</i>, <i>double</i>, <i>ph::angle</i>, <i>char</i>, <i>unsigned int</i>, <i>unsigned int</i>, <i>ph::TxType</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="ph.html#totaleArrayFactor-1">totaleArrayFactor</a></b>(<i>double</i>, <i>double</i>, <i>const ph::TxParams &amp;</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$ph-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+</div>
+<!-- @@@ph -->
+<div class="classes">
+<h2>Classes</h2>
+<h3> class <a href="ph-txparams.html">TxParams</a></h3><!-- $$$TxParams-brief -->
+<p>Transmitter's parameters. <a href="ph-txparams.html#details">More...</a></p>
+<!-- @@@TxParams -->
+</div>
+<div class="types">
+<h2>Type Documentation</h2>
+<!-- $$$TxType$$$dipole$$$array$$$dipoleRefl$$$arrayRefl -->
+<h3 class="fn" id="TxType-enum"><a name="TxType-enum"></a>enum class ph::<span class="name">TxType</span></h3>
+<p>Transmitters types.</p>
+<!-- @@@TxType -->
+</div>
+<div class="func">
+<h2>Function Documentation</h2>
+<!-- $$$angDistrMPC[overload1]$$$angDistrMPCconstint&constdoubleconstdouble -->
+<h3 class="fn" id="angDistrMPC"><a name="angDistrMPC"></a><span class="type">int</span> ph::<span class="name">angDistrMPC</span>(<i>const int &amp;</i>, <i>const double</i>, <i>const double</i>)</h3>
+<p><b class="redFont"><code>\param</code></b>h <b class="redFont"><code>\param</code></b> theta <b class="redFont"><code>\param</code></b> spectrum (Angular or Doppler)</p>
+<p>Returns tha angular distribution for one MPC <b class="redFont"><code>\return</code></b></p>
+<!-- @@@angDistrMPC -->
+<!-- $$$arrayFactor[overload1]$$$arrayFactorph::angleph::angledoubleph::anglecharunsignedintunsignedint -->
+<h3 class="fn" id="arrayFactor"><a name="arrayFactor"></a><span class="type">int</span> ph::<span class="name">arrayFactor</span>(<i>ph::angle</i>, <i>ph::angle</i>, <i>double</i>, <i>ph::angle</i>, <i>char</i>, <i>unsigned int</i>, <i>unsigned int</i>)</h3>
+<p>arrayFactor <b class="redFont"><code>\param</code></b> theta <b class="redFont"><code>\param</code></b> phi <b class="redFont"><code>\param</code></b> fq <b class="redFont"><code>\param</code></b> antOrien <b class="redFont"><code>\return</code></b></p>
+<!-- @@@arrayFactor -->
+<!-- $$$arrayFactor$$$arrayFactorph::angleph::angleconstph::TxParams& -->
+<h3 class="fn" id="arrayFactor-1"><a name="arrayFactor-1"></a><span class="type">int</span> ph::<span class="name">arrayFactor</span>(<i>ph::angle</i>, <i>ph::angle</i>, <i>const ph::TxParams &amp;</i>)</h3>
+<p>arrayFactor <b class="redFont"><code>\param</code></b> theta <b class="redFont"><code>\param</code></b> phi <b class="redFont"><code>\param</code></b> fq <b class="redFont"><code>\param</code></b> antOrien <b class="redFont"><code>\return</code></b></p>
+<!-- @@@arrayFactor -->
+<!-- $$$computeEMfield[overload1]$$$computeEMfieldconstintconstintdoubledoubledoublecharph::TxType -->
+<h3 class="fn" id="computeEMfield"><a name="computeEMfield"></a><span class="type">int</span> ph::<span class="name">computeEMfield</span>(<i>const int</i>, <i>const int</i>, <i>double</i>, <i>double</i>, <i>double</i>, <i>char</i>, <i>ph::TxType</i>)</h3>
+<p>computeEMfield <b class="redFont"><code>\param</code></b> rayLine <b class="redFont"><code>\param</code></b> antArry <b class="redFont"><code>\param</code></b> power <b class="redFont"><code>\param</code></b> wvNbr <b class="redFont"><code>\param</code></b> array_fctr <b class="redFont"><code>\return</code></b></p>
+<!-- @@@computeEMfield -->
+<!-- $$$computeEMfield$$$computeEMfieldconstintconstph::TxParams& -->
+<h3 class="fn" id="computeEMfield-1"><a name="computeEMfield-1"></a><span class="type">int</span> ph::<span class="name">computeEMfield</span>(<i>const int</i>, <i>const ph::TxParams &amp;</i>)</h3>
+<p>computeEMfield overload <b class="redFont"><code>\param</code></b> rayLine <b class="redFont"><code>\param</code></b> antArry <b class="redFont"><code>\param</code></b> power <b class="redFont"><code>\param</code></b> wvNbr <b class="redFont"><code>\param</code></b> array_fctr <b class="redFont"><code>\return</code></b></p>
+<!-- @@@computeEMfield -->
+<!-- $$$computeR[overload1]$$$computeRWholeRay* -->
+<h3 class="fn" id="computeR"><a name="computeR"></a><span class="type">double</span> ph::<span class="name">computeR</span>(<span class="type">WholeRay</span> *<i>wholeRay</i>)</h3>
+<p>computeR <b class="redFont"><code>\param</code></b> wholeRay <b class="redFont"><code>\return</code></b></p>
+<!-- @@@computeR -->
+<!-- $$$computeReflexionPer[overload1]$$$computeReflexionPerdoubledouble -->
+<h3 class="fn" id="computeReflexionPer"><a name="computeReflexionPer"></a><span class="type">double</span> ph::<span class="name">computeReflexionPer</span>(<span class="type">double</span> <i>thetaI</i>, <span class="type">double</span> <i>epsilonR</i>)</h3>
+<p>Returns perpendicular reflection coefficient. <b class="redFont"><code>\param</code></b> thetaI <b class="redFont"><code>\param</code></b> epsilonR <b class="redFont"><code>\return</code></b></p>
+<p>Returns reflection coefficient for waves with perpendicular polarisation to the normal of the reflective surface.</p>
+<!-- @@@computeReflexionPer -->
+<!-- $$$currentTx[overload1]$$$currentTxconstdoubleconstint -->
+<h3 class="fn" id="currentTx"><a name="currentTx"></a><span class="type">double</span> ph::<span class="name">currentTx</span>(const <span class="type">double</span> <i>power</i>, const <span class="type">int</span> <i>antArry</i>)</h3>
+<p>Computes the current at the transmitter. <b class="redFont"><code>\param</code></b> power <b class="redFont"><code>\param</code></b> antArry <b class="redFont"><code>\return</code></b></p>
+<!-- @@@currentTx -->
+<!-- $$$dipoleFactor[overload1]$$$dipoleFactordouble -->
+<h3 class="fn" id="dipoleFactor"><a name="dipoleFactor"></a><span class="type">int</span> ph::<span class="name">dipoleFactor</span>(<i>double</i>)</h3>
+<p>dipoleFactor <b class="redFont"><code>\param</code></b> phi <b class="redFont"><code>\return</code></b></p>
+<!-- @@@dipoleFactor -->
+<!-- $$$firstMinIdx[overload1]$$$firstMinIdxconstint&constdoubleconstunsignedint -->
+<h3 class="fn" id="firstMinIdx"><a name="firstMinIdx"></a><span class="type">double</span> ph::<span class="name">firstMinIdx</span>(const <span class="type">int</span> &amp;<i>fct</i>, const <span class="type">double</span> <i>th</i> = 0.2, const <span class="type">unsigned</span> <span class="type">int</span> <i>range</i> = 1)</h3>
+<p>Find the first minimum in <i>fct</i> and returns its index. A lack of precision in <i>fct</i> is possible so <i>th</i> can be set as threshold.</p>
+<!-- @@@firstMinIdx -->
+<!-- $$$inducedVoltage[overload1]$$$inducedVoltageconstintconstdoubleconstdouble -->
+<h3 class="fn" id="inducedVoltage"><a name="inducedVoltage"></a><span class="type">int</span> ph::<span class="name">inducedVoltage</span>(<i>const int</i>, <i>const double</i>, <i>const double</i>)</h3>
+<p>inducedVoltage <b class="redFont"><code>\param</code></b> field due to reflections and diffraction <b class="redFont"><code>\param</code></b> anglerx [rad] <b class="redFont"><code>\return</code></b> Induced voltage at receiver due to EM field</p>
+<!-- @@@inducedVoltage -->
+<!-- $$$omegaMPC[overload1]$$$omegaMPCdoubledoubleph::angle -->
+<h3 class="fn" id="omegaMPC"><a name="omegaMPC"></a><span class="type">double</span> ph::<span class="name">omegaMPC</span>(<span class="type">double</span> <i>v</i>, <span class="type">double</span> <i>wvNbr</i>, <span class="type">ph::angle</span> <i>angleRx</i>)</h3>
+<p>return omega variable for Doppler Spectrum <b class="redFont"><code>\param</code></b> v <b class="redFont"><code>\return</code></b></p>
+<!-- @@@omegaMPC -->
+<!-- $$$reflectorFactor[overload1]$$$reflectorFactorph::angleph::angledoubleph::angle -->
+<h3 class="fn" id="reflectorFactor"><a name="reflectorFactor"></a><span class="type">int</span> ph::<span class="name">reflectorFactor</span>(<i>ph::angle</i>, <i>ph::angle</i>, <i>double</i>, <i>ph::angle</i>)</h3>
+<p>reflectorFactor <b class="redFont"><code>\param</code></b> theta <b class="redFont"><code>\param</code></b> phi <b class="redFont"><code>\param</code></b> fq <b class="redFont"><code>\param</code></b> antOrien <b class="redFont"><code>\return</code></b></p>
+<!-- @@@reflectorFactor -->
+<!-- $$$reflectorFactor$$$reflectorFactorph::angleph::angleconstph::TxParams& -->
+<h3 class="fn" id="reflectorFactor-1"><a name="reflectorFactor-1"></a><span class="type">int</span> ph::<span class="name">reflectorFactor</span>(<i>ph::angle</i>, <i>ph::angle</i>, <i>const ph::TxParams &amp;</i>)</h3>
+<p>reflectorFactor <b class="redFont"><code>\param</code></b> theta <b class="redFont"><code>\param</code></b> phi <b class="redFont"><code>\param</code></b> fq <b class="redFont"><code>\param</code></b> antOrien <b class="redFont"><code>\return</code></b></p>
+<!-- @@@reflectorFactor -->
+<!-- $$$spread$$$spreadconstint& -->
+<h3 class="fn" id="spread-1"><a name="spread-1"></a><span class="type">double</span> ph::<span class="name">spread</span>(const <span class="type">int</span> &amp;<i>pds</i>)</h3>
+<p>Override. Computes the spread of the arriving power using a <i>psd</i> (Power Spectral Density) and a <i>u</i> (Power Shift).</p>
+<!-- @@@spread -->
+<!-- $$$totaleArrayFactor[overload1]$$$totaleArrayFactordoubledoubledoubleph::anglecharunsignedintunsignedintph::TxType -->
+<h3 class="fn" id="totaleArrayFactor"><a name="totaleArrayFactor"></a><span class="type">int</span> ph::<span class="name">totaleArrayFactor</span>(<i>double</i>, <i>double</i>, <i>double</i>, <i>ph::angle</i>, <i>char</i>, <i>unsigned int</i>, <i>unsigned int</i>, <i>ph::TxType</i>)</h3>
+<p>totaleArrayFactor <b class="redFont"><code>\param</code></b> theta <b class="redFont"><code>\param</code></b> phi <b class="redFont"><code>\param</code></b> fq <b class="redFont"><code>\param</code></b> antOrien <b class="redFont"><code>\return</code></b></p>
+<!-- @@@totaleArrayFactor -->
+<!-- $$$totaleArrayFactor$$$totaleArrayFactordoubledoubleconstph::TxParams& -->
+<h3 class="fn" id="totaleArrayFactor-1"><a name="totaleArrayFactor-1"></a><span class="type">int</span> ph::<span class="name">totaleArrayFactor</span>(<i>double</i>, <i>double</i>, <i>const ph::TxParams &amp;</i>)</h3>
+<p>totaleArrayFactor <b class="redFont"><code>\param</code></b> theta <b class="redFont"><code>\param</code></b> phi <b class="redFont"><code>\param</code></b> fq <b class="redFont"><code>\param</code></b> antOrien <b class="redFont"><code>\return</code></b></p>
+<!-- @@@totaleArrayFactor -->
+</div>
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

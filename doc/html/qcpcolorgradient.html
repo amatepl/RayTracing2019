@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPColorGradient Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPColorGradient</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPColorGradient Class</h1>
+<!-- $$$QCPColorGradient-brief -->
+<p>Defines a color gradient for use with e.g&#x2e; <b class="redFont"><code>\ref</code></b> <a href="qcpcolormap.html">QCPColorMap</a>. <a href="#details">More...</a></p>
+<!-- @@@QCPColorGradient -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPColorGradient&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPColorGradient-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>This class describes a color gradient which can be used to encode data with color. For example, <a href="qcpcolormap.html">QCPColorMap</a> and <a href="qcpcolorscale.html">QCPColorScale</a> have <b class="redFont"><code>\ref</code></b> QCPColorMap::setGradient &quot;setGradient&quot; methods which take an instance of this class. Colors are set with <b class="redFont"><code>\ref</code></b> setColorStopAt(double position, const QColor &amp;color) with a <i>position</i> from 0 to 1. In between these defined color positions, the color will be interpolated linearly either in RGB or HSV space, see <b class="redFont"><code>\ref</code></b> setColorInterpolation.</p>
+<p>Alternatively, load one of the preset color gradients shown in the image below, with <b class="redFont"><code>\ref</code></b> loadPreset, or by directly specifying the preset in the constructor.</p>
+<p>Apart from red, green and blue components, the gradient also interpolates the alpha values of the configured color stops. This allows to display some portions of the data range as transparent in the plot.</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>The <b class="redFont"><code>\ref</code></b> QCPColorGradient(GradientPreset preset) constructor allows directly converting a <b class="redFont"><code>\ref</code></b> GradientPreset to a QCPColorGradient. This means that you can directly pass <b class="redFont"><code>\ref</code></b> GradientPreset to all the <i>setGradient</i> methods, e.g&#x2e;:</p>
+<pre class="cpp"></pre>
+<p>The total number of levels used in the gradient can be set with <b class="redFont"><code>\ref</code></b> setLevelCount. Whether the color gradient shall be applied periodically (wrapping around) to data values that lie outside the data range specified on the plottable instance can be controlled with <b class="redFont"><code>\ref</code></b> setPeriodic.</p>
+</div>
+<!-- @@@QCPColorGradient -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

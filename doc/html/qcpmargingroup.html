@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPMarginGroup Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPMarginGroup</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPMarginGroup Class</h1>
+<!-- $$$QCPMarginGroup-brief -->
+<p>A margin group allows synchronization of margin sides if working with multiple layout elements. <a href="#details">More...</a></p>
+<!-- @@@QCPMarginGroup -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPMarginGroup&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPMarginGroup-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>QCPMarginGroup allows you to tie a margin side of two or more layout elements together, such that they will all have the same size, based on the largest required margin in the group.</p>
+<p><b class="redFont"><code>\n</code></b></p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p><b class="redFont"><code>\n</code></b></p>
+<p>In certain situations it is desirable that margins at specific sides are synchronized across layout elements. For example, if one QCPAxisRect is below another one in a grid layout, it will provide a cleaner look to the user if the left and right margins of the two axis rects are of the same size. The left axis of the top axis rect will then be at the same horizontal position as the left axis of the lower axis rect, making them appear aligned. The same applies for the right axes. This is what QCPMarginGroup makes possible.</p>
+<p>To add/remove a specific side of a layout element to/from a margin group, use the <b class="redFont"><code>\ref</code></b> QCPLayoutElement::setMarginGroup method. To completely break apart the margin group, either call <b class="redFont"><code>\ref</code></b> clear, or just delete the margin group.</p>
+<p><b class="redFont"><code>\section</code></b>QCPMarginGroup-example Example</p>
+<p>First create a margin group:</p>
+<pre class="cpp"></pre>
+<p>Then set this group on the layout element sides:</p>
+<pre class="cpp"></pre>
+<p>Here, we've used the first two axis rects of the plot and synchronized their left margins with each other and their right margins with each other.</p>
+</div>
+<!-- @@@QCPMarginGroup -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

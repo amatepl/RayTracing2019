@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPItemPosition Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPItemPosition</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPItemPosition Class</h1>
+<!-- $$$QCPItemPosition-brief -->
+<p>Manages the position of an item. <a href="#details">More...</a></p>
+<!-- @@@QCPItemPosition -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPItemPosition&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpitemanchor.html">QCPItemAnchor</a></td></tr></table></div><ul>
+<li><a href="qcpitemposition-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPItemPosition-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>Every item has at least one public QCPItemPosition member pointer which provides ways to position the item on the <a href="qcustomplot.html">QCustomPlot</a> surface. Some items have multiple positions, for example <a href="qcpitemrect.html">QCPItemRect</a> has two: <i>topLeft</i> and <i>bottomRight</i>.</p>
+<p>QCPItemPosition has a type (<b class="redFont"><code>\ref</code></b> PositionType) that can be set with <b class="redFont"><code>\ref</code></b> setType. This type defines how coordinates passed to <b class="redFont"><code>\ref</code></b> setCoords are to be interpreted, e.g&#x2e; as absolute pixel coordinates, as plot coordinates of certain axes, etc. For more advanced plots it is also possible to assign different types per X/Y coordinate of the position (see <b class="redFont"><code>\ref</code></b> setTypeX, <b class="redFont"><code>\ref</code></b> setTypeY). This way an item could be positioned at a fixed pixel distance from the top in the Y direction, while following a plot coordinate in the X direction.</p>
+<p>A QCPItemPosition may have a parent <a href="qcpitemanchor.html">QCPItemAnchor</a>, see <b class="redFont"><code>\ref</code></b> setParentAnchor. This way you can tie multiple items together. If the QCPItemPosition has a parent, its coordinates (<b class="redFont"><code>\ref</code></b> setCoords) are considered to be absolute pixels in the reference frame of the parent anchor, where (0, 0) means directly ontop of the parent anchor. For example, You could attach the <i>start</i> position of a <a href="qcpitemline.html">QCPItemLine</a> to the <i>bottom</i> anchor of a <a href="qcpitemtext.html">QCPItemText</a> to make the starting point of the line always be centered under the text label, no matter where the text is moved to. For more advanced plots, it is possible to assign different parent anchors per X/Y coordinate of the position, see <b class="redFont"><code>\ref</code></b> setParentAnchorX, <b class="redFont"><code>\ref</code></b> setParentAnchorY. This way an item could follow another item in the X direction but stay at a fixed position in the Y direction. Or even follow item A in X, and item B in Y.</p>
+<p>Note that every QCPItemPosition inherits from <a href="qcpitemanchor.html">QCPItemAnchor</a> and thus can itself be used as parent anchor for other positions.</p>
+<p>To set the apparent pixel position on the <a href="qcustomplot.html">QCustomPlot</a> surface directly, use <b class="redFont"><code>\ref</code></b> setPixelPosition. This works no matter what type this QCPItemPosition is or what parent-child situation it is in, as <b class="redFont"><code>\ref</code></b> setPixelPosition transforms the coordinates appropriately, to make the position appear at the specified pixel values.</p>
+</div>
+<!-- @@@QCPItemPosition -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

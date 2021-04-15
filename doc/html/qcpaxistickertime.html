@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAxisTickerTime Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAxisTickerTime</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAxisTickerTime Class</h1>
+<!-- $$$QCPAxisTickerTime-brief -->
+<p>Specialized axis ticker for time spans in units of milliseconds to days. <a href="#details">More...</a></p>
+<!-- @@@QCPAxisTickerTime -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAxisTickerTime&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpaxisticker.html">QCPAxisTicker</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPAxisTickerTime-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>This <a href="qcpaxisticker.html">QCPAxisTicker</a> subclass generates ticks that corresponds to time intervals.</p>
+<p>The format of the time display in the tick labels is controlled with <b class="redFont"><code>\ref</code></b> setTimeFormat and <b class="redFont"><code>\ref</code></b> setFieldWidth. The time coordinate is in the unit of seconds with respect to the time coordinate zero. Unlike with QCPAxisTickerDateTime, the ticks don't correspond to a specific calendar date and time.</p>
+<p>The time can be displayed in milliseconds, seconds, minutes, hours and days. Depending on the largest available unit in the format specified with <b class="redFont"><code>\ref</code></b> setTimeFormat, any time spans above will be carried in that largest unit. So for example if the format string is &quot;%m:%s&quot; and a tick at coordinate value 7815 (being 2 hours, 10 minutes and 15 seconds) is created, the resulting tick label will show &quot;130:15&quot; (130 minutes, 15 seconds). If the format string is &quot;%h:%m:%s&quot;, the hour unit will be used and the label will thus be &quot;02:10:15&quot;. Negative times with respect to the axis zero will carry a leading minus sign.</p>
+<p>The ticker can be created and assigned to an axis like this:</p>
+<pre class="cpp"></pre>
+<p>Here is an example of a time axis providing time information in days, hours and minutes. Due to the axis range spanning a few days and the wanted tick count (<b class="redFont"><code>\ref</code></b> setTickCount), the ticker decided to use tick steps of 12 hours:</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>The format string for this example is</p>
+<pre class="cpp"></pre>
+<p><b>Note: </b>If you rather wish to display calendar dates and times, have a look at QCPAxisTickerDateTime instead.</p>
+</div>
+<!-- @@@QCPAxisTickerTime -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

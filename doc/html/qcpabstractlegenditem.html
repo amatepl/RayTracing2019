@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAbstractLegendItem Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAbstractLegendItem</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAbstractLegendItem Class</h1>
+<!-- $$$QCPAbstractLegendItem-brief -->
+<p>The abstract base class for all entries in a <a href="qcplegend.html">QCPLegend</a>. <a href="#details">More...</a></p>
+<!-- @@@QCPAbstractLegendItem -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAbstractLegendItem&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayoutelement.html">QCPLayoutElement</a></td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherited By:</td><td class="memItemRight bottomAlign"> <p><a href="qcpplottablelegenditem.html">QCPPlottableLegendItem</a></p>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPAbstractLegendItem-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>It defines a very basic interface for entries in a <a href="qcplegend.html">QCPLegend</a>. For representing plottables in the legend, the subclass <b class="redFont"><code>\ref</code></b> <a href="qcpplottablelegenditem.html">QCPPlottableLegendItem</a> is more suitable.</p>
+<p>Only derive directly from this class when you need absolute freedom (e.g&#x2e; a custom legend entry that's not even associated with a plottable).</p>
+<p>You must implement the following pure virtual functions:</p>
+<p><b class="redFont"><code>\ref</code></b>draw (from <a href="qcplayerable.html">QCPLayerable</a>)</p>
+<p>You inherit the following members you may use: &lt;table&gt; &lt;tr&gt; &lt;td&gt;<a href="qcplegend.html">QCPLegend</a> *<b>mParentLegend&lt;/td&gt;</b> &lt;td&gt;A pointer to the parent <a href="qcplegend.html">QCPLegend</a>.&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;QFont <b>mFont&lt;/td&gt;</b> &lt;td&gt;The generic font of the item. You should use this font for all or at least the most prominent text of the item.&lt;/td&gt; &lt;/tr&gt; &lt;/table&gt;</p>
+</div>
+<!-- @@@QCPAbstractLegendItem -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

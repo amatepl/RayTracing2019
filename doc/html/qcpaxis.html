@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAxis Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAxis</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAxis Class</h1>
+<!-- $$$QCPAxis-brief -->
+<p>Manages a single axis inside a <a href="qcustomplot.html">QCustomPlot</a>. <a href="#details">More...</a></p>
+<!-- @@@QCPAxis -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAxis&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayerable.html">QCPLayerable</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPAxis-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>Usually doesn't need to be instantiated externally. Access %<a href="qcustomplot.html">QCustomPlot</a>'s default four axes via QCustomPlot::xAxis (bottom), QCustomPlot::yAxis (left), QCustomPlot::xAxis2 (top) and QCustomPlot::yAxis2 (right).</p>
+<p>Axes are always part of an axis rect, see QCPAxisRect.</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;center&gt;Naming convention of axis parts&lt;/center&gt; <b class="redFont"><code>\n</code></b></p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;center&gt;Overview of the spacings and paddings that define the geometry of an axis. The dashed gray line on the left represents the <a href="qcustomplot.html">QCustomPlot</a> widget border.&lt;/center&gt;</p>
+<p>Each axis holds an instance of <a href="qcpaxisticker.html">QCPAxisTicker</a> which is used to generate the tick coordinates and tick labels. You can access the currently installed <b class="redFont"><code>\ref</code></b> ticker or set a new one (possibly one of the specialized subclasses, or your own subclass) via <b class="redFont"><code>\ref</code></b> setTicker. For details, see the documentation of <a href="qcpaxisticker.html">QCPAxisTicker</a>.</p>
+</div>
+<!-- @@@QCPAxis -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

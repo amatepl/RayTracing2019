@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Images/Transmitter1.png</file>
+        <file>Images/Receiver1.png</file>
+        <file>Images/Tree.png</file>
+        <file>Images/Car.png</file>
+        <file>Images/Delete.png</file>
+        <file>Images/Properties.png</file>
+        <file>Images/playB.png</file>
+        <file>Images/playBsmall.png</file>
+        <file>Images/playButton.png</file>
+        <file>Images/anti-clockwize.png</file>
+        <file>Images/clockwize.png</file>
+    </qresource>
+</RCC>

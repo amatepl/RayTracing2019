@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPLineEnding Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPLineEnding</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPLineEnding Class</h1>
+<!-- $$$QCPLineEnding-brief -->
+<p>Handles the different ending decorations for line-like items. <a href="#details">More...</a></p>
+<!-- @@@QCPLineEnding -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPLineEnding&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPLineEnding-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>For every ending a line-like item has, an instance of this class exists. For example, <a href="qcpitemline.html">QCPItemLine</a> has two endings which can be set with QCPItemLine::setHead and QCPItemLine::setTail.</p>
+<p>The styles themselves are defined via the enum QCPLineEnding::EndingStyle. Most decorations can be modified regarding width and length, see <b class="redFont"><code>\ref</code></b> setWidth and <b class="redFont"><code>\ref</code></b> setLength. The direction of the ending decoration (e.g&#x2e; direction an arrow is pointing) is controlled by the line-like item. For example, when both endings of a <a href="qcpitemline.html">QCPItemLine</a> are set to be arrows, they will point to opposite directions, e.g&#x2e; &quot;outward&quot;. This can be changed by <b class="redFont"><code>\ref</code></b> setInverted, which would make the respective arrow point inward.</p>
+<p>Note that due to the overloaded QCPLineEnding constructor, you may directly specify a QCPLineEnding::EndingStyle where actually a QCPLineEnding is expected, e.g&#x2e;</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPLineEnding -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAbstractItem Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAbstractItem</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAbstractItem Class</h1>
+<!-- $$$QCPAbstractItem-brief -->
+<p>The abstract base class for all items in a plot. <a href="#details">More...</a></p>
+<!-- @@@QCPAbstractItem -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAbstractItem&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayerable.html">QCPLayerable</a></td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherited By:</td><td class="memItemRight bottomAlign"> <p><a href="qcpitembracket.html">QCPItemBracket</a>, <a href="qcpitemcurve.html">QCPItemCurve</a>, <a href="qcpitemellipse.html">QCPItemEllipse</a>, <a href="qcpitemline.html">QCPItemLine</a>, <a href="qcpitempixmap.html">QCPItemPixmap</a>, <a href="qcpitemrect.html">QCPItemRect</a>, <a href="qcpitemstraightline.html">QCPItemStraightLine</a>, <a href="qcpitemtext.html">QCPItemText</a>, and <a href="qcpitemtracer.html">QCPItemTracer</a></p>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPAbstractItem-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>In <a href="qcustomplot.html">QCustomPlot</a>, items are supplemental graphical elements that are neither plottables (<a href="qcpabstractplottable.html">QCPAbstractPlottable</a>) nor axes (<a href="qcpaxis.html">QCPAxis</a>). While plottables are always tied to two axes and thus plot coordinates, items can also be placed in absolute coordinates independent of any axes. Each specific item has at least one <a href="qcpitemposition.html">QCPItemPosition</a> member which controls the positioning. Some items are defined by more than one coordinate and thus have two or more <a href="qcpitemposition.html">QCPItemPosition</a> members (For example, <a href="qcpitemrect.html">QCPItemRect</a> has <i>topLeft</i> and <i>bottomRight</i>).</p>
+<p>This abstract base class defines a very basic interface like visibility and clipping. Since this class is abstract, it can't be instantiated. Use one of the subclasses or create a subclass yourself to create new items.</p>
+<p>The built-in items are: &lt;table&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitemline.html">QCPItemLine</a>&lt;/td&gt;&lt;td&gt;A line defined by a start and an end point. May have different ending styles on each side (e.g&#x2e; arrows).&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitemstraightline.html">QCPItemStraightLine</a>&lt;/td&gt;&lt;td&gt;A straight line defined by a start and a direction point. Unlike <a href="qcpitemline.html">QCPItemLine</a>, the straight line is infinitely long and has no endings.&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitemcurve.html">QCPItemCurve</a>&lt;/td&gt;&lt;td&gt;A curve defined by start, end and two intermediate control points. May have different ending styles on each side (e.g&#x2e; arrows).&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitemrect.html">QCPItemRect</a>&lt;/td&gt;&lt;td&gt;A rectangle&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitemellipse.html">QCPItemEllipse</a>&lt;/td&gt;&lt;td&gt;An ellipse&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitempixmap.html">QCPItemPixmap</a>&lt;/td&gt;&lt;td&gt;An arbitrary pixmap&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitemtext.html">QCPItemText</a>&lt;/td&gt;&lt;td&gt;A text label&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitembracket.html">QCPItemBracket</a>&lt;/td&gt;&lt;td&gt;A bracket which may be used to reference/highlight certain parts in the plot.&lt;/td&gt;&lt;/tr&gt; &lt;tr&gt;&lt;td&gt;<a href="qcpitemtracer.html">QCPItemTracer</a>&lt;/td&gt;&lt;td&gt;An item that can be attached to a <a href="qcpgraph.html">QCPGraph</a> and sticks to its data points, given a key coordinate.&lt;/td&gt;&lt;/tr&gt; &lt;/table&gt;</p>
+<p><b class="redFont"><code>\section</code></b>items-clipping Clipping</p>
+<p>Items are by default clipped to the main axis rect (they are only visible inside the axis rect). To make an item visible outside that axis rect, disable clipping via <b class="redFont"><code>\ref</code></b> setClipToAxisRect &quot;setClipToAxisRect(false)&quot;.</p>
+<p>On the other hand if you want the item to be clipped to a different axis rect, specify it via <b class="redFont"><code>\ref</code></b> setClipAxisRect. This clipAxisRect property of an item is only used for clipping behaviour, and in principle is independent of the coordinate axes the item might be tied to via its position members (<b class="redFont"><code>\ref</code></b> QCPItemPosition::setAxes). However, it is common that the axis rect for clipping also contains the axes used for the item positions.</p>
+<p><b class="redFont"><code>\section</code></b>items-using Using items</p>
+<p>First you instantiate the item you want to use and add it to the plot:</p>
+<pre class="cpp"></pre>
+<p>by default, the positions of the item are bound to the x- and y-Axis of the plot. So we can just set the plot coordinates where the line should start/end:</p>
+<pre class="cpp"></pre>
+<p>If we don't want the line to be positioned in plot coordinates but a different coordinate system, e.g&#x2e; absolute pixel positions on the <a href="qcustomplot.html">QCustomPlot</a> surface, we need to change the position type like this:</p>
+<pre class="cpp"></pre>
+<p>Then we can set the coordinates, this time in pixels:</p>
+<pre class="cpp"></pre>
+<p>and make the line visible on the entire <a href="qcustomplot.html">QCustomPlot</a>, by disabling clipping to the axis rect:</p>
+<pre class="cpp"></pre>
+<p>For more advanced plots, it is even possible to set different types and parent anchors per X/Y coordinate of an item position, using for example <b class="redFont"><code>\ref</code></b> QCPItemPosition::setTypeX or <b class="redFont"><code>\ref</code></b> QCPItemPosition::setParentAnchorX. For details, see the documentation of <b class="redFont"><code>\ref</code></b> <a href="qcpitemposition.html">QCPItemPosition</a>.</p>
+<p><b class="redFont"><code>\section</code></b>items-subclassing Creating own items</p>
+<p>To create an own item, you implement a subclass of QCPAbstractItem. These are the pure virtual functions, you must implement:</p>
+<p><b class="redFont"><code>\ref</code></b>selectTest</p>
+<p><b class="redFont"><code>\ref</code></b>draw</p>
+<p>See the documentation of those functions for what they need to do.</p>
+<p><b class="redFont"><code>\subsection</code></b>items-positioning Allowing the item to be positioned</p>
+<p>As mentioned, item positions are represented by <a href="qcpitemposition.html">QCPItemPosition</a> members. Let's assume the new item shall have only one point as its position (as opposed to two like a rect or multiple like a polygon). You then add a public member of type <a href="qcpitemposition.html">QCPItemPosition</a> like so:</p>
+<pre class="cpp">the <span class="keyword">const</span> makes sure the pointer itself can<span class="char">'t be modified from the user of your new item (the QCPItemPosition
+instance it points to, can be modified, of course).
+The initialization of this pointer is made easy with the \ref createPosition function. Just assign
+the return value of this function to each QCPItemPosition in the constructor of your item. \ref createPosition
+takes a string which is the name of the position, typically this is identical to the variable name.
+For example, the constructor of QCPItemExample could look like this:
+
+\code
+QCPItemExample::QCPItemExample(QCustomPlot *parentPlot) :
+  QCPAbstractItem(parentPlot),
+  myPosition(createPosition(&quot;myPosition&quot;))
+{
+  // other constructor code
+}
+</span></pre>
+<p><b class="redFont"><code>\subsection</code></b>items-drawing The draw function</p>
+<p>To give your item a visual representation, reimplement the <b class="redFont"><code>\ref</code></b> draw function and use the passed <a href="qcppainter.html">QCPPainter</a> to draw the item. You can retrieve the item position in pixel coordinates from the position member(s) via <b class="redFont"><code>\ref</code></b> QCPItemPosition::pixelPosition.</p>
+<p>To optimize performance you should calculate a bounding rect first (don't forget to take the pen width into account), check whether it intersects the <b class="redFont"><code>\ref</code></b> clipRect, and only draw the item at all if this is the case.</p>
+<p><b class="redFont"><code>\subsection</code></b>items-selection The selectTest function</p>
+<p>Your implementation of the <b class="redFont"><code>\ref</code></b> selectTest function may use the helpers <b class="redFont"><code>\ref</code></b> QCPVector2D::distanceSquaredToLine and <b class="redFont"><code>\ref</code></b> rectDistance. With these, the implementation of the selection test becomes significantly simpler for most items. See the documentation of <b class="redFont"><code>\ref</code></b> selectTest for what the function parameters mean and what the function should return.</p>
+<p><b class="redFont"><code>\subsection</code></b>anchors Providing anchors</p>
+<p>Providing anchors (<a href="qcpitemanchor.html">QCPItemAnchor</a>) starts off like adding a position. First you create a public member, e.g&#x2e;</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPAbstractItem -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

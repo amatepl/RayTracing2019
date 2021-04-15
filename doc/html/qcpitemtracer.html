@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPItemTracer Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPItemTracer</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPItemTracer Class</h1>
+<!-- $$$QCPItemTracer-brief -->
+<p>Item that sticks to <a href="qcpgraph.html">QCPGraph</a> data points. <a href="#details">More...</a></p>
+<!-- @@@QCPItemTracer -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPItemTracer&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpabstractitem.html">QCPAbstractItem</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPItemTracer-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>The tracer can be connected with a <a href="qcpgraph.html">QCPGraph</a> via <b class="redFont"><code>\ref</code></b> setGraph. Then it will automatically adopt the coordinate axes of the graph and update its <i>position</i> to be on the graph's data. This means the key stays controllable via <b class="redFont"><code>\ref</code></b> setGraphKey, but the value will follow the graph data. If a <a href="qcpgraph.html">QCPGraph</a> is connected, note that setting the coordinates of the tracer item directly via <i>position</i> will have no effect because they will be overriden in the next redraw (this is when the coordinate update happens).</p>
+<p>If the specified key in <b class="redFont"><code>\ref</code></b> setGraphKey is outside the key bounds of the graph, the tracer will stay at the corresponding end of the graph.</p>
+<p>With <b class="redFont"><code>\ref</code></b> setInterpolating you may specify whether the tracer may only stay exactly on data points or whether it interpolates data points linearly, if given a key that lies between two data points of the graph.</p>
+<p>The tracer has different visual styles, see <b class="redFont"><code>\ref</code></b> setStyle. It is also possible to make the tracer have no own visual appearance (set the style to <b class="redFont"><code>\ref</code></b> tsNone), and just connect other item positions to the tracer <i>position</i> (used as an anchor) via <b class="redFont"><code>\ref</code></b> QCPItemPosition::setParentAnchor.</p>
+<p><b>Note: </b>The tracer position is only automatically updated upon redraws. So when the data of the graph changes and immediately afterwards (without a redraw) the position coordinates of the tracer are retrieved, they will not reflect the updated data of the graph. In this case <b class="redFont"><code>\ref</code></b> updatePosition must be called manually, prior to reading the tracer coordinates.</p>
+</div>
+<!-- @@@QCPItemTracer -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

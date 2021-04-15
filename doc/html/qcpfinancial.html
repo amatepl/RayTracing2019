@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPFinancial Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPFinancial</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPFinancial Class</h1>
+<!-- $$$QCPFinancial-brief -->
+<p>A plottable representing a financial stock chart. <a href="#details">More...</a></p>
+<!-- @@@QCPFinancial -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPFinancial&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPFinancial-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>This plottable represents time series data binned to certain intervals, mainly used for stock charts. The two common representations OHLC (Open-High-Low-Close) bars and Candlesticks can be set via <b class="redFont"><code>\ref</code></b> setChartStyle.</p>
+<p>The data is passed via <b class="redFont"><code>\ref</code></b> setData as a set of open/high/low/close values at certain keys (typically times). This means the data must be already binned appropriately. If data is only available as a series of values (e.g&#x2e; <i>price</i> against <i>time</i>), you can use the static convenience function <b class="redFont"><code>\ref</code></b> timeSeriesToOhlc to generate binned OHLC-data which can then be passed to <b class="redFont"><code>\ref</code></b> setData.</p>
+<p>The width of the OHLC bars/candlesticks can be controlled with <b class="redFont"><code>\ref</code></b> setWidth and <b class="redFont"><code>\ref</code></b> setWidthType. A typical choice is to set the width type to <b class="redFont"><code>\ref</code></b> wtPlotCoords (the default) and the width to (or slightly less than) one time bin interval width.</p>
+<p><b class="redFont"><code>\section</code></b>qcpfinancial-appearance Changing the appearance</p>
+<p>Charts can be either single- or two-colored (<b class="redFont"><code>\ref</code></b> setTwoColored). If set to be single-colored, lines are drawn with the plottable's pen (<b class="redFont"><code>\ref</code></b> setPen) and fills with the brush (<b class="redFont"><code>\ref</code></b> setBrush).</p>
+<p>If set to two-colored, positive changes of the value during an interval (<i>close</i> &gt;= <i>open</i>) are represented with a different pen and brush than negative changes (<i>close</i> &lt; <i>open</i>). These can be configured with <b class="redFont"><code>\ref</code></b> setPenPositive, <b class="redFont"><code>\ref</code></b> setPenNegative, <b class="redFont"><code>\ref</code></b> setBrushPositive, and <b class="redFont"><code>\ref</code></b> setBrushNegative. In two-colored mode, the normal plottable pen/brush is ignored. Upon selection however, the normal selected pen/brush (provided by the <b class="redFont"><code>\ref</code></b> selectionDecorator) is used, irrespective of whether the chart is single- or two-colored.</p>
+<p><b class="redFont"><code>\section</code></b>qcpfinancial-usage Usage</p>
+<p>Like all data representing objects in <a href="qcustomplot.html">QCustomPlot</a>, the QCPFinancial is a plottable (<a href="qcpabstractplottable.html">QCPAbstractPlottable</a>). So the plottable-interface of <a href="qcustomplot.html">QCustomPlot</a> applies (QCustomPlot::plottable, QCustomPlot::removePlottable, etc.)</p>
+<p>Usually, you first create an instance:</p>
+<pre class="cpp"></pre>
+<p>which registers it with the <a href="qcustomplot.html">QCustomPlot</a> instance of the passed axes. Note that this <a href="qcustomplot.html">QCustomPlot</a> instance takes ownership of the plottable, so do not delete it manually but use QCustomPlot::removePlottable() instead. The newly created plottable can be modified, e.g&#x2e;:</p>
+<pre class="cpp"></pre>
+<p>Here we have used the static helper method <b class="redFont"><code>\ref</code></b> timeSeriesToOhlc, to turn a time-price data series into a 24-hour binned open-high-low-close data series as QCPFinancial uses.</p>
+</div>
+<!-- @@@QCPFinancial -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

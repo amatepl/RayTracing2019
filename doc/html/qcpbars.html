@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPBars Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPBars</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPBars Class</h1>
+<!-- $$$QCPBars-brief -->
+<p>A plottable representing a bar chart in a plot. <a href="#details">More...</a></p>
+<!-- @@@QCPBars -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPBars&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPBars-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>To plot data, assign it with the <b class="redFont"><code>\ref</code></b> setData or <b class="redFont"><code>\ref</code></b> addData functions.</p>
+<p><b class="redFont"><code>\section</code></b>qcpbars-appearance Changing the appearance</p>
+<p>The appearance of the bars is determined by the pen and the brush (<b class="redFont"><code>\ref</code></b> setPen, <b class="redFont"><code>\ref</code></b> setBrush). The width of the individual bars can be controlled with <b class="redFont"><code>\ref</code></b> setWidthType and <b class="redFont"><code>\ref</code></b> setWidth.</p>
+<p>Bar charts are stackable. This means, two QCPBars plottables can be placed on top of each other (see <b class="redFont"><code>\ref</code></b> QCPBars::moveAbove). So when two bars are at the same key position, they will appear stacked.</p>
+<p>If you would like to group multiple QCPBars plottables together so they appear side by side as shown below, use <a href="qcpbarsgroup.html">QCPBarsGroup</a>.</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p><b class="redFont"><code>\section</code></b>qcpbars-usage Usage</p>
+<p>Like all data representing objects in <a href="qcustomplot.html">QCustomPlot</a>, the QCPBars is a plottable (<a href="qcpabstractplottable.html">QCPAbstractPlottable</a>). So the plottable-interface of <a href="qcustomplot.html">QCustomPlot</a> applies (QCustomPlot::plottable, QCustomPlot::removePlottable, etc.)</p>
+<p>Usually, you first create an instance:</p>
+<pre class="cpp"></pre>
+<p>which registers it with the <a href="qcustomplot.html">QCustomPlot</a> instance of the passed axes. Note that this <a href="qcustomplot.html">QCustomPlot</a> instance takes ownership of the plottable, so do not delete it manually but use QCustomPlot::removePlottable() instead. The newly created plottable can be modified, e.g&#x2e;:</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPBars -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

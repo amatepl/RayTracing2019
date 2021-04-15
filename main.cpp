@@ -1,18 +1,16 @@
-#include "MainWindow.h"
+#include "applicationwindow.h"
+
 #include <QApplication>
 
 
-int main(int argc, char *argv[])
-
-    /*
-     * The main function consist only on calling the Qt windows objects, the main algorithm and functions are defined in the room.cpp sourcecode, and is
-     * instantiated in the MainWindow object.
-     */
-
+int main(int argv, char *args[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    QApplication app(argv, args);
+    ApplicationWindow mainWindow;
 
-    return a.exec();
+    mainWindow.setGeometry(100, 100, 800, 500);
+    mainWindow.show();
+
+    return app.exec();
 }
+

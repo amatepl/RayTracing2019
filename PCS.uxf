@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>2</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>62</x>
+      <y>270</y>
+      <w>64</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>/SceneFactory/
+--
+-createTransmitterProduct(): TransmitterProduct*
+-createReceiverProduct(): ReceiverProduct*
+-createWallProduct(): WallProduct*
+-createBuildingProduct(): BuildingProduct*
+-createTreeProduct(): TreeProduct*
+-createRayProduct(): RayProduct*
+-createCarProduct(): CarProduct*
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>32</x>
+      <y>302</y>
+      <w>84</w>
+      <h>46</h>
+    </coordinates>
+    <panel_attributes>GraphicsFactory : QGraphicsScene
+--
+-Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding,
+InsertTree, InsertCar}: enum
+--
+-m_view: GraphicsView*
+-m_graphicscomponent: GraphicsComposite*
+-m_mode: Mode
+-m_windowobservable: WindowObservable*
+-m_scenecbserver: vector&lt;SceneObserver*&gt;
+-m_scenecbserveriterator: iterator
+--
+-mousePressEvent(QGraphicsSceneMouseEvent*): void
+-mouseMoveEvent(QGraphicsSceneMouseEvent*): void
+-mouseDoubleClickedEvent(QGraphicsSceneMouseEvent*): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>302</y>
+      <w>90</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>MathematicalFactory 
+--
+-m_graphicsfactory: SceneObservable*
+-m_graphicscomponent: GraphicsComponent*
+-m_mathbuildings: vector&lt;MathematicalBuildingProduct*&gt;
+-m_mathbuildingsiterator: iterator
+-m_mathreceivers: vector&lt;MathematicalReceiverProduct*&gt;
+-m_mathreceiversiterator: iterator
+-m_mathtrees: vector&lt;MathematicalTreeProduct*&gt;
+-m_mathtreesiterator: iterator
+-m_mathcars: vector&lt;MathematicalCarProduct*&gt;
+-m_mathcarsiterator: iterator
+--
+-ReceiveBuildingProduct(BuildingProduct*,BuildingProduct*): void
+-ReceiveReceiverProduct(ReceiverProduct*,ReceiverProduct*): void
+-ReceiveTreeProduct(TreeProduct*,TreeProduct*): void
+-ReceiveCarProduct(CarProduct*,CarProduct*): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>480</x>
+      <y>408</y>
+      <w>46</w>
+      <h>68</h>
+    </coordinates>
+    <panel_attributes>/TransmitterProduct/
+--
+Model{dipole,array}: enum
+--
+-getPosX(): int
+-getPosY(): int
+-getRow(): int
+-getColumn(): int
+-getModel(): int
+-getFrequency: unsigned long
+-getOrientation(): double
+-getAntennaDistance(): double
+-getPower(): double
+-setPosX(int): void
+-setPosY(int): void
+-setRow(int): void
+-setColumn(int): void
+-setModel(Model): void
+-setFrequency(unsigned long): void
+-setOrientation(double): void
+-setAntennaDistance(double): void
+-setPower(double): void
+
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>432</y>
+      <w>74</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>GraphicsTransmitterProduct: QGraphicsPixmapItem
+--
+-m_graphicsfactory: GraphicsFactory*
+-m_posx: int
+-m_posy: int
+-m_frequency: unsigned long
+-m_orientation: double
+-m_power: double
+--
+-getImage(): static QPixmap
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>402</y>
+      <w>82</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>MathematicalTransmitterProduct: QPointF
+--
+-m_posx: int
+-m_posy: int
+-m_frequency: unsigned long
+-m_orientation: double
+-m_power: double
+--
+-computeGain(double,double,double,int,int,double): static double</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>544</x>
+      <y>310</y>
+      <w>54</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>/ReceiverProduct/
+--
+-getPosX(): int
+-getPosY(): int
+-getFrequency(): unsigned long long
+-getPower(): double
+-setPosX(int): void
+-setPosY(int): void
+-setFrequency(unsigned long long): void
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>614</x>
+      <y>344</y>
+      <w>70</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>GraphicsReceiverProduct: QGraphicsPixmapItem
+--
+-enableReceiver(bool): void
+-scaleColor(double,double,double): QColor
+-getImage(): static QPixmap
+--
+-m_graphicsfactory: GraphicsFactory*
+-m_posx: int
+-m_posy: int
+-m_frequency: unsigned long long
+-m_power: double
+-m_efield: double</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>614</x>
+      <y>300</y>
+      <w>74</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>MathematicalReceiverProduct: QPointF
+--
+-m_mathematicalfactory: MathematicalFactory*
+-m_graphic: ReceiverProduct* 
+-m_posx: int 
+-m_posy: int 
+-m_power: double 
+-m_efield: double 
+-m_frequency: unsigned long 
+--
+-newProperties(): void
+-getReceiverProduct(): ReceiverProduct*
+-setReceiverProduct(ReceiverProduct*): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>216</x>
+      <y>302</y>
+      <w>72</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>DialogFactory
+--
+-m_graphicsfactory: SceneObservable*
+-m_graphiccomponent: GraphicsComponent*
+--
+-receiveTransmitterProduct(TransmitterProduct*): void
+-receiveBuildingProduct(BuildingProduct*): void
+-receiveReceiverProduct(ReceiverProduct*): void
+-receiveCarProduct(CarProduc*): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>464</y>
+      <w>48</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>DialogTransmitterProduct: QDialog
+--
+-m_dialogfactory: DialogFactory*
+-m_modelBox: QComboBox*
+-m_frequencyorder: QComboBox*
+-m_posx: QSpinBox*
+-m_posy: QSpinBox*
+-m_row: QSpinBox*
+-m_column: QSpinBox*
+-m_orientation: QDoubleSpinBox*
+-m_antennadistance: QDoubleSpinBox*
+-m_power: QDoubleSpinBox*
+-m_frequency: QDoubleSpinBox*
+-m_model: Model
+-m_dialogobserver: vector&lt;DialogObserver*&gt;
+-m_dialogobserveriterator: iterator 
+--
+-createDialog(): void
+--
+-newProperties(): void slot
+-openPlot(): void slot
+-changeModel(QString): void slot 
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>614</x>
+      <y>260</y>
+      <w>50</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>DialogReceiverProduct: QDialog
+--
+-m_dialogfactory: DialogFactory*
+-m_posx: QSpinBox*
+-m_posy: QSpinBox*
+-m_frequency: QDoubleSpinBox*
+-m_frequencyorder: QComboBox*
+-m_power: QLineEdit*
+-m_efield: QLineEdit*
+--
+-createDialog(): void
+--
+-newProperties(): void slot
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>468</x>
+      <y>288</y>
+      <w>54</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>/BuildingProduct/
+--
+Model{brick,concrete,none}: enum
+--
+-getPosX(): int
+-getPosY(): int
+-getOrientation(): double
+-getConductivity(): double
+-getPermittivity(): double
+-getModel(): int
+-getExtremities: QVector&lt;QPointF&gt;
+-setPosX(int): void
+-setPosY(int): void
+-setOrientation(double): void
+-setConductivity(double): void
+-setPermittivity(double): void
+-setModel(int): void
+-setExtremities(QVector&lt;QPointF&gt;): void
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>246</y>
+      <w>64</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>MathematicalBuildingProduct :QPolygonF
+--
+-m_mathematicalfactory: MathematicalFactory*
+-m_extremities: QVector&lt;QPointF&gt;
+-m_model: Model
+-m_posx: int
+-m_posy: int
+-m_orientation: double
+-m_permittivity: double
+-m_conductivity: double
+--
+-getBuildingProduct: BuildingProduct* 
+-setBuildingProduct(BuildingProduct*): void 
+-newProperties(): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>290</y>
+      <w>46</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>DialogBuildingProduct:QDialog
+--
+-m_dialogfactory: DialogFactory*
+-m_posx: QSpinBox*
+-m_posy: QSpinBox*
+-m_orientation: QDoubleSpinBox*
+-m_permittivity: QDoubleSpinBox*
+-m_conductivity: QDoubleSpinBox*
+-m_modelBox: QComboBox*
+-m_pointX: QSpinBox*
+-m_pointY: QSpinBox*
+-m_extremitiesViewer: QTextEdit*
+-m_points: QVector&lt;QPointF&gt;
+-m_model: Model
+--
+-createDialog():void
+-writeExtremities():void
+--
+/-newProperties(): void slot/
+/-changeModel(QString): void slot/
+/-addExtremities(): void slot/
+/-removeExtremities(): void slot/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>358</y>
+      <w>66</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>GraphicsBuildingProduct : QGraphicsPolygonItem
+--
+-m_graphicsfactory: GraphicsFactory*
+-m_model: Model
+-m_extremities: QVector&lt;QPointF&gt;
+-m_posx: int
+-m_posy: int
+-m_orientation: double
+-m_permittivity: double
+-m_conductivity: double
+--
+-getImage(): static QPixmap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>546</x>
+      <y>414</y>
+      <w>32</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>/TreeProduct/
+--
+-getPosX(): int
+-getPosY(): int
+-setPosX(int): void
+-setPosY(int): void
+
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>614</x>
+      <y>412</y>
+      <w>48</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>MathematicalTreeProduct: QPolygonF
+--
+-m_factory: MathematicalFactory*
+-m_graphic: TreeProduct*
+-m_posx: int
+-m_posy: int
+--
+-newProperties(): void
+-getTreeProduct(): TreeProduct*
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>614</x>
+      <y>386</y>
+      <w>44</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>DialogTreeProduct: QDialog
+--
+-m_dialogfactory: DialogFactory*
+-m_posx: QSpinBox*
+-m_posy: QSpinBox*
+--
+-createDialog(): void
+--
+-newProperties(): void slot</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>614</x>
+      <y>442</y>
+      <w>60</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>GraphicsTreeProduct: QGraphicsPixmapItem
+--
+-m_graphicsfactory: GraphicsFactory*
+-m_posx: int
+-m_posy: int
+--
+-getImage(): static QPixmap
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>522</x>
+      <y>630</y>
+      <w>32</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>/RayProduct/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>602</x>
+      <y>594</y>
+      <w>48</w>
+      <h>10</h>
+    </coordinates>
+    <panel_attributes>MathematicalRayProduct :
+QLineF</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>664</x>
+      <y>594</y>
+      <w>38</w>
+      <h>14</h>
+    </coordinates>
+    <panel_attributes>GraphicsRayProduct : 
+QGraphicsLineItem</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>174</x>
+      <y>214</y>
+      <w>68</w>
+      <h>58</h>
+    </coordinates>
+    <panel_attributes>ApplicationWindow: QMainWindow
+--
+-view: QGraphicsView*
+-graphicsfactory: SceneFactory*
+-dialogfactory: SceneFactory*
+-mathematicalfactory: SceneFactory*
+-m_antennagroup: QButtonGroup*
+-m_obstaclegroup: QButtonGroup*
+-m_toolbox: QToolBox*
+-m_windowobserver: vector&lt;WindowObserver*&gt;
+-m_windowobserveriterator: iterator
+-m_mode: Mode
+--
+-createToolButton(const QString &amp;text,int id): void
+-createToolBox(): void
+-setMode(Mode mode): void
+--
+/antennaGroupClicked(int): void slot/
+/obstacleGroupClicked(int): void slot/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>94</x>
+      <y>242</y>
+      <w>84</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+fg=blue</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;10.0;400.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>462</x>
+      <y>418</y>
+      <w>22</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>90.0;140.0;60.0;140.0;60.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>444</y>
+      <w>30</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>130.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>428</x>
+      <y>444</y>
+      <w>56</w>
+      <h>62</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>260.0;10.0;230.0;10.0;230.0;290.0;10.0;290.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>262</x>
+      <y>346</y>
+      <w>96</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>/GraphicsComponent/
+--
+-Type{TransmitterProduct,ReceiverProduct,BuildingProduct,TreeProduct,
+CarProduct}: enum
+--
+-draw(): void
+-add(GraphicsComponent*): void
+-remove(GraphicsComponent*): void
+-graphicsSelected(): bool
+-getType(): int
+-getSize(): unsigned long long
+-getGraphicsComponent(unsigned long long): GraphicsComponent*
+-setGraphicsComponent(unsigned long long, GraphicsComponent*): void
+
+fg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>274</x>
+      <y>406</y>
+      <w>72</w>
+      <h>14</h>
+    </coordinates>
+    <panel_attributes>GraphicsComposite
+--
+-m_grapicscomponent: vector&lt;GraphicsComponent*&gt;
+-m_graphicscomponentiterator:iterator</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>250</x>
+      <y>364</y>
+      <w>28</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>120.0;220.0;10.0;220.0;10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>384</y>
+      <w>6</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>378</y>
+      <w>42</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>/SceneObservable/
+--
+-attachObserver(): void
+-detachObserver(): void
+-notifyNewProperties(): void
+-notifyChangeProperties(): void
+
+fg=magenta</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>160</x>
+      <y>380</y>
+      <w>72</w>
+      <h>14</h>
+    </coordinates>
+    <panel_attributes>/SceneObserver/
+--
+-updateNewProperties(GraphicsComponent*): void
+-updateChangeProperties(GraphicsComponent*): void
+
+fg=magenta</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>124</x>
+      <y>288</y>
+      <w>108</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;520.0;10.0;520.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>122</x>
+      <y>296</y>
+      <w>6</w>
+      <h>10</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>54</x>
+      <y>290</y>
+      <w>12</w>
+      <h>16</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>40.0;10.0;10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>166</x>
+      <y>352</y>
+      <w>6</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=magenta</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>224</x>
+      <y>328</y>
+      <w>6</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=magenta</panel_attributes>
+    <additional_attributes>10.0;260.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>48</x>
+      <y>346</y>
+      <w>6</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=magenta</panel_attributes>
+    <additional_attributes>10.0;160.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>70</x>
+      <y>386</y>
+      <w>94</w>
+      <h>8</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m_sceneObserver*
+fg=magenta</panel_attributes>
+    <additional_attributes>450.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>444</x>
+      <y>266</y>
+      <w>28</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>120.0;300.0;80.0;300.0;80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>426</x>
+      <y>324</y>
+      <w>46</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>210.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>446</x>
+      <y>324</y>
+      <w>26</w>
+      <h>58</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>110.0;10.0;70.0;10.0;70.0;270.0;10.0;270.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>166</x>
+      <y>162</y>
+      <w>84</w>
+      <h>26</h>
+    </coordinates>
+    <panel_attributes>/WindowObservable/
+--
+-Mode{MoveItem,InsertTransmitter,InsertReceiver,InsertBuilding,
+InsertTree,InsertCar}: enum
+--
+-attachObserver(): void
+-detachObserver(): void
+-notify(): void
+-answer(): void
+
+fg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>206</x>
+      <y>186</y>
+      <w>6</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=orange</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>34</x>
+      <y>162</y>
+      <w>72</w>
+      <h>14</h>
+    </coordinates>
+    <panel_attributes>/WindowObserver/
+--
+-update(int mode): void
+
+fg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>44</x>
+      <y>174</y>
+      <w>6</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=orange</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;640.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>104</x>
+      <y>166</y>
+      <w>66</w>
+      <h>8</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m_windowObserver*
+fg=orange</panel_attributes>
+    <additional_attributes>10.0;20.0;310.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>370</y>
+      <w>80</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;120.0;320.0;120.0;320.0;10.0;380.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>540</y>
+      <w>48</w>
+      <h>10</h>
+    </coordinates>
+    <panel_attributes>PatternWindow
+--
+-m_dialog: DialogTransmitterProduct*</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>326</x>
+      <y>540</y>
+      <w>28</w>
+      <h>10</h>
+    </coordinates>
+    <panel_attributes>/DialogObserver/
+--
+-update(): void
+
+fg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>324</x>
+      <y>466</y>
+      <w>34</w>
+      <h>16</h>
+    </coordinates>
+    <panel_attributes>/DialogObservable/
+--
+-attachObserver(): void
+-detachObserver(): void
+-notify(): void
+
+fg=pink</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>356</x>
+      <y>474</y>
+      <w>30</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=pink</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>352</x>
+      <y>542</y>
+      <w>34</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=pink</panel_attributes>
+    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>338</x>
+      <y>480</y>
+      <w>30</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m_dialogobserver*
+fg=pink</panel_attributes>
+    <additional_attributes>10.0;300.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>240</x>
+      <y>240</y>
+      <w>296</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+fg=blue</panel_attributes>
+    <additional_attributes>1430.0;1030.0;1460.0;1030.0;1460.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>382</x>
+      <y>562</y>
+      <w>20</w>
+      <h>16</h>
+    </coordinates>
+    <panel_attributes>Surface3D</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>384</y>
+      <w>80</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0;320.0;50.0;320.0;300.0;380.0;300.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>240</x>
+      <y>240</y>
+      <w>308</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+
+fg=blue</panel_attributes>
+    <additional_attributes>1520.0;430.0;1460.0;430.0;1460.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>596</x>
+      <y>322</y>
+      <w>22</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;90.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>596</x>
+      <y>276</y>
+      <w>22</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;240.0;50.0;240.0;50.0;10.0;90.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>596</x>
+      <y>322</y>
+      <w>22</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;220.0;90.0;220.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>372</y>
+      <w>406</w>
+      <h>222</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;70.0;10.0;110.0;320.0;110.0;320.0;360.0;10.0;360.0;10.0;1090.0;2010.0;1090.0;2010.0;10.0;1890.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>576</x>
+      <y>394</y>
+      <w>42</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;150.0;150.0;150.0;150.0;10.0;190.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>576</x>
+      <y>422</y>
+      <w>42</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;190.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>576</x>
+      <y>422</y>
+      <w>42</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;150.0;10.0;150.0;150.0;190.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>240</x>
+      <y>240</y>
+      <w>310</w>
+      <h>188</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+fg=blue</panel_attributes>
+    <additional_attributes>1530.0;920.0;1460.0;920.0;1460.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>384</y>
+      <w>406</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0;320.0;50.0;320.0;300.0;10.0;300.0;10.0;1030.0;2010.0;1030.0;2010.0;340.0;1840.0;340.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>728</x>
+      <y>308</y>
+      <w>38</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>/CarProduct/
+--
+-getPosX(): int
+-getPosY(): int
+-getOrientation(): double
+-getSpeed(): double
+-setPosX(int): void
+-setPosY(int): void
+-setOrientation(double): void
+-setSpeed(double): void
+
+fg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>786</x>
+      <y>274</y>
+      <w>46</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>DialogCarProduct: QDialog
+--
+-m_dialogfactory: DialogFactory*
+-m_posx: QSpinBox*
+-m_posy: QSpinBox*
+-m_orientation: QDoubleSpinBox*
+-m_speed: QDoubleSpinBox*
+--
+-createDialog(): void
+--
+-newProperties(): void slot</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>786</x>
+      <y>306</y>
+      <w>48</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>MathematicalCarProduct: QRectF
+--
+-m_factory: MathematicalFactory*
+-m_graphic: CarProduct*
+-m_posx: int
+-m_posy: int
+-m_orientation: double
+-m_speed: double
+--
+-newProperties(): void
+-getCarProduct(): CarProduct*
+-setCarProduct(CarProduct*): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>786</x>
+      <y>344</y>
+      <w>60</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>GraphicsTreeProduct: QGraphicsPixmapItem
+--
+-m_graphicsfactory: GraphicsFactory*
+-m_posx: int
+-m_posy: int
+-m_orientation: double
+-m_speed: double
+--
+-getImage(): static QPixmap
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>764</x>
+      <y>290</y>
+      <w>26</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;180.0;70.0;180.0;70.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>764</x>
+      <y>324</y>
+      <w>26</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>764</x>
+      <y>324</y>
+      <w>26</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;70.0;10.0;70.0;180.0;110.0;180.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>240</x>
+      <y>240</y>
+      <w>492</w>
+      <h>92</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+fg=blue</panel_attributes>
+    <additional_attributes>2440.0;440.0;2380.0;440.0;2380.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>306</x>
+      <y>358</y>
+      <w>552</w>
+      <h>236</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+fg=red</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;180.0;320.0;180.0;320.0;430.0;10.0;430.0;10.0;1160.0;2010.0;1160.0;2010.0;80.0;2740.0;80.0;2740.0;10.0;2700.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>240</x>
+      <y>240</y>
+      <w>296</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+fg=blue</panel_attributes>
+    <additional_attributes>1410.0;430.0;1460.0;430.0;1460.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+</diagram>
