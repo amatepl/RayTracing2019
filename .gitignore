@@ -3,3 +3,8 @@
 
 #macOS files
 .DS_Store
+
+# build and binaries
+
+*.bin
+*.o
