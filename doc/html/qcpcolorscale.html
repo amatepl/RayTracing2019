@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPColorScale Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPColorScale</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPColorScale Class</h1>
+<!-- $$$QCPColorScale-brief -->
+<p>A color scale for use with color coding data such as <a href="qcpcolormap.html">QCPColorMap</a>. <a href="#details">More...</a></p>
+<!-- @@@QCPColorScale -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPColorScale&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayoutelement.html">QCPLayoutElement</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPColorScale-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>This layout element can be placed on the plot to correlate a color gradient with data values. It is usually used in combination with one or multiple <b class="redFont"><code>\ref</code></b> <a href="qcpcolormap.html">QCPColorMap</a> &quot;QCPColorMaps&quot;.</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>The color scale can be either horizontal or vertical, as shown in the image above. The orientation and the side where the numbers appear is controlled with <b class="redFont"><code>\ref</code></b> setType.</p>
+<p>Use <b class="redFont"><code>\ref</code></b> QCPColorMap::setColorScale to connect a color map with a color scale. Once they are connected, they share their gradient, data range and data scale type (<b class="redFont"><code>\ref</code></b> setGradient, <b class="redFont"><code>\ref</code></b> setDataRange, <b class="redFont"><code>\ref</code></b> setDataScaleType). Multiple color maps may be associated with a single color scale, to make them all synchronize these properties.</p>
+<p>To have finer control over the number display and axis behaviour, you can directly access the <b class="redFont"><code>\ref</code></b> axis. See the documentation of <a href="qcpaxis.html">QCPAxis</a> for details about configuring axes. For example, if you want to change the number of automatically generated ticks, call</p>
+<pre class="cpp"></pre>
+<p>Placing a color scale next to the main axis rect works like with any other layout element:</p>
+<pre class="cpp"></pre>
+<p>In this case we have placed it to the right of the default axis rect, so it wasn't necessary to call <b class="redFont"><code>\ref</code></b> setType, since <b class="redFont"><code>\ref</code></b> QCPAxis::atRight is already the default. The text next to the color scale can be set with <b class="redFont"><code>\ref</code></b> setLabel.</p>
+<p>For optimum appearance (like in the image above), it may be desirable to line up the axis rect and the borders of the color scale. Use a <b class="redFont"><code>\ref</code></b> <a href="qcpmargingroup.html">QCPMarginGroup</a> to achieve this:</p>
+<pre class="cpp"></pre>
+<p>Color scales are initialized with a non-zero minimum top and bottom margin (<b class="redFont"><code>\ref</code></b> setMinimumMargins), because vertical color scales are most common and the minimum top/bottom margin makes sure it keeps some distance to the top/bottom widget border. So if you change to a horizontal color scale by setting <b class="redFont"><code>\ref</code></b> setType to <b class="redFont"><code>\ref</code></b> QCPAxis::atBottom or <b class="redFont"><code>\ref</code></b> QCPAxis::atTop, you might want to also change the minimum margins accordingly, e.g&#x2e; &lt;tt&gt;setMinimumMargins(QMargins(6, 0, 6, 0))&lt;/tt&gt;.</p>
+</div>
+<!-- @@@QCPColorScale -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

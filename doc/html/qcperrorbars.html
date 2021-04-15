@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPErrorBars Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPErrorBars</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPErrorBars Class</h1>
+<!-- $$$QCPErrorBars-brief -->
+<p>A plottable that adds a set of error bars to other plottables. <a href="#details">More...</a></p>
+<!-- @@@QCPErrorBars -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPErrorBars&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpabstractplottable.html">QCPAbstractPlottable</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPErrorBars-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>The <b class="redFont"><code>\ref</code></b> QCPErrorBars plottable can be attached to other one-dimensional plottables (e.g&#x2e; <b class="redFont"><code>\ref</code></b> <a href="qcpgraph.html">QCPGraph</a>, <b class="redFont"><code>\ref</code></b> <a href="qcpcurve.html">QCPCurve</a>, <b class="redFont"><code>\ref</code></b> <a href="qcpbars.html">QCPBars</a>, etc.) and equips them with error bars.</p>
+<p>Use <b class="redFont"><code>\ref</code></b> setDataPlottable to define for which plottable the <b class="redFont"><code>\ref</code></b> QCPErrorBars shall display the error bars. The orientation of the error bars can be controlled with <b class="redFont"><code>\ref</code></b> setErrorType.</p>
+<p>By using <b class="redFont"><code>\ref</code></b> setData, you can supply the actual error data, either as symmetric error or plus/minus asymmetric errors. <b class="redFont"><code>\ref</code></b> QCPErrorBars only stores the error data. The absolute key/value position of each error bar will be adopted from the configured data plottable. The error data of the <b class="redFont"><code>\ref</code></b> QCPErrorBars are associated one-to-one via their index to the data points of the data plottable. You can directly access and manipulate the error bar data via <b class="redFont"><code>\ref</code></b> data.</p>
+<p>Set either of the plus/minus errors to NaN (&lt;tt&gt;qQNaN()&lt;/tt&gt; or &lt;tt&gt;std::numeric_limits&lt;double&gt;::quiet_NaN()&lt;/tt&gt;) to not show the respective error bar on the data point at that index.</p>
+<p><b class="redFont"><code>\section</code></b>qcperrorbars-appearance Changing the appearance</p>
+<p>The appearance of the error bars is defined by the pen (<b class="redFont"><code>\ref</code></b> setPen), and the width of the whiskers (<b class="redFont"><code>\ref</code></b> setWhiskerWidth). Further, the error bar backbones may leave a gap around the data point center to prevent that error bars are drawn too close to or even through scatter points. This gap size can be controlled via <b class="redFont"><code>\ref</code></b> setSymbolGap.</p>
+</div>
+<!-- @@@QCPErrorBars -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

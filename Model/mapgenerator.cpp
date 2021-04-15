@@ -6,11 +6,25 @@
 //
 //--------------------------------------------------------------------------------------------
 
+/*!
+ * \class Street
+ * \brief Class that used for creating streets on the map.
+ *
+ * asldkfhsdfkjsahfdsjkdfbsalkdjfbsadlfkasjdbf
+ *
+ */
 Street::Street(): QLineF()
 {
 
 }
 
+
+/*!
+* \fn Street::Street(double x1, double y1, double x2, double y2, const double w)
+*
+* Constructs a street object that represents the street between (x1, y1) and (x2, y2)
+* of width \a w.
+*/
 Street::Street(double x1, double y1, double x2, double y2, const double w):
       QLineF(x1, y1, x2, y2), m_w{w}
 {
@@ -23,6 +37,11 @@ Street::Street(const QPointF &p1, const QPointF &p2, const double w):
 
 }
 
+/*!
+* \fn double Street::width() const
+*
+* Returns the width of the street.
+*/
 double Street::width() const
 {
     return m_w;

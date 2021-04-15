@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAxisTickerText Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAxisTickerText</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAxisTickerText Class</h1>
+<!-- $$$QCPAxisTickerText-brief -->
+<p>Specialized axis ticker which allows arbitrary labels at specified coordinates. <a href="#details">More...</a></p>
+<!-- @@@QCPAxisTickerText -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAxisTickerText&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpaxisticker.html">QCPAxisTicker</a></td></tr></table></div><ul>
+<li><a href="qcpaxistickertext-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> int &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcpaxistickertext.html#ticks">ticks</a></b>()</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$QCPAxisTickerText-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>This <a href="qcpaxisticker.html">QCPAxisTicker</a> subclass generates ticks which can be directly specified by the user as coordinates and associated strings. They can be passed as a whole with <b class="redFont"><code>\ref</code></b> setTicks or one at a time with <b class="redFont"><code>\ref</code></b> addTick. Alternatively you can directly access the internal storage via <b class="redFont"><code>\ref</code></b> ticks and modify the tick/label data there.</p>
+<p>This is useful for cases where the axis represents categories rather than numerical values.</p>
+<p>If you are updating the ticks of this ticker regularly and in a dynamic fasion (e.g&#x2e; dependent on the axis range), it is a sign that you should probably create an own ticker by subclassing <a href="qcpaxisticker.html">QCPAxisTicker</a>, instead of using this one.</p>
+<p>The ticker can be created and assigned to an axis like this:</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPAxisTickerText -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$ticks[overload1]$$$ticks -->
+<h3 class="fn" id="ticks"><a name="ticks"></a><span class="type">int</span> &amp;QCPAxisTickerText::<span class="name">ticks</span>()</h3>
+<p>Returns a non-const reference to the internal map which stores the tick coordinates and their labels.</p>
+<p>You can access the map directly in order to add, remove or manipulate ticks, as an alternative to using the methods provided by <a href="qcpaxistickertext.html">QCPAxisTickerText</a>, such as <b class="redFont"><code>\ref</code></b> setTicks and <b class="redFont"><code>\ref</code></b> addTick.</p>
+<!-- @@@ticks -->
+</div>
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

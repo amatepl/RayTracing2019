@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPLayoutGrid Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPLayoutGrid</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPLayoutGrid Class</h1>
+<!-- $$$QCPLayoutGrid-brief -->
+<p>A layout that arranges child elements in a grid. <a href="#details">More...</a></p>
+<!-- @@@QCPLayoutGrid -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPLayoutGrid&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayout.html">QCPLayout</a></td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherited By:</td><td class="memItemRight bottomAlign"> <p><a href="qcplegend.html">QCPLegend</a></p>
+</td></tr></table></div><ul>
+<li><a href="qcplayoutgrid-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPLayoutGrid-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>Elements are laid out in a grid with configurable stretch factors (<b class="redFont"><code>\ref</code></b> setColumnStretchFactor, <b class="redFont"><code>\ref</code></b> setRowStretchFactor) and spacing (<b class="redFont"><code>\ref</code></b> setColumnSpacing, <b class="redFont"><code>\ref</code></b> setRowSpacing).</p>
+<p>Elements can be added to cells via <b class="redFont"><code>\ref</code></b> addElement. The grid is expanded if the specified row or column doesn't exist yet. Whether a cell contains a valid layout element can be checked with <b class="redFont"><code>\ref</code></b> hasElement, that element can be retrieved with <b class="redFont"><code>\ref</code></b> element. If rows and columns that only have empty cells shall be removed, call <b class="redFont"><code>\ref</code></b> simplify. Removal of elements is either done by just adding the element to a different layout or by using the <a href="qcplayout.html">QCPLayout</a> interface <b class="redFont"><code>\ref</code></b> take or <b class="redFont"><code>\ref</code></b> remove.</p>
+<p>If you use <b class="redFont"><code>\ref</code></b> addElement(<a href="qcplayoutelement.html">QCPLayoutElement</a>*) without explicit parameters for <i>row</i> and <i>column</i>, the grid layout will choose the position according to the current <b class="redFont"><code>\ref</code></b> setFillOrder and the wrapping (<b class="redFont"><code>\ref</code></b> setWrap).</p>
+<p>Row and column insertion can be performed with <b class="redFont"><code>\ref</code></b> insertRow and <b class="redFont"><code>\ref</code></b> insertColumn.</p>
+</div>
+<!-- @@@QCPLayoutGrid -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

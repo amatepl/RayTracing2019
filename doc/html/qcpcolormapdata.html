@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPColorMapData Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPColorMapData</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPColorMapData Class</h1>
+<!-- $$$QCPColorMapData-brief -->
+<p>Holds the two-dimensional data of a <a href="qcpcolormap.html">QCPColorMap</a> plottable. <a href="#details">More...</a></p>
+<!-- @@@QCPColorMapData -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPColorMapData&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="qcpcolormapdata-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpcolormapdata.html#isEmpty">isEmpty</a></b>() const</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$QCPColorMapData-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>This class is a data storage for <b class="redFont"><code>\ref</code></b> <a href="qcpcolormap.html">QCPColorMap</a>. It holds a two-dimensional array, which <b class="redFont"><code>\ref</code></b> <a href="qcpcolormap.html">QCPColorMap</a> then displays as a 2D image in the plot, where the array values are represented by a color, depending on the value.</p>
+<p>The size of the array can be controlled via <b class="redFont"><code>\ref</code></b> setSize (or <b class="redFont"><code>\ref</code></b> setKeySize, <b class="redFont"><code>\ref</code></b> setValueSize). Which plot coordinates these cells correspond to can be configured with <b class="redFont"><code>\ref</code></b> setRange (or <b class="redFont"><code>\ref</code></b> setKeyRange, <b class="redFont"><code>\ref</code></b> setValueRange).</p>
+<p>The data cells can be accessed in two ways: They can be directly addressed by an integer index with <b class="redFont"><code>\ref</code></b> setCell. This is the fastest method. Alternatively, they can be addressed by their plot coordinate with <b class="redFont"><code>\ref</code></b> setData. plot coordinate to cell index transformations and vice versa are provided by the functions <b class="redFont"><code>\ref</code></b> coordToCell and <b class="redFont"><code>\ref</code></b> cellToCoord.</p>
+<p>A <b class="redFont"><code>\ref</code></b> QCPColorMapData also holds an on-demand two-dimensional array of alpha values which (if allocated) has the same size as the data map. It can be accessed via <b class="redFont"><code>\ref</code></b> setAlpha, <b class="redFont"><code>\ref</code></b> fillAlpha and <b class="redFont"><code>\ref</code></b> clearAlpha. The memory for the alpha map is only allocated if needed, i.e&#x2e; on the first call of <b class="redFont"><code>\ref</code></b> setAlpha. <b class="redFont"><code>\ref</code></b> clearAlpha restores full opacity and frees the alpha map.</p>
+<p>This class also buffers the minimum and maximum values that are in the data set, to provide QCPColorMap::rescaleDataRange with the necessary information quickly. Setting a cell to a value that is greater than the current maximum increases this maximum to the new value. However, setting the cell that currently holds the maximum value to a smaller value doesn't decrease the maximum again, because finding the true new maximum would require going through the entire data array, which might be time consuming. The same holds for the data minimum. This functionality is given by <b class="redFont"><code>\ref</code></b> recalculateDataBounds, such that you can decide when it is sensible to find the true current minimum and maximum. The method QCPColorMap::rescaleDataRange offers a convenience parameter <i>recalculateDataBounds</i> which may be set to true to automatically call <b class="redFont"><code>\ref</code></b> recalculateDataBounds internally.</p>
+</div>
+<!-- @@@QCPColorMapData -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$isEmpty[overload1]$$$isEmpty -->
+<h3 class="fn" id="isEmpty"><a name="isEmpty"></a><span class="type">bool</span> QCPColorMapData::<span class="name">isEmpty</span>() const</h3>
+<p>Returns whether this instance carries no data. This is equivalent to having a size where at least one of the dimensions is 0 (see <b class="redFont"><code>\ref</code></b> setSize).</p>
+<!-- @@@isEmpty -->
+</div>
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

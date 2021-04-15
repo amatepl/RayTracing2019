@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPCurve Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPCurve</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPCurve Class</h1>
+<!-- $$$QCPCurve-brief -->
+<p>A plottable representing a parametric curve in a plot. <a href="#details">More...</a></p>
+<!-- @@@QCPCurve -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPCurve&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPCurve-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>Unlike <a href="qcpgraph.html">QCPGraph</a>, plottables of this type may have multiple points with the same key coordinate, so their visual representation can have <i>loops</i>. This is realized by introducing a third coordinate <i>t</i>, which defines the order of the points described by the other two coordinates <i>x</i> and <i>y</i>.</p>
+<p>To plot data, assign it with the <b class="redFont"><code>\ref</code></b> setData or <b class="redFont"><code>\ref</code></b> addData functions. Alternatively, you can also access and modify the curve's data via the <b class="redFont"><code>\ref</code></b> data method, which returns a pointer to the internal <b class="redFont"><code>\ref</code></b> QCPCurveDataContainer.</p>
+<p>Gaps in the curve can be created by adding data points with NaN as key and value (&lt;tt&gt;qQNaN()&lt;/tt&gt; or &lt;tt&gt;std::numeric_limits&lt;double&gt;::quiet_NaN()&lt;/tt&gt;) in between the two data points that shall be separated.</p>
+<p><b class="redFont"><code>\section</code></b>qcpcurve-appearance Changing the appearance</p>
+<p>The appearance of the curve is determined by the pen and the brush (<b class="redFont"><code>\ref</code></b> setPen, <b class="redFont"><code>\ref</code></b> setBrush).</p>
+<p><b class="redFont"><code>\section</code></b>qcpcurve-usage Usage</p>
+<p>Like all data representing objects in <a href="qcustomplot.html">QCustomPlot</a>, the QCPCurve is a plottable (<a href="qcpabstractplottable.html">QCPAbstractPlottable</a>). So the plottable-interface of <a href="qcustomplot.html">QCustomPlot</a> applies (QCustomPlot::plottable, QCustomPlot::removePlottable, etc.)</p>
+<p>Usually, you first create an instance:</p>
+<pre class="cpp"></pre>
+<p>which registers it with the <a href="qcustomplot.html">QCustomPlot</a> instance of the passed axes. Note that this <a href="qcustomplot.html">QCustomPlot</a> instance takes ownership of the plottable, so do not delete it manually but use QCustomPlot::removePlottable() instead. The newly created plottable can be modified, e.g&#x2e;:</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPCurve -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

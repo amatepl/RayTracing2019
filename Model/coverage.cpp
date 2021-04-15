@@ -1,6 +1,7 @@
 #include "coverage.h"
 
-Coverage::Coverage(SceneFactory *receiverFactory,const float scale):m_receiverFactory(receiverFactory)
+Coverage::Coverage(SceneFactory *receiverFactory,const float scale):
+      m_receiverFactory(receiverFactory)
 {
     px_to_meter = scale;
 }
@@ -16,7 +17,7 @@ MathematicalComponent* Coverage::compute(map<string, vector<MathematicalProduct 
     setAttributs(mathematicalComponents);
 //    reflectionsNumber = 10;
 
-    RayFactory* rayFactory = new RayFactory(false, m_scene,px_to_meter);
+    RayFactory* rayFactory = new RayFactory(false, m_scene, px_to_meter);
     m_rayFactory = rayFactory;
 
     for(unsigned int i = 0; i < m_transmitters.size(); i++){

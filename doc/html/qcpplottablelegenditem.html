@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPPlottableLegendItem Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPPlottableLegendItem</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPPlottableLegendItem Class</h1>
+<!-- $$$QCPPlottableLegendItem-brief -->
+<p>A legend item representing a plottable with an icon and the plottable name. <a href="#details">More...</a></p>
+<!-- @@@QCPPlottableLegendItem -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPPlottableLegendItem&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpabstractlegenditem.html">QCPAbstractLegendItem</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPPlottableLegendItem-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>This is the standard legend item for plottables. It displays an icon of the plottable next to the plottable name. The icon is drawn by the respective plottable itself (<b class="redFont"><code>\ref</code></b> QCPAbstractPlottable::drawLegendIcon), and tries to give an intuitive symbol for the plottable. For example, the <a href="qcpgraph.html">QCPGraph</a> draws a centered horizontal line and/or a single scatter point in the middle.</p>
+<p>Legend items of this type are always associated with one plottable (retrievable via the plottable() function and settable with the constructor). You may change the font of the plottable name with <b class="redFont"><code>\ref</code></b> setFont. Icon padding and border pen is taken from the parent <a href="qcplegend.html">QCPLegend</a>, see <b class="redFont"><code>\ref</code></b> QCPLegend::setIconBorderPen and <b class="redFont"><code>\ref</code></b> QCPLegend::setIconTextPadding.</p>
+<p>The function <b class="redFont"><code>\ref</code></b> QCPAbstractPlottable::addToLegend/<b class="redFont"><code>\ref</code></b> QCPAbstractPlottable::removeFromLegend creates/removes legend items of this type.</p>
+<p>Since <a href="qcplegend.html">QCPLegend</a> is based on <a href="qcplayoutgrid.html">QCPLayoutGrid</a>, a legend item itself is just a subclass of <a href="qcplayoutelement.html">QCPLayoutElement</a>. While it could be added to a legend (or any other layout) via the normal layout interface, <a href="qcplegend.html">QCPLegend</a> has specialized functions for handling legend items conveniently, see the documentation of <b class="redFont"><code>\ref</code></b> <a href="qcplegend.html">QCPLegend</a>.</p>
+</div>
+<!-- @@@QCPPlottableLegendItem -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

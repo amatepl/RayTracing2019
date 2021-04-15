@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAxisTicker Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAxisTicker</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAxisTicker Class</h1>
+<!-- $$$QCPAxisTicker-brief -->
+<p>The base class tick generator used by <a href="qcpaxis.html">QCPAxis</a> to create tick positions and tick labels. <a href="#details">More...</a></p>
+<!-- @@@QCPAxisTicker -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAxisTicker&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherited By:</td><td class="memItemRight bottomAlign"> <p><a href="qcpaxistickerfixed.html">QCPAxisTickerFixed</a>, <a href="qcpaxistickerlog.html">QCPAxisTickerLog</a>, <a href="qcpaxistickerpi.html">QCPAxisTickerPi</a>, <a href="qcpaxistickertext.html">QCPAxisTickerText</a>, and <a href="qcpaxistickertime.html">QCPAxisTickerTime</a></p>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPAxisTicker-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>Each <a href="qcpaxis.html">QCPAxis</a> has an internal QCPAxisTicker (or a subclass) in order to generate tick positions and tick labels for the current axis range. The ticker of an axis can be set via <b class="redFont"><code>\ref</code></b> QCPAxis::setTicker. Since that method takes a &lt;tt&gt;QSharedPointer&lt;QCPAxisTicker&gt;&lt;/tt&gt;, multiple axes can share the same ticker instance.</p>
+<p>This base class generates normal tick coordinates and numeric labels for linear axes. It picks a reasonable tick step (the separation between ticks) which results in readable tick labels. The number of ticks that should be approximately generated can be set via <b class="redFont"><code>\ref</code></b> setTickCount. Depending on the current tick step strategy (<b class="redFont"><code>\ref</code></b> setTickStepStrategy), the algorithm either sacrifices readability to better match the specified tick count (<b class="redFont"><code>\ref</code></b> QCPAxisTicker::tssMeetTickCount) or relaxes the tick count in favor of better tick steps (<b class="redFont"><code>\ref</code></b> QCPAxisTicker::tssReadability), which is the default.</p>
+<p>The following more specialized axis ticker subclasses are available, see details in the respective class documentation:</p>
+<p>&lt;center&gt; &lt;table&gt; &lt;tr&gt;&lt;td style=&quot;text-align:right; padding: 0 1em&quot;&gt;<a href="qcpaxistickerfixed.html">QCPAxisTickerFixed</a>&lt;/td&gt;&lt;td&gt;</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;tr&gt;&lt;td style=&quot;text-align:right; padding: 0 1em&quot;&gt;<a href="qcpaxistickerlog.html">QCPAxisTickerLog</a>&lt;/td&gt;&lt;td&gt;</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;tr&gt;&lt;td style=&quot;text-align:right; padding: 0 1em&quot;&gt;<a href="qcpaxistickerpi.html">QCPAxisTickerPi</a>&lt;/td&gt;&lt;td&gt;</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;tr&gt;&lt;td style=&quot;text-align:right; padding: 0 1em&quot;&gt;<a href="qcpaxistickertext.html">QCPAxisTickerText</a>&lt;/td&gt;&lt;td&gt;</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;tr&gt;&lt;td style=&quot;text-align:right; padding: 0 1em&quot;&gt;QCPAxisTickerDateTime&lt;/td&gt;&lt;td&gt;</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;tr&gt;&lt;td style=&quot;text-align:right; padding: 0 1em&quot;&gt;<a href="qcpaxistickertime.html">QCPAxisTickerTime</a>&lt;/td&gt;&lt;td&gt;</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p class="centerAlign"><font color="red">[Missing image html]</font></p><p>&lt;/table&gt; &lt;/center&gt;</p>
+<p><b class="redFont"><code>\section</code></b>axisticker-subclassing Creating own axis tickers</p>
+<p>Creating own axis tickers can be achieved very easily by sublassing QCPAxisTicker and reimplementing some or all of the available virtual methods.</p>
+<p>In the simplest case you might wish to just generate different tick steps than the other tickers, so you only reimplement the method <b class="redFont"><code>\ref</code></b> getTickStep. If you additionally want control over the string that will be shown as tick label, reimplement <b class="redFont"><code>\ref</code></b> getTickLabel.</p>
+<p>If you wish to have complete control, you can generate the tick vectors and tick label vectors yourself by reimplementing <b class="redFont"><code>\ref</code></b> createTickVector and <b class="redFont"><code>\ref</code></b> createLabelVector. The default implementations use the previously mentioned virtual methods <b class="redFont"><code>\ref</code></b> getTickStep and <b class="redFont"><code>\ref</code></b> getTickLabel, but your reimplementations don't necessarily need to do so. For example in the case of unequal tick steps, the method <b class="redFont"><code>\ref</code></b> getTickStep loses its usefulness and can be ignored.</p>
+<p>The sub tick count between major ticks can be controlled with <b class="redFont"><code>\ref</code></b> getSubTickCount. Full sub tick placement control is obtained by reimplementing <b class="redFont"><code>\ref</code></b> createSubTickVector.</p>
+<p>See the documentation of all these virtual methods in QCPAxisTicker for detailed information about the parameters and expected return values.</p>
+</div>
+<!-- @@@QCPAxisTicker -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

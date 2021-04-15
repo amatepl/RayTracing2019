@@ -1,0 +1,61 @@
+# PROJECT INFORMATION
+
+project = QDoc PCS
+description = 5G simulation software
+
+# INPUT AND OUTPUT DIRECTORIES
+
+headerdirs += /Users/amate/Documents/Polytech/Thesis/RayTracing2019 \
+               /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Model \
+               /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Abstract_Factory \
+               /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Graphics \
+               /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Observer \
+               /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Product \
+               /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Share \
+               /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Widget
+
+sourcedirs += /Users/amate/Documents/Polytech/Thesis/RayTracing2019 \
+              /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Model \
+              /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Abstract_Factory \
+              /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Graphics \
+              /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Observer \
+              /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Product \
+              /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Share \
+              /Users/amate/Documents/Polytech/Thesis/RayTracing2019/Widget
+# exampledirs = <path to examples directory>
+# imagedirs = <path to image directory>
+
+sources.fileextensions = "*.cpp *.qdoc *.qml"
+headers.fileextensions = "*.h *.hpp "
+examples.fileextensions = "*.cpp *.h *.js *.xq *.svg *.xml *.ui *.qhp *.qhcp *.qml"
+examples.imageextensions = "*.png *.jpeg *.jpg *.gif *.mng"
+
+outputdir  =    /Users/amate/Documents/Polytech/Thesis/RayTracing2019/doc/html
+outputformats = HTML
+
+# path to the CSS files if you would like to use any (here it's the current directory)
+HTML.stylesheets = offline.css
+# the string that actually includes the CSS into documentation file
+HTML.headerstyles = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style/offline.css\"/>\n"
+# what to append to every page after header
+HTML.postheader = "<p class=\"header\"><small>[My awesome documentation]</small></p><hr/>"
+# what to append to every page after the content
+HTML.footer = "<hr/><p class=\"footer\"><small>[some footer and whatnot information]</small></p>"
+
+# HTML.postheader = "<a href=\"index.html\">Home</a>"
+# HTML.footer = "<p /><address><hr /><div align=\"center\">\n" \
+#               ...
+#               "</tr></table></div></address>"
+#
+# HTML.headerstyles = "h3.fn,span.fn" \
+#                     "{ margin-left: 1cm; text-indent: -1cm; }\n" \
+#                     "a:link { color: #004faf; text-decoration: none }\n" \
+#                     "a:visited" \
+#                     "{ color: #672967; text-decoration: none }\n" \
+#                     "td.postheader { font-family: sans-serif }\n" \
+#                     "tr.address { font-family: sans-serif }\n" \
+#                     "body { background: #ffffff; color: black; }"
+# HTML.stylesheets = template/style/style.css \
+#                    template/style/style1.css
+#
+# HTML.scripts = template/scripts/script.js

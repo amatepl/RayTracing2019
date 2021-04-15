@@ -225,7 +225,7 @@ void DialogBuildingProduct::applyProperties(){
 void DialogBuildingProduct::buttonBoxClicked(QAbstractButton *button)
 {
     QString text = button->text();
-    if (button->text() == "&OK") {
+    if (button->text() == "OK") {
 
         saveProperties();
 
@@ -233,7 +233,7 @@ void DialogBuildingProduct::buttonBoxClicked(QAbstractButton *button)
       else if (button->text() == "Apply"){
         applyProperties();
     }
-    else if (button->text() == "&Cancel"){
+    else if (button->text() == "Cancel"){
         close();
     }
 }

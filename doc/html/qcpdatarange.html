@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPDataRange Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPDataRange</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPDataRange Class</h1>
+<!-- $$$QCPDataRange-brief -->
+<p>Describes a data range given by begin and end index. <a href="#details">More...</a></p>
+<!-- @@@QCPDataRange -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPDataRange&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="qcpdatarange-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#QCPDataRange-1">QCPDataRange</a></b>(int <i>begin</i>, int <i>end</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataRange </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#adjusted">adjusted</a></b>(int <i>changeBegin</i>, int <i>changeEnd</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataRange </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#bounded">bounded</a></b>(const QCPDataRange &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#contains">contains</a></b>(const QCPDataRange &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataRange </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#expanded">expanded</a></b>(const QCPDataRange &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataRange </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#intersection">intersection</a></b>(const QCPDataRange &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#intersects">intersects</a></b>(const QCPDataRange &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#isEmpty">isEmpty</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#isValid">isValid</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#length">length</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#setBegin">setBegin</a></b>(int <i>begin</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#setEnd">setEnd</a></b>(int <i>end</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcpdatarange.html#size">size</a></b>() const</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$QCPDataRange-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>QCPDataRange holds two integers describing the begin (<b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html#setBegin">setBegin</a>) and end (<b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html#setEnd">setEnd</a>) index of a contiguous set of data points. The end index points to the data point just after the last data point that's part of the data range, similarly to the nomenclature used in standard iterators.</p>
+<p>Data Ranges are not bound to a certain plottable, thus they can be freely exchanged, created and modified. If a non-contiguous data set shall be described, the class <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html">QCPDataSelection</a> is used, which holds and manages multiple instances of <b class="redFont"><code>\ref</code></b> QCPDataRange. In most situations, <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html">QCPDataSelection</a> is thus used.</p>
+<p>Both <b class="redFont"><code>\ref</code></b> QCPDataRange and <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html">QCPDataSelection</a> offer convenience methods to work with them, e.g&#x2e; <b class="redFont"><code>\ref</code></b> bounded, <b class="redFont"><code>\ref</code></b> expanded, <b class="redFont"><code>\ref</code></b> intersects, <b class="redFont"><code>\ref</code></b> intersection, <b class="redFont"><code>\ref</code></b> adjusted, <b class="redFont"><code>\ref</code></b> contains. Further, addition and subtraction operators (defined in <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html">QCPDataSelection</a>) can be used to join/subtract data ranges and data selections (or mixtures), to retrieve a corresponding <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html">QCPDataSelection</a>.</p>
+<p>%<a href="qcustomplot.html">QCustomPlot</a>'s <b class="redFont"><code>\ref</code></b> dataselection &quot;data selection mechanism&quot; is based on <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html">QCPDataSelection</a> and QCPDataRange.</p>
+<p><b>Note: </b>Do not confuse <b class="redFont"><code>\ref</code></b> QCPDataRange with <b class="redFont"><code>\ref</code></b> <a href="qcprange.html">QCPRange</a>. A <b class="redFont"><code>\ref</code></b> <a href="qcprange.html">QCPRange</a> describes an interval in floating point plot coordinates, e.g&#x2e; the current axis range.</p>
+</div>
+<!-- @@@QCPDataRange -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$QCPDataRange$$$QCPDataRangeintint -->
+<h3 class="fn" id="QCPDataRange-1"><a name="QCPDataRange-1"></a>QCPDataRange::<span class="name">QCPDataRange</span>(<span class="type">int</span> <i>begin</i>, <span class="type">int</span> <i>end</i>)</h3>
+<p>Creates a QCPDataRange, initialized with the specified <i>begin</i> and <i>end</i>.</p>
+<p>No checks or corrections are made to ensure the resulting range is valid (<b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html#isValid">isValid</a>).</p>
+<!-- @@@QCPDataRange -->
+<!-- $$$QCPDataRange[overload1]$$$QCPDataRange -->
+<h3 class="fn" id="QCPDataRange"><a name="QCPDataRange"></a>QCPDataRange::<span class="name">QCPDataRange</span>()</h3>
+<p>Creates an empty QCPDataRange, with begin and end set to 0.</p>
+<!-- @@@QCPDataRange -->
+<!-- $$$adjusted[overload1]$$$adjustedintint -->
+<h3 class="fn" id="adjusted"><a name="adjusted"></a><span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> QCPDataRange::<span class="name">adjusted</span>(<span class="type">int</span> <i>changeBegin</i>, <span class="type">int</span> <i>changeEnd</i>) const</h3>
+<p>Returns a data range where <i>changeBegin</i> and <i>changeEnd</i> were added to the begin and end indices, respectively.</p>
+<!-- @@@adjusted -->
+<!-- $$$bounded[overload1]$$$boundedconstQCPDataRange& -->
+<h3 class="fn" id="bounded"><a name="bounded"></a><span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> QCPDataRange::<span class="name">bounded</span>(const <span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns a data range that matches this data range, except that parts exceeding <i>other</i> are excluded.</p>
+<p>This method is very similar to <b class="redFont"><code>\ref</code></b> intersection, with one distinction: If this range and the <i>other</i> range share no intersection, the returned data range will be empty with begin and end set to the respective boundary side of <i>other</i>, at which this range is residing. (<b class="redFont"><code>\ref</code></b> intersection would just return a range with begin and end set to 0.)</p>
+<!-- @@@bounded -->
+<!-- $$$contains[overload1]$$$containsconstQCPDataRange& -->
+<h3 class="fn" id="contains"><a name="contains"></a><span class="type">bool</span> QCPDataRange::<span class="name">contains</span>(const <span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns whether all data points of <i>other</i> are also contained inside this data range.</p>
+<p><b class="redFont"><code>\see</code></b>intersects</p>
+<!-- @@@contains -->
+<!-- $$$expanded[overload1]$$$expandedconstQCPDataRange& -->
+<h3 class="fn" id="expanded"><a name="expanded"></a><span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> QCPDataRange::<span class="name">expanded</span>(const <span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns a data range that contains both this data range as well as <i>other</i>.</p>
+<!-- @@@expanded -->
+<!-- $$$intersection[overload1]$$$intersectionconstQCPDataRange& -->
+<h3 class="fn" id="intersection"><a name="intersection"></a><span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> QCPDataRange::<span class="name">intersection</span>(const <span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns the data range which is contained in both this data range and <i>other</i>.</p>
+<p>This method is very similar to <b class="redFont"><code>\ref</code></b> bounded, with one distinction: If this range and the <i>other</i> range share no intersection, the returned data range will be empty with begin and end set to 0. (<b class="redFont"><code>\ref</code></b> bounded would return a range with begin and end set to one of the boundaries of <i>other</i>, depending on which side this range is on.)</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdataselection.html#intersection">QCPDataSelection::intersection</a></p>
+<!-- @@@intersection -->
+<!-- $$$intersects[overload1]$$$intersectsconstQCPDataRange& -->
+<h3 class="fn" id="intersects"><a name="intersects"></a><span class="type">bool</span> QCPDataRange::<span class="name">intersects</span>(const <span class="type"><a href="qcpdatarange.html#QCPDataRange">QCPDataRange</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns whether this data range and <i>other</i> share common data points.</p>
+<p><b class="redFont"><code>\see</code></b>intersection, contains</p>
+<!-- @@@intersects -->
+<!-- $$$isEmpty[overload1]$$$isEmpty -->
+<h3 class="fn" id="isEmpty"><a name="isEmpty"></a><span class="type">bool</span> QCPDataRange::<span class="name">isEmpty</span>() const</h3>
+<p>Returns whether this range is empty, i.e&#x2e; whether its begin index equals its end index.</p>
+<p><b class="redFont"><code>\see</code></b>size, length</p>
+<!-- @@@isEmpty -->
+<!-- $$$isValid[overload1]$$$isValid -->
+<h3 class="fn" id="isValid"><a name="isValid"></a><span class="type">bool</span> QCPDataRange::<span class="name">isValid</span>() const</h3>
+<p>Returns whether this range is valid. A valid range has a begin index greater or equal to 0, and an end index greater or equal to the begin index.</p>
+<p><b>Note: </b>Invalid ranges should be avoided and are never the result of any of <a href="qcustomplot.html">QCustomPlot</a>'s methods (unless they are themselves fed with invalid ranges). Do not pass invalid ranges to <a href="qcustomplot.html">QCustomPlot</a>'s methods. The invalid range is not inherently prevented in <a href="qcpdatarange.html">QCPDataRange</a>, to allow temporary invalid begin/end values while manipulating the range. An invalid range is not necessarily empty (<b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html#isEmpty">isEmpty</a>), since its <b class="redFont"><code>\ref</code></b> length can be negative and thus non-zero.</p>
+<!-- @@@isValid -->
+<!-- $$$length[overload1]$$$length -->
+<h3 class="fn" id="length"><a name="length"></a><span class="type">int</span> QCPDataRange::<span class="name">length</span>() const</h3>
+<p>Returns the number of data points described by this data range. Equivalent to <b class="redFont"><code>\ref</code></b> size.</p>
+<!-- @@@length -->
+<!-- $$$setBegin[overload1]$$$setBeginint -->
+<h3 class="fn" id="setBegin"><a name="setBegin"></a><span class="type">void</span> QCPDataRange::<span class="name">setBegin</span>(<span class="type">int</span> <i>begin</i>)</h3>
+<p>Sets the begin of this data range. The <i>begin</i> index points to the first data point that is part of the data range.</p>
+<p>No checks or corrections are made to ensure the resulting range is valid (<b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html#isValid">isValid</a>).</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdatarange.html#setEnd">setEnd</a></p>
+<!-- @@@setBegin -->
+<!-- $$$setEnd[overload1]$$$setEndint -->
+<h3 class="fn" id="setEnd"><a name="setEnd"></a><span class="type">void</span> QCPDataRange::<span class="name">setEnd</span>(<span class="type">int</span> <i>end</i>)</h3>
+<p>Sets the end of this data range. The <i>end</i> index points to the data point just after the last data point that is part of the data range.</p>
+<p>No checks or corrections are made to ensure the resulting range is valid (<b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html#isValid">isValid</a>).</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdatarange.html#setBegin">setBegin</a></p>
+<!-- @@@setEnd -->
+<!-- $$$size[overload1]$$$size -->
+<h3 class="fn" id="size"><a name="size"></a><span class="type">int</span> QCPDataRange::<span class="name">size</span>() const</h3>
+<p>Returns the number of data points described by this data range. This is equal to the end index minus the begin index.</p>
+<p><b class="redFont"><code>\see</code></b>length</p>
+<!-- @@@size -->
+</div>
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

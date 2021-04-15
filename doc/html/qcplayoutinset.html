@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPLayoutInset Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPLayoutInset</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPLayoutInset Class</h1>
+<!-- $$$QCPLayoutInset-brief -->
+<p>A layout that places child elements aligned to the border or arbitrarily positioned. <a href="#details">More...</a></p>
+<!-- @@@QCPLayoutInset -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPLayoutInset&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayout.html">QCPLayout</a></td></tr></table></div><ul>
+<li><a href="qcplayoutinset-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPLayoutInset-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>Elements are placed either aligned to the border or at arbitrary position in the area of the layout. Which placement applies is controlled with the <b class="redFont"><code>\ref</code></b> InsetPlacement (<b class="redFont"><code>\ref</code></b> setInsetPlacement).</p>
+<p>Elements are added via <b class="redFont"><code>\ref</code></b> addElement(<a href="qcplayoutelement.html">QCPLayoutElement</a> *element, Qt::Alignment alignment) or addElement(<a href="qcplayoutelement.html">QCPLayoutElement</a> *element, const QRectF &amp;rect). If the first method is used, the inset placement will default to <b class="redFont"><code>\ref</code></b> ipBorderAligned and the element will be aligned according to the <i>alignment</i> parameter. The second method defaults to <b class="redFont"><code>\ref</code></b> ipFree and allows placing elements at arbitrary position and size, defined by <i>rect</i>.</p>
+<p>The alignment or rect can be set via <b class="redFont"><code>\ref</code></b> setInsetAlignment or <b class="redFont"><code>\ref</code></b> setInsetRect, respectively.</p>
+<p>This is the layout that every QCPAxisRect has as <b class="redFont"><code>\ref</code></b> QCPAxisRect::insetLayout.</p>
+</div>
+<!-- @@@QCPLayoutInset -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

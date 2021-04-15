@@ -1,8 +1,42 @@
 #include "physics.h"
 #include <FFT>
 
+/*!
+ * \namespace ph
+ *
+ * \brief Contains miscellaneous functions used for physics computation.
+ */
 using namespace ph;
 
+/*!
+ * \enum ph::TxType
+ * \brief Transmitters types.
+ */
+
+/*!
+ * \struct ph::TxParams
+ * \brief Transmitter's parameters
+ */
+
+/*!
+ * \fn template <typename Tx, typename Ty>
+ *     vector<Ty> ph::upsample(const vector<Tx> &x, const vector<Ty> &y, const double min,
+ *                         const double max, const double step=1)
+ *
+ * \brief Upsample a vector.
+ *
+ * Upsample vector y function of x in a range [min, max] and with the given step.
+ *
+ */
+
+
+/*!
+ * \fn ph::u ph::uMPC(WholeRay *wholeRay)
+ * \brief Return u parameter for a given MPC
+ * \param wholeRay
+ * \return
+ *
+ */
 ph::u ph::uMPC(double wvNbr, angle theta)
 {
     // if we choose 0° in -y axe which is not natural
@@ -11,19 +45,34 @@ ph::u ph::uMPC(double wvNbr, angle theta)
     return wvNbr * cos(theta * M_PI / 180);
 }
 
-
+/*!
+ * \fn double ph::omegaMPC(double v, double wvNbr,  angle angleRx)
+ * \brief return omega variable for Doppler Spectrum
+ * \param v
+ * \return
+ */
 double ph::omegaMPC(double v, double wvNbr,  angle angleRx)
 {
     return v * ph::uMPC(wvNbr, angleRx);
 }
 
-
+/*!
+ * \fn double pasMPC (WholeRay *wholeRay);
+ * \brief Computes Power Angular Spectrum for one MPC
+ * \param complex<double> angDistr
+ * \return Power Angular Sepctrum for one MPC
+ */
 double ph::prxSpctrMPC(angle theta, double spectrum)
 {
     double max_spectrum = spectrum / cos(theta * M_PI / 180.);
     return 2 * M_PI / (max_spectrum * sqrt(1 - pow(spectrum/max_spectrum, 2)));
 }
 
+/*!
+ * \fn double ph::prxSpctrMPC(std::complex<double> &angDistr, const double ampu, const ph::u u)
+ * \return Power Angular Sepctrum for one MPC
+ *  Overload
+ */
 double ph::prxSpctrMPC(std::complex<double> &angDistr, const double /*ampu*/, const ph::u /*u*/)
 {
 //    return 2*M_PI;
@@ -33,7 +82,14 @@ double ph::prxSpctrMPC(std::complex<double> &angDistr, const double /*ampu*/, co
 //    return ampu * sqrt(1 - pow(u/ampu, 2)) * angDistr / (2 * M_PI);
 }
 
-
+/*!
+ * \fn std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double theta, const double spectrum)
+ * \param h
+ * \param theta
+ * \param spectrum (Angular or Doppler)
+ * \brief Returns tha angular distribution for one MPC
+ * \return
+ */
 std::complex<double> ph::angDistrMPC(const std::complex<double> &h, const double /*theta*/, const double /*spectrum*/)
 {
 //    return 2 * M_PI;
@@ -51,6 +107,13 @@ void sample(vector<T> &vec, T range){
     }
 }
 
+/*!
+ * \fn double ph::spread(const vector<double> &psd, const vector<double> &u)
+ *
+ * Computes the spread of the arriving power using a \a psd (Power Spectral Density)
+ * and a \a u (Power Shift).
+ *
+ */
 double ph::spread(const vector<double> &psd, const vector<double> &u)
 {
     double prx = 0;
@@ -66,6 +129,14 @@ double ph::spread(const vector<double> &psd, const vector<double> &u)
     return sqrt(variance/prx - pow(mean/prx, 2));
 }
 
+/*!
+ * \fn double ph::spread(const map<double, double> &pds)
+ *
+ * Override.
+ * Computes the spread of the arriving power using a \a psd (Power Spectral Density)
+ * and a \a u (Power Shift).
+ *
+ */
 double ph::spread(const map<double, double> &pds)
 {
     double prx = 0;
@@ -79,7 +150,13 @@ double ph::spread(const map<double, double> &pds)
     return sqrt(variance/prx - pow(mean/prx, 2));
 }
 
-map<double, complex<double>> ph::correlation(const map<double, double> &spctr, const vector<double> &domain)
+/*!
+ * \fn ph::map<double, double> correlation(vector<double> &spctr, const vector<double> &domain)
+ *
+ * Return the correlation from the power spectrum \a spctr.
+ */
+map<double, complex<double>> ph::correlation(const map<double, double> &spctr,
+                                             const vector<double> &domain)
 {
     map <double, complex<double>> out;
     complex<double> j{0,1};
@@ -102,7 +179,12 @@ map<double, complex<double>> ph::correlation(const map<double, double> &spctr, c
 //    return corr;
 }
 
-
+/*!
+ * \fn complex <double> ph::dipoleFactor(double phi)
+ * \brief dipoleFactor
+ * \param phi
+ * \return
+ */
 complex <double> ph::dipoleFactor(double phi)
 {
     complex <double> dipolefactor(0.0, 0.0);
@@ -116,7 +198,15 @@ complex <double> ph::dipoleFactor(double phi)
     return dipolefactor;
 }
 
-
+/*!
+ * \fn complex <double> ph::reflectorFactor(angle theta, angle phi, double fq, angle antOrien)
+ * \brief reflectorFactor
+ * \param theta
+ * \param phi
+ * \param fq
+ * \param antOrien
+ * \return
+ */
 complex <double> ph::reflectorFactor(angle theta, angle phi, double fq, angle antOrien){
     complex <double> reflectorfactor(0.0,0.0);
     double lambda = c/fq;
@@ -135,7 +225,15 @@ complex <double> ph::reflectorFactor(angle theta, angle phi, double fq, angle an
     return reflectorfactor;
 }
 
-
+/*!
+ * \fn complex <double> ph::reflectorFactor(angle theta, angle phi, const ph::TxParams &txParams)
+ * \brief reflectorFactor
+ * \param theta
+ * \param phi
+ * \param fq
+ * \param antOrien
+ * \return
+ */
 complex <double> ph::reflectorFactor(angle theta, angle phi, const ph::TxParams &txParams){
     complex <double> reflectorfactor(0.0,0.0);
     double lambda = c/txParams.fq;
@@ -154,7 +252,15 @@ complex <double> ph::reflectorFactor(angle theta, angle phi, const ph::TxParams 
     return reflectorfactor;
 }
 
-
+/*!
+ * \fn complex <double> ph::arrayFactor(angle theta, angle phi,double fq, angle antOrien, char beam, unsigned arrW, unsigned arrH)
+ * \brief arrayFactor
+ * \param theta
+ * \param phi
+ * \param fq
+ * \param antOrien
+ * \return
+ */
 complex <double> ph::arrayFactor(angle theta, angle phi,double fq, angle antOrien,
                             char beam, unsigned arrW, unsigned arrH)
 {
@@ -202,7 +308,15 @@ complex <double> ph::arrayFactor(angle theta, angle phi,double fq, angle antOrie
     return arrayfactor;
 }
 
-
+/*!
+ * \fn complex <double> ph::arrayFactor(angle theta, angle phi, const ph::TxParams &txParams)
+ * \brief arrayFactor
+ * \param theta
+ * \param phi
+ * \param fq
+ * \param antOrien
+ * \return
+ */
 complex <double> ph::arrayFactor(angle theta, angle phi, const ph::TxParams &txParams)
 {
     complex <double> xarray(0.0,0.0);
@@ -249,7 +363,15 @@ complex <double> ph::arrayFactor(angle theta, angle phi, const ph::TxParams &txP
     return arrayfactor;
 }
 
-
+/*!
+ * \fn complex <double> ph::totaleArrayFactor(double theta, double phi, double fq, angle antOrien, char beam, unsigned arrW, unsigned arrH, ph::TxType type)
+ * \brief totaleArrayFactor
+ * \param theta
+ * \param phi
+ * \param fq
+ * \param antOrien
+ * \return
+ */
 complex <double> ph::totaleArrayFactor(double theta, double phi, double fq, angle antOrien,
                                   char beam, unsigned arrW, unsigned arrH, ph::TxType type){
     complex <double> arrayfactor = ph::arrayFactor(theta, phi, fq, antOrien, beam, arrW, arrH);
@@ -270,14 +392,38 @@ complex <double> ph::totaleArrayFactor(double theta, double phi, double fq, angl
     return 0;
 }
 
+/*!
+ * \fn double electricalGain(double theta, double phi)
+ * \brief Returns the elctrical gain.
+ * \param arrayFactor
+ * \return
+ *
+ * Computes the electrical gain for a antana with a given array factor.
+ *
+ */
 double ph::electricalGain(complex<double> arrayFctr){
     return abs(arrayFctr);
 }
 
+/*!
+ * \fn double powerGain(double theta, double phi)
+ * \brief Return the power gain.
+ * \param arrayFctr
+ * \return
+ */
 double ph::powerGain(complex<double> arrayFctr){
     return 16.0/(3.0*M_PI)*pow(abs(arrayFctr),2);
 }
 
+/*!
+ * \fn complex <double> ph::totaleArrayFactor(double theta, double phi, const TxParams &txParams)
+ * \brief totaleArrayFactor
+ * \param theta
+ * \param phi
+ * \param fq
+ * \param antOrien
+ * \return
+ */
 complex <double> ph::totaleArrayFactor(double theta, double phi, const TxParams &txParams){
     complex <double> arrayfactor = ph::arrayFactor(theta, phi, txParams);
     complex <double> dipolefactor = ph::dipoleFactor(phi);
@@ -297,7 +443,17 @@ complex <double> ph::totaleArrayFactor(double theta, double phi, const TxParams 
     return 0;
 }
 
-
+/*!
+ * \fn double ph::computeReflexionPer(double thetaI, double epsilonR)
+ * \brief Returns perpendicular reflection coefficient.
+ * \param thetaI
+ * \param epsilonR
+ * \return
+ *
+ * Returns reflection coefficient for waves with perpendicular polarisation
+ * to the normal of the reflective surface.
+ *
+ */
 double ph::computeReflexionPer(double thetaI, double epsilonR)
 {
     //    double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))
@@ -312,7 +468,12 @@ double ph::computeReflexionPer(double thetaI, double epsilonR)
                (abs(cos(thetaI)) + sqrt(epsilonR) * sqrt(1 - (1 / epsilonR) * pow(sin(thetaI), 2)));
 }
 
-
+/*!
+ * \fn double ph::computeR(WholeRay *wholeRay)
+ * \brief computeR
+ * \param wholeRay
+ * \return
+ */
 double ph::computeR(WholeRay *wholeRay)
 {
     double R = 1;
@@ -328,13 +489,28 @@ double ph::computeR(WholeRay *wholeRay)
     return R;
 }
 
-
+/*!
+ * \fn double ph::currentTx(const double power, const tuple<width, height> antArry);
+ * \brief Computes the current at the transmitter.
+ * \param power
+ * \param antArry
+ * \return
+ */
 double ph::currentTx(const double power, const tuple<width, height> antArry)
 {
     return sqrt(2.0 * power / (std::get<0>(antArry) * std::get<1>(antArry) * r_a));
 }
 
-
+/*!
+ * \fn std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine, const std::tuple<width, height> antArry, double power, double wvNbr, double antOrien, char beam, TxType txType)
+ * \brief computeEMfield
+ * \param rayLine
+ * \param antArry
+ * \param power
+ * \param wvNbr
+ * \param array_fctr
+ * \return
+ */
 std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine,
                                     const std::tuple<width, height> antArry,
                                     double power,
@@ -376,7 +552,16 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay *> rayLine
     return Efield;
 }
 
-
+/*!
+ * \fn std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay*> rayLine, const TxParams &txParams)
+ * \brief computeEMfield overload
+ * \param rayLine
+ * \param antArry
+ * \param power
+ * \param wvNbr
+ * \param array_fctr
+ * \return
+ */
 std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay*> rayLine, const TxParams &txParams)
 {
     //  One vector<ray*> is one multi-path componant, the size of the vector determine the n-level
@@ -404,6 +589,13 @@ std::complex <double> ph::computeEMfield(const gsl::not_null<WholeRay*> rayLine,
     return Efield;
 }
 
+/*!
+ * \fn std::complex <double> ph::inducedVoltage(const std::complex <double> field, const double anglerx,const double lambda)
+ * \brief inducedVoltage
+ * \param field due to reflections and diffraction
+ * \param anglerx [rad]
+ * \return Induced voltage at receiver due to EM field
+ */
 std::complex <double> ph::inducedVoltage(const std::complex <double> field,
                                          const double anglerx,const double lambda)
 {
@@ -411,6 +603,12 @@ std::complex <double> ph::inducedVoltage(const std::complex <double> field,
     return voltage;
 }
 
+/*!
+ * \fn double ph::firstMinIdx(const map<double, double> &fct, const double th, const unsigned range)
+ *
+ * Find the first minimum in \a fct and returns its index.
+ * A lack of precision in \a fct is possible so \a th can be set as threshold.
+ */
 double ph::firstMinIdx(const map<double, double> &fct, const double th, const unsigned range)
 {
 

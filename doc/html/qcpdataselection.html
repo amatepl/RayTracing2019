@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPDataSelection Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPDataSelection</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPDataSelection Class</h1>
+<!-- $$$QCPDataSelection-brief -->
+<p>Describes a data set by holding multiple <a href="qcpdatarange.html">QCPDataRange</a> instances. <a href="#details">More...</a></p>
+<!-- @@@QCPDataSelection -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPDataSelection&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="qcpdataselection-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#QCPDataSelection-1">QCPDataSelection</a></b>(const QCPDataRange &amp;<i>range</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#addDataRange">addDataRange</a></b>(const QCPDataRange &amp;<i>dataRange</i>, bool <i>simplify</i> = true)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#clear">clear</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#contains">contains</a></b>(const QCPDataSelection &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#dataPointCount">dataPointCount</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataRange </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#dataRange">dataRange</a></b>(int <i>index</i> = 0) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#dataRangeCount">dataRangeCount</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#dataRanges">dataRanges</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#enforceType">enforceType</a></b>(QCP::SelectionType <i>type</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataSelection </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#intersection">intersection</a></b>(const QCPDataRange &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataSelection </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#intersection-1">intersection</a></b>(const QCPDataSelection &amp;<i>other</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataSelection </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#inverse">inverse</a></b>(const QCPDataRange &amp;<i>outerRange</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#isEmpty">isEmpty</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#simplify">simplify</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataRange </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#span">span</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataSelection &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#operator-2b-eq">operator+=</a></b>(const QCPDataSelection &amp;<i>other</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataSelection &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#operator-2b-eq-1">operator+=</a></b>(const QCPDataRange &amp;<i>other</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataSelection &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#operator--eq">operator-=</a></b>(const QCPDataSelection &amp;<i>other</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPDataSelection &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#operator--eq-1">operator-=</a></b>(const QCPDataRange &amp;<i>other</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcpdataselection.html#operator-eq-eq">operator==</a></b>(const QCPDataSelection &amp;<i>other</i>) const</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$QCPDataSelection-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>QCPDataSelection manages multiple instances of <a href="qcpdatarange.html">QCPDataRange</a> in order to represent any (possibly disjoint) set of data selection.</p>
+<p>The data selection can be modified with addition and subtraction operators which take QCPDataSelection and <a href="qcpdatarange.html">QCPDataRange</a> instances, as well as methods such as <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#addDataRange">addDataRange</a> and <b class="redFont"><code>\ref</code></b> clear. Read access is provided by <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#dataRange">dataRange</a>, <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#dataRanges">dataRanges</a>, <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#dataRangeCount">dataRangeCount</a>, etc.</p>
+<p>The method <b class="redFont"><code>\ref</code></b> simplify is used to join directly adjacent or even overlapping <a href="qcpdatarange.html">QCPDataRange</a> instances. QCPDataSelection automatically simplifies when using the addition/subtraction operators. The only case when <b class="redFont"><code>\ref</code></b> simplify is left to the user, is when calling <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#addDataRange">addDataRange</a>, with the parameter <i>simplify</i> explicitly set to false. This is useful if many data ranges will be added to the selection successively and the overhead for simplifying after each iteration shall be avoided. In this case, you should make sure to call <b class="redFont"><code>\ref</code></b> simplify after completing the operation.</p>
+<p>Use <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#enforceType">enforceType</a> to bring the data selection into a state complying with the constraints for selections defined in <b class="redFont"><code>\ref</code></b> QCP::SelectionType.</p>
+<p>%<a href="qcustomplot.html">QCustomPlot</a>'s <b class="redFont"><code>\ref</code></b> dataselection &quot;data selection mechanism&quot; is based on QCPDataSelection and <a href="qcpdatarange.html">QCPDataRange</a>.</p>
+<p><b class="redFont"><code>\section</code></b>qcpdataselection-iterating Iterating over a data selection</p>
+<p>As an example, the following code snippet calculates the average value of a graph's data <b class="redFont"><code>\ref</code></b> QCPAbstractPlottable::selection &quot;selection&quot;:</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPDataSelection -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$QCPDataSelection$$$QCPDataSelectionconstQCPDataRange& -->
+<h3 class="fn" id="QCPDataSelection-1"><a name="QCPDataSelection-1"></a>QCPDataSelection::<span class="name">QCPDataSelection</span>(const <span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> &amp;<i>range</i>)</h3>
+<p>Creates a QCPDataSelection containing the provided <i>range</i>.</p>
+<!-- @@@QCPDataSelection -->
+<!-- $$$QCPDataSelection[overload1]$$$QCPDataSelection -->
+<h3 class="fn" id="QCPDataSelection"><a name="QCPDataSelection"></a>QCPDataSelection::<span class="name">QCPDataSelection</span>()</h3>
+<p>Creates an empty QCPDataSelection.</p>
+<!-- @@@QCPDataSelection -->
+<!-- $$$addDataRange[overload1]$$$addDataRangeconstQCPDataRange&bool -->
+<h3 class="fn" id="addDataRange"><a name="addDataRange"></a><span class="type">void</span> QCPDataSelection::<span class="name">addDataRange</span>(const <span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> &amp;<i>dataRange</i>, <span class="type">bool</span> <i>simplify</i> = true)</h3>
+<p>Adds the given <i>dataRange</i> to this data selection. This is equivalent to the += operator but allows disabling immediate simplification by setting <i>simplify</i> to false. This can improve performance if adding a very large amount of data ranges successively. In this case, make sure to call <b class="redFont"><code>\ref</code></b> simplify manually, after the operation.</p>
+<!-- @@@addDataRange -->
+<!-- $$$clear[overload1]$$$clear -->
+<h3 class="fn" id="clear"><a name="clear"></a><span class="type">void</span> QCPDataSelection::<span class="name">clear</span>()</h3>
+<p>Removes all data ranges. The data selection then contains no data points.</p>
+<p><b class="redFont"><code>\ref</code></b><a href="qcpdataselection.html#isEmpty">isEmpty</a></p>
+<!-- @@@clear -->
+<!-- $$$contains[overload1]$$$containsconstQCPDataSelection& -->
+<h3 class="fn" id="contains"><a name="contains"></a><span class="type">bool</span> QCPDataSelection::<span class="name">contains</span>(const <span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns true if the data selection <i>other</i> is contained entirely in this data selection, i.e&#x2e; all data point indices that are in <i>other</i> are also in this data selection.</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdatarange.html#contains">QCPDataRange::contains</a></p>
+<!-- @@@contains -->
+<!-- $$$dataPointCount[overload1]$$$dataPointCount -->
+<h3 class="fn" id="dataPointCount"><a name="dataPointCount"></a><span class="type">int</span> QCPDataSelection::<span class="name">dataPointCount</span>() const</h3>
+<p>Returns the total number of data points contained in all data ranges that make up this data selection.</p>
+<!-- @@@dataPointCount -->
+<!-- $$$dataRange[overload1]$$$dataRangeint -->
+<h3 class="fn" id="dataRange"><a name="dataRange"></a><span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> QCPDataSelection::<span class="name">dataRange</span>(<span class="type">int</span> <i>index</i> = 0) const</h3>
+<p>Returns the data range with the specified <i>index</i>.</p>
+<p>If the data selection is simplified (the usual state of the selection, see <b class="redFont"><code>\ref</code></b> simplify), the ranges are sorted by ascending data point index.</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdataselection.html#dataRangeCount">dataRangeCount</a></p>
+<!-- @@@dataRange -->
+<!-- $$$dataRangeCount[overload1]$$$dataRangeCount -->
+<h3 class="fn" id="dataRangeCount"><a name="dataRangeCount"></a><span class="type">int</span> QCPDataSelection::<span class="name">dataRangeCount</span>() const</h3>
+<p>Returns the number of ranges that make up the data selection. The ranges can be accessed by <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#dataRange">dataRange</a> via their index.</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdataselection.html#dataRange">dataRange</a>, <a href="qcpdataselection.html#dataPointCount">dataPointCount</a></p>
+<!-- @@@dataRangeCount -->
+<!-- $$$dataRanges[overload1]$$$dataRanges -->
+<h3 class="fn" id="dataRanges"><a name="dataRanges"></a><span class="type">int</span> QCPDataSelection::<span class="name">dataRanges</span>() const</h3>
+<p>Returns all data ranges that make up the data selection. If the data selection is simplified (the usual state of the selection, see <b class="redFont"><code>\ref</code></b> simplify), the ranges are sorted by ascending data point index.</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdataselection.html#dataRange">dataRange</a></p>
+<!-- @@@dataRanges -->
+<!-- $$$enforceType[overload1]$$$enforceTypeQCP::SelectionType -->
+<h3 class="fn" id="enforceType"><a name="enforceType"></a><span class="type">void</span> QCPDataSelection::<span class="name">enforceType</span>(<span class="type">QCP::SelectionType</span> <i>type</i>)</h3>
+<p>Makes sure this data selection conforms to the specified <i>type</i> selection type. Before the type is enforced, <b class="redFont"><code>\ref</code></b> simplify is called.</p>
+<p>Depending on <i>type</i>, enforcing means adding new data points that were previously not part of the selection, or removing data points from the selection. If the current selection already conforms to <i>type</i>, the data selection is not changed.</p>
+<p><b class="redFont"><code>\see</code></b>QCP::SelectionType</p>
+<!-- @@@enforceType -->
+<!-- $$$intersection[overload1]$$$intersectionconstQCPDataRange& -->
+<h3 class="fn" id="intersection"><a name="intersection"></a><span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> QCPDataSelection::<span class="name">intersection</span>(const <span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns a data selection containing the points which are both in this data selection and in the data range <i>other</i>.</p>
+<p>A common use case is to limit an unknown data selection to the valid range of a data container, using <b class="redFont"><code>\ref</code></b> QCPDataContainer::dataRange as <i>other</i>. One can then safely iterate over the returned data selection without exceeding the data container's bounds.</p>
+<!-- @@@intersection -->
+<!-- $$$intersection$$$intersectionconstQCPDataSelection& -->
+<h3 class="fn" id="intersection-1"><a name="intersection-1"></a><span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> QCPDataSelection::<span class="name">intersection</span>(const <span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns a data selection containing the points which are both in this data selection and in the data selection <i>other</i>.</p>
+<!-- @@@intersection -->
+<!-- $$$inverse[overload1]$$$inverseconstQCPDataRange& -->
+<h3 class="fn" id="inverse"><a name="inverse"></a><span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> QCPDataSelection::<span class="name">inverse</span>(const <span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> &amp;<i>outerRange</i>) const</h3>
+<p>Returns a data selection which is the exact inverse of this data selection, with <i>outerRange</i> defining the base range on which to invert. If <i>outerRange</i> is smaller than the <b class="redFont"><code>\ref</code></b> span of this data selection, it is expanded accordingly.</p>
+<p>For example, this method can be used to retrieve all unselected segments by setting <i>outerRange</i> to the full data range of the plottable, and calling this method on a data selection holding the selected segments.</p>
+<!-- @@@inverse -->
+<!-- $$$isEmpty[overload1]$$$isEmpty -->
+<h3 class="fn" id="isEmpty"><a name="isEmpty"></a><span class="type">bool</span> QCPDataSelection::<span class="name">isEmpty</span>() const</h3>
+<p>Returns true if there are no data ranges, and thus no data points, in this <a href="qcpdataselection.html">QCPDataSelection</a> instance.</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcpdataselection.html#dataRangeCount">dataRangeCount</a></p>
+<!-- @@@isEmpty -->
+<!-- $$$simplify[overload1]$$$simplify -->
+<h3 class="fn" id="simplify"><a name="simplify"></a><span class="type">void</span> QCPDataSelection::<span class="name">simplify</span>()</h3>
+<p>Sorts all data ranges by range begin index in ascending order, and then joins directly adjacent or overlapping ranges. This can reduce the number of individual data ranges in the selection, and prevents possible double-counting when iterating over the data points held by the data ranges.</p>
+<p>This method is automatically called when using the addition/subtraction operators. The only case when <b class="redFont"><code>\ref</code></b> simplify is left to the user, is when calling <b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html#addDataRange">addDataRange</a>, with the parameter <i>simplify</i> explicitly set to false.</p>
+<!-- @@@simplify -->
+<!-- $$$span[overload1]$$$span -->
+<h3 class="fn" id="span"><a name="span"></a><span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> QCPDataSelection::<span class="name">span</span>() const</h3>
+<p>Returns a <b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html">QCPDataRange</a> which spans the entire data selection, including possible intermediate segments which are not part of the original data selection.</p>
+<!-- @@@span -->
+<!-- $$$operator+=[overload1]$$$operator+=constQCPDataSelection& -->
+<h3 class="fn" id="operator-2b-eq"><a name="operator-2b-eq"></a><span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;QCPDataSelection::<span class="name">operator+=</span>(const <span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;<i>other</i>)</h3>
+<p>Adds the data selection of <i>other</i> to this data selection, and then simplifies this data selection (see <b class="redFont"><code>\ref</code></b> simplify).</p>
+<!-- @@@operator+= -->
+<!-- $$$operator+=$$$operator+=constQCPDataRange& -->
+<h3 class="fn" id="operator-2b-eq-1"><a name="operator-2b-eq-1"></a><span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;QCPDataSelection::<span class="name">operator+=</span>(const <span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> &amp;<i>other</i>)</h3>
+<p>Adds the data range <i>other</i> to this data selection, and then simplifies this data selection (see <b class="redFont"><code>\ref</code></b> simplify).</p>
+<!-- @@@operator+= -->
+<!-- $$$operator-=[overload1]$$$operator-=constQCPDataSelection& -->
+<h3 class="fn" id="operator--eq"><a name="operator--eq"></a><span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;QCPDataSelection::<span class="name">operator-=</span>(const <span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;<i>other</i>)</h3>
+<p>Removes all data point indices that are described by <i>other</i> from this data selection.</p>
+<!-- @@@operator-= -->
+<!-- $$$operator-=$$$operator-=constQCPDataRange& -->
+<h3 class="fn" id="operator--eq-1"><a name="operator--eq-1"></a><span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;QCPDataSelection::<span class="name">operator-=</span>(const <span class="type"><a href="qcpdatarange.html">QCPDataRange</a></span> &amp;<i>other</i>)</h3>
+<p>Removes all data point indices that are described by <i>other</i> from this data selection.</p>
+<!-- @@@operator-= -->
+<!-- $$$operator==[overload1]$$$operator==constQCPDataSelection& -->
+<h3 class="fn" id="operator-eq-eq"><a name="operator-eq-eq"></a><span class="type">bool</span> QCPDataSelection::<span class="name">operator==</span>(const <span class="type"><a href="qcpdataselection.html#QCPDataSelection">QCPDataSelection</a></span> &amp;<i>other</i>) const</h3>
+<p>Returns true if this selection is identical (contains the same data ranges with the same begin and end indices) to <i>other</i>.</p>
+<p>Note that both data selections must be in simplified state (the usual state of the selection, see <b class="redFont"><code>\ref</code></b> simplify) for this operator to return correct results.</p>
+<!-- @@@operator== -->
+</div>
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPItemAnchor Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPItemAnchor</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPItemAnchor Class</h1>
+<!-- $$$QCPItemAnchor-brief -->
+<p>An anchor of an item to which positions can be attached to. <a href="#details">More...</a></p>
+<!-- @@@QCPItemAnchor -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPItemAnchor&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherited By:</td><td class="memItemRight bottomAlign"> <p><a href="qcpitemposition.html">QCPItemPosition</a></p>
+</td></tr></table></div><ul>
+<li><a href="qcpitemanchor-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="protected-functions"></a>
+<h2 id="protected-functions">Protected Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QCPItemPosition *</td><td class="memItemRight bottomAlign"><b><a href="qcpitemanchor.html#toQCPItemPosition">toQCPItemPosition</a></b>()</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$QCPItemAnchor-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>An item (<a href="qcpabstractitem.html">QCPAbstractItem</a>) may have one or more anchors. Unlike <a href="qcpitemposition.html">QCPItemPosition</a>, an anchor doesn't control anything on its item, but provides a way to tie other items via their positions to the anchor.</p>
+<p>For example, a <a href="qcpitemrect.html">QCPItemRect</a> is defined by its positions <i>topLeft</i> and <i>bottomRight</i>. Additionally it has various anchors like <i>top</i>, <i>topRight</i> or <i>bottomLeft</i> etc. So you can attach the <i>start</i> (which is a <a href="qcpitemposition.html">QCPItemPosition</a>) of a <a href="qcpitemline.html">QCPItemLine</a> to one of the anchors by calling QCPItemPosition::setParentAnchor on <i>start</i>, passing the wanted anchor of the <a href="qcpitemrect.html">QCPItemRect</a>. This way the start of the line will now always follow the respective anchor location on the rect item.</p>
+<p>Note that <a href="qcpitemposition.html">QCPItemPosition</a> derives from QCPItemAnchor, so every position can also serve as an anchor to other positions.</p>
+<p>To learn how to provide anchors in your own item subclasses, see the subclassing section of the <a href="qcpabstractitem.html">QCPAbstractItem</a> documentation.</p>
+</div>
+<!-- @@@QCPItemAnchor -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$toQCPItemPosition[overload1]$$$toQCPItemPosition -->
+<h3 class="fn" id="toQCPItemPosition"><a name="toQCPItemPosition"></a><code>[virtual protected] </code><span class="type"><a href="qcpitemposition.html">QCPItemPosition</a></span> *QCPItemAnchor::<span class="name">toQCPItemPosition</span>()</h3>
+<p>Returns 0 if this instance is merely a <a href="qcpitemanchor.html">QCPItemAnchor</a>, and a valid pointer of type <a href="qcpitemposition.html">QCPItemPosition</a>* if it actually is a <a href="qcpitemposition.html">QCPItemPosition</a> (which is a subclass of <a href="qcpitemanchor.html">QCPItemAnchor</a>).</p>
+<p>This safe downcast functionality could also be achieved with a dynamic_cast. However, <a href="qcustomplot.html">QCustomPlot</a> avoids dynamic_cast to work with projects that don't have RTTI support enabled (e.g&#x2e; -fno-rtti flag with gcc compiler).</p>
+<!-- @@@toQCPItemPosition -->
+</div>
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

@@ -1,11 +1,14 @@
 #include "graphicsheatmap.h"
 
+#include <fstream>
+
 //--------------------------------------------------------------------------------------------
 //
 //          Class GraphicsTile
 //
 //--------------------------------------------------------------------------------------------
-GraphicsTile::GraphicsTile(const double eField, int x, int y, int width, int height, QGraphicsItem *parent ):
+GraphicsTile::GraphicsTile(const double eField, int x, int y,
+                           int width, int height, QGraphicsItem *parent ):
       QGraphicsRectItem(x, y, width, height, parent), m_eField(eField)
 {
 
@@ -26,16 +29,41 @@ GraphicsHeatMap::GraphicsHeatMap(HeatMap *heatMap, QGraphicsScene *scene, Mode m
       m_heatMap(heatMap), m_scene(scene), m_mode(mode)
 {
     if (m_mode == GraphicsHeatMap::Mode::field) {
+
+        ofstream myfile;
+        myfile.open ("2GHzE.csv");
+        if (!myfile.is_open()) { return; }
+
+
         for (const auto &tile: *heatMap){
-            GraphicsTile *gtile = new GraphicsTile(abs(tile.eField), tile.pos.x(), tile.pos.y(), tile.sz, tile.sz);
+            GraphicsTile *gtile = new GraphicsTile(abs(tile.eField), tile.pos.x(),
+                                                   tile.pos.y(), tile.sz, tile.sz);
             QColor color;
-            color.setHsv(200/pow(10, abs(tile.eField)), 255,255 - 200/ pow(10, abs(tile.eField)));
+
+            float threshold = 2;
+
+            if (abs(tile.eField) > threshold) {
+                color.setHsv(0, 255, 255);
+            } else {
+                color.setHsv(240 - 240 * abs(tile.eField) / threshold, 255,
+                             255 - (150 - 150 * abs(tile.eField) / threshold));
+            }
+//            color.setHsv(200/pow(10, abs(tile.eField)),
+//                         255,255 - 200/ pow(10, abs(tile.eField)));
             gtile->setBrush(QBrush(color));
             gtile->setPen(QPen(color));
             gtile->setAcceptHoverEvents(true);
-            connect(gtile, &GraphicsTile::eField, this, &GraphicsHeatMap::updateEField);
+            connect(gtile, &GraphicsTile::eField, this,
+                    &GraphicsHeatMap::updateEField);
             m_tiles.push_back(gtile);
+            if (abs(tile.eField)){
+                myfile << abs(tile.eField) << ";\n";
+            }
+
+//            cout<< tile.eField<<endl;
         }
+
+        myfile.close();
     } else if (m_mode == GraphicsHeatMap::Mode::prx) {
         drawPrxTile(heatMap);
     }
@@ -46,7 +74,9 @@ void GraphicsHeatMap::drawPrxTile(HeatMap* heatmap)
 {
     for (const auto &tile: *heatmap){
 //        cout << "Tile power: "<< tile.eField<<endl;
-GraphicsTile *gtile = new GraphicsTile(10*log10(abs(tile.eField)) + 30, tile.pos.x(), tile.pos.y(), tile.sz, tile.sz);
+        GraphicsTile *gtile = new GraphicsTile(10*log10(abs(tile.eField)) + 30,
+                                               tile.pos.x(), tile.pos.y(),
+                                               tile.sz, tile.sz);
         QColor color;
         color.setHsv(200/pow(10, abs(tile.eField)*pow(10,8)), 255,255 - 200/ pow(10, abs(tile.eField)*pow(10,8)));
 //        color.setHsv(abs(tile.eField) * 2, 255,255 - 200/ pow(10, abs(tile.eField)));

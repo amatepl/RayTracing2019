@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPBarsGroup Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPBarsGroup</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPBarsGroup Class</h1>
+<!-- $$$QCPBarsGroup-brief -->
+<p>Groups multiple <a href="qcpbars.html">QCPBars</a> together so they appear side by side. <a href="#details">More...</a></p>
+<!-- @@@QCPBarsGroup -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPBarsGroup&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPBarsGroup-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>When showing multiple <a href="qcpbars.html">QCPBars</a> in one plot which have bars at identical keys, it may be desirable to have them appearing next to each other at each key. This is what adding the respective <a href="qcpbars.html">QCPBars</a> plottables to a QCPBarsGroup achieves. (An alternative approach is to stack them on top of each other, see <b class="redFont"><code>\ref</code></b> QCPBars::moveAbove.)</p>
+<p><b class="redFont"><code>\section</code></b>qcpbarsgroup-usage Usage</p>
+<p>To add a <a href="qcpbars.html">QCPBars</a> plottable to the group, create a new group and then add the respective bars intances:</p>
+<pre class="cpp"></pre>
+<p>Alternatively to appending to the group like shown above, you can also set the group on the <a href="qcpbars.html">QCPBars</a> plottable via <b class="redFont"><code>\ref</code></b> QCPBars::setBarsGroup.</p>
+<p>The spacing between the bars can be configured via <b class="redFont"><code>\ref</code></b> setSpacingType and <b class="redFont"><code>\ref</code></b> setSpacing. The bars in this group appear in the plot in the order they were appended. To insert a bars plottable at a certain index position, or to reposition a bars plottable which is already in the group, use <b class="redFont"><code>\ref</code></b> insert.</p>
+<p>To remove specific bars from the group, use either <b class="redFont"><code>\ref</code></b> remove or call <b class="redFont"><code>\ref</code></b> QCPBars::setBarsGroup &quot;QCPBars::setBarsGroup(0)&quot; on the respective bars plottable.</p>
+<p>To clear the entire group, call <b class="redFont"><code>\ref</code></b> clear, or simply delete the group.</p>
+<p><b class="redFont"><code>\section</code></b>qcpbarsgroup-example Example</p>
+<p>The image above is generated with the following code:</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPBarsGroup -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

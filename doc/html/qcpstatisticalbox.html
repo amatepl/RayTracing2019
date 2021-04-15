@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPStatisticalBox Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPStatisticalBox</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPStatisticalBox Class</h1>
+<!-- $$$QCPStatisticalBox-brief -->
+<p>A plottable representing a single statistical box in a plot. <a href="#details">More...</a></p>
+<!-- @@@QCPStatisticalBox -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPStatisticalBox&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPStatisticalBox-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>To plot data, assign it with the <b class="redFont"><code>\ref</code></b> setData or <b class="redFont"><code>\ref</code></b> addData functions. Alternatively, you can also access and modify the data via the <b class="redFont"><code>\ref</code></b> data method, which returns a pointer to the internal <b class="redFont"><code>\ref</code></b> QCPStatisticalBoxDataContainer.</p>
+<p>Additionally each data point can itself have a list of outliers, drawn as scatter points at the key coordinate of the respective statistical box data point. They can either be set by using the respective <b class="redFont"><code>\ref</code></b> addData(double,double,double,double,double,double,const QVector&lt;double&gt;&amp;) &quot;addData&quot; method or accessing the individual data points through <b class="redFont"><code>\ref</code></b> data, and setting the &lt;tt&gt;QVector&lt;double&gt; outliers&lt;/tt&gt; of the data points directly.</p>
+<p><b class="redFont"><code>\section</code></b>qcpstatisticalbox-appearance Changing the appearance</p>
+<p>The appearance of each data point box, ranging from the lower to the upper quartile, is controlled via <b class="redFont"><code>\ref</code></b> setPen and <b class="redFont"><code>\ref</code></b> setBrush. You may change the width of the boxes with <b class="redFont"><code>\ref</code></b> setWidth in plot coordinates.</p>
+<p>Each data point's visual representation also consists of two whiskers. Whiskers are the lines which reach from the upper quartile to the maximum, and from the lower quartile to the minimum. The appearance of the whiskers can be modified with: <b class="redFont"><code>\ref</code></b> setWhiskerPen, <b class="redFont"><code>\ref</code></b> setWhiskerBarPen, <b class="redFont"><code>\ref</code></b> setWhiskerWidth. The whisker width is the width of the bar perpendicular to the whisker at the top (for maximum) and bottom (for minimum). If the whisker pen is changed, make sure to set the <code>capStyle</code> to <code>Qt::FlatCap</code>. Otherwise the backbone line might exceed the whisker bars by a few pixels due to the pen cap being not perfectly flat.</p>
+<p>The median indicator line inside the box has its own pen, <b class="redFont"><code>\ref</code></b> setMedianPen.</p>
+<p>The outlier data points are drawn as normal scatter points. Their look can be controlled with <b class="redFont"><code>\ref</code></b> setOutlierStyle</p>
+<p><b class="redFont"><code>\section</code></b>qcpstatisticalbox-usage Usage</p>
+<p>Like all data representing objects in <a href="qcustomplot.html">QCustomPlot</a>, the QCPStatisticalBox is a plottable (<a href="qcpabstractplottable.html">QCPAbstractPlottable</a>). So the plottable-interface of <a href="qcustomplot.html">QCustomPlot</a> applies (QCustomPlot::plottable, QCustomPlot::removePlottable, etc.)</p>
+<p>Usually, you first create an instance:</p>
+<pre class="cpp"></pre>
+<p>which registers it with the <a href="qcustomplot.html">QCustomPlot</a> instance of the passed axes. Note that this <a href="qcustomplot.html">QCustomPlot</a> instance takes ownership of the plottable, so do not delete it manually but use QCustomPlot::removePlottable() instead. The newly created plottable can be modified, e.g&#x2e;:</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPStatisticalBox -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPLegend Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPLegend</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPLegend Class</h1>
+<!-- $$$QCPLegend-brief -->
+<p>Manages a legend inside a <a href="qcustomplot.html">QCustomPlot</a>. <a href="#details">More...</a></p>
+<!-- @@@QCPLegend -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPLegend&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayoutgrid.html">QCPLayoutGrid</a></td></tr></table></div><ul>
+<li><a href="qcplegend-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPLegend-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>A legend is a small box somewhere in the plot which lists plottables with their name and icon.</p>
+<p>A legend is populated with legend items by calling <b class="redFont"><code>\ref</code></b> QCPAbstractPlottable::addToLegend on the plottable, for which a legend item shall be created. In the case of the main legend (<b class="redFont"><code>\ref</code></b> QCustomPlot::legend), simply adding plottables to the plot while <b class="redFont"><code>\ref</code></b> QCustomPlot::setAutoAddPlottableToLegend is set to true (the default) creates corresponding legend items. The legend item associated with a certain plottable can be removed with <b class="redFont"><code>\ref</code></b> QCPAbstractPlottable::removeFromLegend. However, QCPLegend also offers an interface to add and manipulate legend items directly: <b class="redFont"><code>\ref</code></b> item, <b class="redFont"><code>\ref</code></b> itemWithPlottable, <b class="redFont"><code>\ref</code></b> itemCount, <b class="redFont"><code>\ref</code></b> addItem, <b class="redFont"><code>\ref</code></b> removeItem, etc.</p>
+<p>Since <b class="redFont"><code>\ref</code></b> QCPLegend derives from <b class="redFont"><code>\ref</code></b> <a href="qcplayoutgrid.html">QCPLayoutGrid</a>, it can be placed in any position a <b class="redFont"><code>\ref</code></b> <a href="qcplayoutelement.html">QCPLayoutElement</a> may be positioned. The legend items are themselves <b class="redFont"><code>\ref</code></b> <a href="qcplayoutelement.html">QCPLayoutElement</a> &quot;QCPLayoutElements&quot; which are placed in the grid layout of the legend. <b class="redFont"><code>\ref</code></b> QCPLegend only adds an interface specialized for handling child elements of type <b class="redFont"><code>\ref</code></b> <a href="qcpabstractlegenditem.html">QCPAbstractLegendItem</a>, as mentioned above. In principle, any other layout elements may also be added to a legend via the normal <b class="redFont"><code>\ref</code></b> <a href="qcplayoutgrid.html">QCPLayoutGrid</a> interface. See the special page about The Layout System for examples on how to add other elements to the legend and move it outside the axis rect.</p>
+<p>Use the methods <b class="redFont"><code>\ref</code></b> setFillOrder and <b class="redFont"><code>\ref</code></b> setWrap inherited from <b class="redFont"><code>\ref</code></b> <a href="qcplayoutgrid.html">QCPLayoutGrid</a> to control in which order (column first or row first) the legend is filled up when calling <b class="redFont"><code>\ref</code></b> addItem, and at which column or row wrapping occurs. The default fill order for legends is <b class="redFont"><code>\ref</code></b> foRowsFirst.</p>
+<p>By default, every <a href="qcustomplot.html">QCustomPlot</a> has one legend (<b class="redFont"><code>\ref</code></b> QCustomPlot::legend) which is placed in the inset layout of the main axis rect (<b class="redFont"><code>\ref</code></b> QCPAxisRect::insetLayout). To move the legend to another position inside the axis rect, use the methods of the <b class="redFont"><code>\ref</code></b> <a href="qcplayoutinset.html">QCPLayoutInset</a>. To move the legend outside of the axis rect, place it anywhere else with the <b class="redFont"><code>\ref</code></b> <a href="qcplayout.html">QCPLayout</a>/<b class="redFont"><code>\ref</code></b> <a href="qcplayoutelement.html">QCPLayoutElement</a> interface.</p>
+</div>
+<!-- @@@QCPLegend -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

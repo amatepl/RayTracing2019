@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPRange Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPRange</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPRange Class</h1>
+<!-- $$$QCPRange-brief -->
+<p>Represents the range an axis is encompassing. <a href="#details">More...</a></p>
+<!-- @@@QCPRange -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPRange&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="qcprange-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#QCPRange-1">QCPRange</a></b>(double <i>lower</i>, double <i>upper</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#QCPRange">QCPRange</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#bounded">bounded</a></b>(double <i>lowerBound</i>, double <i>upperBound</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#center">center</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#contains">contains</a></b>(double <i>value</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#expand">expand</a></b>(const QCPRange &amp;<i>otherRange</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#expand-1">expand</a></b>(double <i>includeCoord</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#expanded">expanded</a></b>(const QCPRange &amp;<i>otherRange</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#expanded-1">expanded</a></b>(double <i>includeCoord</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#normalize">normalize</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#sanitizedForLinScale">sanitizedForLinScale</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#sanitizedForLogScale">sanitizedForLogScale</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> double </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#size">size</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#operator-2a-eq">operator*=</a></b>(const double &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#operator-2b-eq">operator+=</a></b>(const double &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#operator--eq">operator-=</a></b>(const double &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCPRange &amp;</td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#operator-2f-eq">operator/=</a></b>(const double &amp;<i>value</i>)</td></tr>
+</table></div>
+<a name="static-public-members"></a>
+<h2 id="static-public-members">Static Public Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> const double </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#maxRange-var">maxRange</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#validRange">validRange</a></b>(double <i>lower</i>, double <i>upper</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcprange.html#validRange-1">validRange</a></b>(const QCPRange &amp;<i>range</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$QCPRange-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>contains a <i>lower</i> and <i>upper</i> double value and provides convenience input, output and modification functions.</p>
+<p><b class="redFont"><code>\see</code></b>QCPAxis::setRange</p>
+</div>
+<!-- @@@QCPRange -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$QCPRange$$$QCPRangedoubledouble -->
+<h3 class="fn" id="QCPRange-1"><a name="QCPRange-1"></a>QCPRange::<span class="name">QCPRange</span>(<span class="type">double</span> <i>lower</i>, <span class="type">double</span> <i>upper</i>)</h3>
+<p>This is an overloaded function.</p>
+<p>Constructs a range with the specified <i>lower</i> and <i>upper</i> values.</p>
+<p>The resulting range will be normalized (see <b class="redFont"><code>\ref</code></b> normalize), so if <i>lower</i> is not numerically smaller than <i>upper</i>, they will be swapped.</p>
+<!-- @@@QCPRange -->
+<!-- $$$QCPRange[overload1]$$$QCPRange -->
+<h3 class="fn" id="QCPRange"><a name="QCPRange"></a>QCPRange::<span class="name">QCPRange</span>()</h3>
+<p>Constructs a range with <i>lower</i> and <i>upper</i> set to zero.</p>
+<!-- @@@QCPRange -->
+<!-- $$$bounded[overload1]$$$boundeddoubledouble -->
+<h3 class="fn" id="bounded"><a name="bounded"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> QCPRange::<span class="name">bounded</span>(<span class="type">double</span> <i>lowerBound</i>, <span class="type">double</span> <i>upperBound</i>) const</h3>
+<p>Returns this range, possibly modified to not exceed the bounds provided as <i>lowerBound</i> and <i>upperBound</i>. If possible, the size of the current range is preserved in the process.</p>
+<p>If the range shall only be bounded at the lower side, you can set <i>upperBound</i> to <b class="redFont"><code>\ref</code></b> <a href="qcprange.html#maxRange-var">QCPRange::maxRange</a>. If it shall only be bounded at the upper side, set <i>lowerBound</i> to -<b class="redFont"><code>\ref</code></b> <a href="qcprange.html#maxRange-var">QCPRange::maxRange</a>.</p>
+<!-- @@@bounded -->
+<!-- $$$center[overload1]$$$center -->
+<h3 class="fn" id="center"><a name="center"></a><span class="type">double</span> QCPRange::<span class="name">center</span>() const</h3>
+<p>Returns the center of the range, i.e&#x2e; (<i>upper+a</i> lower)*0.5</p>
+<!-- @@@center -->
+<!-- $$$contains[overload1]$$$containsdouble -->
+<h3 class="fn" id="contains"><a name="contains"></a><span class="type">bool</span> QCPRange::<span class="name">contains</span>(<span class="type">double</span> <i>value</i>) const</h3>
+<p>Returns true when <i>value</i> lies within or exactly on the borders of the range.</p>
+<!-- @@@contains -->
+<!-- $$$expand[overload1]$$$expandconstQCPRange& -->
+<h3 class="fn" id="expand"><a name="expand"></a><span class="type">void</span> QCPRange::<span class="name">expand</span>(const <span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> &amp;<i>otherRange</i>)</h3>
+<p>This is an overloaded function.</p>
+<p>Expands this range such that <i>otherRange</i> is contained in the new range. It is assumed that both this range and <i>otherRange</i> are normalized (see <b class="redFont"><code>\ref</code></b> normalize).</p>
+<p>If this range contains NaN as lower or upper bound, it will be replaced by the respective bound of <i>otherRange</i>.</p>
+<p>If <i>otherRange</i> is already inside the current range, this function does nothing.</p>
+<p><b class="redFont"><code>\see</code></b>expanded</p>
+<!-- @@@expand -->
+<!-- $$$expand$$$expanddouble -->
+<h3 class="fn" id="expand-1"><a name="expand-1"></a><span class="type">void</span> QCPRange::<span class="name">expand</span>(<span class="type">double</span> <i>includeCoord</i>)</h3>
+<p>This is an overloaded function.</p>
+<p>Expands this range such that <i>includeCoord</i> is contained in the new range. It is assumed that this range is normalized (see <b class="redFont"><code>\ref</code></b> normalize).</p>
+<p>If this range contains NaN as lower or upper bound, the respective bound will be set to <i>includeCoord</i>.</p>
+<p>If <i>includeCoord</i> is already inside the current range, this function does nothing.</p>
+<p><b class="redFont"><code>\see</code></b>expand</p>
+<!-- @@@expand -->
+<!-- $$$expanded[overload1]$$$expandedconstQCPRange& -->
+<h3 class="fn" id="expanded"><a name="expanded"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> QCPRange::<span class="name">expanded</span>(const <span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> &amp;<i>otherRange</i>) const</h3>
+<p>This is an overloaded function.</p>
+<p>Returns an expanded range that contains this and <i>otherRange</i>. It is assumed that both this range and <i>otherRange</i> are normalized (see <b class="redFont"><code>\ref</code></b> normalize).</p>
+<p>If this range contains NaN as lower or upper bound, the returned range's bound will be taken from <i>otherRange</i>.</p>
+<p><b class="redFont"><code>\see</code></b>expand</p>
+<!-- @@@expanded -->
+<!-- $$$expanded$$$expandeddouble -->
+<h3 class="fn" id="expanded-1"><a name="expanded-1"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> QCPRange::<span class="name">expanded</span>(<span class="type">double</span> <i>includeCoord</i>) const</h3>
+<p>This is an overloaded function.</p>
+<p>Returns an expanded range that includes the specified <i>includeCoord</i>. It is assumed that this range is normalized (see <b class="redFont"><code>\ref</code></b> normalize).</p>
+<p>If this range contains NaN as lower or upper bound, the returned range's bound will be set to <i>includeCoord</i>.</p>
+<p><b class="redFont"><code>\see</code></b>expand</p>
+<!-- @@@expanded -->
+<!-- $$$normalize[overload1]$$$normalize -->
+<h3 class="fn" id="normalize"><a name="normalize"></a><span class="type">void</span> QCPRange::<span class="name">normalize</span>()</h3>
+<p>Makes sure <i>lower</i> is numerically smaller than <i>upper</i>. If this is not the case, the values are swapped.</p>
+<!-- @@@normalize -->
+<!-- $$$sanitizedForLinScale[overload1]$$$sanitizedForLinScale -->
+<h3 class="fn" id="sanitizedForLinScale"><a name="sanitizedForLinScale"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> QCPRange::<span class="name">sanitizedForLinScale</span>() const</h3>
+<p>Returns a sanitized version of the range. Sanitized means for linear scales, that <i>lower</i> will always be numerically smaller (or equal) to <i>upper</i>.</p>
+<!-- @@@sanitizedForLinScale -->
+<!-- $$$sanitizedForLogScale[overload1]$$$sanitizedForLogScale -->
+<h3 class="fn" id="sanitizedForLogScale"><a name="sanitizedForLogScale"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> QCPRange::<span class="name">sanitizedForLogScale</span>() const</h3>
+<p>Returns a sanitized version of the range. Sanitized means for logarithmic scales, that the range won't span the positive and negative sign domain, i.e&#x2e; contain zero. Further <i>lower</i> will always be numerically smaller (or equal) to <i>upper</i>.</p>
+<p>If the original range does span positive and negative sign domains or contains zero, the returned range will try to approximate the original range as good as possible. If the positive interval of the original range is wider than the negative interval, the returned range will only contain the positive interval, with lower bound set to <i>rangeFac</i> or <i>rangeFac</i> *<i>upper</i>, whichever is closer to zero. Same procedure is used if the negative interval is wider than the positive interval, this time by changing the <i>upper</i> bound.</p>
+<!-- @@@sanitizedForLogScale -->
+<!-- $$$size[overload1]$$$size -->
+<h3 class="fn" id="size"><a name="size"></a><span class="type">double</span> QCPRange::<span class="name">size</span>() const</h3>
+<p>Returns the size of the range, i.e&#x2e; <i>upper-a</i> lower</p>
+<!-- @@@size -->
+<!-- $$$validRange[overload1]$$$validRangedoubledouble -->
+<h3 class="fn" id="validRange"><a name="validRange"></a><code>[static] </code><span class="type">bool</span> QCPRange::<span class="name">validRange</span>(<span class="type">double</span> <i>lower</i>, <span class="type">double</span> <i>upper</i>)</h3>
+<p>Checks, whether the specified range is within valid bounds, which are defined as <a href="qcprange.html#maxRange-var">QCPRange::maxRange</a> and QCPRange::minRange. A valid range means:</p>
+<p>range bounds within -<a href="qcprange.html#maxRange-var">maxRange</a> and <a href="qcprange.html#maxRange-var">maxRange</a></p>
+<p>range size above minRange</p>
+<p>range size below <a href="qcprange.html#maxRange-var">maxRange</a></p>
+<!-- @@@validRange -->
+<!-- $$$validRange$$$validRangeconstQCPRange& -->
+<h3 class="fn" id="validRange-1"><a name="validRange-1"></a><code>[static] </code><span class="type">bool</span> QCPRange::<span class="name">validRange</span>(const <span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> &amp;<i>range</i>)</h3>
+<p>This is an overloaded function.</p>
+<p>Checks, whether the specified range is within valid bounds, which are defined as <a href="qcprange.html#maxRange-var">QCPRange::maxRange</a> and QCPRange::minRange. A valid range means:</p>
+<p>range bounds within -<a href="qcprange.html#maxRange-var">maxRange</a> and <a href="qcprange.html#maxRange-var">maxRange</a></p>
+<p>range size above minRange</p>
+<p>range size below <a href="qcprange.html#maxRange-var">maxRange</a></p>
+<!-- @@@validRange -->
+<!-- $$$operator*=[overload1]$$$operator*=constdouble& -->
+<h3 class="fn" id="operator-2a-eq"><a name="operator-2a-eq"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> &amp;QCPRange::<span class="name">operator*=</span>(const <span class="type">double</span> &amp;<i>value</i>)</h3>
+<p>Multiplies both boundaries of the range by <i>value</i>.</p>
+<!-- @@@operator*= -->
+<!-- $$$operator+=[overload1]$$$operator+=constdouble& -->
+<h3 class="fn" id="operator-2b-eq"><a name="operator-2b-eq"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> &amp;QCPRange::<span class="name">operator+=</span>(const <span class="type">double</span> &amp;<i>value</i>)</h3>
+<p>Adds <i>value</i> to both boundaries of the range.</p>
+<!-- @@@operator+= -->
+<!-- $$$operator-=[overload1]$$$operator-=constdouble& -->
+<h3 class="fn" id="operator--eq"><a name="operator--eq"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> &amp;QCPRange::<span class="name">operator-=</span>(const <span class="type">double</span> &amp;<i>value</i>)</h3>
+<p>Subtracts <i>value</i> from both boundaries of the range.</p>
+<!-- @@@operator-= -->
+<!-- $$$operator/=[overload1]$$$operator/=constdouble& -->
+<h3 class="fn" id="operator-2f-eq"><a name="operator-2f-eq"></a><span class="type"><a href="qcprange.html#QCPRange">QCPRange</a></span> &amp;QCPRange::<span class="name">operator/=</span>(const <span class="type">double</span> &amp;<i>value</i>)</h3>
+<p>Divides both boundaries of the range by <i>value</i>.</p>
+<!-- @@@operator/= -->
+</div>
+<div class="vars">
+<h2>Member Variable Documentation</h2>
+<!-- $$$maxRange -->
+<h3 class="fn" id="maxRange-var"><a name="maxRange-var"></a>const <span class="type">double</span> QCPRange::<span class="name">maxRange</span></h3>
+<p>Maximum values (negative and positive) the range will accept in range-changing functions. Larger absolute values would cause errors due to the 11-bit exponent of double precision numbers, corresponding to a maximum magnitude of roughly 1e308.</p>
+<p><b>Warning:</b> Do not use this constant to indicate &quot;arbitrarily large&quot; values in plotting logic (as values that will appear in the plot)! It is intended only as a bound to compare against, e.g&#x2e; to prevent axis ranges from obtaining overflowing ranges.</p>
+<p><b class="redFont"><code>\see</code></b><a href="qcprange.html#validRange">validRange</a>, minRange</p>
+<!-- @@@maxRange -->
+</div>
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

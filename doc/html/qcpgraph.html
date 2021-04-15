@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPGraph Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPGraph</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPGraph Class</h1>
+<!-- $$$QCPGraph-brief -->
+<p>A plottable representing a graph in a plot. <a href="#details">More...</a></p>
+<!-- @@@QCPGraph -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPGraph&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPGraph-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>Usually you create new graphs by calling QCustomPlot::addGraph. The resulting instance can be accessed via QCustomPlot::graph.</p>
+<p>To plot data, assign it with the <b class="redFont"><code>\ref</code></b> setData or <b class="redFont"><code>\ref</code></b> addData functions. Alternatively, you can also access and modify the data via the <b class="redFont"><code>\ref</code></b> data method, which returns a pointer to the internal <b class="redFont"><code>\ref</code></b> QCPGraphDataContainer.</p>
+<p>Graphs are used to display single-valued data. Single-valued means that there should only be one data point per unique key coordinate. In other words, the graph can't have <i>loops</i>. If you do want to plot non-single-valued curves, rather use the <a href="qcpcurve.html">QCPCurve</a> plottable.</p>
+<p>Gaps in the graph line can be created by adding data points with NaN as value (&lt;tt&gt;qQNaN()&lt;/tt&gt; or &lt;tt&gt;std::numeric_limits&lt;double&gt;::quiet_NaN()&lt;/tt&gt;) in between the two data points that shall be separated.</p>
+<p><b class="redFont"><code>\section</code></b>qcpgraph-appearance Changing the appearance</p>
+<p>The appearance of the graph is mainly determined by the line style, scatter style, brush and pen of the graph (<b class="redFont"><code>\ref</code></b> setLineStyle, <b class="redFont"><code>\ref</code></b> setScatterStyle, <b class="redFont"><code>\ref</code></b> setBrush, <b class="redFont"><code>\ref</code></b> setPen).</p>
+<p><b class="redFont"><code>\subsection</code></b>filling Filling under or between graphs</p>
+<p>QCPGraph knows two types of fills: Normal graph fills towards the zero-value-line parallel to the key axis of the graph, and fills between two graphs, called channel fills. To enable a fill, just set a brush with <b class="redFont"><code>\ref</code></b> setBrush which is neither Qt::NoBrush nor fully transparent.</p>
+<p>By default, a normal fill towards the zero-value-line will be drawn. To set up a channel fill between this graph and another one, call <b class="redFont"><code>\ref</code></b> setChannelFillGraph with the other graph as parameter.</p>
+<p><b class="redFont"><code>\see</code></b>QCustomPlot::addGraph, QCustomPlot::graph</p>
+</div>
+<!-- @@@QCPGraph -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

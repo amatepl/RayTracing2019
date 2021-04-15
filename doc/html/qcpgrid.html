@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPGrid Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPGrid</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPGrid Class</h1>
+<!-- $$$QCPGrid-brief -->
+<p>Responsible for drawing the grid of a <a href="qcpaxis.html">QCPAxis</a>. <a href="#details">More...</a></p>
+<!-- @@@QCPGrid -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPGrid&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayerable.html">QCPLayerable</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPGrid-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>This class is tightly bound to <a href="qcpaxis.html">QCPAxis</a>. Every axis owns a grid instance and uses it to draw the grid lines, sub grid lines and zero-line. You can interact with the grid of an axis via <b class="redFont"><code>\ref</code></b> QCPAxis::grid. Normally, you don't need to create an instance of QCPGrid yourself.</p>
+<p>The axis and grid drawing was split into two classes to allow them to be placed on different layers (both <a href="qcpaxis.html">QCPAxis</a> and QCPGrid inherit from <a href="qcplayerable.html">QCPLayerable</a>). Thus it is possible to have the grid in the background and the axes in the foreground, and any plottables/items in between. This described situation is the default setup, see the <a href="qcplayer.html">QCPLayer</a> documentation.</p>
+</div>
+<!-- @@@QCPGrid -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

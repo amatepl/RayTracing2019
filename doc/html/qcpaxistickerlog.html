@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAxisTickerLog Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAxisTickerLog</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAxisTickerLog Class</h1>
+<!-- $$$QCPAxisTickerLog-brief -->
+<p>Specialized axis ticker suited for logarithmic axes. <a href="#details">More...</a></p>
+<!-- @@@QCPAxisTickerLog -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAxisTickerLog&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcpaxisticker.html">QCPAxisTicker</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPAxisTickerLog-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>This <a href="qcpaxisticker.html">QCPAxisTicker</a> subclass generates ticks with unequal tick intervals suited for logarithmic axis scales. The ticks are placed at powers of the specified log base (<b class="redFont"><code>\ref</code></b> setLogBase).</p>
+<p>Especially in the case of a log base equal to 10 (the default), it might be desirable to have tick labels in the form of powers of ten without mantissa display. To achieve this, set the number precision (<b class="redFont"><code>\ref</code></b> QCPAxis::setNumberPrecision) to zero and the number format (<b class="redFont"><code>\ref</code></b> QCPAxis::setNumberFormat) to scientific (exponential) display with beautifully typeset decimal powers, so a format string of &lt;tt&gt;&quot;eb&quot;&lt;/tt&gt;. This will result in the following axis tick labels:</p>
+<p class="centerAlign"><font color="red">[Missing image html]</font></p><p>The ticker can be created and assigned to an axis like this:</p>
+<pre class="cpp"></pre>
+</div>
+<!-- @@@QCPAxisTickerLog -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

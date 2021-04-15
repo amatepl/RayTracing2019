@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPSelectionRect Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPSelectionRect</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPSelectionRect Class</h1>
+<!-- $$$QCPSelectionRect-brief -->
+<p>Provides rect/rubber-band data selection and range zoom interaction. <a href="#details">More...</a></p>
+<!-- @@@QCPSelectionRect -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPSelectionRect&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayerable.html">QCPLayerable</a></td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPSelectionRect-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>QCPSelectionRect is used by <a href="qcustomplot.html">QCustomPlot</a> when the <b class="redFont"><code>\ref</code></b> QCustomPlot::setSelectionRectMode is not <b class="redFont"><code>\ref</code></b> QCP::srmNone. When the user drags the mouse across the plot, the current selection rect instance (<b class="redFont"><code>\ref</code></b> QCustomPlot::setSelectionRect) is forwarded these events and makes sure an according rect shape is drawn. At the begin, during, and after completion of the interaction, it emits the corresponding signals <b class="redFont"><code>\ref</code></b> started, <b class="redFont"><code>\ref</code></b> changed, <b class="redFont"><code>\ref</code></b> canceled, and <b class="redFont"><code>\ref</code></b> accepted.</p>
+<p>The <a href="qcustomplot.html">QCustomPlot</a> instance connects own slots to the current selection rect instance, in order to react to an accepted selection rect interaction accordingly.</p>
+<p><b class="redFont"><code>\ref</code></b>isActive can be used to check whether the selection rect is currently active. An ongoing selection interaction can be cancelled programmatically via calling <b class="redFont"><code>\ref</code></b> cancel at any time.</p>
+<p>The appearance of the selection rect can be controlled via <b class="redFont"><code>\ref</code></b> setPen and <b class="redFont"><code>\ref</code></b> setBrush.</p>
+<p>If you wish to provide custom behaviour, e.g&#x2e; a different visual representation of the selection rect (<b class="redFont"><code>\ref</code></b> QCPSelectionRect::draw), you can subclass QCPSelectionRect and pass an instance of your subclass to <b class="redFont"><code>\ref</code></b> QCustomPlot::setSelectionRect.</p>
+</div>
+<!-- @@@QCPSelectionRect -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

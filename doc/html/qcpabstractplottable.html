@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPAbstractPlottable Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPAbstractPlottable</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPAbstractPlottable Class</h1>
+<!-- $$$QCPAbstractPlottable-brief -->
+<p>The abstract base class for all data representing objects in a plot. <a href="#details">More...</a></p>
+<!-- @@@QCPAbstractPlottable -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPAbstractPlottable&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> <a href="qcplayerable.html">QCPLayerable</a></td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherited By:</td><td class="memItemRight bottomAlign"> <p><a href="qcpcolormap.html">QCPColorMap</a> and <a href="qcperrorbars.html">QCPErrorBars</a></p>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPAbstractPlottable-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>It defines a very basic interface like name, pen, brush, visibility etc. Since this class is abstract, it can't be instantiated. Use one of the subclasses or create a subclass yourself to create new ways of displaying data (see &quot;Creating own plottables&quot; below). Plottables that display one-dimensional data (i.e&#x2e; data points have a single key dimension and one or multiple values at each key) are based off of the template subclass <b class="redFont"><code>\ref</code></b> QCPAbstractPlottable1D, see details there.</p>
+<p>All further specifics are in the subclasses, for example:</p>
+<p>A normal graph with possibly a line and/or scatter points <b class="redFont"><code>\ref</code></b> <a href="qcpgraph.html">QCPGraph</a> (typically created with <b class="redFont"><code>\ref</code></b> QCustomPlot::addGraph)</p>
+<p>A parametric curve: <b class="redFont"><code>\ref</code></b> <a href="qcpcurve.html">QCPCurve</a></p>
+<p>A bar chart: <b class="redFont"><code>\ref</code></b> <a href="qcpbars.html">QCPBars</a></p>
+<p>A statistical box plot: <b class="redFont"><code>\ref</code></b> <a href="qcpstatisticalbox.html">QCPStatisticalBox</a></p>
+<p>A color encoded two-dimensional map: <b class="redFont"><code>\ref</code></b> <a href="qcpcolormap.html">QCPColorMap</a></p>
+<p>An OHLC/Candlestick chart: <b class="redFont"><code>\ref</code></b> <a href="qcpfinancial.html">QCPFinancial</a></p>
+<p><b class="redFont"><code>\section</code></b>plottables-subclassing Creating own plottables</p>
+<p>Subclassing directly from QCPAbstractPlottable is only recommended if you wish to display two-dimensional data like <b class="redFont"><code>\ref</code></b> <a href="qcpcolormap.html">QCPColorMap</a>, i.e&#x2e; two logical key dimensions and one (or more) data dimensions. If you want to display data with only one logical key dimension, you should rather derive from <b class="redFont"><code>\ref</code></b> QCPAbstractPlottable1D.</p>
+<p>If subclassing QCPAbstractPlottable directly, these are the pure virtual functions you must implement:</p>
+<p><b class="redFont"><code>\ref</code></b>selectTest</p>
+<p><b class="redFont"><code>\ref</code></b>draw</p>
+<p><b class="redFont"><code>\ref</code></b>drawLegendIcon</p>
+<p><b class="redFont"><code>\ref</code></b>getKeyRange</p>
+<p><b class="redFont"><code>\ref</code></b>getValueRange</p>
+<p>See the documentation of those functions for what they need to do.</p>
+<p>For drawing your plot, you can use the <b class="redFont"><code>\ref</code></b> coordsToPixels functions to translate a point in plot coordinates to pixel coordinates. This function is quite convenient, because it takes the orientation of the key and value axes into account for you (x and y are swapped when the key axis is vertical and the value axis horizontal). If you are worried about performance (i.e&#x2e; you need to translate many points in a loop like <a href="qcpgraph.html">QCPGraph</a>), you can directly use <b class="redFont"><code>\ref</code></b> QCPAxis::coordToPixel. However, you must then take care about the orientation of the axis yourself.</p>
+<p>Here are some important members you inherit from QCPAbstractPlottable: &lt;table&gt; &lt;tr&gt; &lt;td&gt;<a href="qcustomplot.html">QCustomPlot</a> *<b>mParentPlot&lt;/td&gt;</b> &lt;td&gt;A pointer to the parent <a href="qcustomplot.html">QCustomPlot</a> instance. The parent plot is inferred from the axes that are passed in the constructor.&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;QString <b>mName&lt;/td&gt;</b> &lt;td&gt;The name of the plottable.&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;QPen <b>mPen&lt;/td&gt;</b> &lt;td&gt;The generic pen of the plottable. You should use this pen for the most prominent data representing lines in the plottable (e.g <a href="qcpgraph.html">QCPGraph</a> uses this pen for its graph lines and scatters)&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;QBrush <b>mBrush&lt;/td&gt;</b> &lt;td&gt;The generic brush of the plottable. You should use this brush for the most prominent fillable structures in the plottable (e.g&#x2e; <a href="qcpgraph.html">QCPGraph</a> uses this brush to control filling under the graph)&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;QPointer&lt;<b class="redFont"><code>\ref</code></b> <a href="qcpaxis.html">QCPAxis</a>&gt; <b>mKeyAxis</b>, <b>mValueAxis&lt;/td&gt;</b> &lt;td&gt;The key and value axes this plottable is attached to. Call their QCPAxis::coordToPixel functions to translate coordinates to pixels in either the key or value dimension. Make sure to check whether the pointer is null before using it. If one of the axes is null, don't draw the plottable.&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;<b class="redFont"><code>\ref</code></b> QCPSelectionDecorator <b>mSelectionDecorator&lt;/td&gt;</b> &lt;td&gt;The currently set selection decorator which specifies how selected data of the plottable shall be drawn and decorated. When drawing your data, you must consult this decorator for the appropriate pen/brush before drawing unselected/selected data segments. Finally, you should call its <b class="redFont"><code>\ref</code></b> QCPSelectionDecorator::drawDecoration method at the end of your <b class="redFont"><code>\ref</code></b> draw implementation.&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;<b class="redFont"><code>\ref</code></b> QCP::SelectionType <b>mSelectable&lt;/td&gt;</b> &lt;td&gt;In which composition, if at all, this plottable's data may be selected. Enforcing this setting on the data selection is done by QCPAbstractPlottable automatically.&lt;/td&gt; &lt;/tr&gt;&lt;tr&gt; &lt;td&gt;<b class="redFont"><code>\ref</code></b> <a href="qcpdataselection.html">QCPDataSelection</a> <b>mSelection&lt;/td&gt;</b> &lt;td&gt;Holds the current selection state of the plottable's data, i.e&#x2e; the selected data ranges (<b class="redFont"><code>\ref</code></b> <a href="qcpdatarange.html">QCPDataRange</a>).&lt;/td&gt; &lt;/tr&gt; &lt;/table&gt;</p>
+</div>
+<!-- @@@QCPAbstractPlottable -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

@@ -32,13 +32,36 @@ using namespace std;
 //
 //--------------------------------------------------------------------------------------------
 
+/*!
+ * \class GraphicsTile
+ *
+ * A graphics tile is a single element of a GraphicsHeatMap.
+ *
+ * It manages the curser hoverEnterEvent by signaling the value of the electric
+ * field or power encoded in the tile.
+ */
 class GraphicsTile:public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 public:
-    GraphicsTile(const double eField, int x, int y, int width, int height, QGraphicsItem *parent = nullptr);
+    /*!
+     * \fn GraphicsTile::GraphicsTile(const double eField, int x, int y, int width, int height,
+                 QGraphicsItem *parent = nullptr)
+     *
+     * GrphicsTile constructor.
+     *
+     * It take as parameters \a eField which is the local electric field of
+     * power, \a x and \a y which is the position at which the the eletric field
+     * or power was computed, \a heigth and \a width which are the height and width
+     * of the tile. Those should be proportional to the heatmap density.
+     */
+    GraphicsTile(const double eField, int x, int y, int width, int height,
+                 QGraphicsItem *parent = nullptr);
 
 signals:
+    /*!
+     * \brief eField
+     */
     void eField(double eField);
 protected:
     double m_eField;
@@ -51,6 +74,9 @@ protected:
 //
 //--------------------------------------------------------------------------------------------
 
+/*!
+ * \brief The GraphicsHeatMap class
+ */
 class GraphicsHeatMap: public QObject
 {
     Q_OBJECT

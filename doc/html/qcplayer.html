@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<!-- qcustomplot.cpp -->
+  <title>QCPLayer Class | QDoc PCS</title>
+<link rel="stylesheet" type="text/css" href="style/offline.css"/>
+</head>
+<body>
+<p class="header"><small>[My awesome documentation]</small></p><hr/><li>QCPLayer</li>
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">QCPLayer Class</h1>
+<!-- $$$QCPLayer-brief -->
+<p>A layer that may contain objects, to control the rendering order. <a href="#details">More...</a></p>
+<!-- @@@QCPLayer -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;QCPLayer&gt;</span>
+</td></tr></table></div><ul>
+</ul>
+<a name="details"></a>
+<!-- $$$QCPLayer-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>The Layering system of <a href="qcustomplot.html">QCustomPlot</a> is the mechanism to control the rendering order of the elements inside the plot.</p>
+<p>It is based on the two classes QCPLayer and <a href="qcplayerable.html">QCPLayerable</a>. <a href="qcustomplot.html">QCustomPlot</a> holds an ordered list of one or more instances of QCPLayer (see QCustomPlot::addLayer, QCustomPlot::layer, QCustomPlot::moveLayer, etc.)&#x2e; When replotting, <a href="qcustomplot.html">QCustomPlot</a> goes through the list of layers bottom to top and successively draws the layerables of the layers into the paint buffer(s).</p>
+<p>A QCPLayer contains an ordered list of <a href="qcplayerable.html">QCPLayerable</a> instances. <a href="qcplayerable.html">QCPLayerable</a> is an abstract base class from which almost all visible objects derive, like axes, grids, graphs, items, etc.</p>
+<p><b class="redFont"><code>\section</code></b>qcplayer-defaultlayers Default layers</p>
+<p>Initially, <a href="qcustomplot.html">QCustomPlot</a> has six layers: &quot;background&quot;, &quot;grid&quot;, &quot;main&quot;, &quot;axes&quot;, &quot;legend&quot; and &quot;overlay&quot; (in that order). On top is the &quot;overlay&quot; layer, which only contains the <a href="qcustomplot.html">QCustomPlot</a>'s selection rect (<b class="redFont"><code>\ref</code></b> QCustomPlot::selectionRect). The next two layers &quot;axes&quot; and &quot;legend&quot; contain the default axes and legend, so they will be drawn above plottables. In the middle, there is the &quot;main&quot; layer. It is initially empty and set as the current layer (see QCustomPlot::setCurrentLayer). This means, all new plottables, items etc. are created on this layer by default. Then comes the &quot;grid&quot; layer which contains the <a href="qcpgrid.html">QCPGrid</a> instances (which belong tightly to <a href="qcpaxis.html">QCPAxis</a>, see <b class="redFont"><code>\ref</code></b> QCPAxis::grid). The Axis rect background shall be drawn behind everything else, thus the default QCPAxisRect instance is placed on the &quot;background&quot; layer. Of course, the layer affiliation of the individual objects can be changed as required (<b class="redFont"><code>\ref</code></b> QCPLayerable::setLayer).</p>
+<p><b class="redFont"><code>\section</code></b>qcplayer-ordering Controlling the rendering order via layers</p>
+<p>Controlling the ordering of layerables in the plot is easy: Create a new layer in the position you want the layerable to be in, e.g&#x2e; above &quot;main&quot;, with <b class="redFont"><code>\ref</code></b> QCustomPlot::addLayer. Then set the current layer with <b class="redFont"><code>\ref</code></b> QCustomPlot::setCurrentLayer to that new layer and finally create the objects normally. They will be placed on the new layer automatically, due to the current layer setting. Alternatively you could have also ignored the current layer setting and just moved the objects with <b class="redFont"><code>\ref</code></b> QCPLayerable::setLayer to the desired layer after creating them.</p>
+<p>It is also possible to move whole layers. For example, If you want the grid to be shown in front of all plottables/items on the &quot;main&quot; layer, just move it above &quot;main&quot; with QCustomPlot::moveLayer.</p>
+<p>The rendering order within one layer is simply by order of creation or insertion. The item created last (or added last to the layer), is drawn on top of all other objects on that layer.</p>
+<p>When a layer is deleted, the objects on it are not deleted with it, but fall on the layer below the deleted layer, see QCustomPlot::removeLayer.</p>
+<p><b class="redFont"><code>\section</code></b>qcplayer-buffering Replotting only a specific layer</p>
+<p>If the layer mode (<b class="redFont"><code>\ref</code></b> setMode) is set to <b class="redFont"><code>\ref</code></b> lmBuffered, you can replot only this specific layer by calling <b class="redFont"><code>\ref</code></b> replot. In certain situations this can provide better replot performance, compared with a full replot of all layers. Upon creation of a new layer, the layer mode is initialized to <b class="redFont"><code>\ref</code></b> lmLogical. The only layer that is set to <b class="redFont"><code>\ref</code></b> lmBuffered in a new <b class="redFont"><code>\ref</code></b> <a href="qcustomplot.html">QCustomPlot</a> instance is the &quot;overlay&quot; layer, containing the selection rect.</p>
+</div>
+<!-- @@@QCPLayer -->
+<hr/><p class="footer"><small>[some footer and whatnot information]</small></p></body>
+</html>

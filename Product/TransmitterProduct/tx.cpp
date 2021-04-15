@@ -46,45 +46,6 @@ QPolygonF Tx::buildCoverage() const
     return coverage;
 }
 
-//complex<double>
-//Tx::computeImpulseReflection(WholeRay *ray_line, QLineF local_region)
-//{
-//    complex <double> i(0.0, 1.0);
-////    int amountSegment = ray_line->size();
-////    double completeLength = 0.0;
-////    double R = 1;
-////    Ray *current_ray;
-
-////    for (int i = 0; i < amountSegment; i++) {
-////        current_ray = ray_line->at(i);
-////        if (i != amountSegment - 1) {
-////            double thetaI = abs(current_ray->getTetai());
-////            R *= computeReflexionPer(thetaI * 2 * M_PI / 180, epsilonWallRel);
-////        }
-////        completeLength += current_ray->getMeterLength();
-////    }
-//    double completeLength = ray_line->totalLength();
-//    double R = ph::computeR(ray_line);
-//    double a = R / completeLength;
-
-//    // Angle in degrees
-//    double angle_transmitter = ray_line->back()->angle();
-//    double angle_receiver = ray_line->front()->angle();
-//    QLineF beta(QPointF(.0,.0),QPointF(2.0 * M_PI / lambda,.0));
-//    beta.setAngle(angle_receiver);
-//    double scalar_beta_r = beta.p2().x()*local_region.p2().x() + beta.p2().y()*local_region.p2().y();
-//    complex<double> array_factor = ph::totaleArrayFactor(angle_transmitter, 90,
-//                                                         m_frequency, m_orientation,
-//                                                         m_pr_orientation, m_column,
-//                                                         m_row, static_cast<ph::TxType>(m_kind));
-//    double tau = completeLength/c;
-
-//    complex<double> impulse_r = a * array_factor
-//                                * exp(-i * scalar_beta_r)
-//                                * exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau));
-//    return impulse_r;
-//}
-
 
 void Tx::estimateCh(QPointF *rx, complex <double> field, WholeRay *ray)
 {
@@ -215,34 +176,25 @@ Tx::resultant(QLineF line1, QLineF line2)
 //}
 
 complex <double> Tx::computeEfieldGround(const QPointF *receiver,
-                                                                    const double direction,
-                                                                    const bool properties)
+                                         const double direction,
+                                         const bool properties)
 {
     double pi = acos(0)*2;
     // Compute the electrical field, at the receiver, induced by the ray reflected off the ground.
     double distance = this->distance(receiver); // conversion (1px == 2cm)
-//    cout << "Distance in tx.cpp for ground: " << distance << endl;
     double thetaG = atan((distance / 2) / ant_hght);
-//    cout << "Theta_ig in tx.cpp for ground: " << thetaG << endl;
     double thetaI = pi - thetaG;
-//    cout << "Theta_g in tx.cpp for ground: " << thetaI << endl;
     double R = computeReflexionPar(thetaG, epsilonWallRel);
-//    cout << "Gamma_par in tx.cpp for ground: " << R << endl;
     double completeLength = sqrt(4 * pow(ant_hght, 2) + pow(distance, 2)); //distance / sin(thetaG);
-//    cout << "d_g in tx.cpp for ground: " << completeLength << endl;
     complex <double> i(0.0, 1.0);
 
     double Ia = sqrt(2 * m_power / (m_row * m_column * r_a)); // Ia could be changed for Beamforming application
-//    cout << "Ia in tx.cpp for ground: " << Ia << endl;
     complex<double> array_factor = ph::totaleArrayFactor(direction, thetaI * 180.0 / pi,
                                                          m_frequency, m_orientation,
                                                          m_pr_orientation, m_column,
                                                          m_row, static_cast<ph::TxType>(m_kind));
-//    cout << "AF in tx.cpp for ground: " << array_factor << endl;
     double beta = 2*pi/lambda;
-//    cout << "phi in tx.cpp for ground: " << direction << endl;
     complex<double> a = R * array_factor * exp(-i * beta * completeLength) / completeLength;
-//    cout << "Beta in tx.cpp for ground: " << beta << endl;
     complex <double> Efield = -i * a * (z_0 * Ia) / (2 * pi);
 
     QLineF receiver_speed = receivers_speed[receiver];
@@ -252,20 +204,13 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
     {
         double tau = completeLength * 1e9/c; // [ns]
         tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
-//        m_receiversImpulse[receiver][tau] += lambda*Efield*cos(M_PI/2*cos(thetaI))/(M_PI*sin(thetaI));
         complex<double> induced_voltage = ph::inducedVoltage(Efield,thetaI,lambda);
         m_chsData[receiver].impulseResp[tau] += induced_voltage;
         m_chsData[receiver].indVoltage += induced_voltage;
-        // m_chsData[receiver].intPattern[direction] += induced_voltage*exp(-i*beta*cos(M_PI/2-thetaG));
         m_chsData[receiver].indVoltageGnd = induced_voltage;
         m_chsData[receiver].angleGroundX = direction;
         m_chsData[receiver].angleGroundZ = (M_PI/2-thetaG)*180/M_PI;
-//        cout << "Induced voltage for ground: " << induced_voltage << endl;
         m_chsData[receiver].nlosFactor += norm(induced_voltage);
-//        double shift = (direction - m_receiver_speed.angle()) * M_PI / 180.0;
-//        double omega = -2.0 * M_PI * m_receiver_speed.length() * cos(shift) * cos(M_PI/2-thetaG) / lambda;
-//        m_dopplerSpectrum[receiver][omega] += a;
-//        m_chsData[receiver].dopplerSpctr[omega] += a;
 
         double angleRx = 180 + direction;
         Data &chData = m_chsData[receiver];
@@ -284,7 +229,7 @@ complex <double> Tx::computeEfieldGround(const QPointF *receiver,
         double prxAngSpctr = ph::prxSpctrMPC(angularDistr, wvNbr, u);
 
         complex<double> dopplerDistr = ph::angDistrMPC(induced_voltage, theta, w);
-        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
+//        double prxDopSpctr = ph::prxSpctrMPC(dopplerDistr, wvNbr * receiver_speed.length(), w);
 
         // Save Data
         chData.u.push_back(u);
@@ -322,45 +267,10 @@ double Tx::distance(const QPointF *receiver)
     return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2)) * px_to_meter; // conversion (1px == 1dm)
 }
 
-//complex<double>
-//Tx::computeImpulseDiffraction(WholeRay *ray_line, QLineF local_region)
-//{
-//    double direct_dist = sqrt(pow(ray_line->at(1)->p1().x() - ray_line->at(0)->p2().x(), 2)
-//                              + pow(ray_line->at(1)->p1().y() - ray_line->at(0)->p2().y(), 2)); //convertir px to cm?
-//    complex<double> F = 0.0;
-//    complex <double> i(0.0, 1.0);
-
-//    // The length defference between the path going through the tip of the obstacle, and the direct path.
-//    double delta_r = (ray_line->at(0)->length() + ray_line->at(1)->length() - direct_dist) * px_to_meter;
-//    double nu = sqrt(2 * 2 * M_PI / lambda * delta_r / M_PI);
-
-//    // The ITU's approximation for |F(nu)|^2
-//    double absF = pow(10, -6.9 / 40) / sqrt((sqrt(pow(nu - 0.1, 2) + 1) + nu - 0.1));
-//    double argF = -M_PI / 4 - pow(nu, 2) * M_PI / 2;
-//    F = absF * exp(i * argF);
-
-//    Line directRay(ray_line->at(0)->p2(), ray_line->at(1)->p1());
-//    directRay.setScale(px_to_meter);
-//    double angle = ray_line->at(1)->angle();
-//    QLineF beta(QPointF(.0,.0),QPointF(2.0 * M_PI / lambda,.0));
-//    beta.setAngle(ray_line->at(0)->angle());
-//    double scalar_beta_r = beta.p2().x()*local_region.p2().x() + beta.p2().y()*local_region.p2().y();
-//    double tau = (ray_line->at(0)->getMeterLength()+ray_line->at(1)->getMeterLength())/c;
-//    complex<double> array_factor = ph::totaleArrayFactor(angle,90,
-//                                                     m_frequency, m_orientation,
-//                                                     m_pr_orientation, m_column,
-//                                                     m_row, static_cast<ph::TxType>(m_kind));
-
-//    complex<double> impulse_r = array_factor*F
-//                                *exp(-i * scalar_beta_r)
-//                                *exp(-i * 2.0*M_PI * std::complex<double>(m_frequency * tau))
-//                                /directRay.getMeterLength();
-//    return impulse_r;
-//}
 
 complex<double> Tx::computeDiffractedEfield(QPointF *receiver,
-                                                                        WholeRay *rayLine,
-                                                                        bool properties)
+                                            WholeRay *rayLine,
+                                            bool /*properties*/)
 {
 
     // Direct distance between the receiver and the transmitter
@@ -377,21 +287,16 @@ complex<double> Tx::computeDiffractedEfield(QPointF *receiver,
 
     // The length defference between the path going through the tip of the obstacle, and the direct path.
     double d_diff = (rayLine->at(0)->length() + rayLine->at(1)->length())*px_to_meter;
-//    cout << "d_diff: " << d_diff << endl;
     double delta_r = d_diff - (direct_dist * px_to_meter);
-//    cout << "delta_r: " << delta_r << endl;
     double nu = sqrt(2 * 2 * M_PI / lambda * delta_r / M_PI);
-//    cout << "nu: " << nu << endl;
     // The ITU's approximation for |F(nu)|^2
 
     double absF = pow(10, -6.9 / 40) / sqrt((sqrt(pow(nu - 0.1, 2) + 1) + nu - 0.1));
     double argF = -M_PI / 4 - pow(nu, 2) * M_PI / 2;
     F = absF * exp(i * argF);
-//    cout << "F_nu: " << F << endl;
 
     double angle = rayLine->at(1)->angle();
-    double angle_end = rayLine->at(0)->angle();
-//    cout << "Phi_diff [rad]: " << angle*M_PI/180 << endl;
+//    double angle_end = rayLine->at(0)->angle();
     complex<double> array_factor = ph::totaleArrayFactor(angle,90,
                                                      m_frequency, m_orientation,
                                                      m_pr_orientation, m_column,
@@ -401,15 +306,7 @@ complex<double> Tx::computeDiffractedEfield(QPointF *receiver,
                         / d_diff);
     double Ia = sqrt(2 * m_power / (m_row*m_column * r_a)); // Ia could be changed for Beamforming application (add exp)
     Efield = -i  * a * ((z_0 * Ia) / (2 * M_PI));
-//    cout << "E_diff: " << Efield << endl;
-    if (properties){
-//        double completeLength = rayLine->at(1)->getMeterLength() + rayLine->at(0)->getMeterLength();
-//        double tau = completeLength * 1e9/c; // [ns]
-//        tau = round(tau*1e4)/1e4; // [precision of 0.1 ps]
-//        complex<double> induced_voltage = ph::inducedVoltage(Efield,M_PI/2,lambda);
-//        m_chsData[receiver].impulseResp[tau] += induced_voltage;
-//        m_chsData[receiver].impulseResp[angle_end] += induced_voltage;
-    }
+
     return Efield;
 }
 
@@ -450,7 +347,8 @@ void Tx::chooseBeam(QPointF *receiver)
                 if (wholeRay->size() == 1) {
                     // Adding the ground component
                     double angle_transmitter = wholeRay->back()->angle();
-                    groundField = computeEfieldGround(receiver,angle_transmitter,false); // Compute the electrical field from the ray reflected off the ground
+                    // Compute the electrical field from the ray reflected off the ground
+                    groundField = computeEfieldGround(receiver,angle_transmitter,false);
                 }
 
                 emField += EMfield;
@@ -484,35 +382,28 @@ Tx::comput4FixedBeam(QPointF *receiver)
     complex<double> EMfield;
     for (unsigned i = 0; i < m_receiversRays[receiver].size(); i++)
     {
-//        cout << "-------------------------------------------" << endl;
         WholeRay *wholeRay = m_receiversRays[receiver].at(i);
 
         if (wholeRay->at(0)->getDiffracted())
         {
             map<QPointF *, map<double, double>>::iterator it;
-            //m_ray_speed = ray_speeds[wholeRay];
             EMfield = computeDiffractedEfield(receiver,wholeRay,true);
             m_receiversField[receiver] += EMfield;
             m_rxsSumAbsE[receiver] += abs(EMfield);
             diffracted = true;
 
         } else {
-            //m_ray_speed = ray_speeds[wholeRay];
-            //m_ray_speed.setLength(m_ray_speed.length()/3.6);
 
             tuple<int, int> arrSize = {m_column, m_row};
-//            double wvNbr = 2.0 * M_PI / lambda;
-//            complex<double> EMfield = computeEMfield(wholeRay, receiver,true);
             EMfield = ph::computeEMfield(wholeRay, arrSize, m_power, wvNbr,
                                                      m_orientation, m_pr_orientation,
                                                          static_cast<ph::TxType>(m_kind));
-//            cout << "E_o: " << EMfield << endl;
 
             if (wholeRay->size() == 1) {
                 // Adding the ground component
                 double angle_transmitter = wholeRay->back()->angle();
-                m_receiversGroundField[receiver] = computeEfieldGround(receiver, angle_transmitter, true); // Compute the electrical field from the ray reflected off the ground
-//                cout << "E_g: " << m_receiversGroundField[receiver] << endl;
+                // Compute the electrical field from the ray reflected off the ground
+                m_receiversGroundField[receiver] = computeEfieldGround(receiver, angle_transmitter, true);
             }
             m_receiversField[receiver] += EMfield;
             m_rxsSumAbsE[receiver] += abs(EMfield);
@@ -521,8 +412,6 @@ Tx::comput4FixedBeam(QPointF *receiver)
         estimateCh(receiver,EMfield,wholeRay);
     }
 
-
-//    ph::normalizeMap<map<double, double>(m_chsData.at(receiver).impulseResp);
 }
 
 void Tx::dontChoseBeam(QPointF *receiver)
@@ -554,9 +443,7 @@ double Tx::computePrx(QPointF* receiver)
     for (auto &imp: m_chsData[receiver].impulseResp){
         Voc += imp.second;
     }
-//    cout << "Voltage: " << Voc << endl;
     double Prx = 1.0 / (8.0 * r_a) * norm(Voc);
-//    cout << "Prx: " << Prx << endl;
     return Prx;
 }
 
@@ -571,22 +458,6 @@ double Tx::dBm(double power)
 {
     return 10 * (log10(power/0.001));
 }
-
-
-//double Tx::computeReflexionPer(double thetaI, double epsilonR) const
-//{
-////    double R = (cos(thetaI) - sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)))
-////               /(cos(thetaI) + sqrt(epsilonR)*sqrt(1 - (1/epsilonR)*pow(sin(thetaI),2)));
-
-//    //  Now in the code thatai is the angle between the ray and the wall and not between
-//    //  the ray and the normal to the wall.
-//    //  Basicly thetai = pi/2 - thetai.
-//    //  Because of that cos and sin are inverted and we take their absolute value because of the angles given by Qt.
-
-//    double R = (abs(sin(thetaI)) - sqrt(epsilonR) * sqrt(1 - (1 / epsilonR) * pow(cos(thetaI), 2))) /
-//               (abs(sin(thetaI)) + sqrt(epsilonR) * sqrt(1 - (1 / epsilonR) * pow(cos(thetaI), 2)));
-//    return R;
-//}
 
 
 double Tx::computeReflexionPar(double thetaI, double epsilonR) const
@@ -615,16 +486,9 @@ void Tx::notifyObservables()
 void Tx::clearAll(){
     //map<QPointF *,vector<vector<Ray *>*>>::iterator rays;
     vector<WholeRay *> whole_rays;
-    WholeRay *tmp;
+//    WholeRay *tmp;
     for (const auto  &rays: m_receiversRays){
         whole_rays = rays.second;
-//        for (unsigned i = 0; i<whole_rays.size(); i++){
-//            tmp = whole_rays.at(i);
-//            for (unsigned j = 0; j< tmp->size();j ++) {
-//                delete tmp->at(j);
-//            }
-//            delete whole_rays.at(i);
-//        }
         for (auto &wholeRay: whole_rays) {
             wholeRay->clear();
         }
@@ -871,127 +735,8 @@ Data * Tx::getChData(QPointF *rx)
     // Normalize PAS
     map<double, double> testPAS = m_chsData[rx].prxAngularSpctrMap;
     vector<double> testPASVec = m_chsData[rx].prxAngularSpctr;
-//    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-//        e.second = e.second/m_chsData[rx].prxAngularSpctrMap.size();
-//    }
-//    for (auto &e: m_chsData[rx].prxDopplerSpctrMap) {
-//        e.second = e.second/m_chsData[rx].prxDopplerSpctrMap.size();
-//    }
-//    double max = 0;
-//    for (const auto &e: m_chsData[rx].prxAngularSpctrMap){
-//        if (max < abs(e.second)) max = abs(e.second);
-//    }
-
-//    for (auto &e: m_chsData[rx].prxAngularSpctrMap) {
-//        e.second = (e.second / max);
-//    }
-
-//    for (double &e: m_chsData[rx].prxAngularSpctr) {
-//        e += 1;
-//    }
-
-    // Rice Factor
-//    m_chsData[rx].riceFactor = 10*log10(m_los_factor[rx]/m_nlos_factor[rx]);
-
-    // Angular Spread
-//    m_chsData[rx].angularSpred = ph::angularSpread(m_chsData[rx].prxAngularSpctr, m_chsData[rx].u, wvNbr);
-
-    // Doppler Spread
-//    double speed = receivers_speed[rx].length();
-//    m_chsData[rx].dopplerSpread = ph::angularSpread(m_chsData[rx].prxDopplerSpctr, m_chsData[rx].w, speed * wvNbr);
-
-//    Eigen::FFT<double> fft;
-
-//    // Frequency response
-//    vector<double> h;
-//    vector<double> t;
-//    for (auto e: m_chsData[rx].impulseResp) {
-//        t.push_back(e.first);
-//        h.push_back(abs(e.second));
-//    }
-//    if (t.size()) h = ph::upsample<double, double>(t, h, 0, t.back(), 1);
-//    vector<complex<double>> fqResp ;
-
-//    if ( h.size() > 1) fft.fwd(fqResp, h);
-
-//    double fq = 0;
-//    for (const auto &e: fqResp) {
-//        m_chsData[rx].fqResp[fq] = e;
-//        fq++;
-//    }
-
-    // FFT
-//    vector <complex <double>> test;
-//    vector<complex<double>> out;
-//    vector <double> out2;
-
-//    vector <double> ulocal;
-//    for (auto &key: m_chsData[rx].prxAngularSpctrMap) {
-//        test.push_back(key.second);
-//        ulocal.push_back(key.first);
-//    }
-
-//    vector<complex<double>> upsampledPAS = ph::upsample<double, complex<double>>(ulocal, test, -wvNbr, wvNbr, 1);
-
-//    if (upsampledPAS.size() > 1){
-//        fft.inv(out, upsampledPAS);
-//    }
-
-//    ph::fft(upsampledPAS, true);
-//    vector<complex<double>> out3 = ph::idft(upsampledPAS);
-//    vector<complex<double>> out3 = ph::idft(test);
-
-//    for (const auto &e: out) {
-//        out2.push_back((float)e.real());
-////        out2.push_back((float)abs(e));
-//    }
-
-//    vector<double> omega;
-//    for (unsigned i = 0; i < out2.size(); i++) {
-//        omega.push_back(i);
-//    }
-
-//    map<double, double> spaceCorr = ph::correlation(test);
-
-//    cout << "out2 size: " << out2.size() << endl;
-//    unsigned f = 0;
-//    for (const auto &e: out2){
-//        cout << e <<", "<< upsampledPAS.at(f) << endl;
-//        f++;
-//    }
-
-//    cout << "u ----------" << endl;
-//    for (auto &e: ulocal) {
-//        cout << e << endl;
-//    }
-
-//    int i = 0;
-//    for (auto e: out2) {
-//        m_chsData[rx].spaceCrltnMap[i] = e;
-//        i++;
-//    }
-//    m_chsData[rx].spaceCrltn = out2;
-//    m_chsData[rx].deltaZ = omega;
     return &m_chsData[rx];
 }
-
-//void Tx::angularSpread(QPointF *rx)
-//{
-//    double prx = 0;
-//    double variance = 0;
-//    double mean = 0;
-
-//    const vector<double> &prxAngularSpread = m_chsData.at(rx).prxAngularSpctr;
-//    const vector<double> &u = m_chsData.at(rx).u;
-
-//    for (unsigned i = 0; i < prxAngularSpread.size(); i++) {
-//        prx += prxAngularSpread.at(i);
-//        variance += pow(u.at(i), 2) * prxAngularSpread.at(i);
-//        mean += u.at(i) * prxAngularSpread.at(i);
-//    }
-
-//    m_chsData.at(rx).angularSpred = sqrt(variance/prx - pow(mean, 2));
-//}
 
 void Tx::compute(QPointF *receiver)
 {
@@ -1014,8 +759,6 @@ void Tx::compute(QPointF *receiver)
     m_chsData[receiver].prx = powerDBm;
     m_chsData[receiver].eField = m_receiversField[receiver]+m_receiversGroundField[receiver];
 
-    // m_algorithm->sendData(this, dynamic_cast<MathematicalProduct *>(receiver));
-//    receiver->answer(this, m_frequency, m_bandwidth, powerDBm, m_receiversField[receiver]);
 }
 
 
@@ -1131,33 +874,6 @@ double Tx::getRxSumAbsE(QPointF *rx)
 {
     return m_rxsSumAbsE[rx];
 }
-
-//complex<double> Tx::computeInterference(QPointF* copy_receiver,QLineF local_region)
-//{
-//    complex<double> impulse_r = 0;
-//    vector<WholeRay *> wholeRays = m_receiversRays[copy_receiver];
-
-//    for (unsigned j = 0; j < wholeRays.size(); j++)
-//    {
-//        WholeRay *wholeRay  = wholeRays.at(j);
-
-//        if (wholeRay->at(0)->getDiffracted())
-//        {
-//            impulse_r += computeImpulseDiffraction(wholeRay, local_region);
-//        }
-//        else
-//        {
-//            int amountSegment = wholeRay->size();
-//            if (amountSegment == 1)
-//            {
-//                double angle_transmitter = wholeRay->back()->angle();
-//                impulse_r += computeImpulseGroundReflection(copy_receiver, angle_transmitter, local_region);
-//            }
-//            impulse_r += computeImpulseReflection(wholeRay,local_region);
-//        }
-//    }
-//    return impulse_r;
-//}
 
 // ---------------------------------------------------- ModelObserver -------------------------------------------------------------------
 
@@ -1298,7 +1014,7 @@ void Tx::linearRegressionPathLoss()
         sumy2 += pow(Prx[i],2);
     }
 
-    double denom = (m_pathloss.size() * sumx2 - pow(sumx,2));
+    double denom = (sumx2 - pow(sumx,2) / m_pathloss.size());
     if (denom == 0) {
         // singular matrix. can't solve the problem.
         m = 0;
@@ -1306,8 +1022,9 @@ void Tx::linearRegressionPathLoss()
         if (r) r = 0;
     }
     else{
-        m = (m_pathloss.size() * sumxy  -  sumx * sumy) / denom;
-        b = (sumy * sumx2  -  sumx * sumxy) / denom;
+        m = (sumxy - sumx * sumy / m_pathloss.size()) / denom;
+//        b = (sumy * sumx2  -  sumx * sumxy) / denom;
+        b = sumy/m_pathloss.size() - m * sumx/m_pathloss.size();
         if (r != 0.0) {
             r = (sumxy - sumx * sumy / m_pathloss.size()) /    /* compute correlation coeff */
             sqrt((sumx2 - pow(sumx,2)/m_pathloss.size()) *
@@ -1416,13 +1133,13 @@ map<double,double> Tx::notifyObserversShadowing()
     }
     std::map<double,double>::iterator it;
     double power_mean = 0;
-    for (int j = 0; j < prx.size(); j ++){
+    for (unsigned j = 0; j < prx.size(); j ++){
         if (j > mid && j < prx.size()-mid){
-            for (int i = -mid ; i <=mid ; i++){
-                power_mean = power_mean + (prx[j+i]-m_pathloss[j+i]);
+            for (int i = -mid; i <= mid; i++){
+                power_mean = power_mean + (prx[j+i] - m_pathloss[j+i]);
             }
-            power_mean = power_mean/sample_mean;
-            shadow[dpl[j]] = power_mean+m_pathloss[j];
+            power_mean = power_mean / sample_mean;
+            shadow[dpl[j]] = power_mean + m_pathloss[j];
          }
 //        else {
 //            shadow[dpl[j]] = prx[j];
