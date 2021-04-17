@@ -56,7 +56,17 @@ void GraphicsMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
         GraphicsProduct *graphicsproduct = m_sceneFactory->createGraphicsProduct(int(p.x()),int(p.y()));
         m_app->answer(graphicsproduct);
         m_mode = MoveItem;
-    }
+    } /*else if (event->button() == Qt::RightButton)
+        {
+            rightMousePressed = true;
+            _panStartX = event->x();
+            _panStartY = event->y();
+            setCursor(Qt::ClosedHandCursor);
+            event->accept();
+            return;
+        }
+
+    }*/
     m_app->resetToolInfo();
     QGraphicsScene::mousePressEvent(event);
 }

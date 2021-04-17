@@ -148,6 +148,7 @@ public slots:
 
     void addToStatusBar(const double val);
     void updateStatusBar(const string &str);
+    void updateScale(double scale);
 };
 
 #endif // APPLICATIONWINDOW_H

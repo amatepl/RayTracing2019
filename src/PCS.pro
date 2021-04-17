@@ -6,11 +6,11 @@ greaterThan(QT_MAJOR_VERSION, 4):QT += widgets printsupport \
 
 CONFIG += c++1z
 
-HEADERS += Abstract_Factory/dialogfactory.h \
-    Abstract_Factory/abstractalgorithmfactory.h \
+HEADERS += Abstract_Factory/abstractalgorithmfactory.h \
     Abstract_Factory/abstractrayfactory.h \
     Abstract_Factory/buildingfactory.h \
     Abstract_Factory/carfactory.h \
+    Abstract_Factory/dialogfactory.h \
     Abstract_Factory/rayfactory.h \
     Abstract_Factory/raytracingalgorithmfactory.h \
     Abstract_Factory/receiverfactory.h \
@@ -25,9 +25,11 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Model/coverage.h \
     Model/imagesmethod.h \
     Model/mapgenerator.h \
+    Model/model.cpp.orig \
     Model/model.h \
-    Observer/AppInterface.h \
+    Model/raytracing.cpp.orig \
     Model/raytracing.h \
+    Observer/AppInterface.h \
     Observer/modelobservable.h \
     Observer/modelobserver.h \
     Observer/movingobstacle.h \
@@ -35,16 +37,17 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Observer/productobserver.h \
     Observer/sceneobservable.h \
     Observer/sceneobserver.h \
+    Observer/windowobservable.h \
     Observer/windowobserver.h \
     Observer/windowomodelbservable.h \
     Product/BuildingProduct/building.h \
     Product/BuildingProduct/buildingproduct.h \
     Product/BuildingProduct/dialogbuildingproduct.h \
     Product/BuildingProduct/graphicsbuilding.h \
+    Product/CarProduct/car.h \
     Product/CarProduct/carproduct.h \
     Product/CarProduct/dialogcarproduct.h \
     Product/CarProduct/graphicscarproduct.h \
-    Product/CarProduct/car.h \
     Product/RayProduct/graphicsray.h \
     Product/RayProduct/ray.h \
     Product/RayProduct/rayproduct.h \
@@ -53,9 +56,10 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Product/ReceiverProduct/receiverproduct.h \
     Product/ReceiverProduct/rx.h \
     Product/TransmitterProduct/antenadiffraction.h \
-    Product/TransmitterProduct/dialogfactory.h \
     Product/TransmitterProduct/dialogtx.h \
     Product/TransmitterProduct/graphicstx.h \
+    Product/TransmitterProduct/mathematicaltransmitterproduct.cpp.orig \
+    Product/TransmitterProduct/mathematicaltransmitterproduct.h.orig \
     Product/TransmitterProduct/tx.h \
     Product/TransmitterProduct/tximg.h \
     Product/TransmitterProduct/txinterface.h \
@@ -80,16 +84,19 @@ HEADERS += Abstract_Factory/dialogfactory.h \
     Share/rxdatahandler.h \
     Share/wall.h \
     Share/wholeray.h \
+    Widget/graphics_view_zoom.h \
     Widget/infobar.h \
     Widget/infowidget.h \
     Widget/toolbox.h \
     applicationwindow.h \
     graphicsmap.h \
-    qcustomplot.h
+    logicinterface.h \
+    qcustomplot/qcustomplot.h \
 
-SOURCES += Abstract_Factory/dialogfactory.cpp \
-    Abstract_Factory/buildingfactory.cpp \
+
+SOURCES += Abstract_Factory/buildingfactory.cpp \
     Abstract_Factory/carfactory.cpp \
+    Abstract_Factory/dialogfactory.cpp \
     Abstract_Factory/rayfactory.cpp \
     Abstract_Factory/raytracingalgorithmfactory.cpp \
     Abstract_Factory/receiverfactory.cpp \
@@ -106,9 +113,9 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Product/BuildingProduct/building.cpp \
     Product/BuildingProduct/dialogbuildingproduct.cpp \
     Product/BuildingProduct/graphicsbuilding.cpp \
+    Product/CarProduct/car.cpp \
     Product/CarProduct/dialogcarproduct.cpp \
     Product/CarProduct/graphicscarproduct.cpp \
-    Product/CarProduct/car.cpp \
     Product/RayProduct/graphicsray.cpp \
     Product/RayProduct/ray.cpp \
     Product/ReceiverProduct/dialogrx.cpp \
@@ -132,18 +139,21 @@ SOURCES += Abstract_Factory/dialogfactory.cpp \
     Share/rxdatahandler.cpp \
     Share/wall.cpp \
     Share/wholeray.cpp \
+    Widget/graphics_view_zoom.cpp \
     Widget/infobar.cpp \
     Widget/infowidget.cpp \
     Widget/toolbox.cpp \
     applicationwindow.cpp \
     graphicsmap.cpp \
     main.cpp \
-    qcustomplot.cpp
+    qcustomplot/qcustomplot.cpp \
+
 
 RESOURCES += \
-    Ressources.qrc
+    ../Ressources.qrc
 
-DISTFILES +=
+DISTFILES += \
+    PCS.uxf
 
 INCLUDEPATH += /usr/local/GSL/include \
     /usr/local/boost_1_74_0 \

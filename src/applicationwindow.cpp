@@ -1,6 +1,7 @@
 #include "applicationwindow.h"
 #include "Share/wholeray.h"
 #include "Share/params.h"
+#include "Widget/graphics_view_zoom.h"
 
 float px_to_meter = 0.2;  // meter per pixel
 
@@ -49,6 +50,11 @@ ApplicationWindow::ApplicationWindow(QWidget *parent) : QMainWindow(parent, Qt::
 
     m_graphicsmode = MoveItem;
     m_info_widget->sendGenerateMap();
+
+    Graphics_view_zoom* z = new Graphics_view_zoom(view);
+    z->set_modifiers(Qt::NoModifier);
+    connect(z, &Graphics_view_zoom::zoomed, this, &ApplicationWindow::updateScale);
+
 }
 
 ApplicationWindow::~ApplicationWindow()
@@ -294,6 +300,7 @@ void ApplicationWindow::createToolInfo()
 void ApplicationWindow::createStatusBar()
 {
     m_scaleScene = createScaleScene(px_to_meter);
+//    m_scaleScene = createScaleScene(50);
 
     QGraphicsView *scaleWidget = createScaleWidget();
     m_statusBar = statusBar();
@@ -307,9 +314,11 @@ QGraphicsScene *ApplicationWindow::createScaleScene(const double &px_to_m)
     scaleMeters->setFont(QFont("Helvetica", 10));
     scaleScene->addItem(scaleMeters);
     scaleMeters->setPos(-32, -6);
-    scaleScene->addLine(1, 5, 10/px_to_m, 5);
+//    scaleScene->addLine(1, 5, 10/px_to_m, 5);
+    scaleScene->addLine(1, 5, 250 * px_to_m, 5);
     scaleScene->addLine(1, 0, 1, 5);
-    scaleScene->addLine(10/px_to_m, 0, 10/px_to_m, 5);
+//    scaleScene->addLine(10/px_to_m, 0, 10/px_to_m, 5);
+    scaleScene->addLine(250 * px_to_m, 0, 250 * px_to_m, 5);
     return scaleScene;
 }
 
@@ -318,7 +327,7 @@ QGraphicsView *ApplicationWindow::createScaleWidget()
     QGraphicsView *scaleWidget = new QGraphicsView(m_scaleScene);
     scaleWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scaleWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scaleWidget->setFixedSize(100, 20);
+    scaleWidget->setFixedSize(150, 20);
     return scaleWidget;
 }
 
@@ -343,9 +352,11 @@ void ApplicationWindow::updateGraphicsScale(const double &px_to_m)
     scaleMeters->setFont(QFont("Helvetica", 10));
     m_scaleScene->addItem(scaleMeters);
     scaleMeters->setPos(-32, -6);
-    m_scaleScene->addLine(1, 5, 10/px_to_m, 5);
+//    m_scaleScene->addLine(1, 5, 10/px_to_m, 5);
+    m_scaleScene->addLine(1, 5, 250 * px_to_m, 5);
     m_scaleScene->addLine(1, 0, 1, 5);
-    m_scaleScene->addLine(10/px_to_m, 0, 10/px_to_m, 5);
+//    m_scaleScene->addLine(10/px_to_m, 0, 10/px_to_m, 5);
+    m_scaleScene->addLine(250 * px_to_m, 0, 250 * px_to_m, 5);
 
 }
 
@@ -531,6 +542,7 @@ void ApplicationWindow::generateMap(unsigned h, unsigned w,
 {
     setScale(px_to_m);
     updateGraphicsScale(px_to_m);
+//    updateGraphicsScale(50);
     m_map->setSceneRect(0, 0, w / px_to_m, h / px_to_m);
     m_model->generateMap(h, w, min_cars, max_cars, min_st_dist, max_st_dist, min_st_w, max_st_w, px_to_m);
 }
@@ -628,3 +640,11 @@ void ApplicationWindow::updateStatusBar(const string &str)
     }
     m_statusBar->showMessage(QString::fromStdString(info));
 }
+
+void ApplicationWindow::updateScale(double scale)
+{
+    cout << "Scale update: " << scale << endl;
+    setScale(scale);
+    updateGraphicsScale(scale);
+}
+

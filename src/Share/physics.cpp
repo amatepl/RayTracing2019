@@ -32,9 +32,9 @@ using namespace ph;
 
 /*!
  * \fn ph::u ph::uMPC(WholeRay *wholeRay)
- * \brief Return u parameter for a given MPC
- * \param wholeRay
- * \return
+ * \brief Return \c u parameter for a given MPC
+ *
+ *
  *
  */
 ph::u ph::uMPC(double wvNbr, angle theta)

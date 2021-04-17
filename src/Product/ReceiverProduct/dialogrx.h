@@ -27,7 +27,7 @@
 
 #include "receiverproduct.h"
 #include "Product/ReceiverProduct/graphicsrx.h"
-#include "qcustomplot.h"
+#include "qcustomplot/qcustomplot.h"
 #include "Graphics/interfererencepattern.h"
 
 using namespace QtDataVisualization;

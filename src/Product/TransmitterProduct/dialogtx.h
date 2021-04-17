@@ -10,7 +10,7 @@
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QComboBox>
-#include <qcustomplot.h>
+#include <qcustomplot/qcustomplot.h>
 #include <QDialogButtonBox>
 
 #include "txinterface.h"

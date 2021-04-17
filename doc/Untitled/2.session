@@ -1,0 +1,19 @@
+window_sizes 1792 1002 420 1366 886 64
+cleanlooks_style
+diagrams
+  active  classdiagram_ref 128002 // PCS
+    1092 708 100 A4 0 0
+end
+show_stereotypes
+selected class_ref 142722 // forImage
+open
+  classview_ref 128898 // TransmitterProduct
+  
+  package_ref 129410 // TreeProduct
+  classview_ref 129794 // src
+  classview_ref 130050 // Product
+  classview_ref 130562 // TransmitterProduct
+  classview_ref 130690 // ReceiverProduct
+  classview_ref 130306 // Model
+end
+end
